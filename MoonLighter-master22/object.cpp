@@ -170,7 +170,7 @@ void dgBossDoor::update()
 void dgBossDoor::render()
 {
 	_open->ZorderStretchRender(0, _x, _y,2.f);
-	CAMERAMANAGER->ZorderStretchFrameRender(IMAGEMANAGER->findImage(_imgTopKey), 2000, _x - IMAGEMANAGER->findImage(_imgTopKey)->getFrameWidth(), _y - IMAGEMANAGER->findImage(_imgTopKey)->getFrameHeight(), 0, _frameY,2.f);
+	CAMERAMANAGER->ZorderStretchFrameRender(IMAGEMANAGER->findImage(_imgTopKey), 2000, _x , _y , 0, _frameY,2.f);
 }
 
 void dgBossDoor::openPlay()

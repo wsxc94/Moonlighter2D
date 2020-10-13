@@ -381,7 +381,7 @@ void gasMan::arrowFire()
 	if (_attack->getCurIndex() < 5) return;
 	if (_isFireSoundPlay == false)
 	{
-		SOUNDMANAGER->play("potFire", 0.5f);
+		SOUNDMANAGER->play("potFire", 0.2f);
 	}
 	switch (_emDirection)
 	{
@@ -446,7 +446,7 @@ void gasMan::arrowMove()
 		RECT temp;
 		if (IntersectRect(&temp, &_vArrow[i].rc, &dunRC)) continue;
 		_vArrow.erase(_vArrow.begin() + i);
-		SOUNDMANAGER->play("gasArrowPop");
+		SOUNDMANAGER->play("gasArrowPop",0.2f);
 	}
 }
 
@@ -487,7 +487,7 @@ void gasMan::arrowRender()
 
 void gasMan::hitSoundPlay()
 {
-	SOUNDMANAGER->play("gasManHit", 0.5f);
+	SOUNDMANAGER->play("gasManHit", 0.2f);
 }
 
 void gasMan::gasManCollision()
