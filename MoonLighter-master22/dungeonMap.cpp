@@ -30,8 +30,6 @@ HRESULT DungeonMap::init()
 {
 	this->setStartDungeon();
 
-	
-
 	return S_OK;
 }
 
@@ -65,6 +63,7 @@ void DungeonMap::update()
 	this->enemyUpdate();
 	// 아이템 업뎃
 	this->itemUpdate();
+
 }
 
 void DungeonMap::render()
@@ -90,9 +89,11 @@ void DungeonMap::render()
 	{
 		_vItem[i]->render(getMemDC());
 	}
+	for (int i = 0; i < _vTile.size(); i++)
+	{
+		if (_vTile[i].tState == TS_PORTAL) FrameRect(getMemDC(), _vTile[i].rc, RGB(255, 255, 255));
+	}
 	this->dgDoorRender();
-
-	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 
 }
 
@@ -356,6 +357,31 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 		(*map)->_bottomDoor->init(525, 630, "던전문(위아래)", 1);
 	}
 
+	if ((*map)->_dgKind == DG_SEMIBOSS)
+	{
+		switch (RANDOM->range(3))
+		{
+		case 0: // 왼쪽에 보스문 생성
+			(*map)->_leftDoor = new dgBossDoor;
+			(*map)->_leftDoor->init(43, 235, "보스문(양옆)", 1);
+			break;
+		case 1: // 오른쪽에 보스문 생성
+			(*map)->_rightDoor = new dgBossDoor;
+			(*map)->_rightDoor->init(1109, 235, "보스문(양옆)", 0);
+			break;
+		case 2: // 위에 보스문 생성
+			(*map)->_topDoor = new dgBossDoor;
+			(*map)->_topDoor->init(515, 8, "보스문(위아래)", 0);
+			break;
+		}
+
+		enemy* _em = new bossSkeleton;
+		_em->init(WINSIZEX/2,WINSIZEY/2);
+		_em->initTileSize(28, 15);
+		_em->setWallTile((*map)->_vTile);
+		(*map)->_vEnemy.push_back(_em);
+	}
+
 	//던전문에 따른 포탈타일 생성
 	for (int i = 0, left = 0, right = 0, top = 0, bottom = 0; i < (*map)->_vTile.size(); i++)
 	{
@@ -368,7 +394,9 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 					(*map)->_vTile[i].rc.top != (*map)->_leftDoor->getRect().top &&
 					(*map)->_vTile[i].rc.bottom != (*map)->_leftDoor->getRect().bottom)
 				{
-					if (left == 1) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (left == 1 && (*map)->_dgKind == DG_NOMAL) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (left == 3 && (*map)->_dgKind == DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
+
 					left++;
 				}
 			}
@@ -382,7 +410,8 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 					(*map)->_vTile[i].rc.top != (*map)->_rightDoor->getRect().top &&
 					(*map)->_vTile[i].rc.bottom != (*map)->_rightDoor->getRect().bottom)
 				{
-					if (right == 1) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (right == 1 && (*map)->_dgKind == DG_NOMAL) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (right == 3 && (*map)->_dgKind == DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
 					right++;
 				}
 			}
@@ -392,11 +421,12 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 		{
 			if (IntersectRect(&rc, &(*map)->_vTile[i].rc, &(*map)->_topDoor->getRect()))
 			{
-				if ((*map)->_vTile[i].rc.bottom + 1 == (*map)->_topDoor->getRect().bottom &&
+				if (((*map)->_vTile[i].rc.bottom + 1 == (*map)->_topDoor->getRect().bottom || (*map)->_vTile[i].rc.bottom == (*map)->_topDoor->getRect().bottom) &&
 					(*map)->_vTile[i].rc.left != (*map)->_topDoor->getRect().left &&
 					(*map)->_vTile[i].rc.right != (*map)->_topDoor->getRect().right)
 				{
-					if (top == 1) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (top == 1 && (*map)->_dgKind == DG_NOMAL) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (top == 3 && (*map)->_dgKind == DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
 					top++;
 				}
 			}
@@ -428,19 +458,19 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 
 void DungeonMap::dgDoorRender()
 {
-	if (_leftDg != nullptr)
+	if (_leftDoor != nullptr)
 	{
 		_leftDoor->render();
 	}
-	if (_rightDg != nullptr)
+	if (_rightDoor != nullptr)
 	{
 		_rightDoor->render();
 	}
-	if (_topDg != nullptr)
+	if (_topDoor != nullptr)
 	{
 		_topDoor->render();
 	}
-	if (_bottomDg != nullptr)
+	if (_bottomDoor != nullptr)
 	{
 		_bottomDoor->render();
 	}
@@ -456,8 +486,16 @@ void DungeonMap::dgDoorUpdate()
 
 void DungeonMap::dgDoorOpen()
 {
-	if(!SOUNDMANAGER->isPlaySound("DungeonDoor"))
-	SOUNDMANAGER->play("DungeonDoor");
+	if (_dgKind == DG_NOMAL)
+	{
+		if (!SOUNDMANAGER->isPlaySound("DungeonDoor"))
+			SOUNDMANAGER->play("DungeonDoor");
+	}
+	else
+	{
+		if (!SOUNDMANAGER->isPlaySound("bossDoor"))
+			SOUNDMANAGER->play("bossDoor");
+	}
 	if (_leftDoor)	_leftDoor->openPlay();
 	if (_rightDoor)	_rightDoor->openPlay();
 	if (_topDoor)	_topDoor->openPlay();
@@ -467,7 +505,7 @@ void DungeonMap::dgDoorOpen()
 void DungeonMap::dgDoorClose()
 {
 	if (!SOUNDMANAGER->isPlaySound("DungeonDoor"))
-	SOUNDMANAGER->play("DungeonDoor");
+		SOUNDMANAGER->play("DungeonDoor");
 	if (_leftDoor)	_leftDoor->closePlay();
 	if (_rightDoor)	_rightDoor->closePlay();
 	if (_topDoor)	_topDoor->closePlay();
@@ -872,13 +910,19 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 			{
 				if (_vTile[i].tState == TS_PORTAL && IntersectRect(&temp, &rc, &_leftDoor->getRect()))
 				{
-					return 1;
+					if (_dgKind == DG_SEMIBOSS)
+						return 5;
+					else 
+						return 1;
 				}
 			}
 			if (_rightDoor != nullptr)
 			{
 				if (_vTile[i].tState == TS_PORTAL && IntersectRect(&temp, &rc, &_rightDoor->getRect()))
 				{
+					if (_dgKind == DG_SEMIBOSS)
+						return 5;
+					else
 					return 2;
 				}
 			}
@@ -886,6 +930,9 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 			{
 				if (_vTile[i].tState == TS_PORTAL && IntersectRect(&temp, &rc, &_topDoor->getRect()))
 				{
+					if (_dgKind == DG_SEMIBOSS)
+						return 5;
+					else
 					return 3;
 				}
 			}
@@ -893,11 +940,17 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 			{
 				if (_vTile[i].tState == TS_PORTAL && IntersectRect(&temp, &rc, &_bottomDoor->getRect()))
 				{
+					if (_dgKind == DG_SEMIBOSS)
+						return 5;
+					else
 					return 4;
 				}
 			}
 		}
 	}
+
+
+
 	return 0;
 }
 

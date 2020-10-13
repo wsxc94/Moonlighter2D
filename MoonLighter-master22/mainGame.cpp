@@ -31,7 +31,9 @@ HRESULT mainGame::init()
 
 	PLAYER->init();
 	SCENEMANAGER->loadScene("타운로딩");
-	
+
+	CAMERAMANAGER->FadeInit(1, FADE_IN);
+
 
 	return S_OK;
 }
@@ -55,6 +57,8 @@ void mainGame::update()
 	SCENEMANAGER->update();
 	//사운드매니져 업데이트 (이게 없으면 사운드매니져 제대로 동작하지 않는다!!!)
 	SOUNDMANAGER->update();
+
+	CAMERAMANAGER->FadeUpdate();
 }
 
 //=============================================================
@@ -73,6 +77,8 @@ void mainGame::render()
 	//프레임을 보고싶으면 주석해제
 	TIMEMANAGER->render(getMemDC());
 	PLAYERDATA->render(getMemDC());
+
+	CAMERAMANAGER->FadeRender(getMemDC());
 
 //=============================================================
 	//백버퍼의 내용을 화면DC에 그린다 (이것도 렌더에 그냥 두기)

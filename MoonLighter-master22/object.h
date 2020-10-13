@@ -15,17 +15,39 @@ public:
 	virtual void render();
 
 };
-
+enum DOORKIND
+{
+	DOOR_NOMAL,DOOR_BOSS
+};
 class dgDoor : public gameNode
 {
-private:
+protected:
+	DOORKIND _kind;
 	bool _isActivate;
 	bool _isOpen;
 	bool _isClose;
 	animation* _open;
 	animation* _close;
 	RECT _rc;
+	int _x, _y;
 	string _imgKey;
+public:
+	virtual HRESULT init(int x, int y, string key, int frameY);
+	virtual void release();
+	virtual void update();
+	virtual void render();
+
+	virtual void openPlay();
+	virtual void closePlay();
+	virtual void setIsActivate(bool isA) { _isActivate = isA; }
+	virtual bool getIsActivate() { return _isActivate; }
+	virtual RECT getRect() { return _rc; }
+	virtual int getId() { return _open->getCurIndex(); }
+	virtual DOORKIND getDoorKind() { return _kind; }
+};
+
+class dgBossDoor : public dgDoor
+{
 public:
 	HRESULT init(int x, int y, string key, int frameY);
 	void release();

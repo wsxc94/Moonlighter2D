@@ -321,7 +321,7 @@ void maptoolScene::update()
 	
 		if (INPUT->GetToggleKey('M'))
 		{
-			_miniMap->stretchRender(getMemDC(), 0, 0, WINSIZEX/2,WINSIZEY/2);
+			_miniMap->stretchRender(getMemDC(), 0, 0, 0.5f);
 		}
 		
 	}

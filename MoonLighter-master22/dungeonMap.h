@@ -5,7 +5,6 @@
 #include "enemy.h"
 #include "itemManager.h"
 
-
 enum DUNGEONDOOR
 {
 	DOOR_OPEN, DOOR_CLOSE
@@ -45,6 +44,7 @@ private:
 	DungeonMap* _bottomDg;
 
 	int _test;
+	int _floor;
 
 private:
 	vector<DungeonMap*> _vMaps;
@@ -86,6 +86,9 @@ public:
 
 	void checkColiArrow();
 
+	//현재 몇층인지 알려줌
+	void setCurrentFloor(int floor) { _floor = floor; }
+
 	DungeonMap* findMap(POINT pos);
 	bool isFindMap(POINT pos);
 
@@ -105,5 +108,6 @@ public:
 	RECT getHoleTile(RECT rc);
 	vector<tagTile> getVTile() { return _vTile; }
 	DUNGEONDOOR getDungeonDoorState() { return _doorState; }
+	DUNGEONKIND getDungeonKind() { return _dgKind; }
 };
 

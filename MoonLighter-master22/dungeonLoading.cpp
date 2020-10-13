@@ -87,19 +87,16 @@ void dungeonLoading::loadImage()
 	_loading->loadFrameImage("enemyDie", "Images/몬스터/enemyDie11.bmp", 1320, 136, 11, 1);
 	_loading->loadFrameImage("potDie", "Images/몬스터/potDie7(2).bmp", 602, 116, 7, 1);
 
-	_loading->loadFrameImage("skeletonMove", "Images/몬스터/bossSkeletonMove14X4.bmp", 6972, 1864, 14, 4);
-	_loading->loadFrameImage("skeletonMoveHitRed", "Images/몬스터/bossSkeletonMove14X4HitRed.bmp", 6972, 1864, 14, 4);
-	_loading->loadFrameImage("skeletonMoveHitWhite", "Images/몬스터/bossSkeletonMove14X4HitWhite.bmp", 6972, 1864, 14, 4);
-	_loading->loadFrameImage("skeletonAttackSword", "Images/몬스터/bossSkeletonSword22X4.bmp", 10956, 1864, 22, 4);
-	_loading->loadFrameImage("skeletonAttackSwordHitRed", "Images/몬스터/bossSkeletonSword22X4HitRed.bmp", 10956, 1864, 22, 4);
-	_loading->loadFrameImage("skeletonAttackSwordHitWhite", "Images/몬스터/bossSkeletonSword22X4HitWhite.bmp", 10956, 1864, 22, 4);
-	_loading->loadFrameImage("skeletonAttackHammer", "Images/몬스터/bossSkeletonHammer20X4.bmp", 9960, 1864, 20, 4);
-	_loading->loadFrameImage("skeletonAttackHammerHitRed", "Images/몬스터/bossSkeletonHammer20X4HitRed.bmp", 9960, 1864, 20, 4);
-	_loading->loadFrameImage("skeletonAttackHammerHitWhite", "Images/몬스터/bossSkeletonHammer20X4HitWhite.bmp", 9960, 1864, 20, 4);
-	_loading->loadFrameImage("skeletonDie", "Images/몬스터/bossSkeletonDie18.bmp", 13374, 698, 18, 1);
+	_loading->loadFrameImage("skeletonMove", "Images/몬스터/bossSkeletonMove14X4.bmp", 2324, 621, 14, 4);
+	_loading->loadFrameImage("skeletonMoveHitRed", "Images/몬스터/bossSkeletonMove14X4HitRed.bmp", 2324, 621, 14, 4);
+	_loading->loadFrameImage("skeletonMoveHitWhite", "Images/몬스터/bossSkeletonMove14X4HitWhite.bmp", 2324, 621, 14, 4);
+	_loading->loadFrameImage("skeletonAttackSword", "Images/몬스터/bossSkeletonSword22X4.bmp", 3652, 621, 22, 4);
+	_loading->loadFrameImage("skeletonAttackSwordHitRed", "Images/몬스터/bossSkeletonSword22X4HitRed.bmp", 3652, 621, 22, 4);
+	_loading->loadFrameImage("skeletonAttackSwordHitWhite", "Images/몬스터/bossSkeletonSword22X4HitWhite.bmp", 3652, 621, 22, 4);
+	_loading->loadFrameImage("skeletonAttackHammer", "Images/몬스터/bossSkeletonHammer20X4.bmp", 3320, 621, 20, 4);
+	_loading->loadFrameImage("skeletonAttackHammerHitRed", "Images/몬스터/bossSkeletonHammer20X4HitRed.bmp", 3320, 621, 20, 4);
+	_loading->loadFrameImage("skeletonAttackHammerHitWhite", "Images/몬스터/bossSkeletonHammer20X4HitWhite.bmp", 3320, 621, 20, 4);
 	_loading->loadFrameImage("hammerWave1", "Images/몬스터/hammerWave(2)8.bmp", 1848, 251, 8, 1);
-	_loading->loadFrameImage("hammerWave2", "Images/몬스터/hammerWave(3)8.bmp", 2696, 371, 8, 1);
-	_loading->loadFrameImage("hammerWave3", "Images/몬스터/hammerWave(4)8.bmp", 3648, 509, 8, 1);
 	_loading->loadFrameImage("skeletonBlade", "Images/몬스터/bossSkeletonBlade8.bmp", 1040, 297, 8, 1);
 
 	_loading->loadImage("enemyProgressBarFront", "Images/던전/enemyProgressBarFront.bmp", 120, 10);
@@ -112,6 +109,8 @@ void dungeonLoading::loadImage()
 
 	_loading->loadFrameImage("던전문(위아래)", "Images/던전/dungeonDoorUD6.bmp", 1050, 212, 6, 2);
 	_loading->loadFrameImage("던전문(양옆)", "Images/던전/dungeonDoorLR6.bmp", 630, 350, 6, 2);
+	_loading->loadFrameImage("보스문(위아래)", "Images/던전/bossDoorH17.bmp", 1632, 108,17,2);
+	_loading->loadFrameImage("보스문(양옆)", "Images/던전/bossDoorW17.bmp", 918, 192,17,2);
 
 }
 
@@ -119,6 +118,7 @@ void dungeonLoading::loadSound()
 {
 	_loading->loadSound("dungeonBGM", "Sound/dungeonBGM.mp3", true, true);
 	_loading->loadSound("DungeonDoor", "Sound/door.wav");
+	_loading->loadSound("bossDoor", "Sound/bossDoor.wav");
 	_loading->loadSound("spaRoomBGM", "Sound/poolRoomBGM.mp3", true, true);
 	_loading->loadSound("golemAttack", "Sound/에너미/골렘/골렘공격.wav");
 	_loading->loadSound("golemHit", "Sound/에너미/골렘/골렘맞음.wav");
@@ -129,6 +129,9 @@ void dungeonLoading::loadSound()
 	_loading->loadSound("skullAttackSword", "Sound/에너미/해골/skeletonAttackSword.wav");
 	_loading->loadSound("skullAttackHammer", "Sound/에너미/해골/skeletonAttackHammer.wav");
 	_loading->loadSound("skullHit", "Sound/에너미/해골/skeletonStep1.wav");
+	_loading->loadSound("skullHit2", "Sound/에너미/해골/skeletonStep2.wav");
+	_loading->loadSound("skullHit3", "Sound/에너미/해골/skeletonStep3.wav");
+	_loading->loadSound("skeletonWave", "Sound/에너미/해골/wave.wav");
 	_loading->loadSound("gasManHit", "Sound/에너미/슬라임/슬라임맞음.wav");
 	_loading->loadSound("golemDie", "Sound/에너미/골렘/골렘사망.wav");
 	_loading->loadSound("enemyDie", "Sound/에너미/슬라임/슬라임죽음.wav");

@@ -28,6 +28,9 @@ private:
 	//에너미 테스트
 	enemy*	_em;
 
+	//던전 층수
+	int _dgFloor;
+
 public:
 	nomalDungeonScene() { };
 	~nomalDungeonScene() { };
@@ -36,8 +39,8 @@ public:
 	void release();
 	void update();
 	void render();
-	void coll();
 	bool minimapPush(POINT pt);
 	void minimapRender();
+	void setNewFloor();
 };
 

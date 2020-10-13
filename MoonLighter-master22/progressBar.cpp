@@ -56,13 +56,22 @@ void progressBar::cameraAlphaRender(int x, int y, BYTE alpha)
 	CAMERAMANAGER->ZorderAlphaRender(_progressBarFront, 2001, front.left, front.top,0,0,_width,_height, alpha);
 }
 
+void progressBar::ZorderRender(float z, int x, int y)
+{
+
+}
+
+void progressBar::ZorderAlphaRender(float z, int x, int y)
+{
+}
+
 void progressBar::cameraRender(int x, int y)
 {
 	//렌더링 되는 순서에 의해서 렌더가 되니까 피통부터 렌더 시킨다
 	RECT back = RectMakeCenter(x, y, _progressBarBack->getWidth(), _progressBarBack->getHeight());
-	 CAMERAMANAGER->Render(getMemDC(), _progressBarBack, back.left, back.top);
+	 CAMERAMANAGER->ZorderRender(_progressBarBack,2001, back.left, back.top);
 	//앞에 보여지는 체력바 이미지
 	RECT front = RectMakeCenter(x, y, _progressBarFront->getWidth(), _progressBarFront->getHeight());
-	CAMERAMANAGER->Render(getMemDC(), _progressBarFront, front.left, front.top, 0, 0, _width, _height);
+	CAMERAMANAGER->ZorderRender(_progressBarFront,2001, front.left, front.top, 0, 0, _width, _height);
 }
 

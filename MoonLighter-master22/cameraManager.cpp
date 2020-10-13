@@ -18,7 +18,6 @@ HRESULT cameraManager::init(float pivotX, float pivotY, float maxX, float maxY, 
 
 	_CMState = CAMERAMANAGERSTATE::CAMERAMANAGER_FOLLOWPIVOT;
 
-
 	return S_OK;
 }
 
@@ -163,19 +162,9 @@ void cameraManager::FrameRender(HDC hdc, image * ig, int destX, int destY, int f
 	ig->frameRender(hdc, this->getRelativeX(destX), this->getRelativeY(destY), frameX, frameY);
 }
 
-void cameraManager::StretchRender(HDC hdc, image * ig, int destX, int destY, int sizeX, int sizeY)
-{
-	ig->stretchRender(hdc, this->getRelativeX(destX), this->getRelativeY(destY), sizeX, sizeY);
-}
-
 void cameraManager::StretchRender(HDC hdc, image * ig, int destX, int destY, float size)
 {
 	ig->stretchRender(hdc, this->getRelativeX(destX), this->getRelativeY(destY), size);
-}
-
-void cameraManager::StretchFrameRender(HDC hdc, image * ig, int destX, int destY, int frameX, int frameY, int sizeX, int sizeY)
-{
-	ig->stretchFrameRender(hdc, this->getRelativeX(destX), this->getRelativeY(destY), frameX, frameY, sizeX, sizeY);
 }
 
 void cameraManager::StretchFrameRender(HDC hdc, image * ig, int destX, int destY, int frameX, int frameY, float size)
@@ -303,6 +292,68 @@ void cameraManager::ZorderRotateAlphaFrameRender(image * img, float z, int cente
 	_vZoderRender.push_back(_zo);
 }
 
+void cameraManager::ZorderStretchRender(image * img, float z, int centerX, int centerY, float scale)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_STRETCH_RENDER, img, z, getRelativeX(centerX), getRelativeY(centerY));
+	_zo->scale = scale;
+	_vZoderRender.push_back(_zo);
+}
+
+void cameraManager::ZorderStretchFrameRender(image * img, float z, int centerX, int centerY, int frameX, int frameY, float scale)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_STRETCH_FRAME, img, z, getRelativeX(centerX), getRelativeY(centerY));
+	_zo->frameX = frameX;
+	_zo->frameY = frameY;
+	_zo->scale = scale;
+	_vZoderRender.push_back(_zo);
+}
+
+void cameraManager::ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, COLORREF color, UINT format)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_TXT, nullptr, z, 0, 0);
+	_zo->txt = txt;
+	_zo->txtRC = txtRC;
+	_zo->font = font;
+	_zo->txtColor = color;
+	_zo->format = format;
+	_vZoderRender.push_back(_zo);
+}
+
+void cameraManager::FadeInit(int time, FADEKIND fadeKind)
+{
+	IMAGEMANAGER->addImage("fadeImg", WINSIZEX, WINSIZEY);
+	_fadeInfo.minus = 255 / time;
+	_fadeInfo.fadeKind = fadeKind;
+	_fadeInfo.alpha = (fadeKind == FADE_IN) ? 255 : 0;
+	_fadeInfo.isStart = false;
+}
+
+void cameraManager::FadeStart()
+{
+	_fadeInfo.isStart = true;
+	_fadeInfo.alpha = (_fadeInfo.fadeKind == FADE_IN) ? 255 : 0;
+}
+
+void cameraManager::FadeUpdate()
+{
+	if (_fadeInfo.fadeKind == FADE_IN)
+	{
+		_fadeInfo.alpha -= _fadeInfo.minus;
+		if (_fadeInfo.alpha <= 0) _fadeInfo.isStart = false;
+	}
+	else
+	{
+		_fadeInfo.alpha += _fadeInfo.minus;
+		if (_fadeInfo.alpha >= 255) _fadeInfo.isStart = false;
+	}
+}
+
+void cameraManager::FadeRender(HDC hdc)
+{
+	if(_fadeInfo.isStart)
+	IMAGEMANAGER->findImage("fadeImg")->alphaRender(hdc, 0, 0, _fadeInfo.alpha);
+}
+
 void cameraManager::ZorderSort()
 {
 
@@ -311,6 +362,7 @@ void cameraManager::ZorderSort()
 
 void cameraManager::ZorderTotalRender(HDC hdc)
 {
+
 	Sort(0, _vZoderRender.size() - 1);
 	for (int i = _vZoderRender.size() - 1; i >= 0; i--)
 	{
@@ -345,6 +397,21 @@ void cameraManager::ZorderTotalRender(HDC hdc)
 			break;
 		case IMG_ROTATE_ALPHAFRAME:
 			_vZoderRender[i]->img->rotateAlphaFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->angle, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->alpha);
+			break;
+		case IMG_STRETCH_RENDER:
+			_vZoderRender[i]->img->stretchRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->scale);
+			break;
+		case IMG_STRETCH_FRAME:
+			_vZoderRender[i]->img->stretchFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->scale);
+			break;
+		case IMG_TXT:
+			HFONT font = _vZoderRender[i]->font;
+			HFONT oFont = (HFONT)SelectObject(hdc, font);
+			SetTextColor(hdc, _vZoderRender[i]->txtColor);
+			DrawText(hdc, _vZoderRender[i]->txt.c_str(), -1, &_vZoderRender[i]->txtRC, _vZoderRender[i]->format);
+			SelectObject(hdc, oFont);
+			DeleteObject(font);
+			SetTextColor(hdc,RGB(255, 255, 255));
 			break;
 		}
 	}

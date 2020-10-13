@@ -404,7 +404,7 @@ private:
 	animation* _attackSword;		//칼 근접공격
 	animation* _attackHammer;		//해머 근접공격
 	animation* _hammerWave1;		//해머충격파
-	animation* _hammerWave2;		//해머충격파
+	animation* _scroll;
 	tagBlade* _blade;				//블레이드
 
 	vector<animation*> _vSkillEffect; // 스킬 충격파 이펙트 에니매이션
@@ -423,6 +423,9 @@ private:
 	int _hitCount;			//히트카운트
 	int _autoAttackCount;	//오토공격 카운트
 	int _autoAttackCool;	//오토어택 쿨
+	int _dieCount;			//죽었을때 흰색으로 띄울시간
+
+	bool _isWaveHit;		//충격파 충돌했냐?
 
 	progressBar* _hpBarRed;
 	progressBar* _hpBarWhite;
@@ -450,4 +453,6 @@ public:
 	void soundUpdate();
 	void bladeUpdate();
 	void hitUpdate();
+	void hitToPlayer();
+	void hitSoundPlay();
 };

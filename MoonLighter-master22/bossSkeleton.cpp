@@ -7,20 +7,20 @@ HRESULT bossSkeleton::init(int x, int y)
 	_attackSword = new animation;
 	_attackHammer = new animation;
 	_hammerWave1 = new animation;
-	_hammerWave2 = new animation;
+	_scroll = new animation;
 
 	_move->init(IMAGEMANAGER->findImage("skeletonMove"), 0, 8, true);
 	_attackSword->init(IMAGEMANAGER->findImage("skeletonAttackSword"), 0, 5);
 	_attackHammer->init(IMAGEMANAGER->findImage("skeletonAttackHammer"), 0, 7);
 	_hammerWave1->init(IMAGEMANAGER->findImage("hammerWave1"), 0, 7);
-	_hammerWave2->init(IMAGEMANAGER->findImage("hammerWave2"), 0, 7);
+	_scroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
 
 	vector<POINT> vp;
 
 	_attackSword->aniStop();
 	_attackHammer->aniStop();
 	_hammerWave1->aniStop();
-	_hammerWave2->aniStop();
+	_scroll->aniStop();
 
 	_stState = ST_INIT;
 	_bossPhase = ST_PHASE_1;
@@ -37,6 +37,8 @@ HRESULT bossSkeleton::init(int x, int y)
 	_hitCount = 0;
 	_autoAttackCount = 0;
 	_autoAttackCool = RANDOM->range(200, 500);
+	_dieCount = 0;
+	_isWaveHit = false;
 
 	//체력바 초기화
 	_hpBarRed = new progressBar;
@@ -54,6 +56,10 @@ HRESULT bossSkeleton::init(int x, int y)
 	_isItemDrop = false;
 	_emPlayerColi = false;
 
+	//에너미 공격박스 초기화
+	_swordAtkBox.isHit = false;
+	_hammerAtkBox.isHit = false;
+
 	//블레이드 초기화
 	_blade = new tagBlade;
 	_blade->ani = new animation;
@@ -69,7 +75,28 @@ HRESULT bossSkeleton::init(int x, int y)
 	// 사운드 관련 함수 초기화
 	_isAttackPlay = false;
 
+	//아이템 초기화
+	_isItemDrop = true;
+	_itemIndexSize = 11;
+	_itemDropSize = RANDOM->range(3 , 10);
+	_itemIndex = new int[_itemIndexSize];
+	_itemNum = new int[_itemDropSize];
 
+	//나올수 있는 아이템인덱스 초기화
+	for (int i = 0; i < 11; i++)
+	{
+		_itemIndex[i] = i + 1;
+	}
+
+	// 드랍될 아이템의 인덱스를 랜덤으로 지정
+	for (int i = 0; i < _itemDropSize; i++)
+	{
+		_itemNum[i] = _itemIndex[RANDOM->range(_itemIndexSize)];
+	}
+
+
+	CAMERAMANAGER->FadeInit(50, FADE_IN);
+	CAMERAMANAGER->FadeStart();
 	return S_OK;
 }
 
@@ -79,31 +106,23 @@ void bossSkeleton::release()
 
 void bossSkeleton::update()
 {
-	if (INPUT->GetKeyDown(VK_LEFT))
-	{
-		_attackHammer->changeImg(IMAGEMANAGER->findImage("skeletonMoveHitRed"));
-	}
-	if (INPUT->GetKeyDown(VK_RIGHT))
-	{
-		_stState = ST_SKILL_HAMMER;
-		_attackHammer->aniRestart();
-	}
-	if (INPUT->GetKeyDown(VK_DOWN))
-	{
-		_stState = ST_MOVE;
-	}
-
+	_scroll->update();			//스크롤 업데이트
 	if (_emHp < 333)
 	{
 		_bossPhase = ST_PHASE_2;
+	}
+	if (_emHp <= 0 && _stState != ST_INIT)
+	{
+		_stState = ST_DIE;
 	}
 
 	this->soundUpdate();				//사운드 업뎃
 
 
 	this->atkBoxUpdate();				//공격렉트 업데이트
-	this->attackUpdate();				//공격에 관한 업데이트
 	this->collision();					//플레이어랑 충돌
+	this->hitToPlayer();				//플레이어 공격하기
+	this->attackUpdate();				//공격에 관한 업데이트
 
 	//히트 관련
 	this->hitUpdate();
@@ -126,9 +145,20 @@ void bossSkeleton::update()
 			_emHp = 666;
 			_stState = ST_MOVE;
 			_bossPhase = ST_PHASE_1;
+			_scroll->aniPlay();
 		}
 		break;
 	case bossSkeleton::ST_DIE:
+		_dieCount++;
+		_attackHammer->changeImg(IMAGEMANAGER->findImage("skeletonAttackHammerHitWhite"));
+		_attackSword->changeImg(IMAGEMANAGER->findImage("skeletonAttackSwordHitWhite"));
+		_move->changeImg(IMAGEMANAGER->findImage("skeletonMoveHitWhite"));
+		if (_dieCount > 80)
+		{
+			_isActivate = false;
+			_isItemDrop = false;
+		}
+
 		break;
 	default:
 		break;
@@ -136,7 +166,6 @@ void bossSkeleton::update()
 
 	// 충격파 애니메이션 업뎃
 	_hammerWave1->update();
-	_hammerWave2->update();
 	//체력바 업뎃
 	_hpBarRed->update(_emHp);
 	_hpBarWhite->update(_emHp);
@@ -145,14 +174,14 @@ void bossSkeleton::update()
 void bossSkeleton::render()
 {
 	this->animationRender();
-	//FrameRect(getMemDC(), RectMakeCenter(_x, _y - 80, 130, 220), RGB(0, 0, 0));
-	//FrameRect(getMemDC(), RectMakeCenter(_x, _y, 35, 35), RGB(255, 255, 255));
-	FrameRect(getMemDC(), _hammerRange, RGB(0, 0, 255));
-	FrameRect(getMemDC(), _swordRange, RGB(0, 255, 0));
-	FrameRect(getMemDC(), _hammerAtkBox.box, RGB(0, 0, 0));
-	FrameRect(getMemDC(), _swordAtkBox.box, RGB(0, 0, 0));
-	FrameRect(getMemDC(), _emRC, RGB(255, 0, 0));
+	if (_scroll->getAniState() == ANIMATION_PLAY) _scroll->ZorderStretchRender(WINSIZEY, WINSIZEX / 2, WINSIZEY - 150, 2.f);
+	RECT txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 70, 300, 40);
+	HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+	
+	CAMERAMANAGER->ZorderDrawText("Dual Weapon Skeleton", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
 
+	
 	_hpBar->cameraRender(WINSIZEX / 2, WINSIZEY - 50);
 }
 
@@ -213,7 +242,6 @@ void bossSkeleton::animationRender()
 		_attackSword->setFrameY(3);
 
 		if (_hammerWave1->getAniState() != ANIMATION_END) _hammerWave1->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave1")->getFrameWidth() / 2 - 166, _y - IMAGEMANAGER->findImage("hammerWave1")->getFrameHeight() / 2 + 30);
-		if (_hammerWave2->getAniState() != ANIMATION_END) _hammerWave2->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave2")->getFrameWidth() / 2 - 166, _y - IMAGEMANAGER->findImage("hammerWave2")->getFrameHeight() / 2 + 30);
 		break;
 	case EM_RIGHT:
 		_move->setFrameY(2);
@@ -221,7 +249,6 @@ void bossSkeleton::animationRender()
 		_attackSword->setFrameY(0);
 
 		if (_hammerWave1->getAniState() != ANIMATION_END) _hammerWave1->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave1")->getFrameWidth() / 2 + 166, _y - IMAGEMANAGER->findImage("hammerWave1")->getFrameHeight() / 2 + 30);
-		if (_hammerWave2->getAniState() != ANIMATION_END) _hammerWave2->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave2")->getFrameWidth() / 2 + 166, _y - IMAGEMANAGER->findImage("hammerWave2")->getFrameHeight() / 2 + 30);
 		break;
 	case EM_TOP:
 		_move->setFrameY(3);
@@ -229,7 +256,6 @@ void bossSkeleton::animationRender()
 		_attackSword->setFrameY(1);
 
 		if (_hammerWave1->getAniState() != ANIMATION_END) _hammerWave1->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave1")->getFrameWidth() / 2 - 8, _y - IMAGEMANAGER->findImage("hammerWave1")->getFrameHeight() / 2 - 149);
-		if (_hammerWave2->getAniState() != ANIMATION_END) _hammerWave2->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave2")->getFrameWidth() / 2 - 8, _y - IMAGEMANAGER->findImage("hammerWave2")->getFrameHeight() / 2 - 149);
 		break;
 	case EM_BOTTOM:
 		_move->setFrameY(0);
@@ -237,12 +263,14 @@ void bossSkeleton::animationRender()
 		_attackSword->setFrameY(2);
 
 		if (_hammerWave1->getAniState() != ANIMATION_END) _hammerWave1->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave1")->getFrameWidth() / 2 + 13, _y - IMAGEMANAGER->findImage("hammerWave1")->getFrameHeight() / 2 + 140);
-		if (_hammerWave2->getAniState() != ANIMATION_END) _hammerWave2->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave2")->getFrameWidth() / 2 + 13, _y - IMAGEMANAGER->findImage("hammerWave2")->getFrameHeight() / 2 + 140);
 		break;
 
 	}
 	//블레이드 렌더
 	if (_blade->ani->getAniState() != ANIMATION_END) _blade->ani->ZorderRotateAlphaRender(getMemDC(), 2000, _blade->x, _blade->y, _blade->angle, 150);
+
+	int wid = IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2 * 3;
+	int hei = IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2 * 3;
 
 	//공격, 움직임에 관한 애니메이션 렌더
 	switch (_stState)
@@ -253,9 +281,9 @@ void bossSkeleton::animationRender()
 		if (_attackHammer->getAniState() != ANIMATION_END)
 		{
 			if (_attackHammer->getCurIndex() >= 6 && _attackHammer->getCurIndex() < 17)
-				_attackHammer->ZoderRender(PLAYER->getY() + 1, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+				_attackHammer->ZorderStretchRender(PLAYER->getY() + 1, _x , _y ,3.f);
 			else
-				_attackHammer->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+				_attackHammer->ZorderStretchRender(_y, _x , _y , 3.f);
 		}
 		break;
 	case bossSkeleton::ST_ATTACK_SWORD:
@@ -264,18 +292,21 @@ void bossSkeleton::animationRender()
 		if (_attackSword->getAniState() != ANIMATION_END)
 		{
 			if (_attackSword->getCurIndex() >= 7 && _attackSword->getCurIndex() <= 15)
-				_attackSword->ZoderRender(PLAYER->getY() + 1, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+				_attackSword->ZorderStretchRender(PLAYER->getY() + 1, _x , _y , 3.f);
 			else
-				_attackSword->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+				_attackSword->ZorderStretchRender(_y, _x , _y , 3.f);
 		}
 		break;
 	case bossSkeleton::ST_MOVE:
-		_move->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+		_move->ZorderStretchRender(_y, _x , _y , 3.f);
 		break;
 	case bossSkeleton::ST_INIT:
-		_move->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+		_move->ZorderStretchRender(_y, _x , _y , 3.f);
 		break;
 	case bossSkeleton::ST_DIE:
+		if (_attackSword->getAniState() != ANIMATION_END) _attackSword->ZorderStretchRender(_y, _x, _y, 3.f);
+		else if (_attackHammer->getAniState() != ANIMATION_END) _attackHammer->ZorderStretchRender(_y, _x, _y, 3.f);
+		else _move->ZorderStretchRender(_y, _x, _y, 3.f);
 		break;
 	default:
 		break;
@@ -288,11 +319,11 @@ void bossSkeleton::atkRangeUpdate()
 	{
 	case EM_LEFT:
 		_hammerRange = RectMake(_emRC.left - 140, _y, _x - (_emRC.left - 140), 60);
-		_swordRange = RectMake(_emRC.left - 140, _emRC.top + 100, 140, 220);
+		_swordRange = RectMake(_emRC.left - 140, _emRC.top + 50, 140, 220);
 		break;
 	case EM_RIGHT:
 		_hammerRange = RectMake(_x, _y, (_emRC.right + 140) - _x, 60);
-		_swordRange = RectMake(_emRC.right, _emRC.top + 100, 140, 220);
+		_swordRange = RectMake(_emRC.right, _emRC.top + 50, 140, 220);
 		break;
 	case EM_TOP:
 		_hammerRange = RectMake(_emRC.left + 10, _emRC.top + 20, 90, _y - _emRC.top + 20);
@@ -493,6 +524,7 @@ void bossSkeleton::attackUpdate()
 		if (_attackSword->getAniState() == ANIMATION_END)
 		{
 			_stState = ST_MOVE;
+			_isAttackPlay = false;
 		}
 
 		break;
@@ -503,6 +535,7 @@ void bossSkeleton::attackUpdate()
 			_attackHammer->aniPause();
 			_hammerWave1->aniRestart();
 			_stState = ST_WAVE;
+			_isAttackPlay = false;
 		}
 		break;
 	case bossSkeleton::ST_WAVE:
@@ -514,7 +547,9 @@ void bossSkeleton::attackUpdate()
 				if (_attackHammer->getAniState() != ANIMATION_PLAY)
 				{
 					if (_attackHammer->getAniState() != ANIMATION_REVERSE)
+					{
 						_attackHammer->aniReverse();
+					}
 
 					if (_attackHammer->getCurIndex() == 9 && _attackHammer->getAniState() == ANIMATION_REVERSE)
 					{
@@ -523,6 +558,7 @@ void bossSkeleton::attackUpdate()
 				}
 				if (_attackHammer->getAniState() == ANIMATION_PLAY && _attackHammer->getCurIndex() == 12)
 				{
+					SOUNDMANAGER->play("skeletonWave");
 					_attackHammer->aniPause();
 					_hammerWave1->aniRestart();
 					_waveCount++;
@@ -536,8 +572,10 @@ void bossSkeleton::attackUpdate()
 		}
 		if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX())
 		{
+			_isAttackPlay = false;
 			_stState = ST_MOVE;
 			_waveCount = 0;
+			_attackHammer->aniStop();
 		}
 		break;
 	case bossSkeleton::ST_MOVE:
@@ -567,10 +605,22 @@ void bossSkeleton::soundUpdate()
 		}
 		break;
 	case bossSkeleton::ST_SKILL_SWORD:
+		if (_attackSword->getCurIndex() == 3 && _isAttackPlay == false)
+		{
+			_isAttackPlay = true;
+			SOUNDMANAGER->play("skullAttackSword", 0.2f);
+		}
 		break;
 	case bossSkeleton::ST_SKILL_HAMMER:
+		cout << _attackHammer->getCurIndex() << endl;
+		if (_attackHammer->getCurIndex() == 11 && _isAttackPlay == false)
+		{
+			_isAttackPlay = true;
+			SOUNDMANAGER->play("skeletonWave");
+		}
 		break;
 	case bossSkeleton::ST_MOVE:
+
 		break;
 	default:
 		break;
@@ -645,3 +695,123 @@ void bossSkeleton::hitUpdate()
 	}
 
 }
+
+void bossSkeleton::hitToPlayer()
+{
+	RECT temp;
+
+	switch (_stState)
+	{
+	case bossSkeleton::ST_ATTACK_SWORD:
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
+		{
+			_swordAtkBox.isHit = true;
+			PLAYERDATA->minusInDungeonHp(_emAtkSword);
+		}
+		if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
+		break;
+	case bossSkeleton::ST_ATTACK_HAMMER:
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false)
+		{
+			_hammerAtkBox.isHit = true;
+			PLAYERDATA->minusInDungeonHp(_emAtkHammer);
+		}
+		if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
+		break;
+	case bossSkeleton::ST_SKILL_SWORD:
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
+		{
+			_swordAtkBox.isHit = true;
+			PLAYERDATA->minusInDungeonHp(_emAtkSword);
+		}
+		if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
+		break;
+	case bossSkeleton::ST_SKILL_HAMMER:
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false && _attackHammer->getCurIndex() < 9)
+		{
+			_hammerAtkBox.isHit = true;
+			PLAYERDATA->minusInDungeonHp(_emAtkHammer);
+		}
+		if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
+		break;
+	case bossSkeleton::ST_WAVE:
+		RECT _waveRC;
+		float pDist;
+		float cx = (PLAYER->getRect().left + PLAYER->getRect().right) / 2;
+		float cy = (PLAYER->getRect().top + PLAYER->getRect().bottom) / 2;
+		switch (_emDirection)
+		{
+		case EM_LEFT:
+			_waveRC = RectMakeCenter(_x - 166, _y + 30, 180, 180);
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+			{
+				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+				if (getDistance(_x - 166, _y + 30, cx, cy) < 180 + pDist)
+				{
+					PLAYERDATA->minusInDungeonHp(_emAtkWave);
+					_isWaveHit = true;
+				}
+			}
+			break;
+		case EM_RIGHT:
+			_waveRC = RectMakeCenter(_x + 166, _y + 30, 180, 180);
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+			{
+				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+				if (getDistance(_x + 166, _y + 30, cx, cy) < 180 + pDist)
+				{
+					PLAYERDATA->minusInDungeonHp(_emAtkWave);
+					_isWaveHit = true;
+				}
+			}
+			break;
+		case EM_TOP:
+			_waveRC = RectMakeCenter(_x - 8, _y - 149, 180, 180);
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+			{
+				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+				if (getDistance(_x - 8, _y - 149, cx, cy) < 180 + pDist)
+				{
+					PLAYERDATA->minusInDungeonHp(_emAtkWave);
+					_isWaveHit = true;
+				}
+			}
+			break;
+		case EM_BOTTOM:
+			_waveRC = RectMakeCenter(_x + 13, _y + 140, 180, 180);
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+			{
+				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+				if (getDistance(_x + 13, _y + 140, cx, cy) < 180 + pDist)
+				{
+					PLAYERDATA->minusInDungeonHp(_emAtkWave);
+					_isWaveHit = true;
+				}
+			}
+			break;
+		}
+		if (_hammerWave1->getAniState() == ANIMATION_END)
+		{
+			_isWaveHit = false;
+		}
+	break;
+	}
+
+}
+
+void bossSkeleton::hitSoundPlay()
+{
+	switch (RANDOM->range(3))
+	{
+	case 0:
+		SOUNDMANAGER->play("skullHit", 0.3f);
+		break;
+	case 1:
+		SOUNDMANAGER->play("skullHit2", 0.3f);
+		break;
+	case 2:
+		SOUNDMANAGER->play("skullHit2", 0.3f);
+		break;
+	}
+}
+

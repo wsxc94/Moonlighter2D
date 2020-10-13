@@ -43,6 +43,7 @@ void object::render()
 
 HRESULT dgDoor::init(int x, int y, string key,int frameY)
 {
+	_kind = DOOR_NOMAL;
 	_imgKey = key;
 	_rc = RectMake(x, y, IMAGEMANAGER->findImage(key)->getFrameWidth(), IMAGEMANAGER->findImage(key)->getFrameHeight());
 	_close = new animation;
@@ -111,5 +112,66 @@ void dgChest::render()
 }
 
 void dgChest::openPlay()
+{
+}
+
+HRESULT dgBossDoor::init(int x, int y, string key, int frameY)
+{
+	_kind = DOOR_BOSS;
+	_imgKey = key;
+	_x = x + IMAGEMANAGER->findImage(key)->getFrameWidth();
+	_y = y + IMAGEMANAGER->findImage(key)->getFrameHeight();
+
+	if (IMAGEMANAGER->findImage(key)->getFrameHeight() > IMAGEMANAGER->findImage(key)->getFrameWidth())
+	{
+		if (frameY == 1)
+			_rc = RectMake(x, y, 97, 192);
+		else
+			_rc = RectMake(x + 11, y, 97, 192);
+	}
+	else
+	{
+		_rc = RectMake(x, y, 192, 97);
+	}
+
+	
+
+	_open = new animation;
+	vector<POINT> _temp;
+	for (int i = IMAGEMANAGER->findImage(key)->getMaxFrameX(); i >= 0; i--)
+	{
+		_temp.push_back(PointMake(i, frameY));
+	}
+	_open->initArray(_temp, IMAGEMANAGER->findImage(key), 7);
+
+	_isOpen = false;
+	_isClose = false;
+
+	return S_OK;
+}
+
+void dgBossDoor::release()
+{
+	SAFE_DELETE(_open);
+}
+
+void dgBossDoor::update()
+{
+	if(_isOpen)
+	_open->update();
+}
+
+void dgBossDoor::render()
+{
+	_open->ZorderStretchRender(2000, _x, _y,2.f);
+	//FrameRect(getMemDC(), _rc,RGB(255,255,255));
+}
+
+void dgBossDoor::openPlay()
+{
+	_isOpen = true;
+}
+
+void dgBossDoor::closePlay()
 {
 }

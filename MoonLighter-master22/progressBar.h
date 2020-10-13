@@ -23,6 +23,8 @@ public:
 	void alphaRender(int x, int y, BYTE alpha);
 	void cameraRender(int x, int y);
 	void cameraAlphaRender(int x, int y, BYTE alpha);
+	void ZorderRender(float z, int x, int y);
+	void ZorderAlphaRender(float z, int x, int y);
 
 };
 

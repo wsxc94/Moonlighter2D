@@ -166,6 +166,11 @@ void animation::ZorderRotateAlphaRender(HDC hdc, float z, int centerX, int cente
 	if (_isArray) CAMERAMANAGER->ZorderRotateAlphaFrameRender(_img, z, centerX, centerY, angle, _aniList[_curIndex].x, _aniList[_curIndex].y, alpha);
 }
 
+void animation::ZorderStretchRender(float z, int centerX, int centerY, float scale)
+{
+	if (!_isArray)	CAMERAMANAGER->ZorderStretchFrameRender(_img, z, centerX, centerY, _aniList[_curIndex].x, _frameY, scale);
+	if (_isArray) CAMERAMANAGER->ZorderStretchFrameRender(_img, z, centerX, centerY, _aniList[_curIndex].x, _aniList[_curIndex].y, scale);
+}
 
 void animation::aniPlay()
 {

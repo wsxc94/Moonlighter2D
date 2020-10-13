@@ -4,24 +4,29 @@
 
 HRESULT nomalDungeonScene::init()
 {
+	//던전층수
+	_dgFloor = 1;
+
 	_startDungeon = new DungeonMap(0, 0);
+	_startDungeon->setCurrentFloor(_dgFloor);
 	_startDungeon->init();
 	_currentDungeon = _startDungeon;
 
 	_golemScroll = new animation;
-	_golemScroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 5);
+	_golemScroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
 
 	//플레이어 테스트
 	_player = RectMakeCenter(WINSIZEX / 2, WINSIZEY / 2, 40, 40);
 	//에너미 테스트
-	_em = new bossSkeleton;
-	_em->init(WINSIZEX / 2, WINSIZEY / 2);
-	_em->initTileSize(28, 15);
 
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
+
+	//카메라 초기화
 	CAMERAMANAGER->init(WINSIZEX / 2, WINSIZEY / 2, WINSIZEX, WINSIZEY, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
+	CAMERAMANAGER->FadeInit(80, FADE_IN);
+	CAMERAMANAGER->FadeStart();
 
 	return S_OK;
 }
@@ -35,7 +40,7 @@ void nomalDungeonScene::update()
 	// 던전 배경음 
 	if (!SOUNDMANAGER->isPlaySound("dungeonBGM"))
 	{
-		SOUNDMANAGER->play("dungeonBGM",0.5f);
+		SOUNDMANAGER->play("dungeonBGM",0.2f);
 	}
 
 	//골렘스크롤 업뎃
@@ -52,37 +57,39 @@ void nomalDungeonScene::update()
 	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
 
-	//여기부턴 테스트 ==================================================
 
-	/*_em->isAttackRange(PLAYER->getRect());
-	_em->update();
-	_em->setEndTile(PLAYER->getX(),PLAYER->getY());*/
 
-	// 나중에 수정바람
 	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
-		//플레이어 이동
-		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
+		if (_currentDungeon->getDungeonKind() == DG_NOMAL)
 		{
-		case 1:
-			PLAYER->setX(1085 + 17);
-			PLAYER->setY(350 + 17);
-			break;
-		case 2:
-			PLAYER->setX(140 + 17);
-			PLAYER->setY(350 + 17);
-			break;
-		case 3:
-			PLAYER->setX(595 + 17);
-			PLAYER->setY(595 + 17);
-			break;
-		case 4:
-			PLAYER->setX(595 + 17);
-			PLAYER->setY(105 + 17);
-			break;
+			//플레이어 이동
+			switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
+			{
+			case 1:
+				PLAYER->setX(1085 + 17);
+				PLAYER->setY(350 + 17);
+				break;
+			case 2:
+				PLAYER->setX(140 + 17);
+				PLAYER->setY(350 + 17);
+				break;
+			case 3:
+				PLAYER->setX(595 + 17);
+				PLAYER->setY(595 + 17);
+				break;
+			case 4:
+				PLAYER->setX(595 + 17);
+				PLAYER->setY(105 + 17);
+				break;
+			}
+			//던전 이동
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 		}
-		//던전 이동
-		_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+	}
+	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5)
+	{
+		this->setNewFloor();
 	}
 
 	PLAYER->update();
@@ -95,17 +102,23 @@ void nomalDungeonScene::render()
 
 	PLAYER->render(getMemDC());
 
-	//_em->render();
-	CAMERAMANAGER->ZorderTotalRender(getMemDC());
-
 	//골렘 스크롤 렌더
-	if (_golemScroll->getAniState() == ANIMATION_PLAY) _golemScroll->render(getMemDC(), WINSIZEX / 2 - IMAGEMANAGER->findImage("golemScroll")->getFrameWidth() / 2, WINSIZEY / 2 + 200);
+	if (_golemScroll->getAniState() == ANIMATION_PLAY)
+	{
+		_golemScroll->ZorderStretchRender(2000, WINSIZEX / 2, WINSIZEY - 150, 2.f);
+		RECT txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 70, 300, 40);
+		HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		CAMERAMANAGER->ZorderDrawText("골렘   던전", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		CAMERAMANAGER->ZorderDrawText(to_string(_dgFloor), WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+	}
 
-	if (INPUT->GetToggleKey(VK_TAB))
+	if (INPUT->GetKey(VK_TAB))
 	{
 		this->minimapRender();
 	}
 
+	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 	ITEMMENU->render(getMemDC());
 }
 bool nomalDungeonScene::minimapPush(POINT pt)
@@ -148,4 +161,29 @@ void nomalDungeonScene::minimapRender()
 	if (_currentDungeon->getBottomDG() != nullptr)    IMAGEMANAGER->findImage("minimapEntranceH")->frameRender(getMemDC(), rc.left + 38, rc.bottom, 1, 0);
 	else                                        IMAGEMANAGER->findImage("minimapEntranceH")->frameRender(getMemDC(), rc.left + 38, rc.bottom - 6, 1, 1);
 	
+}
+
+void nomalDungeonScene::setNewFloor()
+{
+	SAFE_DELETE(_startDungeon);
+	//던전층수
+	_dgFloor++;
+
+	_startDungeon = new DungeonMap(0, 0);
+	_startDungeon->setCurrentFloor(_dgFloor);
+	_startDungeon->init();
+	_currentDungeon = _startDungeon;
+
+	_golemScroll->aniRestart();
+
+	//플레이어 테스트
+	_player = RectMakeCenter(WINSIZEX / 2, WINSIZEY / 2, 40, 40);
+	//에너미 테스트
+
+	PLAYER->setX(WINSIZEX / 2);
+	PLAYER->setY(WINSIZEY / 2);
+
+
+	CAMERAMANAGER->FadeInit(80, FADE_IN);
+	CAMERAMANAGER->FadeStart();
 }
