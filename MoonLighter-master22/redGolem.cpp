@@ -424,7 +424,7 @@ void redGolem::soundUpdate()
 
 void redGolem::hitSoundPlay()
 {
-	SOUNDMANAGER->play("golemHit",0.5f);
+	SOUNDMANAGER->play("golemHit", 0.5f);
 }
 
 void redGolem::dropItem()
@@ -434,7 +434,7 @@ void redGolem::dropItem()
 
 void redGolem::redGolemCollision()
 {
-
+	collisionEnemyBody();
 	RECT temp;
 	if (!_emPlayerColi)
 	{

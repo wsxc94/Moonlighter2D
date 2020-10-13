@@ -84,7 +84,7 @@ void enemy::setWallTile(vector<tagTile> vTile)
 		{
 			for (int y = 0; y < _idy; y++)
 			{
-				if (PtInRect(&_totalNode[y][x].rc,pt))
+				if (PtInRect(&_totalNode[y][x].rc, pt))
 				{
 					if (vTile[i].tState == TS_HOLE || vTile[i].tState == TS_MOVEBAN)
 					{
@@ -93,19 +93,19 @@ void enemy::setWallTile(vector<tagTile> vTile)
 				}
 			}
 		}
-		
+
 	}
 }
 
 void enemy::aStar()
 {
 	if (!_endNode) return;
-	
+
 
 	_openList.clear();
 	_closeList.clear();
 	_finalList.clear();
-	
+
 	_openList.push_back(_startNode);
 	while (_openList.size() > 0)
 	{
@@ -251,8 +251,25 @@ void enemy::collision()
 		this->hitSoundPlay();
 	}
 
+}
 
+void enemy::soundUpdate()
+{
+}
 
+void enemy::setProgressBar()
+{
+	_hpBarAlpha = 255;
+	_isHpBarRender = true;
+}
+
+void enemy::hitSoundPlay()
+{
+}
+
+void enemy::collisionEnemyBody()
+{
+	RECT temp;
 	if (!_emPlayerColi)
 	{
 		//에너미 몸통과 충돌
@@ -276,19 +293,4 @@ void enemy::collision()
 			_emPlayerColi = false;
 		}
 	}
-
-}
-
-void enemy::soundUpdate()
-{
-}
-
-void enemy::setProgressBar()
-{
-	_hpBarAlpha = 255;
-	_isHpBarRender = true;
-}
-
-void enemy::hitSoundPlay()
-{
 }

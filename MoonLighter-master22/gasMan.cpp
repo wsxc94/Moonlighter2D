@@ -37,7 +37,7 @@ HRESULT gasMan::init(int x, int y)
 	_hitCount = 0;
 
 	_hpBar = new progressBar;
-	_hpBar->init("enemyProgressBarFront", "enemyProgressBarBack",_emHp);
+	_hpBar->init("enemyProgressBarFront", "enemyProgressBarBack", _emHp);
 	_hpBarAlpha = 255;
 	_isHpBarRender = true;
 
@@ -164,7 +164,7 @@ void gasMan::render()
 {
 	this->arrowRender();
 	this->aniRender();
-	if(_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 80, _hpBarAlpha);
+	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 80, _hpBarAlpha);
 }
 
 void gasMan::aniRender()
@@ -190,12 +190,12 @@ void gasMan::aniRender()
 			if (_isHit)
 			{
 				_moveHit->setFrameY(1);
-				_moveHit->ZoderRender( _y, _x - 65, _y - 75);
+				_moveHit->ZoderRender(_y, _x - 65, _y - 75);
 			}
 			else
 			{
 				_move->setFrameY(1);
-				_move->ZoderRender( _y, _x - 65, _y - 75);
+				_move->ZoderRender(_y, _x - 65, _y - 75);
 			}
 			break;
 		case EM_TOP:
@@ -238,7 +238,7 @@ void gasMan::aniRender()
 				_attack->setFrameY(0);
 				_attack->ZoderRender(_y, _x - 65, _y - 75);
 			}
-		break;
+			break;
 		case EM_RIGHT:
 			if (_isHit)
 			{
@@ -250,7 +250,7 @@ void gasMan::aniRender()
 				_attack->setFrameY(1);
 				_attack->ZoderRender(_y, _x - 65, _y - 75);
 			}
-		break;
+			break;
 		case EM_TOP:
 			if (_isHit)
 			{
@@ -262,7 +262,7 @@ void gasMan::aniRender()
 				_attack->setFrameY(2);
 				_attack->ZoderRender(_y, _x - 65, _y - 75);
 			}
-		break;
+			break;
 		case EM_BOTTOM:
 			if (_isHit)
 			{
@@ -274,12 +274,12 @@ void gasMan::aniRender()
 				_attack->setFrameY(3);
 				_attack->ZoderRender(_y, _x - 65, _y - 75);
 			}
-		break;
+			break;
 		}
-	break;
+		break;
 	case EM_DIE:
 		_die->ZoderRender(_y, _x - 60, _y - 85);
-	break;
+		break;
 	}
 }
 
@@ -294,7 +294,7 @@ void gasMan::attackRangeUpdate()
 		_attackRange = RectMakeCenter(_emRC.right + 100, (_emRC.bottom + _emRC.top) / 2 + 20, 200, 50);
 		break;
 	case EM_TOP:
-		_attackRange = RectMakeCenter((_emRC.left + _emRC.right)/2 + 10, _emRC.top - 100, 50, 200);
+		_attackRange = RectMakeCenter((_emRC.left + _emRC.right) / 2 + 10, _emRC.top - 100, 50, 200);
 		break;
 	case EM_BOTTOM:
 		_attackRange = RectMakeCenter((_emRC.left + _emRC.right) / 2 - 10, _emRC.bottom + 100, 50, 200);
@@ -381,7 +381,7 @@ void gasMan::arrowFire()
 	if (_attack->getCurIndex() < 5) return;
 	if (_isFireSoundPlay == false)
 	{
-		SOUNDMANAGER->play("potFire",0.5f);
+		SOUNDMANAGER->play("potFire", 0.5f);
 	}
 	switch (_emDirection)
 	{
@@ -407,7 +407,7 @@ void gasMan::arrowFire()
 		break;
 	case EM_TOP:
 		_arrow.direction = AR_UP;
-		_arrow.angle = PI/2;
+		_arrow.angle = PI / 2;
 		_arrow.x = _x + 20;
 		_arrow.y = _emRC.top;
 		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 5, 24);
@@ -417,7 +417,7 @@ void gasMan::arrowFire()
 		break;
 	case EM_BOTTOM:
 		_arrow.direction = AR_DOWN;
-		_arrow.angle = PI/2 *3;
+		_arrow.angle = PI / 2 * 3;
 		_arrow.x = _x - 10;
 		_arrow.y = _emRC.bottom;
 		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 5, 24);
@@ -482,16 +482,17 @@ void gasMan::arrowRender()
 		}
 	}
 
-	
+
 }
 
 void gasMan::hitSoundPlay()
 {
-	SOUNDMANAGER->play("gasManHit",0.5f);
+	SOUNDMANAGER->play("gasManHit", 0.5f);
 }
 
 void gasMan::gasManCollision()
 {
+	collisionEnemyBody();
 	RECT temp;
 	for (int i = 0; i < _vArrow.size(); i++)
 	{

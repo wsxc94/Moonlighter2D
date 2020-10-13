@@ -116,6 +116,16 @@ void animation::update()
 		break;
 	case ANIMATION_END:
 		break;
+	case ANIMATION_REVERSE:
+		_aniCount = 0;
+		_curIndex--;
+		if (_curIndex < 0)
+		{
+			_curIndex++;
+			_aniState = ANIMATION_END;
+
+		}
+		break;
 	}
 	
 }
@@ -144,6 +154,18 @@ void animation::ZoderAlphaRender(int z, int destX, int destY, BYTE alpha)
 	if (_isArray) CAMERAMANAGER->ZorderAlphaFrameRender(_img, z, destX, destY, _aniList[_curIndex].x, _aniList[_curIndex].y, alpha);
 }
 
+void animation::ZorderRotateRender(HDC hdc, float z, int centerX, int centerY, float angle)
+{
+	if (!_isArray)	CAMERAMANAGER->ZorderRotateFrameRender(_img, z, centerX, centerY, angle, _aniList[_curIndex].x, _frameY);
+	if (_isArray) CAMERAMANAGER->ZorderRotateFrameRender(_img, z, centerX, centerY, angle, _aniList[_curIndex].x, _aniList[_curIndex].y);
+}
+
+void animation::ZorderRotateAlphaRender(HDC hdc, float z, int centerX, int centerY, float angle, BYTE alpha)
+{
+	if (!_isArray)	CAMERAMANAGER->ZorderRotateAlphaFrameRender(_img, z, centerX, centerY, angle, _aniList[_curIndex].x, _frameY, alpha);
+	if (_isArray) CAMERAMANAGER->ZorderRotateAlphaFrameRender(_img, z, centerX, centerY, angle, _aniList[_curIndex].x, _aniList[_curIndex].y, alpha);
+}
+
 
 void animation::aniPlay()
 {
@@ -153,6 +175,11 @@ void animation::aniPlay()
 void animation::aniPause()
 {
 	_aniState = ANIMATION_PAUSE;
+}
+
+void animation::aniReverse()
+{
+	_aniState = ANIMATION_REVERSE;
 }
 
 void animation::aniStop()

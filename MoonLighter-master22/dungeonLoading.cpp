@@ -88,16 +88,27 @@ void dungeonLoading::loadImage()
 	_loading->loadFrameImage("potDie", "Images/몬스터/potDie7(2).bmp", 602, 116, 7, 1);
 
 	_loading->loadFrameImage("skeletonMove", "Images/몬스터/bossSkeletonMove14X4.bmp", 6972, 1864, 14, 4);
+	_loading->loadFrameImage("skeletonMoveHitRed", "Images/몬스터/bossSkeletonMove14X4HitRed.bmp", 6972, 1864, 14, 4);
+	_loading->loadFrameImage("skeletonMoveHitWhite", "Images/몬스터/bossSkeletonMove14X4HitWhite.bmp", 6972, 1864, 14, 4);
 	_loading->loadFrameImage("skeletonAttackSword", "Images/몬스터/bossSkeletonSword22X4.bmp", 10956, 1864, 22, 4);
+	_loading->loadFrameImage("skeletonAttackSwordHitRed", "Images/몬스터/bossSkeletonSword22X4HitRed.bmp", 10956, 1864, 22, 4);
+	_loading->loadFrameImage("skeletonAttackSwordHitWhite", "Images/몬스터/bossSkeletonSword22X4HitWhite.bmp", 10956, 1864, 22, 4);
 	_loading->loadFrameImage("skeletonAttackHammer", "Images/몬스터/bossSkeletonHammer20X4.bmp", 9960, 1864, 20, 4);
+	_loading->loadFrameImage("skeletonAttackHammerHitRed", "Images/몬스터/bossSkeletonHammer20X4HitRed.bmp", 9960, 1864, 20, 4);
+	_loading->loadFrameImage("skeletonAttackHammerHitWhite", "Images/몬스터/bossSkeletonHammer20X4HitWhite.bmp", 9960, 1864, 20, 4);
 	_loading->loadFrameImage("skeletonDie", "Images/몬스터/bossSkeletonDie18.bmp", 13374, 698, 18, 1);
 	_loading->loadFrameImage("hammerWave1", "Images/몬스터/hammerWave(2)8.bmp", 1848, 251, 8, 1);
 	_loading->loadFrameImage("hammerWave2", "Images/몬스터/hammerWave(3)8.bmp", 2696, 371, 8, 1);
 	_loading->loadFrameImage("hammerWave3", "Images/몬스터/hammerWave(4)8.bmp", 3648, 509, 8, 1);
+	_loading->loadFrameImage("skeletonBlade", "Images/몬스터/bossSkeletonBlade8.bmp", 1040, 297, 8, 1);
 
 	_loading->loadImage("enemyProgressBarFront", "Images/던전/enemyProgressBarFront.bmp", 120, 10);
 	_loading->loadImage("enemyProgressBarBack", "Images/던전/enemyProgressBarback.bmp", 124, 14);
-	
+	_loading->loadImage("semiBossHpBarFront(red)", "Images/몬스터/semiBossHpFront(red).bmp", 927, 17, true, RGB(255, 0, 255));
+	_loading->loadImage("semiBossHpBarFront(white)", "Images/몬스터/semiBossHpFront(white).bmp", 927, 17, true, RGB(255, 0, 255));
+	_loading->loadImage("semiBossHpBarBack", "Images/몬스터/semiBossHpBack.bmp", 947, 23, true, RGB(255, 0, 255));
+
+
 
 	_loading->loadFrameImage("던전문(위아래)", "Images/던전/dungeonDoorUD6.bmp", 1050, 212, 6, 2);
 	_loading->loadFrameImage("던전문(양옆)", "Images/던전/dungeonDoorLR6.bmp", 630, 350, 6, 2);

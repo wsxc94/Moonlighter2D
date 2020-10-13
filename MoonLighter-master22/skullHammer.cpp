@@ -11,8 +11,8 @@ HRESULT skullHammer::init(int x, int y)
 
 	_move->init(IMAGEMANAGER->findImage("ÇØ°ñÀü»ç"), 0, 6, true);
 	_moveHit->init(IMAGEMANAGER->findImage("ÇØ°ñÀü»çÇÇ°Ý"), 0, 6, true);
-	_attack->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°Ý"), 0, 6 );
-	_attackHit->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°ÝÇÇ°Ý"), 0, 6 );
+	_attack->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°Ý"), 0, 6);
+	_attackHit->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°ÝÇÇ°Ý"), 0, 6);
 	_die->init(IMAGEMANAGER->findImage("enemyDie"), 0, 6);
 
 	_x = x;
@@ -33,8 +33,8 @@ HRESULT skullHammer::init(int x, int y)
 	_isAttackSoundPlay = false;
 	_isItemDrop = false;
 
-	_emDirection = EM_LEFT;
 	_emState = EM_MOVE;
+	_emDirection = EM_LEFT;
 
 	_hpBar = new progressBar;
 	_hpBar->init("enemyProgressBarFront", "enemyProgressBarBack", _emHp);
@@ -148,6 +148,7 @@ void skullHammer::update()
 	case EM_HIT:
 		break;
 	}
+
 	skullHammerCollision();
 }
 
@@ -165,7 +166,7 @@ void skullHammer::render()
 		_die->ZoderRender(_y, _x - 60, _y - 70);
 		break;
 	}
-	if (_isHpBarRender) _hpBar->cameraAlphaRender( _x, _y - 70,_hpBarAlpha);
+	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 70, _hpBarAlpha);
 }
 
 void skullHammer::directionUpdate()
@@ -224,7 +225,7 @@ void skullHammer::moveRender()
 		else
 		{
 			_move->setFrameY(2);
-			_move->ZoderRender(_y, _emRC.left - IMAGEMANAGER->findImage("ÇØ°ñÀü»ç")->getFrameWidth()/2 + 20 , _emRC.top - 50);
+			_move->ZoderRender(_y, _emRC.left - IMAGEMANAGER->findImage("ÇØ°ñÀü»ç")->getFrameWidth() / 2 + 20, _emRC.top - 50);
 		}
 		break;
 	case EM_RIGHT:
@@ -334,7 +335,7 @@ void skullHammer::attackBox()
 {
 	if (_attack->getCurIndex() > 3 && _isAttackSoundPlay == false)
 	{
-		SOUNDMANAGER->play("skullAttackSword",0.5f);
+		SOUNDMANAGER->play("skullAttackSword", 0.5f);
 		_isAttackSoundPlay = true;
 	}
 	switch (_emDirection)
@@ -362,7 +363,7 @@ void skullHammer::attackBox()
 	case EM_TOP:
 		if (_attack->getCurIndex() > 6 && _attack->getCurIndex() < 11)
 		{
-			_attackBox = RectMake(_emRC.left - 20 , _emRC.top - 30, 80, 30);
+			_attackBox = RectMake(_emRC.left - 20, _emRC.top - 30, 80, 30);
 		}
 		else
 		{
@@ -450,11 +451,12 @@ void skullHammer::setStartNode()
 
 void skullHammer::hitSoundPlay()
 {
-	SOUNDMANAGER->play("skullHit",0.5f);
+	SOUNDMANAGER->play("skullHit", 0.5f);
 }
 
 void skullHammer::skullHammerCollision()
 {
+	collisionEnemyBody();
 	RECT temp;
 	if (!_emPlayerColi)
 	{

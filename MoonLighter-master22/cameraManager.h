@@ -18,7 +18,8 @@ struct tagShakeTime
 
 enum ZORDERIMGKIND
 {
-	IMG_NOMAL, IMG_NOMAL_SOUR, IMG_FRAME, IMG_ALPHA, IMG_ALPHA_SOUR, IMG_ALPHA_FRAME
+	IMG_NOMAL, IMG_NOMAL_SOUR, IMG_FRAME, IMG_ALPHA, IMG_ALPHA_SOUR, IMG_ALPHA_FRAME,
+	IMG_ROTATE_RENDER, IMG_ROTATE_FRAME, IMG_ROTATE_ALPHA, IMG_ROTATE_ALPHAFRAME
 };
 
 struct tagZoderRender
@@ -30,6 +31,7 @@ struct tagZoderRender
 	int frameX, frameY;	// 프레임이미지일경우 프레임값
 	int sourX, sourY;
 	int sourWid, sourHei;
+	float angle;			// 회전각
 	BYTE alpha;			// 알파값
 
 	//생성과 동시에초기화
@@ -40,7 +42,7 @@ struct tagZoderRender
 		z = _z;
 		x = _x;
 		y = _y;
-		frameX = frameY = sourX = sourY = sourWid = sourHei = alpha = 0;
+		frameX = frameY = sourX = sourY = sourWid = sourHei = alpha = angle = 0;
 	}
 
 };
@@ -99,6 +101,10 @@ public:
 	void AlphaRender(HDC hdc, image* ig, int destX, int destY, BYTE alpha);
 	void AlphaRender(HDC hdc, image* ig, int destX, int destY, int sourX, int sourY, int sourWid, int sourHei, BYTE alpha);
 	void AlphaFrameRender(HDC hdc, image* ig, int destX, int destY, int frameX, int frameY, BYTE alpha);
+	void RotateRender(HDC hdc, image* img, int centerX, int centerY, float angle);
+	void RotateFrameRender(HDC hdc, image* img, int centerX, int centerY, float angle, int frameX = 0, int frameY = 0);
+	void RotateAlphaRender(HDC hdc, image* img, int centerX, int centerY, float angle, BYTE alpha);
+	void RotateAlphaFrameRender(HDC hdc, image* img, int centerX, int centerY, float angle, int frameX, int frameY, BYTE alpha);
 
 	void ZorderRender(image* img, float z, int destX, int destY);
 	void ZorderRender(image* img, float z, int destX, int destY, int sourX, int sourY, int sourWid, int sourHei);
@@ -106,6 +112,10 @@ public:
 	void ZorderAlphaRender(image* img, float z, int destX, int destY, BYTE alpha);
 	void ZorderAlphaRender(image* img, float z, int destX, int destY, int sourX, int sourY, int sourWid, int sourHei, BYTE alpha);
 	void ZorderAlphaFrameRender(image* img, float z, int destX, int destY, int frameX, int frameY, BYTE alpha);
+	void ZorderRotateRender(image* img, float z, int centerX, int centerY, float angle);
+	void ZorderRotateFrameRender(image* img, float z, int centerX, int centerY, float angle, int frameX = 0, int frameY = 0);
+	void ZorderRotateAlphaRender(image* img, float z, int centerX, int centerY, float angle, BYTE alpha);
+	void ZorderRotateAlphaFrameRender(image* img, float z, int centerX, int centerY, float angle, int frameX, int frameY, BYTE alpha);
 
 	void ZorderSort();
 	void ZorderTotalRender(HDC hdc);

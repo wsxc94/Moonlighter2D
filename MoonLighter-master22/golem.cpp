@@ -11,7 +11,7 @@ HRESULT golem::init(int x, int y)
 
 	_move->init(IMAGEMANAGER->findImage("°ñ·½Àü»ç"), 0, 6, true);
 	_attack->init(IMAGEMANAGER->findImage("°ñ·½°ø°Ý"), 0, 6);
-	_moveHit->init(IMAGEMANAGER->findImage("°ñ·½Àü»çÇÇ°Ý"), 0, 6,true);
+	_moveHit->init(IMAGEMANAGER->findImage("°ñ·½Àü»çÇÇ°Ý"), 0, 6, true);
 	_attackHit->init(IMAGEMANAGER->findImage("°ñ·½°ø°ÝÇÇ°Ý"), 0, 6);
 	_die->init(IMAGEMANAGER->findImage("enemyDie"), 0, 6);
 
@@ -25,7 +25,7 @@ HRESULT golem::init(int x, int y)
 	_isAttackSoundPlay = false;
 	_isDieSoundPlay = false;
 	_isItemDrop = false;
-	_emRC = RectMakeCenter(x, y-20, 50, 80);
+	_emRC = RectMakeCenter(x, y - 20, 50, 80);
 
 	_knockBackSpeed = 3.f;
 
@@ -56,7 +56,7 @@ HRESULT golem::init(int x, int y)
 	{
 		_itemNum[i] = _itemIndex[RANDOM->range(_itemIndexSize)];
 	}
-	
+
 	_emPlayerColi = false;
 	count = 0;
 
@@ -144,7 +144,7 @@ void golem::update()
 
 	// °ñ·½ÀÇ À§Ä¡¸¦ Ç×»ó ¿¡ÀÌ½ºÅ¸ ½ÃÀÛÁöÁ¡À¸·Î ÇÑ´Ù
 	this->setStartNode();
-	
+
 	directionUpdate();
 	golemCollision();
 	_emRC = RectMakeCenter(_x, _y - 20, 50, 80);
@@ -324,19 +324,19 @@ void golem::attackBox()
 	switch (_emDirection)
 	{
 	case EM_LEFT:
-		if(_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.left - 60, _emRC.top, 60, 80);
+		if (_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.left - 60, _emRC.top, 60, 80);
 		if (_attack->getCurIndex() < 6) _attackBox = RectMake(0, 0, 0, 0);
 		break;
 	case EM_RIGHT:
-		if(_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.right, _emRC.top, 60, 80);
+		if (_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.right, _emRC.top, 60, 80);
 		if (_attack->getCurIndex() < 6) _attackBox = RectMake(0, 0, 0, 0);
 		break;
 	case EM_TOP:
-		if(_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.left, _emRC.top - 20, 50, 20);
+		if (_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.left, _emRC.top - 20, 50, 20);
 		if (_attack->getCurIndex() < 6) _attackBox = RectMake(0, 0, 0, 0);
 		break;
 	case EM_BOTTOM:
-		if(_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.left, _emRC.bottom, 50, 50);
+		if (_attack->getCurIndex() > 6) _attackBox = RectMake(_emRC.left, _emRC.bottom, 50, 50);
 		if (_attack->getCurIndex() < 6) _attackBox = RectMake(0, 0, 0, 0);
 		break;
 	}
@@ -419,11 +419,12 @@ void golem::setStartNode()
 
 void golem::hitSoundPlay()
 {
-	SOUNDMANAGER->play("golemHit",0.5f);
+	SOUNDMANAGER->play("golemHit", 0.5f);
 }
 
 void golem::golemCollision()
 {
+	collisionEnemyBody();
 	RECT temp;
 
 	if (!_emPlayerColi)

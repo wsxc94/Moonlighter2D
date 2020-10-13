@@ -5,6 +5,7 @@ enum ANIMATIONPLAYSTATE
 {
 	ANIMATION_PLAY,
 	ANIMATION_PAUSE,
+	ANIMATION_REVERSE,
 	ANIMATION_END
 };
 class animation
@@ -40,21 +41,26 @@ public:
 	// 업데이트를 해주지않으면 프레임이 돌지 않는다
 	void update();
 	// 이미지 렌더시킬 좌표 left, top 좌표임
-	void render(HDC hdc,int destX, int destY);
+	void render(HDC hdc, int destX, int destY);
 	void CameraRender(HDC hdc, int destX, int destY);
 	void ZoderRender(int z, int destX, int destY);
-	void ZoderAlphaRender(int z, int destX, int destY , BYTE alpha);
+	void ZoderAlphaRender(int z, int destX, int destY, BYTE alpha);
+	void ZorderRotateRender(HDC hdc, float z, int centerX, int centerY, float angle);
+	void ZorderRotateAlphaRender(HDC hdc, float z, int centerX, int centerY, float angle, BYTE alpha);
 
 	void aniPlay();
 	void aniPause();
+	void aniReverse();
 	void aniStop();
 	void aniRestart();
 
 	ANIMATIONPLAYSTATE getAniState() { return _aniState; }
 	vector<POINT> getAniList() { return _aniList; }
 	int getCurIndex() { return _curIndex; }
+	void setCurIndex(int idx) { _curIndex = idx; }
 	int getFrameY() { return _frameY; }
 	image* getImage() { return _img; }
+	void changeImg(image* img) { _img = img; }
 	RECT& getRect() { return _rc; }
 	void setFrameY(int y) { _frameY = y; }
 	string getKey() { return _key; }

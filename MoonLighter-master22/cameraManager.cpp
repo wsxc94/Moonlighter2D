@@ -198,6 +198,26 @@ void cameraManager::AlphaFrameRender(HDC hdc, image * ig, int destX, int destY, 
 	ig->alphaFrameRender(hdc, this->getRelativeX(destX), this->getRelativeY(destY), frameX, frameY, alpha);
 }
 
+void cameraManager::RotateRender(HDC hdc, image * img, int centerX, int centerY, float angle)
+{
+	img->rotateRender(hdc, this->getRelativeX(centerX), this->getRelativeY(centerY), angle);
+}
+
+void cameraManager::RotateFrameRender(HDC hdc, image * img, int centerX, int centerY, float angle, int frameX, int frameY)
+{
+	img->rotateFrameRender(hdc, this->getRelativeX(centerX), this->getRelativeY(centerY), angle, frameX, frameY);
+}
+
+void cameraManager::RotateAlphaRender(HDC hdc, image * img, int centerX, int centerY, float angle, BYTE alpha)
+{
+	img->rotateAlphaRender(hdc, this->getRelativeX(centerX), this->getRelativeY(centerY), angle, alpha);
+}
+
+void cameraManager::RotateAlphaFrameRender(HDC hdc, image * img, int centerX, int centerY, float angle, int frameX, int frameY, BYTE alpha)
+{
+	img->rotateAlphaFrameRender(hdc, this->getRelativeX(centerX), this->getRelativeY(centerY), angle, frameX, frameY, alpha);
+}
+
 void cameraManager::ZorderRender(image * img, float z, int destX, int destY)
 {
 	tagZoderRender* _zo = new tagZoderRender(IMG_NOMAL, img, z, getRelativeX(destX), getRelativeY(destY));
@@ -249,6 +269,40 @@ void cameraManager::ZorderAlphaFrameRender(image * img, float z, int destX, int 
 	_vZoderRender.push_back(_zo);
 }
 
+void cameraManager::ZorderRotateRender(image * img, float z, int centerX, int centerY, float angle)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_ROTATE_RENDER, img, z, getRelativeX(centerX), getRelativeY(centerY));
+	_zo->angle = angle;
+	_vZoderRender.push_back(_zo);
+}
+
+void cameraManager::ZorderRotateFrameRender(image * img, float z, int centerX, int centerY, float angle, int frameX, int frameY)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_ROTATE_FRAME, img, z, getRelativeX(centerX), getRelativeY(centerY));
+	_zo->frameX = frameX;
+	_zo->frameY = frameY;
+	_zo->angle = angle;
+	_vZoderRender.push_back(_zo);
+}
+
+void cameraManager::ZorderRotateAlphaRender(image * img, float z, int centerX, int centerY, float angle, BYTE alpha)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_ROTATE_ALPHA, img, z, getRelativeX(centerX), getRelativeY(centerY));
+	_zo->alpha = alpha;
+	_zo->angle = angle;
+	_vZoderRender.push_back(_zo);
+}
+
+void cameraManager::ZorderRotateAlphaFrameRender(image * img, float z, int centerX, int centerY, float angle, int frameX, int frameY, BYTE alpha)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_ROTATE_ALPHAFRAME, img, z, getRelativeX(centerX), getRelativeY(centerY));
+	_zo->frameX = frameX;
+	_zo->frameY = frameY;
+	_zo->alpha = alpha;
+	_zo->angle = angle;
+	_vZoderRender.push_back(_zo);
+}
+
 void cameraManager::ZorderSort()
 {
 
@@ -257,7 +311,7 @@ void cameraManager::ZorderSort()
 
 void cameraManager::ZorderTotalRender(HDC hdc)
 {
-	Sort(0,_vZoderRender.size() -1);
+	Sort(0, _vZoderRender.size() - 1);
 	for (int i = _vZoderRender.size() - 1; i >= 0; i--)
 	{
 		switch (_vZoderRender[i]->kind)
@@ -279,6 +333,18 @@ void cameraManager::ZorderTotalRender(HDC hdc)
 			break;
 		case IMG_ALPHA_FRAME:
 			_vZoderRender[i]->img->alphaFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->alpha);
+			break;
+		case IMG_ROTATE_RENDER:
+			_vZoderRender[i]->img->rotateRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->angle);
+			break;
+		case IMG_ROTATE_FRAME:
+			_vZoderRender[i]->img->rotateFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->angle, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY);
+			break;
+		case IMG_ROTATE_ALPHA:
+			_vZoderRender[i]->img->rotateAlphaRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->angle, _vZoderRender[i]->alpha);
+			break;
+		case IMG_ROTATE_ALPHAFRAME:
+			_vZoderRender[i]->img->rotateAlphaFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->angle, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->alpha);
 			break;
 		}
 	}

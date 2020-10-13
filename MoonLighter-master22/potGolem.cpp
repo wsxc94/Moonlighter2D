@@ -90,7 +90,7 @@ void potGolem::update()
 	this->aniUpdate();
 	this->emBulletMove();
 	this->potGolemCollision();
-	
+
 	_hpBar->update(_emHp);
 	if (_isHpBarRender)
 	{
@@ -98,19 +98,19 @@ void potGolem::update()
 		if (_hpBarAlpha <= 0) _isHpBarRender = false;
 	}
 
-	
+
 }
 
 void potGolem::render()
 {
 	this->aniRender();
-	
+
 	for (int i = 0; i < 30; i++)
 	{
 		if (!_bullet[i].isFire) continue;
 		//_bullet[i].img->frameRender(getMemDC(), _bullet[i].rc.left, _bullet[i].rc.top,0,_bullet[i].frameY);
 		//CAMERAMANAGER->FrameRender(getMemDC(), _bullet[i].img, _bullet[i].rc.left, _bullet[i].rc.top, 0, _bullet[i].frameY);
-		CAMERAMANAGER->ZorderFrameRender(_bullet[i].img, _bullet[i].y, _bullet[i].rc.left, _bullet[i].rc.top,0,_bullet[i].frameY);
+		CAMERAMANAGER->ZorderFrameRender(_bullet[i].img, _bullet[i].y, _bullet[i].rc.left, _bullet[i].rc.top, 0, _bullet[i].frameY);
 	}
 	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 50, _hpBarAlpha);
 }
@@ -236,7 +236,7 @@ void potGolem::aniRender()
 		}
 		break;
 	}
-	
+
 }
 
 void potGolem::emDirectionUpdate()
@@ -306,7 +306,7 @@ void potGolem::emBulletFire()
 		}
 	}
 
-	
+
 }
 
 void potGolem::emBulletMove()
@@ -333,7 +333,7 @@ void potGolem::emBulletMove()
 		}
 	}
 
-	
+
 
 	for (int i = 0; i < 30; i++)
 	{
@@ -350,7 +350,7 @@ void potGolem::emBulletMove()
 		if (wid != bWid || hei != bHei)
 		{
 			_bullet[i].isFire = false;
-			SOUNDMANAGER->play("potBulletPop",0.5f);
+			SOUNDMANAGER->play("potBulletPop", 0.5f);
 			break;
 		}
 	}
@@ -369,7 +369,7 @@ void potGolem::emBulletMove()
 					if (_totalNode[y][x].nodeState == NODE_WALL)
 					{
 						_bullet[i].isFire = false;
-						SOUNDMANAGER->play("potBulletPop",0.5f);
+						SOUNDMANAGER->play("potBulletPop", 0.5f);
 					}
 				}
 			}
@@ -440,7 +440,7 @@ void potGolem::isAttackRange(RECT rc)
 	}
 
 	_isAttackRange = false;
-	
+
 }
 
 void potGolem::setWallTile(vector<tagTile> vTile)
@@ -480,11 +480,12 @@ void potGolem::setWallTile(vector<tagTile> vTile)
 
 void potGolem::hitSoundPlay()
 {
-	SOUNDMANAGER->play("golemHit",0.5f);
+	SOUNDMANAGER->play("golemHit", 0.5f);
 }
 
 void potGolem::potGolemCollision()
 {
+	collisionEnemyBody();
 	RECT temp;
 
 	for (int i = 0; i < 30; i++)

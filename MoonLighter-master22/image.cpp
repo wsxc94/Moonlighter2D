@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "image.h"
-image::image() : _imageInfo(NULL), _fileName(NULL), _blendImage(NULL), _stretchImage(NULL), _minimapImage(NULL)
+image::image() : _imageInfo(NULL), _fileName(NULL), _blendImage(NULL), _stretchImage(NULL), _minimapImage(NULL), _rotateImage(NULL)
 {
 }
 image::~image()
@@ -225,14 +225,17 @@ HRESULT image::initForAlphaBlend()
 	//0 ~ 255 => 255일때 원본색상
 	//_blendFunc.SourceConstantAlpha = 255;
 
+	int size;
+	(_imageInfo->width > _imageInfo->height ? size = _imageInfo->width : size = _imageInfo->height);
+
 	//알파블렌드 이미지 정보 구조체 새로 생성후 초기화 하기
 	_blendImage = new IMAGE_INFO;
-	_blendImage->loadType = LOAD_FILE;
+	_blendImage->loadType = LOAD_EMPTY;
 	_blendImage->hMemDC = CreateCompatibleDC(hdc);
-	_blendImage->hBit = (HBITMAP)CreateCompatibleBitmap(hdc, _imageInfo->width, _imageInfo->height);
+	_blendImage->hBit = (HBITMAP)CreateCompatibleBitmap(hdc, size, size);
 	_blendImage->hOBit = (HBITMAP)SelectObject(_blendImage->hMemDC, _blendImage->hBit);
-	_blendImage->width = WINSIZEX;
-	_blendImage->height = WINSIZEY;
+	_blendImage->width = size;
+	_blendImage->height = size;
 
 	//DC 해제하기
 	ReleaseDC(_hWnd, hdc);
@@ -245,9 +248,9 @@ HRESULT image::initForStretch(int sizeX, int sizeY)
 	HDC hdc = GetDC(_hWnd);
 
 	_stretchImage = new IMAGE_INFO;
-	_stretchImage->loadType = LOAD_FILE;
+	_stretchImage->loadType = LOAD_EMPTY;
 	_stretchImage->hMemDC = CreateCompatibleDC(hdc);
-	_stretchImage->hBit = (HBITMAP)CreateCompatibleBitmap(hdc,sizeX, sizeY);
+	_stretchImage->hBit = (HBITMAP)CreateCompatibleBitmap(hdc, sizeX, sizeY);
 	_stretchImage->hOBit = (HBITMAP)SelectObject(_stretchImage->hMemDC, _stretchImage->hBit);
 	_stretchImage->width = WINSIZEX;
 	_stretchImage->height = WINSIZEY;
@@ -262,12 +265,29 @@ HRESULT image::initForMinimap(int sizeX, int sizeY)
 	HDC hdc = GetDC(_hWnd);
 
 	_minimapImage = new IMAGE_INFO;
-	_minimapImage->loadType = LOAD_FILE;
+	_minimapImage->loadType = LOAD_EMPTY;
 	_minimapImage->hMemDC = CreateCompatibleDC(hdc);
 	_minimapImage->hBit = (HBITMAP)CreateCompatibleBitmap(hdc, sizeX, sizeY);
 	_minimapImage->hOBit = (HBITMAP)SelectObject(_minimapImage->hMemDC, _minimapImage->hBit);
 	_minimapImage->width = WINSIZEX;
 	_minimapImage->height = WINSIZEY;
+
+	ReleaseDC(_hWnd, hdc);
+	return S_OK;
+}
+
+HRESULT image::initForRotate()
+{
+	HDC hdc = GetDC(_hWnd);
+	int size;
+	(_imageInfo->width > _imageInfo->height ? size = _imageInfo->width : size = _imageInfo->height);
+	_rotateImage = new IMAGE_INFO;
+	_rotateImage->loadType = LOAD_EMPTY;
+	_rotateImage->hMemDC = CreateCompatibleDC(hdc);
+	_rotateImage->hBit = (HBITMAP)CreateCompatibleBitmap(hdc, size, size);
+	_rotateImage->hOBit = (HBITMAP)SelectObject(_rotateImage->hMemDC, _rotateImage->hBit);
+	_rotateImage->width = size;
+	_rotateImage->height = size;
 
 	ReleaseDC(_hWnd, hdc);
 	return S_OK;
@@ -300,7 +320,7 @@ void image::release()
 		SelectObject(_blendImage->hMemDC, _blendImage->hOBit);
 		DeleteObject(_blendImage->hBit);
 		DeleteDC(_blendImage->hMemDC);
-		
+
 		//포인터 삭제
 		SAFE_DELETE(_blendImage);
 	}
@@ -390,7 +410,7 @@ void image::alphaRender(HDC hdc, BYTE alpha)
 			_imageInfo->width,		//복사 영역 가로크기
 			_imageInfo->height,		//복사 영역 세로크기
 			_transColor);			//복사할때 제외할 색상 (일반적으로 마젠타 색상을 사용함)
-	
+
 		//3
 		GdiAlphaBlend(hdc, 0, 0, _imageInfo->width, _imageInfo->height,
 			_blendImage->hMemDC, 0, 0, _imageInfo->width, _imageInfo->height, _blendFunc);
@@ -435,9 +455,9 @@ void image::alphaRender(HDC hdc, int destX, int destY, BYTE alpha)
 	}
 }
 
-void image::alphaFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY,BYTE alpha)
+void image::alphaFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY, BYTE alpha)
 {
-	if (!_blendImage) this->initForAlphaBlend(); 
+	if (!_blendImage) this->initForAlphaBlend();
 
 	_blendFunc.SourceConstantAlpha = alpha;
 
@@ -534,7 +554,7 @@ void image::stretchRender(HDC hdc, int destX, int destY, float size)
 	}
 }
 
-void image::stretchFrameRender(HDC hdc, int destX, int destY,int currentFrameX, int currentFrameY, int sizeX, int sizeY)
+void image::stretchFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY, int sizeX, int sizeY)
 {
 	this->initForStretch(sizeX, sizeY);
 	SetStretchBltMode(hdc, COLORONCOLOR);
@@ -544,7 +564,7 @@ void image::stretchFrameRender(HDC hdc, int destX, int destY,int currentFrameX, 
 		BitBlt(_stretchImage->hMemDC, 0, 0, sizeX, sizeY, hdc, destX, destY, SRCCOPY);
 		StretchBlt(_stretchImage->hMemDC, 0, 0, sizeX, sizeY, _imageInfo->hMemDC,
 			_imageInfo->frameWidth * currentFrameX, _imageInfo->frameHeight * currentFrameY,
-			_imageInfo->frameWidth,_imageInfo->frameHeight, SRCCOPY);
+			_imageInfo->frameWidth, _imageInfo->frameHeight, SRCCOPY);
 		GdiTransparentBlt(hdc, destX, destY, sizeX, sizeY, _stretchImage->hMemDC, 0, 0, sizeX, sizeY, _transColor);
 	}
 	else
@@ -595,8 +615,8 @@ void image::frameRender(HDC hdc, int destX, int destY)
 	else//원본 이미지 그대로 출력
 	{
 		BitBlt(hdc, destX, destY, _imageInfo->frameWidth, _imageInfo->frameHeight,
-			_imageInfo->hMemDC, 
-			_imageInfo->currentFrameX * _imageInfo->frameWidth, 
+			_imageInfo->hMemDC,
+			_imageInfo->currentFrameX * _imageInfo->frameWidth,
 			_imageInfo->currentFrameY * _imageInfo->frameHeight, SRCCOPY);
 	}
 }
@@ -772,5 +792,219 @@ void image::loopAlphaRender(HDC hdc, const LPRECT drawArea, int offsetX, int off
 			//그려주자(알파렌더-이미지잘라서붙이기)
 			alphaRender(hdc, rcDest.left, rcDest.top, rcSour.left, rcSour.top, sourWidth, sourHeight, alpha);
 		}
+	}
+}
+
+void image::rotateRender(HDC hdc, float centerX, float centerY, float angle)
+{
+	if (!_rotateImage) this->initForRotate();
+	POINT rPoint[3];
+	int dist = sqrt((_imageInfo->width / 2) * (_imageInfo->width / 2) + (_imageInfo->height / 2) * (_imageInfo->height / 2));
+	float baseAngle[3];
+	baseAngle[0] = PI - atanf(((float)_imageInfo->height / 2) / ((float)_imageInfo->width / 2));
+	baseAngle[1] = atanf(((float)_imageInfo->height / 2) / ((float)_imageInfo->width / 2));
+	baseAngle[2] = PI + atanf(((float)_imageInfo->height / 2) / ((float)_imageInfo->width / 2));
+
+	for (int i = 0; i < 3; i++)
+	{
+		rPoint[i].x = (_rotateImage->width / 2 + cosf(baseAngle[i] + angle) * dist);
+		rPoint[i].y = (_rotateImage->height / 2 + -sinf(baseAngle[i] + angle) * dist);
+	}
+
+	if (_isTrans)
+	{
+		BitBlt(_rotateImage->hMemDC, 0, 0, _rotateImage->width, _rotateImage->height, hdc, 0, 0, BLACKNESS);
+		HBRUSH hBrush = CreateSolidBrush(_transColor);
+		HBRUSH oBrush = (HBRUSH)SelectObject(_rotateImage->hMemDC, hBrush);
+		ExtFloodFill(_rotateImage->hMemDC, 1, 1, RGB(0, 0, 0), FLOODFILLSURFACE);
+		DeleteObject(hBrush);
+
+		PlgBlt(_rotateImage->hMemDC, rPoint, _imageInfo->hMemDC,
+			0, 0,
+			_imageInfo->width,
+			_imageInfo->height,
+			NULL, 0, 0);
+		GdiTransparentBlt(hdc,
+			centerX - _rotateImage->width / 2,
+			centerY - _rotateImage->height / 2,
+			_rotateImage->width,
+			_rotateImage->height,
+			_rotateImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_transColor);
+	}
+	else
+	{
+		PlgBlt(hdc, rPoint, _imageInfo->hMemDC, 0, 0, _imageInfo->width, _imageInfo->height, NULL, 0, 0);
+	}
+}
+
+void image::rotateFrameRender(HDC hdc, float centerX, float centerY, float angle, int frameX, int frameY)
+{
+	if (!_rotateImage) this->initForRotate();
+	POINT rPoint[3];
+	int dist = sqrt((_imageInfo->frameWidth / 2) * (_imageInfo->frameWidth / 2) + (_imageInfo->frameHeight / 2) * (_imageInfo->frameHeight / 2));
+	float baseAngle[3];
+	baseAngle[0] = PI - atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+	baseAngle[1] = atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+	baseAngle[2] = PI + atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+
+	for (int i = 0; i < 3; i++)
+	{
+		rPoint[i].x = (_rotateImage->width / 2 + cosf(baseAngle[i] + angle) * dist);
+		rPoint[i].y = (_rotateImage->height / 2 + -sinf(baseAngle[i] + angle) * dist);
+	}
+
+	if (_isTrans)
+	{
+		BitBlt(_rotateImage->hMemDC, 0, 0, _rotateImage->width, _rotateImage->height, hdc, 0, 0, BLACKNESS);
+		HBRUSH hBrush = CreateSolidBrush(_transColor);
+		HBRUSH oBrush = (HBRUSH)SelectObject(_rotateImage->hMemDC, hBrush);
+		ExtFloodFill(_rotateImage->hMemDC, 1, 1, RGB(0, 0, 0), FLOODFILLSURFACE);
+		DeleteObject(hBrush);
+
+		PlgBlt(_rotateImage->hMemDC, rPoint, _imageInfo->hMemDC,
+			_imageInfo->frameWidth * frameX, _imageInfo->frameHeight * frameY,
+			_imageInfo->frameWidth,
+			_imageInfo->frameHeight,
+			NULL, 0, 0);
+
+		GdiTransparentBlt(hdc,
+			centerX - _rotateImage->width / 2,
+			centerY - _rotateImage->height / 2,
+			_rotateImage->width,
+			_rotateImage->height,
+			_rotateImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_transColor);
+	}
+	else
+	{
+		PlgBlt(hdc, rPoint, _imageInfo->hMemDC, _imageInfo->frameWidth * frameX, _imageInfo->frameHeight * frameY, _imageInfo->frameWidth, _imageInfo->frameHeight, NULL, 0, 0);
+	}
+}
+
+void image::rotateAlphaRender(HDC hdc, float centerX, float centerY, float angle, BYTE alpha)
+{
+	if (!_blendImage) this->initForAlphaBlend();
+	if (!_rotateImage) this->initForRotate();
+
+	_blendFunc.SourceConstantAlpha = alpha;
+
+	POINT rPoint[3];
+	int dist = sqrt((_imageInfo->width / 2) * (_imageInfo->width / 2) + (_imageInfo->height / 2) * (_imageInfo->height / 2));
+	float baseAnlge[3];
+	baseAnlge[0] = PI - atanf(((float)_imageInfo->height / 2) / ((float)_imageInfo->width / 2));
+	baseAnlge[1] = atanf(((float)_imageInfo->height / 2) / ((float)_imageInfo->width / 2));
+	baseAnlge[2] = PI + atanf(((float)_imageInfo->height / 2) / ((float)_imageInfo->width / 2));
+
+	for (int i = 0; i < 3; i++)
+	{
+		rPoint[i].x = (_rotateImage->width / 2 + cosf(baseAnlge[i] + angle) * dist);
+		rPoint[i].y = (_rotateImage->height / 2 - sinf(baseAnlge[i] + angle) * dist);
+	}
+
+	if (_isTrans)
+	{
+		BitBlt(_rotateImage->hMemDC, 0, 0, _rotateImage->width, _rotateImage->height, hdc, 0, 0, BLACKNESS);
+		BitBlt(_blendImage->hMemDC, 0, 0, _rotateImage->width, _rotateImage->height, hdc, centerX - _rotateImage->width / 2, centerY - _rotateImage->height / 2, SRCCOPY);
+
+		HBRUSH brush = CreateSolidBrush(_transColor);
+		HBRUSH oBrush = (HBRUSH)SelectObject(_rotateImage->hMemDC, brush);
+		ExtFloodFill(_rotateImage->hMemDC, 1, 1, RGB(0, 0, 0), FLOODFILLSURFACE);
+		DeleteObject(brush);
+
+		PlgBlt(_rotateImage->hMemDC, rPoint, _imageInfo->hMemDC,
+			0, 0,
+			_imageInfo->width,
+			_imageInfo->height,
+			NULL, 0, 0);
+		GdiTransparentBlt(_blendImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_rotateImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_transColor);
+		GdiAlphaBlend(hdc,
+			centerX - _rotateImage->width / 2,
+			centerY - _rotateImage->height / 2,
+			_rotateImage->width,
+			_rotateImage->height,
+			_blendImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_blendFunc);
+	}
+	else
+	{
+		PlgBlt(hdc, rPoint, _imageInfo->hMemDC, 0, 0, _imageInfo->width, _imageInfo->height, NULL, 0, 0);
+	}
+
+}
+
+void image::rotateAlphaFrameRender(HDC hdc, float centerX, float centerY, float angle, int frameX, int frameY, BYTE alpha)
+{
+	if (!_rotateImage) this->initForRotate();
+	if (!_blendImage) this->initForAlphaBlend();
+	_blendFunc.SourceConstantAlpha = alpha;
+	POINT rPoint[3];
+	int dist = sqrt((_imageInfo->frameWidth / 2) * (_imageInfo->frameWidth / 2) + (_imageInfo->frameHeight / 2) * (_imageInfo->frameHeight / 2));
+	float baseAngle[3];
+	baseAngle[0] = PI - atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+	baseAngle[1] = atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+	baseAngle[2] = PI + atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+
+	for (int i = 0; i < 3; i++)
+	{
+		rPoint[i].x = (_rotateImage->width / 2 + cosf(baseAngle[i] + angle) * dist);
+		rPoint[i].y = (_rotateImage->height / 2 + -sinf(baseAngle[i] + angle) * dist);
+	}
+
+	if (_isTrans)
+	{
+		BitBlt(_rotateImage->hMemDC, 0, 0, _rotateImage->width, _rotateImage->height, hdc, 0, 0, BLACKNESS);
+		BitBlt(_blendImage->hMemDC, 0, 0, _rotateImage->width, _rotateImage->height, hdc, centerX - _rotateImage->width / 2, centerY - _rotateImage->height / 2, SRCCOPY);
+		HBRUSH hBrush = CreateSolidBrush(_transColor);
+		HBRUSH oBrush = (HBRUSH)SelectObject(_rotateImage->hMemDC, hBrush);
+		ExtFloodFill(_rotateImage->hMemDC, 1, 1, RGB(0, 0, 0), FLOODFILLSURFACE);
+		DeleteObject(hBrush);
+
+		PlgBlt(_rotateImage->hMemDC, rPoint, _imageInfo->hMemDC,
+			_imageInfo->frameWidth * frameX, _imageInfo->frameHeight * frameY,
+			_imageInfo->frameWidth,
+			_imageInfo->frameHeight,
+			NULL, 0, 0);
+
+		GdiTransparentBlt(_blendImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_rotateImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_transColor);
+		GdiAlphaBlend(hdc,
+			centerX - _rotateImage->width / 2,
+			centerY - _rotateImage->height / 2,
+			_rotateImage->width,
+			_rotateImage->height,
+			_blendImage->hMemDC,
+			0, 0,
+			_rotateImage->width,
+			_rotateImage->height,
+			_blendFunc);
+	}
+	else
+	{
+		PlgBlt(hdc, rPoint, _imageInfo->hMemDC, _imageInfo->frameWidth * frameX, _imageInfo->frameHeight * frameY, _imageInfo->frameWidth, _imageInfo->frameHeight, NULL, 0, 0);
 	}
 }

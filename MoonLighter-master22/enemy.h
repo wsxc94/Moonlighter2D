@@ -11,12 +11,12 @@ enum ENEMYKIND			// 종류
 
 enum ENEMYSTATE			// 상태
 {
-	EM_MOVE,EM_ATTACK,EM_DIE,EM_HIT
+	EM_MOVE, EM_ATTACK, EM_DIE, EM_HIT
 };
 
 enum ENEMYDIRECTION		//보고있는 방향
 {
-	EM_LEFT,EM_RIGHT,EM_TOP,EM_BOTTOM
+	EM_LEFT, EM_RIGHT, EM_TOP, EM_BOTTOM
 };
 
 enum NODESTATE
@@ -35,7 +35,7 @@ struct node
 	int F, G, H;
 	node* parentNode;
 	NODESTATE nodeState;
-	
+
 	void init(int _idx, int _idy)
 	{
 		idx = _idx;
@@ -69,7 +69,7 @@ protected:
 	bool _isAttackRange;
 	bool _isHit;
 	bool _isItemDrop;
-	
+
 
 	float _x;
 	float _y;
@@ -82,7 +82,7 @@ protected:
 	int	 _itemIndexSize;		//아이템인덱스 사이즈
 	int  _itemDropSize;			//아이템드롭될개수
 
-		
+
 	bool _emPlayerColi;	//충돌용 함수
 	int count;			//충돌용 함수
 
@@ -119,6 +119,7 @@ public:
 	virtual void soundUpdate();
 	virtual void setProgressBar();
 	virtual void hitSoundPlay();
+	virtual void collisionEnemyBody();
 public:
 	virtual bool getIsActivate() { return _isActivate; }
 	virtual void setIsActivate(bool at) { _isActivate = at; }
@@ -179,8 +180,8 @@ public:
 
 class golem : public enemy
 {
-// isAttackRange 에다 플레이어 렉트 넣어줄것
-// 플레이어가 때렸을시 _isHit 트루 만들어주고 hp깍아줄것
+	// isAttackRange 에다 플레이어 렉트 넣어줄것
+	// 플레이어가 때렸을시 _isHit 트루 만들어주고 hp깍아줄것
 private:
 	animation* _move;
 	animation* _attack;
@@ -257,7 +258,7 @@ private:
 	tagPotBullet* _bullet;
 public:
 	potGolem() {}
-	~potGolem() {}	
+	~potGolem() {}
 
 	HRESULT init(int x, int y);
 	void release();
@@ -321,7 +322,7 @@ class gasMan : public enemy
 private:
 	enum GASARROWDIRECTION
 	{
-		AR_LEFT,AR_RIGHT,AR_UP,AR_DOWN
+		AR_LEFT, AR_RIGHT, AR_UP, AR_DOWN
 	};
 	struct tagGasArrow
 	{
@@ -377,7 +378,7 @@ class bossSkeleton : public enemy
 public:
 	enum SKELETONSTATE
 	{
-		ST_ATTACK_SWORD, ST_ATTACK_HAMMER, ST_SKILL_SWORD, ST_SKILL_HAMMER,ST_WAVE, ST_MOVE
+		ST_ATTACK_SWORD, ST_ATTACK_HAMMER, ST_SKILL_SWORD, ST_SKILL_HAMMER, ST_WAVE, ST_MOVE, ST_INIT, ST_DIE
 	};
 	enum SKELETONPHASE
 	{
@@ -388,13 +389,23 @@ public:
 		bool isHit;
 		RECT box;
 	};
-	SKELETONSTATE _attackState;
+	struct tagBlade
+	{
+		animation* ani;
+		float x, y;				// 센터점
+		float angle;			//날아가는 각도
+		bool isFire;			// 발사했냐?
+		bool isBreak;			//부서지는 애니메이션 재생용
+	};
+	SKELETONSTATE _stState;
+	SKELETONPHASE _bossPhase;
 private:
 	animation* _move;				//움직임
 	animation* _attackSword;		//칼 근접공격
 	animation* _attackHammer;		//해머 근접공격
 	animation* _hammerWave1;		//해머충격파
 	animation* _hammerWave2;		//해머충격파
+	tagBlade* _blade;				//블레이드
 
 	vector<animation*> _vSkillEffect; // 스킬 충격파 이펙트 에니매이션
 
@@ -406,6 +417,16 @@ private:
 
 	int _waveCount;			//충격파 횟수
 	int _waveTime;			//다음충격파
+	int _emAtkHammer;		//해머 공격력
+	int _emAtkSword;		//칼 공격력
+	int _emAtkWave;			//충격파 공격력
+	int _hitCount;			//히트카운트
+	int _autoAttackCount;	//오토공격 카운트
+	int _autoAttackCool;	//오토어택 쿨
+
+	progressBar* _hpBarRed;
+	progressBar* _hpBarWhite;
+
 
 	// 사운드 관련 불함수
 	bool _isAttackPlay;
@@ -427,4 +448,6 @@ public:
 	void moveUpdate();
 	void attackUpdate();
 	void soundUpdate();
+	void bladeUpdate();
+	void hitUpdate();
 };

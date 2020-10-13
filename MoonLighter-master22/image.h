@@ -58,6 +58,7 @@ private:
 
 	LPIMAGE_INFO	_stretchImage;  //스트레치 이미지
 	LPIMAGE_INFO	_minimapImage;	//미니맵 이미지
+	LPIMAGE_INFO	_rotateImage;	//회 전이미지
 
 public:
 	image();
@@ -71,11 +72,12 @@ public:
 	//프레임 이미지 파일로 초기화
 	HRESULT init(const char* fileName, int width, int height, int frameX, int frameY, bool isTrans = true, COLORREF transColor = RGB(255, 0, 255));
 	HRESULT init(const char* fileName, float x, float y, int width, int height, int frameX, int frameY, bool isTrans = true, COLORREF transColor = RGB(255, 0, 255));
-	
+
 	//알파블렌드 초기화
 	HRESULT initForAlphaBlend();
 	HRESULT initForStretch(int sizeX, int sizeY);
 	HRESULT initForMinimap(int sizeX, int sizeY);
+	HRESULT initForRotate();
 
 
 	//해제
@@ -88,13 +90,13 @@ public:
 	//알파렌더(이미지를 알파값만큼 투명화 시켜준다)
 	void alphaRender(HDC hdc, BYTE alpha);
 	void alphaRender(HDC hdc, int destX, int destY, BYTE alpha);
-	void alphaFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY,BYTE alpha);
+	void alphaFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY, BYTE alpha);
 	void alphaRender(HDC hdc, int destX, int destY, int sourX, int sourY, int sourWidth, int sourHeight, BYTE alpha);
 	//스트레치 렌더
 	void stretchRender(HDC hdc, int destX, int destY, int sizeX, int sizeY);
 	void stretchRender(HDC hdc, int destX, int destY, float size);
-	void stretchFrameRender(HDC hdc, int destX, int destY,int currentFrameX, int currentFrameY, int sizeX, int sizeY);
-	void stretchFrameRender(HDC hdc, int destX, int destY,int currentFrameX, int currentFrameY, float size);
+	void stretchFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY, int sizeX, int sizeY);
+	void stretchFrameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY, float size);
 	//프레임렌더
 	void frameRender(HDC hdc, int destX, int destY);
 	void frameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY);
@@ -104,6 +106,12 @@ public:
 	//루프렌더
 	void loopRender(HDC hdc, const LPRECT drawArea, int offsetX, int offsetY);
 	void loopAlphaRender(HDC hdc, const LPRECT drawArea, int offsetX, int offsetY, BYTE alpha);
+
+	//회전렌더 기본적으로 선터점렌더다
+	void rotateRender(HDC hdc, float centerX, float centerY, float angle);
+	void rotateFrameRender(HDC hdc, float centerX, float centerY, float angle, int frameX = 0, int frameY = 0);
+	void rotateAlphaRender(HDC hdc, float centerX, float centerY, float angle, BYTE alpha);
+	void rotateAlphaFrameRender(HDC hdc, float centerX, float centerY, float angle, int frameX = 0, int frameY = 0, BYTE alpha = 255);
 
 	//DC 얻기
 	inline HDC getMemDC() { return _imageInfo->hMemDC; }

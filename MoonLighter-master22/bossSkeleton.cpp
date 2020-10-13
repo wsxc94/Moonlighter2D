@@ -9,27 +9,66 @@ HRESULT bossSkeleton::init(int x, int y)
 	_hammerWave1 = new animation;
 	_hammerWave2 = new animation;
 
-	_move->init(IMAGEMANAGER->findImage("skeletonMove"), 0, 8,true);
-	_attackSword->init(IMAGEMANAGER->findImage("skeletonAttackSword"), 0, 7);
+	_move->init(IMAGEMANAGER->findImage("skeletonMove"), 0, 8, true);
+	_attackSword->init(IMAGEMANAGER->findImage("skeletonAttackSword"), 0, 5);
 	_attackHammer->init(IMAGEMANAGER->findImage("skeletonAttackHammer"), 0, 7);
 	_hammerWave1->init(IMAGEMANAGER->findImage("hammerWave1"), 0, 7);
 	_hammerWave2->init(IMAGEMANAGER->findImage("hammerWave2"), 0, 7);
+
+	vector<POINT> vp;
 
 	_attackSword->aniStop();
 	_attackHammer->aniStop();
 	_hammerWave1->aniStop();
 	_hammerWave2->aniStop();
 
-	_attackState = ST_MOVE;
-	_emState = EM_MOVE;
+	_stState = ST_INIT;
+	_bossPhase = ST_PHASE_1;
 	_x = x;
 	_y = y;
 
+	//기타 초기화
+	_emHp = 0;
+	_emAtkHammer = 30;
+	_emAtkSword = 20;
+	_emAtkWave = 15;
 	_waveCount = 0;
 	_waveTime = 0;
+	_hitCount = 0;
+	_autoAttackCount = 0;
+	_autoAttackCool = RANDOM->range(200, 500);
+
+	//체력바 초기화
+	_hpBarRed = new progressBar;
+	_hpBarRed->init("semiBossHpBarFront(red)", "semiBossHpBarBack", 666);
+
+	_hpBarWhite = new progressBar;
+	_hpBarWhite->init("semiBossHpBarFront(white)", "semiBossHpBarBack", 666);
+
+	_hpBar = _hpBarRed;
+
+	//불변수 초기화
+	_isHit = false;
+	_isAttackRange = false;
+	_isActivate = true;
+	_isItemDrop = false;
+	_emPlayerColi = false;
+
+	//블레이드 초기화
+	_blade = new tagBlade;
+	_blade->ani = new animation;
+	_blade->ani->init(IMAGEMANAGER->findImage("skeletonBlade"), 0, 5);
+	_blade->ani->aniStop();
+	_blade->x = 0;
+	_blade->y = 0;
+	_blade->angle = 0;
+	_blade->isFire = false;
+	_blade->isBreak = false;
+
 
 	// 사운드 관련 함수 초기화
 	_isAttackPlay = false;
+
 
 	return S_OK;
 }
@@ -42,19 +81,36 @@ void bossSkeleton::update()
 {
 	if (INPUT->GetKeyDown(VK_LEFT))
 	{
-		_emState = EM_ATTACK;
-		_attackState = ST_SKILL_HAMMER;
-		_attackHammer->aniRestart();
+		_attackHammer->changeImg(IMAGEMANAGER->findImage("skeletonMoveHitRed"));
 	}
 	if (INPUT->GetKeyDown(VK_RIGHT))
 	{
+		_stState = ST_SKILL_HAMMER;
 		_attackHammer->aniRestart();
 	}
+	if (INPUT->GetKeyDown(VK_DOWN))
+	{
+		_stState = ST_MOVE;
+	}
+
+	if (_emHp < 333)
+	{
+		_bossPhase = ST_PHASE_2;
+	}
+
 	this->soundUpdate();				//사운드 업뎃
 
-	switch (_emState)
+
+	this->atkBoxUpdate();				//공격렉트 업데이트
+	this->attackUpdate();				//공격에 관한 업데이트
+	this->collision();					//플레이어랑 충돌
+
+	//히트 관련
+	this->hitUpdate();
+
+	switch (_stState)
 	{
-	case EM_MOVE:
+	case bossSkeleton::ST_MOVE:
 		_move->update();				// 애니메이션 업뎃
 
 		this->setStartNode();			// 에이스타 시작설정
@@ -62,33 +118,33 @@ void bossSkeleton::update()
 		this->enemyMove();				// 움직임
 		this->atkRangeUpdate();			// 공격범위 업뎃
 		this->moveUpdate();				// 플레이어와 충돌검사해서 공격	
-
-
 		break;
-	case EM_ATTACK:
-		_attackHammer->update();		// 애니메이션 업뎃
-		_attackSword->update();			// 애니메이션 업뎃
-
-		this->atkBoxUpdate();			// 공격박스 업뎃
-		this->attackUpdate();			// 공격이 끝나면 움직이게 설정
-		
+	case bossSkeleton::ST_INIT:
+		_emHp += 10;
+		if (_emHp >= 666)
+		{
+			_emHp = 666;
+			_stState = ST_MOVE;
+			_bossPhase = ST_PHASE_1;
+		}
 		break;
-	case EM_DIE:
-		break;
-	case EM_HIT:
+	case bossSkeleton::ST_DIE:
 		break;
 	default:
 		break;
 	}
 
+	// 충격파 애니메이션 업뎃
 	_hammerWave1->update();
 	_hammerWave2->update();
+	//체력바 업뎃
+	_hpBarRed->update(_emHp);
+	_hpBarWhite->update(_emHp);
 }
 
 void bossSkeleton::render()
 {
 	this->animationRender();
-
 	//FrameRect(getMemDC(), RectMakeCenter(_x, _y - 80, 130, 220), RGB(0, 0, 0));
 	//FrameRect(getMemDC(), RectMakeCenter(_x, _y, 35, 35), RGB(255, 255, 255));
 	FrameRect(getMemDC(), _hammerRange, RGB(0, 0, 255));
@@ -96,6 +152,8 @@ void bossSkeleton::render()
 	FrameRect(getMemDC(), _hammerAtkBox.box, RGB(0, 0, 0));
 	FrameRect(getMemDC(), _swordAtkBox.box, RGB(0, 0, 0));
 	FrameRect(getMemDC(), _emRC, RGB(255, 0, 0));
+
+	_hpBar->cameraRender(WINSIZEX / 2, WINSIZEY - 50);
 }
 
 void bossSkeleton::setStartNode()
@@ -118,8 +176,8 @@ void bossSkeleton::enemyMove()
 	if (_finalList.size() > 0)
 	{
 		float angle = getAngle(_x, _y, _finalList.front()->centerX, _finalList.front()->centerY);
-		//_x += cosf(angle) * 1.5f;
-		//_y -= sinf(angle) * 1.5f;
+		_x += cosf(angle) * 0.5f;
+		_y -= sinf(angle) * 0.5f;
 
 		angle = getAngle(_x, _y, (_endNode->rc.left + _endNode->rc.right) / 2, (_endNode->rc.top + _endNode->rc.bottom) / 2);
 		if (angle > DEGREE(45) && angle <= DEGREE(135))
@@ -140,13 +198,13 @@ void bossSkeleton::enemyMove()
 		}
 	}
 
-	_emRC = RectMakeCenter(_x, _y - 80, 130, 220);
+	_emRC = RectMakeCenter(_x, _y - 50, 130, 160);
 	_aStarRC = RectMakeCenter(_x, _y, 35, 35);
 }
 
 void bossSkeleton::animationRender()
 {
-
+	//에너미 애니메이션 y축 변경및 충격파 렌더
 	switch (_emDirection)
 	{
 	case EM_LEFT:
@@ -154,8 +212,8 @@ void bossSkeleton::animationRender()
 		_attackHammer->setFrameY(2);
 		_attackSword->setFrameY(3);
 
-		if (_hammerWave1->getAniState() != ANIMATION_END) _hammerWave1->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave1")->getFrameWidth() / 2 - 166, _y - IMAGEMANAGER->findImage("hammerWave1")->getFrameHeight() / 2  + 30);
-		if (_hammerWave2->getAniState() != ANIMATION_END) _hammerWave2->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave2")->getFrameWidth() / 2 - 166, _y - IMAGEMANAGER->findImage("hammerWave2")->getFrameHeight() / 2  + 30);
+		if (_hammerWave1->getAniState() != ANIMATION_END) _hammerWave1->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave1")->getFrameWidth() / 2 - 166, _y - IMAGEMANAGER->findImage("hammerWave1")->getFrameHeight() / 2 + 30);
+		if (_hammerWave2->getAniState() != ANIMATION_END) _hammerWave2->ZoderRender(0, _x - IMAGEMANAGER->findImage("hammerWave2")->getFrameWidth() / 2 - 166, _y - IMAGEMANAGER->findImage("hammerWave2")->getFrameHeight() / 2 + 30);
 		break;
 	case EM_RIGHT:
 		_move->setFrameY(2);
@@ -183,28 +241,41 @@ void bossSkeleton::animationRender()
 		break;
 
 	}
+	//블레이드 렌더
+	if (_blade->ani->getAniState() != ANIMATION_END) _blade->ani->ZorderRotateAlphaRender(getMemDC(), 2000, _blade->x, _blade->y, _blade->angle, 150);
 
-	switch (_emState)
+	//공격, 움직임에 관한 애니메이션 렌더
+	switch (_stState)
 	{
-	case EM_MOVE:
-		_move->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
-		break;
-	case EM_ATTACK:
+	case bossSkeleton::ST_ATTACK_HAMMER:
+	case bossSkeleton::ST_SKILL_HAMMER:
+	case bossSkeleton::ST_WAVE:
 		if (_attackHammer->getAniState() != ANIMATION_END)
 		{
-			if(_attackHammer->getCurIndex() < 6)
-			_attackHammer->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
-			else if(_attackHammer->getCurIndex() >= 6)
-			_attackHammer->ZoderRender(PLAYER->getY() + 1, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
-			else if(_attackHammer->getCurIndex() >= 13)
-			_attackHammer->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+			if (_attackHammer->getCurIndex() >= 6 && _attackHammer->getCurIndex() < 17)
+				_attackHammer->ZoderRender(PLAYER->getY() + 1, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+			else
+				_attackHammer->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
 		}
-		if (_attackSword->getAniState() != ANIMATION_END) _attackSword->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
-		
 		break;
-	case EM_DIE:
+	case bossSkeleton::ST_ATTACK_SWORD:
+	case bossSkeleton::ST_SKILL_SWORD:
+
+		if (_attackSword->getAniState() != ANIMATION_END)
+		{
+			if (_attackSword->getCurIndex() >= 7 && _attackSword->getCurIndex() <= 15)
+				_attackSword->ZoderRender(PLAYER->getY() + 1, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+			else
+				_attackSword->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+		}
 		break;
-	case EM_HIT:
+	case bossSkeleton::ST_MOVE:
+		_move->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+		break;
+	case bossSkeleton::ST_INIT:
+		_move->ZoderRender(_y, _x - IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2, _y - IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2);
+		break;
+	case bossSkeleton::ST_DIE:
 		break;
 	default:
 		break;
@@ -218,19 +289,19 @@ void bossSkeleton::atkRangeUpdate()
 	case EM_LEFT:
 		_hammerRange = RectMake(_emRC.left - 140, _y, _x - (_emRC.left - 140), 60);
 		_swordRange = RectMake(_emRC.left - 140, _emRC.top + 100, 140, 220);
-	break;
+		break;
 	case EM_RIGHT:
 		_hammerRange = RectMake(_x, _y, (_emRC.right + 140) - _x, 60);
 		_swordRange = RectMake(_emRC.right, _emRC.top + 100, 140, 220);
-	break;
+		break;
 	case EM_TOP:
-		_hammerRange = RectMake(_emRC.left + 10,_emRC.top + 20,90,_y - _emRC.top + 20);
+		_hammerRange = RectMake(_emRC.left + 10, _emRC.top + 20, 90, _y - _emRC.top + 20);
 		_swordRange = RectMake(_emRC.left - 20, _emRC.top, 150, _y - _emRC.top);
-	break;
+		break;
 	case EM_BOTTOM:
 		_hammerRange = RectMake(_x - 35, _y, 100, 200);
 		_swordRange = RectMake(_emRC.left, _y, 150, 150);
-	break;
+		break;
 	}
 }
 
@@ -242,26 +313,26 @@ void bossSkeleton::atkBoxUpdate()
 		// 해머 공격용 렉트 
 		if (_attackHammer->getCurIndex() >= 6 && _attackHammer->getCurIndex() <= 13)
 		{
-			_hammerAtkBox.box = RectMake(_hammerRange.left + 10, _hammerRange.top + 10, _x- _hammerRange.left + 10, 50);
+			_hammerAtkBox.box = RectMake(_hammerRange.left + 10, _hammerRange.top + 10, _x - _hammerRange.left + 10, 50);
 		}
 		else _hammerAtkBox = { 0,0,0,0 };
 		// 칼 공격용 렉트
 		if (_attackSword->getCurIndex() >= 7 && _attackSword->getCurIndex() <= 13)
 		{
-			_swordAtkBox.box = RectMake(_swordRange.left, _swordRange.top, 100, 100);
+			_swordAtkBox.box = { _swordRange.left, _swordRange.top + 30, _swordRange.right, _swordRange.bottom };
 		}
 		else _swordAtkBox.box = { 0,0,0,0 };
 		break;
 	case EM_RIGHT:
 		if (_attackHammer->getCurIndex() >= 6 && _attackHammer->getCurIndex() <= 13)
 		{
-			_hammerAtkBox.box = RectMake(_x , _hammerRange.top + 10, _hammerRange.right - _x - 10, 50);
+			_hammerAtkBox.box = RectMake(_x, _hammerRange.top + 10, _hammerRange.right - _x - 10, 50);
 		}
 		else _hammerAtkBox = { 0,0,0,0 };
 		// 칼 공격용 렉트
 		if (_attackSword->getCurIndex() >= 7 && _attackSword->getCurIndex() <= 13)
 		{
-			_swordAtkBox.box = RectMake(_swordRange.left, _swordRange.top, 100, 100);
+			_swordAtkBox.box = { _swordRange.left, _swordRange.top + 30, _swordRange.right, _swordRange.bottom };
 		}
 		else _swordAtkBox.box = { 0,0,0,0 };
 		break;
@@ -274,20 +345,20 @@ void bossSkeleton::atkBoxUpdate()
 		// 칼 공격용 렉트
 		if (_attackSword->getCurIndex() >= 7 && _attackSword->getCurIndex() <= 13)
 		{
-			_swordAtkBox.box = RectMake(_swordRange.left, _swordRange.top, 100, 100);
+			_swordAtkBox.box = { _swordRange.left + 10, _swordRange.top + 20, _swordRange.right, _swordRange.bottom };
 		}
 		else _swordAtkBox.box = { 0,0,0,0 };
 		break;
 	case EM_BOTTOM:
 		if (_attackHammer->getCurIndex() >= 6 && _attackHammer->getCurIndex() <= 13)
 		{
-			_hammerAtkBox.box = RectMake(_x - 35,_y,95,180);
+			_hammerAtkBox.box = RectMake(_x - 35, _y, 95, 180);
 		}
 		else _hammerAtkBox = { 0,0,0,0 };
 		// 칼 공격용 렉트
 		if (_attackSword->getCurIndex() >= 7 && _attackSword->getCurIndex() <= 13)
 		{
-			_swordAtkBox.box = RectMake(_swordRange.left, _swordRange.top, 100, 100);
+			_swordAtkBox.box = { _swordRange.left, _swordRange.top, _swordRange.right, _swordRange.bottom - 30 };
 		}
 		else _swordAtkBox.box = { 0,0,0,0 };
 		break;
@@ -296,126 +367,181 @@ void bossSkeleton::atkBoxUpdate()
 
 void bossSkeleton::moveUpdate()
 {
-
-	RECT temp;
-	
-	if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerRange) && IntersectRect(&temp, &PLAYER->getRect(), &_swordRange))
+	_autoAttackCount++;
+	if (_autoAttackCount > _autoAttackCool)
 	{
-		if (RANDOM->range(2) == 0)
+		_autoAttackCool = RANDOM->range(200, 500);
+		_autoAttackCount = 0;
+
+		if (_attackSword->getAniState() == ANIMATION_END)
+		{
+			_attackSword->aniRestart();
+			_stState = ST_SKILL_SWORD;
+		}
+	}
+	RECT temp;
+	if (_bossPhase == ST_PHASE_1)
+	{
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerRange) && IntersectRect(&temp, &PLAYER->getRect(), &_swordRange))
 		{
 
-			if (_attackSword->getAniState() == ANIMATION_END)
+			if (RANDOM->range(2) == 0)
 			{
-				_attackSword->aniRestart();
-				_attackState = ST_ATTACK_SWORD;
-				_emState = EM_ATTACK;
+
+				if (_attackSword->getAniState() == ANIMATION_END)
+				{
+					_attackSword->aniRestart();
+					_stState = ST_ATTACK_SWORD;
+				}
+			}
+			else
+			{
+				if (_attackHammer->getAniState() == ANIMATION_END)
+				{
+					_attackHammer->aniRestart();
+					_stState = ST_ATTACK_HAMMER;
+				}
 			}
 		}
-		else
+		else if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerRange))
 		{
 			if (_attackHammer->getAniState() == ANIMATION_END)
 			{
 				_attackHammer->aniRestart();
-				_attackState = ST_ATTACK_HAMMER;
-				_emState = EM_ATTACK;
+				_stState = ST_ATTACK_HAMMER;
+			}
+		}
+		else if (IntersectRect(&temp, &PLAYER->getRect(), &_swordRange))
+		{
+			if (_attackSword->getAniState() == ANIMATION_END)
+			{
+				_attackSword->aniRestart();
+				_stState = ST_ATTACK_SWORD;
 			}
 		}
 	}
-	else if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerRange))
+	else
 	{
-		if (_attackHammer->getAniState() == ANIMATION_END)
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerRange) && IntersectRect(&temp, &PLAYER->getRect(), &_swordRange))
 		{
-			_attackHammer->aniRestart();
-			_attackState = ST_ATTACK_HAMMER;
-			_emState = EM_ATTACK;
+			if (_attackHammer->getAniState() == ANIMATION_END)
+			{
+				_attackHammer->aniRestart();
+				_stState = ST_SKILL_HAMMER;
+			}
+		}
+		else if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerRange))
+		{
+			if (_attackHammer->getAniState() == ANIMATION_END)
+			{
+				_attackHammer->aniRestart();
+				_stState = ST_SKILL_HAMMER;
+			}
+		}
+		else if (IntersectRect(&temp, &PLAYER->getRect(), &_swordRange))
+		{
+			if (_attackSword->getAniState() == ANIMATION_END)
+			{
+				_attackSword->aniRestart();
+				_stState = ST_SKILL_SWORD;
+			}
 		}
 	}
-	else if (IntersectRect(&temp, &PLAYER->getRect(), &_swordRange))
-	{
-		if (_attackSword->getAniState() == ANIMATION_END)
-		{
-			_attackSword->aniRestart();
-			_attackState = ST_ATTACK_SWORD;
-			_emState = EM_ATTACK;
-		}
-	}
+
+
 
 }
 
 void bossSkeleton::attackUpdate()
 {
-	switch (_attackState)
+	//블레이드 업뎃
+	this->bladeUpdate();
+
+	switch (_stState)
 	{
 	case bossSkeleton::ST_ATTACK_SWORD:
+		_attackSword->update();
 		if (_attackSword->getAniState() == ANIMATION_END)
 		{
 			_isAttackPlay = false;
 			_attackSword->aniStop();
-			_emState = EM_MOVE;
-			_attackState = ST_MOVE;
+			_stState = ST_MOVE;
 		}
 		break;
 	case bossSkeleton::ST_ATTACK_HAMMER:
+		_attackHammer->update();
 		// 망치가 땅을 찍었을때 충격파 애니메이션 시작
 		if (_attackHammer->getCurIndex() == 6 && _hammerWave1->getAniState() == ANIMATION_END) _hammerWave1->aniRestart();
 		if (_attackHammer->getAniState() == ANIMATION_END)
 		{
 			_isAttackPlay = false;				//사운드 재생 초기화
 			_attackHammer->aniStop();
-			_emState = EM_MOVE;
-			_attackState = ST_MOVE;
+			_stState = ST_MOVE;
 		}
 		break;
 	case bossSkeleton::ST_SKILL_SWORD:
+		_attackSword->update();
+
+		if (_attackSword->getCurIndex() == 7 && _blade->isFire == false)
+		{
+			_blade->angle = getAngle(_x, _y, PLAYER->getX(), PLAYER->getY());
+			_blade->x = _x + cosf(_blade->angle) * 150;
+			_blade->y = _y - sinf(_blade->angle) * 150;
+			_blade->isFire = true;
+			_blade->ani->aniRestart();
+		}
+		if (_attackSword->getAniState() == ANIMATION_END)
+		{
+			_stState = ST_MOVE;
+		}
+
 		break;
 	case bossSkeleton::ST_SKILL_HAMMER:
+		_attackHammer->update();
 		if (_attackHammer->getCurIndex() == 12)
 		{
 			_attackHammer->aniPause();
 			_hammerWave1->aniRestart();
-			_attackState = ST_WAVE;
+			_stState = ST_WAVE;
 		}
 		break;
 	case bossSkeleton::ST_WAVE:
-		//첫번째 충격파
-		if (_hammerWave1->getAniState() == ANIMATION_END && _waveCount == 0)
+		_attackHammer->update();
+		if (_hammerWave1->getAniState() == ANIMATION_END)
 		{
-			_waveTime++;
-			if (_waveTime >= 20)
+			if (_waveCount < 4)
 			{
-				_waveTime = 0;
-				_waveCount++;
-				_hammerWave2->aniRestart();
+				if (_attackHammer->getAniState() != ANIMATION_PLAY)
+				{
+					if (_attackHammer->getAniState() != ANIMATION_REVERSE)
+						_attackHammer->aniReverse();
+
+					if (_attackHammer->getCurIndex() == 9 && _attackHammer->getAniState() == ANIMATION_REVERSE)
+					{
+						_attackHammer->aniPlay();
+					}
+				}
+				if (_attackHammer->getAniState() == ANIMATION_PLAY && _attackHammer->getCurIndex() == 12)
+				{
+					_attackHammer->aniPause();
+					_hammerWave1->aniRestart();
+					_waveCount++;
+				}
+
 			}
-		}
-		//두번째 충격파
-		else if (_hammerWave2->getAniState() == ANIMATION_END && _waveCount < 5 && _waveCount > 0)
-		{
-			_waveTime++;
-			if (_waveTime >= 20 && _waveCount < 4)
+			else
 			{
-				_waveTime = 0;
-				_waveCount++;
-				_hammerWave2->aniRestart();
-			}
-			else if (_waveTime >= 20 && _waveCount == 4)
-			{
-				_waveTime = 0;
-				_waveCount++;
 				_attackHammer->aniPlay();
 			}
 		}
-		else if (_attackHammer->getAniState() == ANIMATION_END && _waveCount == 5)
+		if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX())
 		{
-			_emState = EM_MOVE;
-			_attackState = ST_MOVE;
+			_stState = ST_MOVE;
 			_waveCount = 0;
-			_waveTime = 0;
 		}
-
-
 		break;
 	case bossSkeleton::ST_MOVE:
+
 		break;
 	default:
 		break;
@@ -424,15 +550,20 @@ void bossSkeleton::attackUpdate()
 
 void bossSkeleton::soundUpdate()
 {
-	switch (_attackState)
+	switch (_stState)
 	{
 	case bossSkeleton::ST_ATTACK_SWORD:
+		if (_attackSword->getCurIndex() == 3 && _isAttackPlay == false)
+		{
+			_isAttackPlay = true;
+			SOUNDMANAGER->play("skullAttackSword", 0.2f);
+		}
 		break;
 	case bossSkeleton::ST_ATTACK_HAMMER:
 		if (_attackHammer->getCurIndex() == 3 && _isAttackPlay == false)
 		{
 			_isAttackPlay = true;
-			SOUNDMANAGER->play("skullAttackHammer",0.2f);
+			SOUNDMANAGER->play("skullAttackHammer", 0.2f);
 		}
 		break;
 	case bossSkeleton::ST_SKILL_SWORD:
@@ -444,4 +575,73 @@ void bossSkeleton::soundUpdate()
 	default:
 		break;
 	}
+}
+
+void bossSkeleton::bladeUpdate()
+{
+	if (_blade->isFire == false) return;
+	_blade->ani->update();
+	//부서지지 않았을때 움직임
+	if (_blade->isBreak == false)
+	{
+		_blade->x += cosf(_blade->angle) * 6.f;
+		_blade->y -= sinf(_blade->angle) * 6.f;
+	}
+
+
+	//날아가는 도중엔 칼날모양 유지
+	if (_blade->isBreak == false && _blade->ani->getCurIndex() == 2)
+	{
+		_blade->ani->aniPause();
+	}
+
+	//던전 내부 사이즈의 렉트
+	RECT dunRC = RectMake(140, 105, 35 * _idx, 35 * _idy);
+	POINT pt = { _blade->x,_blade->y };
+	if (!PtInRect(&dunRC, pt))
+	{
+		_blade->ani->aniPlay();
+		_blade->isBreak = true;
+	}
+
+	if (_blade->ani->getCurIndex() == _blade->ani->getImage()->getMaxFrameX())
+	{
+		_blade->isFire = false;
+		_blade->isBreak = false;
+		_blade->ani->aniStop();
+	}
+
+}
+
+void bossSkeleton::hitUpdate()
+{
+	if (!_isHit) return;
+	_hitCount++;
+
+	if (_hitCount < 5)
+	{
+		_hpBar = _hpBarWhite;
+		_attackHammer->changeImg(IMAGEMANAGER->findImage("skeletonAttackHammerHitRed"));
+		_attackSword->changeImg(IMAGEMANAGER->findImage("skeletonAttackSwordHitRed"));
+		_move->changeImg(IMAGEMANAGER->findImage("skeletonMoveHitRed"));
+	}
+	else if (_hitCount < 10)
+	{
+		_hpBar = _hpBarRed;
+		_attackHammer->changeImg(IMAGEMANAGER->findImage("skeletonAttackHammerHitWhite"));
+		_attackSword->changeImg(IMAGEMANAGER->findImage("skeletonAttackSwordHitWhite"));
+		_move->changeImg(IMAGEMANAGER->findImage("skeletonMoveHitWhite"));
+	}
+
+
+	if (_hitCount > 10)
+	{
+		_hitCount = 0;
+		_hpBar = _hpBarRed;
+		_isHit = false;
+		_attackHammer->changeImg(IMAGEMANAGER->findImage("skeletonAttackHammer"));
+		_attackSword->changeImg(IMAGEMANAGER->findImage("skeletonAttackSword"));
+		_move->changeImg(IMAGEMANAGER->findImage("skeletonMove"));
+	}
+
 }
