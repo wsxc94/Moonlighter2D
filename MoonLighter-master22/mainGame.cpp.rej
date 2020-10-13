@@ -1,0 +1,9 @@
+diff a/MoonLighter-master22/mainGame.cpp b/MoonLighter-master22/mainGame.cpp	(rejected hunks)
+@@ -19,6 +19,7 @@
+ 	SCENEMANAGER->addScene("Ÿ��ȭ��", new townScene);
+ 	SCENEMANAGER->addScene("�븻����", new nomalDungeonScene);
+ <<<<<<< HEAD
++=======
+ 	SCENEMANAGER->addScene("��������", new bossDungeonScene);
+ 	SCENEMANAGER->addScene("�����ε�", new dungeonLoading);
+ >>>>>>> feature/itemManager

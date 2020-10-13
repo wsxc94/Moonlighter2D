@@ -1,0 +1,78 @@
+diff a/MoonLighter-master22/dungeonMap.cpp b/MoonLighter-master22/dungeonMap.cpp	(rejected hunks)
+@@ -281,26 +281,26 @@
+ 	if ((*map)->_leftDg != nullptr)
+ 	{
+ 		(*map)->_leftDoor = new dgDoor;
+-		(*map)->_leftDoor->init(70, 315, "������(�翷)", 1);
++		(*map)->_leftDoor->init(35, 280, "������(�翷)", 1);
+ 	}
+ 	if ((*map)->_rightDg != nullptr)
+ 	{
+ 		(*map)->_rightDoor = new dgDoor;
+-		(*map)->_rightDoor->init(1120, 315, "������(�翷)", 0);
++		(*map)->_rightDoor->init(1120, 280, "������(�翷)", 0);
+ 	}
+ 	if ((*map)->_topDg != nullptr)
+ 	{
+ 		(*map)->_topDoor = new dgDoor;
+-		(*map)->_topDoor->init(560, 35, "������(���Ʒ�)", 0);
++		(*map)->_topDoor->init(525, 0, "������(���Ʒ�)", 0);
+ 	}
+ 	if ((*map)->_bottomDg != nullptr)
+ 	{
+ 		(*map)->_bottomDoor = new dgDoor;
+-		(*map)->_bottomDoor->init(560, 630, "������(���Ʒ�)", 1);
++		(*map)->_bottomDoor->init(525, 630, "������(���Ʒ�)", 1);
+ 	}
+ 	
+ 	//�������� ���� ��ŻŸ�� ����
+-	for (int i = 0; i < (*map)->_vTile.size(); i++)
++	for (int i = 0, left = 0, right = 0, top = 0, bottom = 0; i < (*map)->_vTile.size(); i++)
+ 	{
+ 		RECT rc;
+ 		if ((*map)->_leftDoor != nullptr)
+@@ -311,7 +311,8 @@
+ 					(*map)->_vTile[i].rc.top != (*map)->_leftDoor->getRect().top &&
+ 					(*map)->_vTile[i].rc.bottom != (*map)->_leftDoor->getRect().bottom)
+ 				{
+-					(*map)->_vTile[i].tState = TS_PORTAL;
++					if(left == 1) (*map)->_vTile[i].tState = TS_PORTAL;
++					left++;
+ 				}
+ 			}
+ 		}
+@@ -324,7 +325,8 @@
+ 					(*map)->_vTile[i].rc.top != (*map)->_rightDoor->getRect().top &&
+ 					(*map)->_vTile[i].rc.bottom != (*map)->_rightDoor->getRect().bottom)
+ 				{
+-					(*map)->_vTile[i].tState = TS_PORTAL;
++					if(right == 1) (*map)->_vTile[i].tState = TS_PORTAL;
++					right++;
+ 				}
+ 			}
+ 		}
+@@ -333,11 +335,12 @@
+ 		{
+ 			if (IntersectRect(&rc, &(*map)->_vTile[i].rc, &(*map)->_topDoor->getRect()))
+ 			{
+-				if ((*map)->_vTile[i].rc.bottom == (*map)->_topDoor->getRect().bottom &&
++				if ((*map)->_vTile[i].rc.bottom + 1 == (*map)->_topDoor->getRect().bottom &&
+ 					(*map)->_vTile[i].rc.left != (*map)->_topDoor->getRect().left &&
+ 					(*map)->_vTile[i].rc.right != (*map)->_topDoor->getRect().right)
+ 				{
+-					(*map)->_vTile[i].tState = TS_PORTAL;
++					if(top == 1) (*map)->_vTile[i].tState = TS_PORTAL;
++					top++;
+ 				}
+ 			}
+ 		}
+@@ -350,7 +353,8 @@
+ 					(*map)->_vTile[i].rc.left != (*map)->_bottomDoor->getRect().left &&
+ 					(*map)->_vTile[i].rc.right != (*map)->_bottomDoor->getRect().right)
+ 				{
+-					(*map)->_vTile[i].tState = TS_PORTAL;
++					if(bottom == 1) (*map)->_vTile[i].tState = TS_PORTAL;
++					bottom++;
+ 				}
+ 			}
+ 		}
