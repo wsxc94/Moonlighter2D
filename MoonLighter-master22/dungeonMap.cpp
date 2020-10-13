@@ -69,6 +69,7 @@ void DungeonMap::update()
 void DungeonMap::render()
 {
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage(_backImg), 0, 0);
+	
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		if (_vTile[i].terrain == TR_NONE || _vTile[i].key == "") continue;
@@ -88,10 +89,6 @@ void DungeonMap::render()
 	for (int i = 0; i < _vItem.size(); i++)
 	{
 		_vItem[i]->render(getMemDC());
-	}
-	for (int i = 0; i < _vTile.size(); i++)
-	{
-		if (_vTile[i].tState == TS_PORTAL) FrameRect(getMemDC(), _vTile[i].rc, RGB(255, 255, 255));
 	}
 	this->dgDoorRender();
 
@@ -339,22 +336,22 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 	if ((*map)->_leftDg != nullptr)
 	{
 		(*map)->_leftDoor = new dgDoor;
-		(*map)->_leftDoor->init(35, 280, "던전문(양옆)", 1);
+		(*map)->_leftDoor->init(35, 280, "던전문(양옆)", "던전문뚜껑(양옆)", 1);
 	}
 	if ((*map)->_rightDg != nullptr)
 	{
 		(*map)->_rightDoor = new dgDoor;
-		(*map)->_rightDoor->init(1120, 280, "던전문(양옆)", 0);
+		(*map)->_rightDoor->init(1120, 280, "던전문(양옆)", "던전문뚜껑(양옆)", 0);
 	}
 	if ((*map)->_topDg != nullptr)
 	{
 		(*map)->_topDoor = new dgDoor;
-		(*map)->_topDoor->init(525, 0, "던전문(위아래)", 0);
+		(*map)->_topDoor->init(525, 0, "던전문(위아래)", "던전문뚜껑(위아래)", 0);
 	}
 	if ((*map)->_bottomDg != nullptr)
 	{
 		(*map)->_bottomDoor = new dgDoor;
-		(*map)->_bottomDoor->init(525, 630, "던전문(위아래)", 1);
+		(*map)->_bottomDoor->init(525, 630, "던전문(위아래)", "던전문뚜껑(위아래)", 1);
 	}
 
 	if ((*map)->_dgKind == DG_SEMIBOSS)
@@ -363,15 +360,15 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 		{
 		case 0: // 왼쪽에 보스문 생성
 			(*map)->_leftDoor = new dgBossDoor;
-			(*map)->_leftDoor->init(43, 235, "보스문(양옆)", 1);
+			(*map)->_leftDoor->init(43, 235, "보스문(양옆)", "보스문뚜껑(양옆)", 1);
 			break;
 		case 1: // 오른쪽에 보스문 생성
 			(*map)->_rightDoor = new dgBossDoor;
-			(*map)->_rightDoor->init(1109, 235, "보스문(양옆)", 0);
+			(*map)->_rightDoor->init(1109, 235, "보스문(양옆)", "보스문뚜껑(양옆)", 0);
 			break;
 		case 2: // 위에 보스문 생성
 			(*map)->_topDoor = new dgBossDoor;
-			(*map)->_topDoor->init(515, 8, "보스문(위아래)", 0);
+			(*map)->_topDoor->init(515, 8, "보스문(위아래)", "보스문뚜껑(위아래)", 0);
 			break;
 		}
 

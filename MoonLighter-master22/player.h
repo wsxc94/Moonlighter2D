@@ -17,7 +17,7 @@ enum PLAYER_STATE
 	PLAYER_TALK,
 	PLAYER_DIE,
 	PLAYER_FALL,
-	PLAYER_SWIM
+	PLAYER_SWIM,
 };
 
 enum WEAPONSTATE
@@ -83,6 +83,7 @@ private:
 	int _lastRollY;			// 구르기전 y
 	int	_holeAlpha;			// 구르기 알파값
 
+
 	int _attackCount;
 	int _attackIndex;
 
@@ -118,6 +119,9 @@ public:
 	void keyInput();		//플레이어의 상태에 상관없이 키 입력을 받는 함수 
 	void npcTalk(bool& isTalk);
 
+
+	//게터 세터 모음
+public:
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }
 

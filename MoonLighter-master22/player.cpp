@@ -644,3 +644,4 @@ void player::npcTalk(bool& isTalk)
 	}
 }
 
+

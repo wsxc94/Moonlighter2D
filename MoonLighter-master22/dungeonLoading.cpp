@@ -109,8 +109,12 @@ void dungeonLoading::loadImage()
 
 	_loading->loadFrameImage("던전문(위아래)", "Images/던전/dungeonDoorUD6.bmp", 1050, 212, 6, 2);
 	_loading->loadFrameImage("던전문(양옆)", "Images/던전/dungeonDoorLR6.bmp", 630, 350, 6, 2);
+	_loading->loadFrameImage("던전문뚜껑(위아래)", "Images/던전/dungeonDoorTopUD.bmp", 175, 212, 1, 2);
+	_loading->loadFrameImage("던전문뚜껑(양옆)", "Images/던전/dungeonDoorTopLR.bmp", 105, 350, 1, 2);
 	_loading->loadFrameImage("보스문(위아래)", "Images/던전/bossDoorH17.bmp", 1632, 108,17,2);
 	_loading->loadFrameImage("보스문(양옆)", "Images/던전/bossDoorW17.bmp", 918, 192,17,2);
+	_loading->loadFrameImage("보스문뚜껑(양옆)", "Images/던전/bossDoorTopW17.bmp", 54, 192,1,2);
+	_loading->loadFrameImage("보스문뚜껑(위아래)", "Images/던전/bossDoorTopH17.bmp", 96, 54,1,1);
 
 }
 

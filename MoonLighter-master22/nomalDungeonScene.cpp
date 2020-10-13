@@ -19,6 +19,7 @@ HRESULT nomalDungeonScene::init()
 	_player = RectMakeCenter(WINSIZEX / 2, WINSIZEY / 2, 40, 40);
 	//¿¡³Ê¹Ì Å×½ºÆ®
 
+
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
@@ -42,22 +43,6 @@ void nomalDungeonScene::update()
 	{
 		SOUNDMANAGER->play("dungeonBGM",0.2f);
 	}
-
-	//°ñ·½½ºÅ©·Ñ ¾÷µ«
-	_golemScroll->update();
-	//¹Ì´Ï¸Ê ¾È°£ºÎºÐ Ãß°¡ÇØÁÜ (°ÇµéÇÊ¿ä¾øÀ½)
-	if (this->minimapPush(_currentDungeon->getDungeonXY()))
-	{
-		_vMinimap.push_back(make_pair(_currentDungeon->getDungeonXY(), _currentDungeon));
-	}
-
-	//´øÀü ¾÷µ«
-	_currentDungeon->update();
-	//Ä«¸Þ¶ó ¾÷µ«
-	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
-	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
-
-
 
 	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
@@ -87,10 +72,27 @@ void nomalDungeonScene::update()
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 		}
 	}
-	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5)
+	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
 		this->setNewFloor();
 	}
+
+
+	//°ñ·½½ºÅ©·Ñ ¾÷µ«
+	_golemScroll->update();
+	//¹Ì´Ï¸Ê ¾È°£ºÎºÐ Ãß°¡ÇØÁÜ (°ÇµéÇÊ¿ä¾øÀ½)
+	if (this->minimapPush(_currentDungeon->getDungeonXY()))
+	{
+		_vMinimap.push_back(make_pair(_currentDungeon->getDungeonXY(), _currentDungeon));
+	}
+
+
+	//´øÀü ¾÷µ«
+	_currentDungeon->update();
+	//Ä«¸Þ¶ó ¾÷µ«
+	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
+	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
+
 
 	PLAYER->update();
 	ITEMMENU->update();
@@ -98,9 +100,9 @@ void nomalDungeonScene::update()
 
 void nomalDungeonScene::render()
 {
-	_currentDungeon->render();
 
 	PLAYER->render(getMemDC());
+	_currentDungeon->render();
 
 	//°ñ·½ ½ºÅ©·Ñ ·»´õ
 	if (_golemScroll->getAniState() == ANIMATION_PLAY)

@@ -41,10 +41,11 @@ void object::render()
 	}
 }
 
-HRESULT dgDoor::init(int x, int y, string key,int frameY)
+HRESULT dgDoor::init(int x, int y, string key, string topkey, int frameY)
 {
 	_kind = DOOR_NOMAL;
 	_imgKey = key;
+	_imgTopKey = topkey;
 	_rc = RectMake(x, y, IMAGEMANAGER->findImage(key)->getFrameWidth(), IMAGEMANAGER->findImage(key)->getFrameHeight());
 	_close = new animation;
 	_close->init(IMAGEMANAGER->findImage(key), frameY, 7);
@@ -59,6 +60,7 @@ HRESULT dgDoor::init(int x, int y, string key,int frameY)
 
 	_isOpen = false;
 	_isClose = false;
+	_frameY = frameY;
 
 	return S_OK;
 }
@@ -80,6 +82,7 @@ void dgDoor::render()
 	//_close->CameraRender(getMemDC(), _rc.left, _rc.top);
 	_close->ZoderRender(0, _rc.left, _rc.top);
 	if(_isOpen) _open->ZoderRender(1, _rc.left, _rc.top);
+	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage(_imgTopKey), 2000, _rc.left, _rc.top, 0, _frameY);
 }
 
 void dgDoor::openPlay()
@@ -115,10 +118,11 @@ void dgChest::openPlay()
 {
 }
 
-HRESULT dgBossDoor::init(int x, int y, string key, int frameY)
+HRESULT dgBossDoor::init(int x, int y, string key, string topkey, int frameY)
 {
 	_kind = DOOR_BOSS;
 	_imgKey = key;
+	_imgTopKey = topkey;
 	_x = x + IMAGEMANAGER->findImage(key)->getFrameWidth();
 	_y = y + IMAGEMANAGER->findImage(key)->getFrameHeight();
 
@@ -147,6 +151,8 @@ HRESULT dgBossDoor::init(int x, int y, string key, int frameY)
 	_isOpen = false;
 	_isClose = false;
 
+	_frameY = frameY;
+
 	return S_OK;
 }
 
@@ -163,8 +169,8 @@ void dgBossDoor::update()
 
 void dgBossDoor::render()
 {
-	_open->ZorderStretchRender(2000, _x, _y,2.f);
-	//FrameRect(getMemDC(), _rc,RGB(255,255,255));
+	_open->ZorderStretchRender(0, _x, _y,2.f);
+	CAMERAMANAGER->ZorderStretchFrameRender(IMAGEMANAGER->findImage(_imgTopKey), 2000, _x - IMAGEMANAGER->findImage(_imgTopKey)->getFrameWidth(), _y - IMAGEMANAGER->findImage(_imgTopKey)->getFrameHeight(), 0, _frameY,2.f);
 }
 
 void dgBossDoor::openPlay()

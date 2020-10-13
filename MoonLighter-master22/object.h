@@ -31,8 +31,10 @@ protected:
 	RECT _rc;
 	int _x, _y;
 	string _imgKey;
+	string _imgTopKey;
+	int _frameY;
 public:
-	virtual HRESULT init(int x, int y, string key, int frameY);
+	virtual HRESULT init(int x, int y, string key,string topkey, int frameY);
 	virtual void release();
 	virtual void update();
 	virtual void render();
@@ -49,7 +51,7 @@ public:
 class dgBossDoor : public dgDoor
 {
 public:
-	HRESULT init(int x, int y, string key, int frameY);
+	HRESULT init(int x, int y, string key, string topkey, int frameY);
 	void release();
 	void update();
 	void render();

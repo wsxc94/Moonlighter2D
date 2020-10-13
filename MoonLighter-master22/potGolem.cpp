@@ -253,7 +253,7 @@ void potGolem::emBulletFire()
 	{
 		if (_isFireSoundPlay == false)
 		{
-			SOUNDMANAGER->play("potFire");
+			SOUNDMANAGER->play("potFire",0.2f);
 			_isFireSoundPlay = true;
 		}
 		for (int i = 0; i < 30; i++)
@@ -350,7 +350,7 @@ void potGolem::emBulletMove()
 		if (wid != bWid || hei != bHei)
 		{
 			_bullet[i].isFire = false;
-			SOUNDMANAGER->play("potBulletPop", 0.5f);
+			SOUNDMANAGER->play("potBulletPop", 0.2f);
 			break;
 		}
 	}
@@ -369,7 +369,7 @@ void potGolem::emBulletMove()
 					if (_totalNode[y][x].nodeState == NODE_WALL)
 					{
 						_bullet[i].isFire = false;
-						SOUNDMANAGER->play("potBulletPop", 0.5f);
+						SOUNDMANAGER->play("potBulletPop", 0.2f);
 					}
 				}
 			}
