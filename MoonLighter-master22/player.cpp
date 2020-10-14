@@ -62,8 +62,6 @@ void player::release()
 
 void player::update()
 {
-	
-	
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -72,8 +70,7 @@ void player::update()
 	_player.rc = RectMakeCenter(_player.x, _player.y - 12, 45, 60);
 	_arrow->update();
 	this->keyInput();
-	this->updateWeaponState();
-	
+	this->updateWeaponState();	
 }
 
 void player::render(HDC hdc)
