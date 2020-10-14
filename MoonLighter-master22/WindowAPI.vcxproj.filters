@@ -252,6 +252,12 @@
     <ClCompile Include="bossSkeleton.cpp">
       <Filter>MainGame\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="effectManager.cpp">
+      <Filter>GameFramework\매니져</Filter>
+    </ClCompile>
+    <ClCompile Include="damageFont.cpp">
+      <Filter>GameFramework\매니져</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -406,6 +412,12 @@
     </ClInclude>
     <ClInclude Include="cursor.h">
       <Filter>GameFramework\커서</Filter>
+    </ClInclude>
+    <ClInclude Include="effectManager.h">
+      <Filter>GameFramework\매니져</Filter>
+    </ClInclude>
+    <ClInclude Include="damageFont.h">
+      <Filter>GameFramework\매니져</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

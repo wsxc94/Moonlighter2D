@@ -155,6 +155,8 @@
     <ClInclude Include="cameraManager.h" />
     <ClInclude Include="commonMacroFunction.h" />
     <ClInclude Include="cursor.h" />
+    <ClInclude Include="damageFont.h" />
+    <ClInclude Include="effectManager.h" />
     <ClInclude Include="displayStand.h" />
     <ClInclude Include="dungeonLoading.h" />
     <ClInclude Include="dungeonMap.h" />
@@ -208,6 +210,8 @@
     <ClCompile Include="calendar.cpp" />
     <ClCompile Include="cameraManager.cpp" />
     <ClCompile Include="cursor.cpp" />
+    <ClCompile Include="damageFont.cpp" />
+    <ClCompile Include="effectManager.cpp" />
     <ClCompile Include="displayStand.cpp" />
     <ClCompile Include="dungeonLoading.cpp" />
     <ClCompile Include="dungeonMap.cpp" />

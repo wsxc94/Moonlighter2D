@@ -30,6 +30,7 @@ HRESULT player::init()
 	IMAGEMANAGER->addFrameImage("던전달리기HIT", "Images/플레이어/player_run_dungeon_Hit8X4.bmp", 960, 480, 8, 4);
 	IMAGEMANAGER->addFrameImage("숏소드HIT", "Images/플레이어/short_attack_Hit6X4.bmp", 720, 480, 6, 4);
 	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
+	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
 
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;
@@ -87,6 +88,7 @@ HRESULT player::init()
 	_player.weapon = SHORT_SOWRD;
 	_player.index = 0;
 	_player.count = 0;
+	_player.dashCount = 0;
 
 	_playerAttackBox.rc = RectMakeCenter(10, 10, 10, 10);
 	_playerAttackBox.isHit = false;
@@ -370,8 +372,11 @@ void player::playerState()
 			break;
 
 		case PLAYER_ROLL:
-			_rollJumpPower = 6.0f;
+			_rollJumpPower = 5.0f;
 			_rollGravity = 0.1f;
+			_player.dashCount++;
+			if(_player.dashCount % 5 == 0)
+			EFFECTMANAGER->addParticle("대시이펙트", _player.y, _player.x, _player.y,true,90);
 
 			_rollCount++;
 			switch (_player.direction)
@@ -399,6 +404,7 @@ void player::playerState()
 				_rollIndex = 0;
 				_rollGravity = 0;
 				_rollJumpPower = 0;
+				_player.dashCount = 0;
 			}
 			break;
 

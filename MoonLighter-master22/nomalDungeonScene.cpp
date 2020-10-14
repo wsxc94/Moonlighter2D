@@ -34,6 +34,9 @@ HRESULT nomalDungeonScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
+	this->initItemSlot();
+	this->getInvenItem();
+
 	return S_OK;
 }
 
@@ -47,30 +50,35 @@ void nomalDungeonScene::update()
 	//this->soundUpdate();
 
 
-	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
+	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN 
+		&& _currentDungeon->getDungeonKind() != DG_SEMIBOSS)
 	{
 		//플레이어 이동
 		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
 		{
 		case 1:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(1085 + 17);
 			PLAYER->setY(350 + 17);
 			break;
 		case 2:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(140 + 17);
 			PLAYER->setY(350 + 17);
 			break;
 		case 3:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(595 + 17);
 			PLAYER->setY(595 + 17);
 			break;
 		case 4:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(595 + 17);
 			PLAYER->setY(105 + 17);
 			break;
 		}
 		//던전 이동
-		_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+		
 		
 	}
 	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
@@ -124,6 +132,9 @@ void nomalDungeonScene::render()
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 	ITEMMENU->render(getMemDC());
+
+	//this->itemResultRender();
+	
 }
 bool nomalDungeonScene::minimapPush(POINT pt)
 {
@@ -195,4 +206,118 @@ void nomalDungeonScene::setNewFloor()
 void nomalDungeonScene::soundUpdate()
 {
 
+}
+
+void nomalDungeonScene::initItemSlot()
+{
+	for (int i = 0; i < 28; i++)
+	{
+		_dungeonSlot[i].slotIdx = i;
+		_dungeonSlot[i].isEmpty = true;
+	}
+}
+
+void nomalDungeonScene::getInvenItem()
+{	
+	//원래 샵 인벤토리 벡터에 있던 아이템은 전부 지우기 
+	
+	deleteInvenItems();
+
+	for (int i = 0; i < ITEMMENU->getInventory()->getItem().size(); i++)
+	{
+		//장착 슬롯에 있는 아이템을 제외하고 인벤토리 슬롯에 있던 아이템 가져오기 
+		switch (ITEMMENU->getInventory()->getItem()[i]->getInvenPosIdx())
+		{
+			case 5: case 6: case 12: case 13:
+			case 19: case 20: case 26: case 27:
+				break;
+
+			default:
+				gameItem *item = new gameItem;
+				item->init(ITEMMENU->getInventory()->getItem()[i]);
+				_vItem.push_back(item);
+				_dungeonSlot[item->getInvenPosIdx()].isEmpty = false;
+				break;
+		}
+	}
+}
+
+void nomalDungeonScene::deleteInvenItems()
+{
+	for (int i = 0; i < _vItem.size(); )
+	{
+		switch (_vItem[i]->getInvenPosIdx())
+		{
+			case 5: case 6: case 12: case 13:
+			case 19: case 20: case 26: case 27:
+				i++;
+				break;
+
+			default:
+				SAFE_DELETE(_vItem[i]);
+				_vItem.erase(_vItem.begin() + i);
+				break;
+		}
+	}
+}
+
+void nomalDungeonScene::itemResultRender()
+{
+	IMAGEMANAGER->render("menu_shopInventory", getMemDC(), 100, 86);
+	for (int i = 0; i < 28; i++)
+	{
+		//비어있는 슬롯은 건너뛰기 
+		if (_dungeonSlot[i].isEmpty) continue;
+
+		//비어있지 않은 슬롯은 인벤토리 벡터에서 해당 슬롯의 인덱스와 일치하는 아이템을 출력 
+		for (int j = 0; j < _vItem.size(); j++)
+		{
+			//인벤토리 벡터에서 슬롯의 인덱스와 일치하지 않는 아이템은 건너뛰기 
+			if (_vItem[j]->getInvenPosIdx() != i) continue;
+
+			int columnIdx = _vItem[j]->getInvenPosIdx() % 7;
+			int rowIdx = _vItem[j]->getInvenPosIdx() / 7;
+
+			switch (_vItem[j]->getInvenPosIdx())
+			{
+			case 0: case 1: case 2: case 3: case 4:
+				_vItem[j]->getItemImg()->render(getMemDC(),
+					200 + (columnIdx * 72), 172);
+				countRender(_vItem[j]->getCount(),
+					240 + (columnIdx * 72), 208);
+				break;
+
+			case 7: case 8: case 9: case 10: case 11:
+			case 14: case 15: case 16: case 17: case 18:
+			case 21: case 22: case 23: case 24: case 25:
+				_vItem[j]->getItemImg()->render(getMemDC(),
+					200 + (columnIdx * 72), 258 + ((rowIdx - 1) * 72));
+				countRender(_vItem[j]->getCount(),
+					240 + (columnIdx * 72), 294 + ((rowIdx - 1) * 72));
+				break;
+
+			}//end of switch
+		}//end of for(j)
+	}//end of for(i)
+}
+
+void nomalDungeonScene::countRender(int count, int destX, int destY)
+{
+	if (count == 0)
+	{
+		IMAGEMANAGER->render("0_black", getMemDC(), destX, destY);
+		return;
+	}
+
+	for (int i = 1, distance = 0; i <= count; i *= 10)
+	{
+		int number = (count / i) % 10;
+
+		char keyName[16];
+
+		wsprintf(keyName, "%d_black", number);
+		IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
+		distance++;
+
+	}//end of for
 }

@@ -42,6 +42,7 @@ struct tagPlayer
 	WEAPONSTATE weapon;
 	int count;
 	int index;
+	int dashCount;
 };
 
 struct tagPlayerAttackBox
