@@ -3,15 +3,16 @@
 
 void npc::setshopTargetPos()
 {
+	//2¹øÀÌ Å¸°ÙÀÌ´Ù.
 	vector<tagPosF> tmp;
 	// 0¹ø ÁÂÆÇ
 	tmp.push_back(tagPosF(600, 750));
 	tmp.push_back(tagPosF(425, 750));
 	tmp.push_back(tagPosF(421, 650));
+
 	tmp.push_back(tagPosF(421, 600));
 	tmp.push_back(tagPosF(580, 600));
 	tmp.push_back(tagPosF(580, 690));
-
 	tmp.push_back(tagPosF(620, 680));
 	tmp.push_back(tagPosF(660, 830));
 
@@ -21,8 +22,8 @@ void npc::setshopTargetPos()
 	tmp.push_back(tagPosF(670, 780));
 	tmp.push_back(tagPosF(610, 740));
 	tmp.push_back(tagPosF(563, 655));
-	tmp.push_back(tagPosF(610, 740));
 
+	tmp.push_back(tagPosF(610, 740));
 	tmp.push_back(tagPosF(640, 680));
 	tmp.push_back(tagPosF(660, 830));
 	shop_target.push_back(tmp);
@@ -33,7 +34,6 @@ void npc::setshopTargetPos()
 	tmp.push_back(tagPosF(460, 790));
 	tmp.push_back(tagPosF(420, 710));
 	tmp.push_back(tagPosF(460, 790));
-
 	tmp.push_back(tagPosF(660, 680));
 	tmp.push_back(tagPosF(660, 830));
 	shop_target.push_back(tmp);
@@ -266,15 +266,33 @@ void npc::move(NPC_MAP NPC_SHOP)
 	{
 		_angle = getAngle(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x, 
 			shop_target[shop_targetIdx][shop_currentTargetIdx].y);
+
+		_pos.x += cosf(_angle) * _speed;
+		_pos.y += -sinf(_angle) * _speed / 2;
 	}
 	
 	if (getDistance(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
 		shop_target[shop_targetIdx][shop_currentTargetIdx].y) < 1)
 	{
 		
+		
 		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() - 1 && !_delay) {
 			_delay = true;
-			shop_currentTargetIdx++;
+
+			if (shop_currentTargetIdx != 2)
+				shop_currentTargetIdx++;
+			else {
+				_stop = true;
+				_speed = 0;
+				if (shop_targetIdx == 0 || shop_targetIdx == 2) {
+					_aniNpc->setFrameY(2);
+				}
+				else if (shop_targetIdx == 1 || shop_targetIdx == 3)
+				{
+					_aniNpc->setFrameY(3);
+				}
+
+			}
 
 		}
 
@@ -283,9 +301,11 @@ void npc::move(NPC_MAP NPC_SHOP)
 		_delay = false;
 	}
 	
+	/*if (!_stop) {
+		_pos.x += cosf(_angle) * _speed;
+		_pos.y += -sinf(_angle) * _speed / 2;
+	}*/
 
-	_pos.x += cosf(_angle) * _speed;
-	_pos.y += -sinf(_angle) * _speed / 2;
 }
 
 void npc::action(string talk)

@@ -7,8 +7,6 @@ HRESULT displayStand::init()
 	_cursor = new cursor;
 	_cursor->init();
 
-	ITEMMENU->init();
-
 	//메뉴 위치 초기화 
 	initMenuPos();
 
@@ -76,8 +74,6 @@ void displayStand::update()
 		}
 	}
 
-	//싱글톤 업데이트 
-	ITEMMENU->update();
 }
 
 void displayStand::render()
@@ -87,20 +83,18 @@ void displayStand::render()
 	//wsprintf(str, "invenSize : %d", _vShopInven.size());
 	//TextOut(getMemDC(), 10, 90, str, strlen(str));
 
-	wsprintf(str, "invenSize : %d", _vShopInven.size());
-	TextOut(getMemDC(), 10, 90, str, strlen(str));
+	/*wsprintf(str, "invenSize : %d", _vShopInven.size());
+	TextOut(getMemDC(), 10, 90, str, strlen(str));*/
 
-	ITEMMENU->render(getMemDC());
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	if (_displayItem[i].getType() == ITEM_EMPTY) continue;
 
-	for (int i = 0; i < 4; i++)
-	{
-		if (_displayItem[i].getType() == ITEM_EMPTY) continue;
+	//	/*wsprintf(str, "displayItem[%d] : %d", i, _displayItem[i].getType());
+	//	TextOut(getMemDC(), 10, 130 + (i * 25), str, strlen(str));*/
 
-		wsprintf(str, "displayItem[%d] : %d", i, _displayItem[i].getType());
-		TextOut(getMemDC(), 10, 130 + (i * 25), str, strlen(str));
-
-		_displayItem[i].getItemImg()->render(getMemDC(), 10, 130 + (i * 25));
-	}
+	//	_displayItem[i].getItemImg()->render(getMemDC(), 10, 130 + (i * 25));
+	//}
 
 	if (_menuOn)
 	{
@@ -131,6 +125,7 @@ void displayStand::openDisplayStand()
 
 	_menuOn = true;
 	_openMenu = true;
+	PLAYER->setDisplayOn(true);
 
 	//인벤토리 슬롯값 초기화 
 	initInvenSlot();
@@ -151,6 +146,7 @@ void displayStand::closeDisplayStand()
 
 		_closeMenu = true;
 		_cursor->setShowCursor(false);
+		PLAYER->setDisplayOn(false);
 	}
 }
 
@@ -165,6 +161,7 @@ void displayStand::toggleMenu()
 		{
 			_closeMenu = true;
 			_cursor->setShowCursor(false);
+			PLAYER->setDisplayOn(false);
 
 			//인벤토리의 아이템 슬롯과 동기화시키기
 			ITEMMENU->getInventory()->syncWithShopInven(_vShopInven);
@@ -173,7 +170,7 @@ void displayStand::toggleMenu()
 		{
 			_menuOn = true;
 			_openMenu = true;
-
+			PLAYER->setDisplayOn(true);
 			//인벤토리 슬롯값 초기화 
 			initInvenSlot();
 

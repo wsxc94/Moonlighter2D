@@ -3,85 +3,9 @@
 
 HRESULT player::init()
 {
-<<<<<<< HEAD
-	IMAGEMANAGER->addFrameImage("던전구르기", "Images/플레이어/player_roll_dungeon8X4.bmp", 960, 480, 8, 4);
-	IMAGEMANAGER->addFrameImage("던전달리기", "Images/플레이어/player_run_dungeon8X4.bmp", 960, 480, 8, 4);
-	IMAGEMANAGER->addFrameImage("던전idle", "Images/플레이어/player_idle_dungeon10X4.bmp", 1200, 480, 10, 4);
-
-	IMAGEMANAGER->addFrameImage("구르기", "Images/플레이어/shop_roll.bmp", 960, 480, 8, 4);
-	IMAGEMANAGER->addFrameImage("달리기", "Images/플레이어/shop_run8x4.bmp", 960, 480, 8, 4);
-	IMAGEMANAGER->addFrameImage("idle", "Images/플레이어/shop_idle10x4.bmp", 1200, 480, 10, 4);
-
-	IMAGEMANAGER->addFrameImage("죽음", "Images/플레이어/player_die10X1.bmp", 1200, 120, 10, 1);
-	IMAGEMANAGER->addFrameImage("구멍빠짐", "Images/플레이어/hole_fall3X1.bmp", 360, 120, 3, 1);
-	IMAGEMANAGER->addFrameImage("죽음포탈", "Images/플레이어/teleportOut58x1.bmp", 7424, 128, 58, 1);
-
-	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack9X4.bmp", 1080, 480, 9, 4);
-	IMAGEMANAGER->addFrameImage("활스킬", "Images/플레이어/bow_skill2X4.bmp", 240, 480, 2, 4);
-
-
-	IMAGEMANAGER->addFrameImage("숏소드", "Images/플레이어/short_attack6X4.bmp", 720, 480, 6, 4);
-	IMAGEMANAGER->addFrameImage("숏소드2연격", "Images/플레이어/short_attack_two5X4.bmp", 600, 480, 5, 4);
-	IMAGEMANAGER->addFrameImage("방패", "Images/플레이어/player_shild.bmp", 120, 480, 1, 4);
-
-	IMAGEMANAGER->addImage("그림자", "Images/플레이어/player_Shadow.bmp", 70, 50, true, RGB(255, 0, 255));
-	IMAGEMANAGER->addFrameImage("온천", "Images/플레이어/swimState10X4.bmp", 500, 208, 10, 4);
-
-	IMAGEMANAGER->addFrameImage("던전idleHIT", "Images/플레이어/player_idle_dungeon_Hit10X4.bmp", 1200, 480, 10, 4);
-	IMAGEMANAGER->addFrameImage("던전달리기HIT", "Images/플레이어/player_run_dungeon_Hit8X4.bmp", 960, 480, 8, 4);
-	IMAGEMANAGER->addFrameImage("숏소드HIT", "Images/플레이어/short_attack_Hit6X4.bmp", 720, 480, 6, 4);
-	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
-	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
-
-	_aniTownIdle = new ::animation;
-	_aniTownRun = new ::animation;
-	_aniTownRoll = new ::animation;
-	_aniDgIdle = new ::animation;
-	_aniDgRun = new ::animation;
-	_aniDgRoll = new ::animation;
-	_aniFall = new ::animation;
-	_aniSword = new ::animation;
-	_aniSwordTwo = new ::animation;
-	_aniBow = new ::animation;
-	_aniDie = new ::animation;
-	_aniSwim = new ::animation;
-	_aniHit = new ::animation;
-	_aniRunHit = new ::animation;
-	_aniSwordHit = new ::animation;
-	_aniSwordTwoHit = new ::animation;
-	_deathPortal = new ::animation;
-
-	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
-	_aniTownRun->init(IMAGEMANAGER->findImage("달리기"), 0, 5, true);
-	_aniTownRoll->init(IMAGEMANAGER->findImage("구르기"), 0, 7);
-	_aniTownRoll->aniStop();
-	_aniDgIdle->init(IMAGEMANAGER->findImage("던전idle"), 0, 7, true);
-	_aniDgRun->init(IMAGEMANAGER->findImage("던전달리기"), 0, 5, true);
-	_aniDgRoll->init(IMAGEMANAGER->findImage("던전구르기"), 0, 5);
-	_aniDgRoll->aniStop();
-	_aniFall->init(IMAGEMANAGER->findImage("구멍빠짐"), 0, 7);
-	_aniFall->aniStop();
-	_aniSword->init(IMAGEMANAGER->findImage("숏소드"), 0, 5);
-	_aniSword->aniStop();
-	_aniSwordTwo->init(IMAGEMANAGER->findImage("숏소드2연격"), 0, 5);
-	_aniSwordTwo->aniStop();
-	_aniBow->init(IMAGEMANAGER->findImage("활날리기"), 0, 5);
-	_aniBow->aniStop();
-	_aniDie->init(IMAGEMANAGER->findImage("죽음"), 0, 7);
-	_aniDie->aniStop();
-	_aniSwim->init(IMAGEMANAGER->findImage("온천"), 0, 7);
-	_aniHit->init(IMAGEMANAGER->findImage("던전idleHIT"), 0, 7, true);
-	_aniRunHit->init(IMAGEMANAGER->findImage("던전달리기HIT"), 0, 5, true);
-	_aniSwordHit->init(IMAGEMANAGER->findImage("숏소드HIT"), 0, 5);
-	_aniSwordHit->aniStop();
-	_aniSwordTwoHit->init(IMAGEMANAGER->findImage("숏소드2연격HIT"), 0, 5);
-	_aniSwordTwoHit->aniStop();
-	_deathPortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
-	_deathPortal->aniStop();
-=======
 	
 	this->imageInit();
->>>>>>> player
+
 
 	_player.x = 200;
 	_player.y = 200;

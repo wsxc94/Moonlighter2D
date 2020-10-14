@@ -48,6 +48,7 @@ void shopLoading::loadingImage()
 	_loading->loadFrameImage("상점좌판", "Images/상점/상점좌판.bmp", 98, 112, 1, 1);
 	_loading->loadFrameImage("상점책상", "Images/상점/상점책상.bmp", 192, 66, 1, 1);
 	_loading->loadFrameImage("상점침대", "Images/상점/상점침대.bmp", 102, 76, 1, 1);
+	_loading->loadFrameImage("아이템그림자", "Images/상점/item_shadow.bmp", 24, 12, 1, 1);
 }
 
 void shopLoading::loadingSound()

@@ -81,6 +81,8 @@ private:
 	bool _isHit;
 	bool _isDie;
 
+	bool _displayOn;
+
 	int _frameX;
 	int _frameY;
 
@@ -148,8 +150,12 @@ public:
 	void playerPush();		//방패를 든채로 맞거나 화살을 쏠때 밀려나나
 	bool getKeyMove();
 
-
 	void imageInit();
+
+	void setDisplayOn(bool on) { _displayOn = on; }
+	bool& getDisplayOn() { return _displayOn; }
+
+
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }
 

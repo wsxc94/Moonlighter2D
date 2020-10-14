@@ -34,7 +34,6 @@ HRESULT mainGame::init()
 
 	CAMERAMANAGER->FadeInit(1, FADE_IN);
 
-
 	return S_OK;
 }
 
@@ -85,8 +84,8 @@ void mainGame::render()
 	EFFECTMANAGER->render();
 	//프레임을 보고싶으면 주석해제
 	TIMEMANAGER->render(getMemDC());
+	
 	PLAYERDATA->render(getMemDC());
-
 	CAMERAMANAGER->FadeRender(getMemDC());
 
 //=============================================================
