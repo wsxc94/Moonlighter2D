@@ -39,14 +39,11 @@ void gotoDungeon::update()
 	else _portalPosCheck = false;
 
 	if ((y < 1030) && _dungeonDoorCheck) {
-		/*cout << "문열기" << endl;
-		_DungeonDoorAnim = new animation;
-		_DungeonDoorAnim->init(IMAGEMANAGER->findImage("던전가는길문"), 0, 7, false, false);
-		_dungeonDoorCheck = false;*/
 		if (_DungeonDoorAnim->getAniState() != ANIMATION_PLAY)
 		{
 			_DungeonDoorAnim->aniPlay();
 			_dungeonDoorCheck = false;
+			SOUNDMANAGER->play("doorBGM");
 		}
 	}
 	else if ((y > 1030) && !_dungeonDoorCheck) {

@@ -18,13 +18,11 @@ enum PLAYER_STATE
 	PLAYER_DIE,
 	PLAYER_FALL,
 	PLAYER_SWIM,
-<<<<<<< HEAD
-=======
+
 	HIT_IDLE,
 	HIT_RUN,
 	HIT_SWORD,
 	HIT_SWORD_TWO
->>>>>>> origin/player
 };
 
 enum WEAPONSTATE

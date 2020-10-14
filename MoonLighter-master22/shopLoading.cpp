@@ -52,6 +52,5 @@ void shopLoading::loadingImage()
 
 void shopLoading::loadingSound()
 {
-	_loading->loadSound("상점입장0", "Sound/shopSound/shopDoorOpen0.wav");
-	_loading->loadSound("상점입장1", "Sound/shopSound/shopDoorOpen1.wav");
+	
 }

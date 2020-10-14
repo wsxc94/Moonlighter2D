@@ -27,7 +27,7 @@ void townLoading::update()
 	_loading->update();
 	if (_loading->loadingDone())
 	{
-		SCENEMANAGER->loadScene("상점가판대");
+		SCENEMANAGER->loadScene("타운화면");
 	}
 }
 
@@ -284,5 +284,13 @@ void townLoading::loadingSound()
 	//플레이어 사운드 
 	_loading->loadSound("heal", "Sound/playerSound/heal.wav");
 	_loading->loadSound("weaponChange", "Sound/playerSound/weaponChange.wav");
+	_loading->loadSound("doorBGM", "Sound/door.wav");
+
+	_loading->loadSound("상점입장0", "Sound/shopSound/shopDoorOpen0.wav");
+	_loading->loadSound("상점입장1", "Sound/shopSound/shopDoorOpen1.wav");
+	_loading->loadSound("문닫아", "Sound/shopSound/문닫힘.wav");
+
+	//마을 사운드
+	_loading->loadSound("개소리" , "Sound/townSound/개소리.wav");
 
 }

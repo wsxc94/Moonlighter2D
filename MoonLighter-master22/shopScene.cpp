@@ -4,15 +4,15 @@
 HRESULT shopScene::init()
 {
 	//클래스 초기화
+	
+
 	_npc = new ShopNpcManager;
 	_npc->init();
 
 	_displayStand = new displayStand;
 	_displayStand->init();
 
-	_pivotX = WINSIZEX / 2;
-	_pivotY = WINSIZEY / 2;
-
+	PLAYER->init();
 	PLAYER->setX(700);
 	PLAYER->setY(850);
 
@@ -24,6 +24,10 @@ HRESULT shopScene::init()
 
 	IMAGEMANAGER->addImage("temp", 2000, 1000);
 
+	CAMERAMANAGER->FadeInit(80, FADE_IN);
+	CAMERAMANAGER->FadeStart();
+
+	_visit = false;
 	return S_OK;
 }
 
@@ -37,14 +41,14 @@ void shopScene::release()
 
 void shopScene::update()
 {
+	if (!CAMERAMANAGER->FadeIsStart() && !_visit) {
+		_visit = true;
+		SOUNDMANAGER->play("문닫아");
+	}
+
 	if (!SOUNDMANAGER->isPlaySound("상점브금")) {
 		SOUNDMANAGER->play("상점브금", 0.3f);
 	}
-
-	if (INPUT->GetKey(VK_LEFT) && _pivotX >= WINSIZEX / 2) _pivotX -= 10;
-	if (INPUT->GetKey(VK_RIGHT) && _pivotX < 1000 - WINSIZEX / 2) _pivotX += 10;
-	if (INPUT->GetKey(VK_UP) && _pivotY > WINSIZEY / 2) _pivotY -= 10;
-	if (INPUT->GetKey(VK_DOWN) && _pivotY < 1000 - WINSIZEY / 2) _pivotY += 10;
 
 	_npc->update();
 	_displayStand->update();
@@ -117,6 +121,7 @@ void shopScene::PlayerCol()
 	{
 		PLAYER->setPlayerState(PLAYER_STATE::PLAYER_IDLE);
 	}
+
 	if (GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),
 		(PLAYER->getShadowRect().left + PLAYER->getShadowRect().right) /2 , PLAYER->getShadowRect().top) == RGB(255, 0, 0) ||
 		GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),
