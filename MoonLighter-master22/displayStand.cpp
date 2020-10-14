@@ -13,7 +13,6 @@ HRESULT displayStand::init()
 	initMenuPos();
 
 	//아이템 구조체 초기화 
-	memset(&_tempItem, 0, sizeof(_tempItem));
 	memset(&_itemEmpty, 0, sizeof(_itemEmpty));
 	memset(&_itemGrabbed, 0, sizeof(_itemGrabbed));
 	memset(&_displayItem1, 0, sizeof(_displayItem1));
@@ -21,6 +20,17 @@ HRESULT displayStand::init()
 	memset(&_displayItem3, 0, sizeof(_displayItem3));
 	memset(&_displayItem4, 0, sizeof(_displayItem4));
 	memset(_itemPrice, 0, sizeof(_itemPrice));
+
+	//가격 커서 구조체 초기화 
+	_priceCursor.img = IMAGEMANAGER->findImage("arrow_price");
+	_priceCursor.posIdx = 0;
+	_priceCursor.digit[0] = 1;
+	_priceCursor.digit[1] = 10;
+	_priceCursor.digit[2] = 100;
+	_priceCursor.digit[3] = 1000;
+	_priceCursor.digit[4] = 10000;
+	_priceCursor.digit[5] = 100000;
+	_priceCursor.digit[6] = 1000000;
 
 	//상점 슬롯 초기화 
 	initShopSlot();
@@ -35,7 +45,7 @@ HRESULT displayStand::init()
 	//아이템 잡기 관련 변수 
 	_isGrabbingItem = false;
 	_isPuttingItem = false;
-	_grabSoundPlayed = false; 
+	_grabSoundPlayed = false;
 	_grabTime = 12;
 
 	return S_OK;
@@ -57,11 +67,14 @@ void displayStand::update()
 		openMenu();
 		closeMenu();
 
-		//키 입력 함수 
-		keyInput();
+		if (_menuOn)
+		{
+			//키 입력 함수 
+			keyInput();
 
-		//커서 애니메이션 함수 
-		_cursor->update();
+			//커서 애니메이션 함수 
+			_cursor->update();
+		}
 	}
 
 	//싱글톤 업데이트 
@@ -71,6 +84,9 @@ void displayStand::update()
 void displayStand::render()
 {
 	char str[100];
+
+	//wsprintf(str, "invenSize : %d", _vShopInven.size());
+	//TextOut(getMemDC(), 10, 90, str, strlen(str));
 
 	wsprintf(str, "invenSize : %d", _vShopInven.size());
 	TextOut(getMemDC(), 10, 90, str, strlen(str));
@@ -88,7 +104,13 @@ void displayStand::render()
 
 			if (_itemGrabbed.getType() != ITEM_EMPTY) itemGrabbedRender();
 
-			displayCount();
+			displayCountRender();
+			unitPriceRender();
+			totalPriceRender();
+			cursorRender();
+
+			//현재 가격책정 모드라면 가격 커서 렌더 
+			if (_shopCtrl == CTRL_PRICE) priceCursorRender();
 		}
 	}
 }
@@ -98,8 +120,8 @@ void displayStand::openDisplayStand()
 	//메뉴가 현재 열려있는 상태거나 열기 및 닫기 중이라면 함수 종료 
 	if (_menuOn || _openMenu || _closeMenu) return;
 
-	_menuOn = true; 
-	_openMenu = true; 
+	_menuOn = true;
+	_openMenu = true;
 
 	//인벤토리 슬롯값 초기화 
 	initInvenSlot();
@@ -116,9 +138,9 @@ void displayStand::closeDisplayStand()
 	if (INPUT->GetKeyDown('I'))
 	{
 		//현재 메뉴가 닫힌 상태거나 열기 및 닫기 중이라면 함수 종료 
-		if (!_menuOn || _openMenu || _closeMenu) return; 
+		if (!_menuOn || _openMenu || _closeMenu) return;
 
-		_closeMenu = true; 
+		_closeMenu = true;
 		_cursor->setShowCursor(false);
 	}
 }
@@ -128,11 +150,11 @@ void displayStand::toggleMenu()
 	if (INPUT->GetKeyDown('O'))
 	{
 		//현재 메뉴를 열고 있거나 닫고 있는 중이라면 함수 종료 
-		if (_openMenu || _closeMenu) return; 
+		if (_openMenu || _closeMenu) return;
 
 		if (_menuOn)
 		{
-			_closeMenu = true; 
+			_closeMenu = true;
 			_cursor->setShowCursor(false);
 
 			//인벤토리의 아이템 슬롯과 동기화시키기
@@ -141,7 +163,7 @@ void displayStand::toggleMenu()
 		else
 		{
 			_menuOn = true;
-			_openMenu = true; 
+			_openMenu = true;
 
 			//인벤토리 슬롯값 초기화 
 			initInvenSlot();
@@ -167,7 +189,7 @@ void displayStand::initMenuPos()
 
 void displayStand::openMenu()
 {
-	if (!_openMenu) return; 
+	if (!_openMenu) return;
 
 	menuMoveUp(&_shopInvenPos, SHOPINVENPOSY);
 	menuMoveLeft(&_displayPos, DISPLAYPOSX);
@@ -188,9 +210,9 @@ void displayStand::closeMenu()
 
 	if (_shopInvenPos.y == WINSIZEY && _displayPos.x == WINSIZEX)
 	{
-		_closeMenu = false; 
+		_closeMenu = false;
 		_menuOn = false;
-		
+
 		//다시 아이템 메뉴의 키값을 입력받도록 함. 
 		ITEMMENU->setCanKeyInput(true);
 	}
@@ -235,18 +257,18 @@ void displayStand::initShopSlot()
 
 		switch (_shopSlot[i].slotType)
 		{
-			case 0: case 1: case 2: case 3: case 4:
-			case 7: case 8: case 9: case 10: case 11:
-			case 14: case 15: case 16: case 17: case 18:
-			case 21: case 22: case 23: case 24: case 25:
-				_shopSlot[i].slotType = SLOT_INVEN;
-				break;
+		case 0: case 1: case 2: case 3: case 4:
+		case 7: case 8: case 9: case 10: case 11:
+		case 14: case 15: case 16: case 17: case 18:
+		case 21: case 22: case 23: case 24: case 25:
+			_shopSlot[i].slotType = SLOT_INVEN;
+			break;
 
-			case 5: case 6: case 19: case 20:
-				_shopSlot[i].slotType = SLOT_DISPLAY;
+		case 5: case 6: case 19: case 20:
+			_shopSlot[i].slotType = SLOT_DISPLAY;
 
-			case 12: case 13: case 26: case 27:
-				_shopSlot[i].slotType = SLOT_PRICE;
+		case 12: case 13: case 26: case 27:
+			_shopSlot[i].slotType = SLOT_PRICE;
 		}
 	}//end of for 
 }
@@ -258,18 +280,18 @@ void displayStand::initInvenSlot()
 		switch (i)
 		{
 			//진열 아이템 슬롯
-			case 5: case 6: case 19: case 20:
-				break;
-			
+		case 5: case 6: case 19: case 20:
+			break;
+
 			//진열 아이템 가격 슬롯 
-			case 12: case 13: case 26: case 27:
-				break;
-			
+		case 12: case 13: case 26: case 27:
+			break;
+
 			//인벤토리 슬롯 
-			default:
-				_shopSlot[i].isEmpty = true; 
-				break;
-			}
+		default:
+			_shopSlot[i].isEmpty = true;
+			break;
+		}
 	}//end of for 
 }
 
@@ -283,20 +305,22 @@ void displayStand::initInvenItem()
 		//장착 슬롯에 있는 아이템을 제외하고 인벤토리 슬롯에 있던 아이템 가져오기 
 		switch (ITEMMENU->getInventory()->getItem()[i]->getInvenPosIdx())
 		{
-			case 5: case 6: case 12: case 13:
-			case 19: case 20: case 26: case 27:
-			case 28: case 29: case 30:
-				break; 
+		case 5: case 6: case 12: case 13:
+		case 19: case 20: case 26: case 27:
+		case 28: case 29: case 30:
+			break;
 
-			default:
-				gameItem *item = new gameItem;
-				item->init(ITEMMENU->getInventory()->getItem()[i]);
-				_vShopInven.push_back(item);
+		default:
+			gameItem *item = new gameItem;
+			item->init(ITEMMENU->getInventory()->getItem()[i]);
+			_vShopInven.push_back(item);
 
-				_shopSlot[item->getInvenPosIdx()].isEmpty = false; 
-				break;
+			_shopSlot[item->getInvenPosIdx()].isEmpty = false;
+			break;
 		}
 	}
+
+	_vShopInven[0]->setPrice(1000);
 }
 
 void displayStand::deleteInvenItems()
@@ -305,30 +329,88 @@ void displayStand::deleteInvenItems()
 	{
 		switch (_vShopInven[i]->getInvenPosIdx())
 		{
-			case 5: case 6: case 12: case 13:
-			case 19: case 20: case 26: case 27:
-				i++;
-				break;
+		case 5: case 6: case 12: case 13:
+		case 19: case 20: case 26: case 27:
+			i++;
+			break;
 
-			default:
-				SAFE_DELETE(_vShopInven[i]);
-				_vShopInven.erase(_vShopInven.begin() + i);
-				break;
+		default:
+			SAFE_DELETE(_vShopInven[i]);
+			_vShopInven.erase(_vShopInven.begin() + i);
+			break;
 		}
 	}
+}
+
+gameItem displayStand::getDisplayOne()
+{
+	if (_shopSlot[5].isEmpty) return _itemEmpty;
+	else
+	{
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			if (_vShopInven[i]->getInvenPosIdx() != 5) continue;
+
+			return *(_vShopInven[i]);
+		}
+	}
+}
+
+gameItem displayStand::getDisplayTwo()
+{
+	if (_shopSlot[6].isEmpty) return _itemEmpty;
+	else
+	{
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			if (_vShopInven[i]->getInvenPosIdx() != 6) continue;
+
+			return *(_vShopInven[i]);
+		}
+	}
+}
+
+gameItem displayStand::getDisplayThree()
+{
+	if (_shopSlot[19].isEmpty) return _itemEmpty;
+	else
+	{
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			if (_vShopInven[i]->getInvenPosIdx() != 19) continue;
+
+			return *(_vShopInven[i]);
+		}
+	}
+}
+
+gameItem displayStand::getDisplayFour()
+{
+	if (_shopSlot[20].isEmpty) return _itemEmpty;
+	else
+	{
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			if (_vShopInven[i]->getInvenPosIdx() != 20) continue;
+
+			return *(_vShopInven[i]);
+		}
+	}
+	return gameItem();
 }
 
 void displayStand::setShopCtrl(SHOP_CTRL state)
 {
 	switch (_shopCtrl)
 	{
-		case CTRL_INVENTORY:
-			_shopCtrl = state;
-			break;
+	case CTRL_INVENTORY:
+		_shopCtrl = state;
+		break;
 
-		case CTRL_PRICE:
-			_shopCtrl = state;
-			break;
+	case CTRL_PRICE:
+		_priceCursor.posIdx = 0;
+		_shopCtrl = state;
+		break;
 	}
 }
 
@@ -336,21 +418,21 @@ void displayStand::keyInput()
 {
 	switch (_shopCtrl)
 	{
-		case CTRL_INVENTORY:
-			invenKeyInput();
-			break;
+	case CTRL_INVENTORY:
+		invenKeyInput();
+		break;
 
-		case CTRL_PRICE:
-
+	case CTRL_PRICE:
+		priceKeyInput();
 		break;
 	}//end of for 
 
 	switch (_cursor->getSlotIdx())
 	{
-		case 12: case 13: case 26: case 27:
-			if (_shopCtrl == CTRL_INVENTORY) _cursor->setCursorState(CURSOR_PRICE_OFF);
-			else _cursor->setCursorState(CURSOR_PRICE_ON);
-			break;
+	case 12: case 13: case 26: case 27:
+		if (_shopCtrl == CTRL_INVENTORY) _cursor->setCursorState(CURSOR_PRICE_OFF);
+		else _cursor->setCursorState(CURSOR_PRICE_ON);
+		break;
 	}//end of switch 
 }
 
@@ -387,47 +469,78 @@ void displayStand::invenKeyInput()
 	switch (_cursor->getSlotIdx())
 	{
 		//커서의 위치가 가격조정판에 있을 때 j키 입력시 가격 입력 컨트롤러로 변경 
-		case 12: case 13: case 26: case 27:
-			if (INPUT->GetKeyDown('J'))
-			{
-				setShopCtrl(CTRL_PRICE);
-			}
-			break;
+	case 12: case 13: case 26: case 27:
+		if (INPUT->GetKeyDown('J'))
+		{
+			setShopCtrl(CTRL_PRICE);
+		}
+		break;
 
 		//그외 모든 상황에서는 아이템 잡기 및 놓기 실행
-		default:
-			if (INPUT->GetKey('J'))
-			{
-				_cursor->setClickTime(_cursor->getClickTime() + 1);
+	default:
+		if (INPUT->GetKey('J'))
+		{
+			_cursor->setClickTime(_cursor->getClickTime() + 1);
 
-				//꾹 누르고 있으면 한꺼번에 잡기 실행 
-				if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
-				{
-					grabItem();
-				}
-			}
-			if (INPUT->GetKeyDown('J'))
+			//꾹 누르고 있으면 한꺼번에 잡기 실행 
+			if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
 			{
-				_cursor->setCursorState(CURSOR_CLICK);
-				putItem();
+				grabItem();
 			}
-			if (INPUT->GetKeyUp('J'))
-			{
-				//한꺼번에 잡기를 실행할 정도로 길게 누르지 않고 손을 뗄 경우
-				//1개씩 아이템을 잡을 수 있도록 함수 실행 
-				if (!_isPuttingItem) grabItem();
+		}
+		if (INPUT->GetKeyDown('J'))
+		{
+			_cursor->setCursorState(CURSOR_CLICK);
+			putItem();
+		}
+		if (INPUT->GetKeyUp('J'))
+		{
+			//한꺼번에 잡기를 실행할 정도로 길게 누르지 않고 손을 뗄 경우
+			//1개씩 아이템을 잡을 수 있도록 함수 실행 
+			if (!_isPuttingItem) grabItem();
 
-				_isPuttingItem = false;
-				_grabSoundPlayed = false;
-				_cursor->setClickTime(0);
-			}
-			break; 
+			_isPuttingItem = false;
+			_grabSoundPlayed = false;
+			_cursor->setClickTime(0);
+		}
+		break;
 
 	}//end of switch 
 }
 
 void displayStand::priceKeyInput()
 {
+	//좌우 키 입력으로 가격 커서 좌우로 이동하기 
+	if (INPUT->GetKeyDown('A'))
+	{
+		if (_priceCursor.posIdx < 6) _priceCursor.posIdx++;
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+	if (INPUT->GetKeyDown('D'))
+	{
+		if (_priceCursor.posIdx > 0) _priceCursor.posIdx--;
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+
+	//상하 키 입력으로 가격 변경하기  
+	if (INPUT->GetKeyDown('W'))
+	{
+		setPriceUp();
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+	if (INPUT->GetKeyDown('S'))
+	{
+		setPriceDown();
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+
+	//가격 확정하기(확정 후 컨트롤러 인벤토리로 변경)
+	if (INPUT->GetKeyDown('J'))
+	{
+		saveLastPrice();
+		setShopCtrl(CTRL_INVENTORY);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
 }
 
 void displayStand::leftKeyDown()
@@ -438,41 +551,41 @@ void displayStand::leftKeyDown()
 
 	switch (_cursor->getSlotIdx())
 	{
-		case 0:
-			_cursor->setSlotIdx(6);
-			break;
+	case 0:
+		_cursor->setSlotIdx(6);
+		break;
 
-		case 7:
-			//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
-			else _cursor->setSlotIdx(6);
-			break;
+	case 7:
+		//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
+		else _cursor->setSlotIdx(6);
+		break;
 
-		case 13:
-			//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
-			else _cursor->setSlotIdx(5);
-			break;
+	case 13:
+		//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
+		else _cursor->setSlotIdx(5);
+		break;
 
-		case 14:
-			_cursor->setSlotIdx(20);
-			break;
+	case 14:
+		_cursor->setSlotIdx(20);
+		break;
 
-		case 21:
-			//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
-			else _cursor->setSlotIdx(20);
-			break;
+	case 21:
+		//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
+		else _cursor->setSlotIdx(20);
+		break;
 
-		case 27:
-			//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
-			else _cursor->setSlotIdx(19);
-			break;
+	case 27:
+		//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
+		else _cursor->setSlotIdx(19);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() - 1);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() - 1);
+		break;
 	}
 }
 
@@ -480,49 +593,49 @@ void displayStand::rightKeyDown()
 {
 	switch (_cursor->getSlotIdx())
 	{
-		case 6:
-			_cursor->setSlotIdx(0);
-			break;
+	case 6:
+		_cursor->setSlotIdx(0);
+		break;
 
-		case 11:
-			//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
-			else _cursor->setSlotIdx(5);
-			break;
+	case 11:
+		//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
+		else _cursor->setSlotIdx(5);
+		break;
 
-		case 12:
-			//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
-			else _cursor->setSlotIdx(6);
-			break;
+	case 12:
+		//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
+		else _cursor->setSlotIdx(6);
+		break;
 
-		case 13:
-			_cursor->setSlotIdx(7);
-			break;
+	case 13:
+		_cursor->setSlotIdx(7);
+		break;
 
-		case 20:
-			_cursor->setSlotIdx(14);
-			break;
+	case 20:
+		_cursor->setSlotIdx(14);
+		break;
 
-		case 25:
-			//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
-			else _cursor->setSlotIdx(19);
-			break;
+	case 25:
+		//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
+		else _cursor->setSlotIdx(19);
+		break;
 
-		case 26:
-			//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
-			else _cursor->setSlotIdx(20);
-			break;
+	case 26:
+		//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
+		else _cursor->setSlotIdx(20);
+		break;
 
-		case 27:
-			_cursor->setSlotIdx(21);
-			break;
+	case 27:
+		_cursor->setSlotIdx(21);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() + 1);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() + 1);
+		break;
 	}
 }
 
@@ -530,37 +643,37 @@ void displayStand::upKeyDown()
 {
 	switch (_cursor->getSlotIdx())
 	{
-		case 0: case 1: case 2: case 3: case 4:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() + 21);
-			break;
+	case 0: case 1: case 2: case 3: case 4:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() + 21);
+		break;
 
-		case 5:
-			//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
-			else _cursor->setSlotIdx(19);
-			break;
+	case 5:
+		//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
+		else _cursor->setSlotIdx(19);
+		break;
 
-		case 6:
-			//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
-			else _cursor->setSlotIdx(20);
-			break;
+	case 6:
+		//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
+		else _cursor->setSlotIdx(20);
+		break;
 
-		case 19:
-			//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
-			else _cursor->setSlotIdx(5);
-			break;
+	case 19:
+		//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
+		else _cursor->setSlotIdx(5);
+		break;
 
-		case 20:
-			//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
-			else _cursor->setSlotIdx(6);
-			break;
+	case 20:
+		//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
+		else _cursor->setSlotIdx(6);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() - 7);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() - 7);
+		break;
 	}
 }
 
@@ -568,37 +681,37 @@ void displayStand::downKeyDown()
 {
 	switch (_cursor->getSlotIdx())
 	{
-		case 5:
-			//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
-			else _cursor->setSlotIdx(19);
-			break;
+	case 5:
+		//현재 아이템을 잡고있지 않고, 5번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[5].isEmpty) _cursor->setSlotIdx(12);
+		else _cursor->setSlotIdx(19);
+		break;
 
-		case 6:
-			//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
-			else _cursor->setSlotIdx(20);
-			break;
+	case 6:
+		//현재 아이템을 잡고있지 않고, 6번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[6].isEmpty) _cursor->setSlotIdx(13);
+		else _cursor->setSlotIdx(20);
+		break;
 
-		case 19:
-			//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
-			else _cursor->setSlotIdx(5);
-			break;
+	case 19:
+		//현재 아이템을 잡고있지 않고, 19번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[19].isEmpty) _cursor->setSlotIdx(26);
+		else _cursor->setSlotIdx(5);
+		break;
 
-		case 20:
-			//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
-			if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
-			else _cursor->setSlotIdx(6);
-			break;
+	case 20:
+		//현재 아이템을 잡고있지 않고, 20번 슬롯에 아이템이 있을 때 
+		if (!_isGrabbingItem && !_shopSlot[20].isEmpty) _cursor->setSlotIdx(27);
+		else _cursor->setSlotIdx(6);
+		break;
 
-		case 21: case 22: case 23: case 24: case 25: case 26: case 27:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() - 21);
-			break;
+	case 21: case 22: case 23: case 24: case 25: case 26: case 27:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() - 21);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() + 7);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() + 7);
+		break;
 	}
 }
 
@@ -747,6 +860,7 @@ void displayStand::putItem()
 	{
 		_isPuttingItem = true;
 		putItemOnEmptySlot();
+		loadLastPrice(_cursor->getSlotIdx());
 		_isGrabbingItem = false;
 		SOUNDMANAGER->play("cursor_drop", 0.4f);
 	}
@@ -844,6 +958,7 @@ void displayStand::putItemOnOccupiedSlot()
 
 				_itemGrabbed = _itemEmpty;
 				_isGrabbingItem = false;
+				loadLastPrice(_cursor->getSlotIdx());
 				return;
 			}
 			else //비어있지 않은 경우 현재 들고있는 아이템과 슬롯에 있는 아이템 바꿔치기 
@@ -856,12 +971,86 @@ void displayStand::putItemOnOccupiedSlot()
 				SAFE_DELETE(_vShopInven[i]);
 				_vShopInven.erase(_vShopInven.begin() + i);
 				_vShopInven.push_back(item);
+				loadLastPrice(_cursor->getSlotIdx());
 				//push_back을 해주고나서 또 for문을 돌면 중복실행이 될 수 있으므로
 				//반드시 return하여 함수를 종료시켜준다. 
 				return;
 			}
 		}
 	}//end of for 
+}
+
+void displayStand::setPriceUp()
+{
+	//현재 커서의 위치가 가격 책정 위치일 때 
+	switch (_cursor->getSlotIdx())
+	{
+	case 12: case 13: case 26: case 27:
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			//현재 커서 위치가 가리키는 아이템 인덱스가 아니면 건너뛰기 
+			if (_vShopInven[i]->getInvenPosIdx() != (_cursor->getSlotIdx() - 7)) continue;
+
+			//현재 가격이 맥스가격보다 낮을 때 가격 올리기 
+			if (_vShopInven[i]->getPrice() < MAXPRICE)
+			{
+				_vShopInven[i]->addPrice(_priceCursor.digit[_priceCursor.posIdx]);
+
+				if (_vShopInven[i]->getPrice() > MAXPRICE) _vShopInven[i]->setPrice(MAXPRICE);
+			}
+		}
+		return;
+	}//end of switch 
+}
+
+void displayStand::setPriceDown()
+{
+	//현재 커서의 위치가 가격 책정 위치일 때 
+	switch (_cursor->getSlotIdx())
+	{
+	case 12: case 13: case 26: case 27:
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			//현재 커서 위치가 가리키는 아이템 인덱스가 아니면 건너뛰기 
+			if (_vShopInven[i]->getInvenPosIdx() != (_cursor->getSlotIdx() - 7)) continue;
+
+			//현재 가격이 맥스가격보다 낮을 때 가격 올리기 
+			if (_vShopInven[i]->getPrice() > 0)
+			{
+				_vShopInven[i]->subPrice(_priceCursor.digit[_priceCursor.posIdx]);
+
+				if (_vShopInven[i]->getPrice() < 0) _vShopInven[i]->setPrice(0);
+			}
+		}
+		return;
+	}//end of switch 
+}
+
+void displayStand::saveLastPrice()
+{
+	switch (_cursor->getSlotIdx())
+	{
+	case 12: case 13: case 26: case 27:
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			//현재 커서 위치가 가리키는 아이템 인덱스가 아니면 건너뛰기 
+			if (_vShopInven[i]->getInvenPosIdx() != (_cursor->getSlotIdx() - 7)) continue;
+
+			//현재 책정한 가격을 마지막 가격으로 저장하기 
+			_itemPrice[_vShopInven[i]->getItemIdx()] = _vShopInven[i]->getPrice();
+		}
+		return;
+	}//end of switch 
+}
+
+void displayStand::loadLastPrice(int index)
+{
+	for (int i = 0; i < _vShopInven.size(); i++)
+	{
+		if (_vShopInven[i]->getInvenPosIdx() != index) continue;
+
+		_vShopInven[i]->setPrice(_itemPrice[_vShopInven[i]->getItemIdx()]);
+	}
 }
 
 void displayStand::menuRender()
@@ -882,50 +1071,72 @@ void displayStand::cursorRender()
 
 		switch (_cursor->getSlotIdx())
 		{
-			case 0: case 1: case 2: case 3: case 4:
-				_cursor->getImg()->frameRender(getMemDC(),
-					186 + (columnIdx * 72), 158, _cursor->getIdx(), 0);
-				break;
+		case 0: case 1: case 2: case 3: case 4:
+			_cursor->getImg()->frameRender(getMemDC(),
+				186 + (columnIdx * 72), 158, _cursor->getIdx(), 0);
+			break;
 
-			case 7: case 8: case 9: case 10: case 11:
-			case 14: case 15: case 16: case 17: case 18:
-			case 21: case 22: case 23: case 24: case 25:
-				_cursor->getImg()->frameRender(getMemDC(),
-					186 + (columnIdx * 72), 244 + ((rowIdx - 1) * 72), _cursor->getIdx(), 0);
-				break;
+		case 7: case 8: case 9: case 10: case 11:
+		case 14: case 15: case 16: case 17: case 18:
+		case 21: case 22: case 23: case 24: case 25:
+			_cursor->getImg()->frameRender(getMemDC(),
+				186 + (columnIdx * 72), 244 + ((rowIdx - 1) * 72), _cursor->getIdx(), 0);
+			break;
 
-			case 5:
-				_cursor->getImg()->frameRender(getMemDC(), 742, 158, _cursor->getIdx(), 0);
-				break;
+		case 5:
+			_cursor->getImg()->frameRender(getMemDC(), 742, 158, _cursor->getIdx(), 0);
+			break;
 
-			case 6:
-				_cursor->getImg()->frameRender(getMemDC(), 998, 158, _cursor->getIdx(), 0);
-				break;
+		case 6:
+			_cursor->getImg()->frameRender(getMemDC(), 998, 158, _cursor->getIdx(), 0);
+			break;
 
-			case 12:
-				_cursor->getImg()->frameRender(getMemDC(), 678, 246, _cursor->getIdx(), 0);
-				break;
+		case 12:
+			_cursor->getImg()->frameRender(getMemDC(), 678, 246, _cursor->getIdx(), 0);
+			break;
 
-			case 13:
-				_cursor->getImg()->frameRender(getMemDC(), 934, 246, _cursor->getIdx(), 0);
-				break;
+		case 13:
+			_cursor->getImg()->frameRender(getMemDC(), 934, 246, _cursor->getIdx(), 0);
+			break;
 
-			case 19:
-				_cursor->getImg()->frameRender(getMemDC(), 742, 384, _cursor->getIdx(), 0);
-				break;
+		case 19:
+			_cursor->getImg()->frameRender(getMemDC(), 742, 384, _cursor->getIdx(), 0);
+			break;
 
-			case 20:
-				_cursor->getImg()->frameRender(getMemDC(), 998, 384, _cursor->getIdx(), 0);
-				break;
+		case 20:
+			_cursor->getImg()->frameRender(getMemDC(), 998, 384, _cursor->getIdx(), 0);
+			break;
 
-			case 26:
-				_cursor->getImg()->frameRender(getMemDC(), 678, 472, _cursor->getIdx(), 0);
-				break;
+		case 26:
+			_cursor->getImg()->frameRender(getMemDC(), 678, 472, _cursor->getIdx(), 0);
+			break;
 
-			case 27:
-				_cursor->getImg()->frameRender(getMemDC(), 934, 472, _cursor->getIdx(), 0);
-				break;
+		case 27:
+			_cursor->getImg()->frameRender(getMemDC(), 934, 472, _cursor->getIdx(), 0);
+			break;
 		}
+	}
+}
+
+void displayStand::priceCursorRender()
+{
+	switch (_cursor->getSlotIdx())
+	{
+	case 12:
+		_priceCursor.img->render(getMemDC(), 808 - (_priceCursor.posIdx * 12), 250);
+		break;
+
+	case 13:
+		_priceCursor.img->render(getMemDC(), 1064 - (_priceCursor.posIdx * 12), 250);
+		break;
+
+	case 26:
+		_priceCursor.img->render(getMemDC(), 808 - (_priceCursor.posIdx * 12), 476);
+		break;
+
+	case 27:
+		_priceCursor.img->render(getMemDC(), 1064 - (_priceCursor.posIdx * 12), 476);
+		break;
 	}
 }
 
@@ -947,42 +1158,42 @@ void displayStand::itemRender()
 
 			switch (_vShopInven[j]->getInvenPosIdx())
 			{
-				case 0: case 1: case 2: case 3: case 4:
-					_vShopInven[j]->getItemImg()->render(getMemDC(),
-						200 + (columnIdx * 72), 172);
-					itemCountRender(_vShopInven[j]->getCount(),
-						240 + (columnIdx * 72), 208, COLOR_BLACK);
-					break;
+			case 0: case 1: case 2: case 3: case 4:
+				_vShopInven[j]->getItemImg()->render(getMemDC(),
+					200 + (columnIdx * 72), 172);
+				countRender(_vShopInven[j]->getCount(),
+					240 + (columnIdx * 72), 208, COLOR_BLACK);
+				break;
 
-				case 7: case 8: case 9: case 10: case 11:
-				case 14: case 15: case 16: case 17: case 18:
-				case 21: case 22: case 23: case 24: case 25:
-					_vShopInven[j]->getItemImg()->render(getMemDC(),
-						200 + (columnIdx * 72), 258 + ((rowIdx - 1) * 72));
-					itemCountRender(_vShopInven[j]->getCount(),
-						240 + (columnIdx * 72), 294 + ((rowIdx - 1) * 72), COLOR_BLACK);
-					break;
+			case 7: case 8: case 9: case 10: case 11:
+			case 14: case 15: case 16: case 17: case 18:
+			case 21: case 22: case 23: case 24: case 25:
+				_vShopInven[j]->getItemImg()->render(getMemDC(),
+					200 + (columnIdx * 72), 258 + ((rowIdx - 1) * 72));
+				countRender(_vShopInven[j]->getCount(),
+					240 + (columnIdx * 72), 294 + ((rowIdx - 1) * 72), COLOR_BLACK);
+				break;
 
-				case 5:
-					_vShopInven[j]->getItemImg()->render(getMemDC(), 756, 172);
-					itemCountRender(_vShopInven[j]->getCount(), 796, 208, COLOR_WHITE);
-					break;
+			case 5:
+				_vShopInven[j]->getItemImg()->render(getMemDC(), 756, 172);
+				countRender(_vShopInven[j]->getCount(), 796, 208, COLOR_WHITE);
+				break;
 
-				case 6:
-					_vShopInven[j]->getItemImg()->render(getMemDC(), 1012, 172);
-					itemCountRender(_vShopInven[j]->getCount(), 1052, 208, COLOR_WHITE);
-					break; 
+			case 6:
+				_vShopInven[j]->getItemImg()->render(getMemDC(), 1012, 172);
+				countRender(_vShopInven[j]->getCount(), 1052, 208, COLOR_WHITE);
+				break;
 
-				case 19:
-					_vShopInven[j]->getItemImg()->render(getMemDC(), 756, 398);
-					itemCountRender(_vShopInven[j]->getCount(), 796, 434, COLOR_WHITE);
-					break;
+			case 19:
+				_vShopInven[j]->getItemImg()->render(getMemDC(), 756, 398);
+				countRender(_vShopInven[j]->getCount(), 796, 434, COLOR_WHITE);
+				break;
 
-				case 20:
-					_vShopInven[j]->getItemImg()->render(getMemDC(), 1012, 398);
-					itemCountRender(_vShopInven[j]->getCount(), 1052, 434, COLOR_WHITE);
-					break;
-			
+			case 20:
+				_vShopInven[j]->getItemImg()->render(getMemDC(), 1012, 398);
+				countRender(_vShopInven[j]->getCount(), 1052, 434, COLOR_WHITE);
+				break;
+
 			}//end of switch
 		}//end of for(j)
 	}//end of for(i)
@@ -998,51 +1209,48 @@ void displayStand::itemGrabbedRender()
 
 		switch (_cursor->getSlotIdx())
 		{
-			case 0: case 1: case 2: case 3: case 4:
-				IMAGEMANAGER->render("grabBase", getMemDC(),
-					188 + (columnIdx * 72), 90);
-				_itemGrabbed.getItemImg()->render(getMemDC(),
-					200 + (columnIdx * 72), 100);
-				itemCountRender(_itemGrabbed.getCount(), 240 + (columnIdx * 72), 136, COLOR_BLACK);
-				break;
+		case 0: case 1: case 2: case 3: case 4:
+			IMAGEMANAGER->render("grabBase", getMemDC(),
+				188 + (columnIdx * 72), 90);
+			_itemGrabbed.getItemImg()->render(getMemDC(),
+				200 + (columnIdx * 72), 100);
+			countRender(_itemGrabbed.getCount(), 240 + (columnIdx * 72), 136, COLOR_BLACK);
+			break;
 
-			case 7: case 8: case 9: case 10: case 11:
-			case 14: case 15: case 16: case 17: case 18:
-			case 21: case 22: case 23: case 24: case 25:
-				IMAGEMANAGER->render("grabBase", getMemDC(),
-					188 + (columnIdx * 72), 176 + ((rowIdx - 1) * 72));
-				_itemGrabbed.getItemImg()->render(getMemDC(),
-					200 + (columnIdx * 72), 186 + ((rowIdx - 1) * 72));
-				itemCountRender(_itemGrabbed.getCount(),
-					240 + (columnIdx * 72), 222 + ((rowIdx - 1) * 72), COLOR_BLACK);
-				break;
+		case 7: case 8: case 9: case 10: case 11:
+		case 14: case 15: case 16: case 17: case 18:
+		case 21: case 22: case 23: case 24: case 25:
+			IMAGEMANAGER->render("grabBase", getMemDC(),
+				188 + (columnIdx * 72), 176 + ((rowIdx - 1) * 72));
+			_itemGrabbed.getItemImg()->render(getMemDC(),
+				200 + (columnIdx * 72), 186 + ((rowIdx - 1) * 72));
+			countRender(_itemGrabbed.getCount(),
+				240 + (columnIdx * 72), 222 + ((rowIdx - 1) * 72), COLOR_BLACK);
+			break;
 
-			case 5:
-				IMAGEMANAGER->render("grabBase", getMemDC(), 744, 90);
-				_itemGrabbed.getItemImg()->render(getMemDC(), 756, 100);
-				itemCountRender(_itemGrabbed.getCount(), 796, 136, COLOR_BLACK);
-				break;
+		case 5:
+			IMAGEMANAGER->render("grabBase", getMemDC(), 744, 90);
+			_itemGrabbed.getItemImg()->render(getMemDC(), 756, 100);
+			countRender(_itemGrabbed.getCount(), 796, 136, COLOR_BLACK);
+			break;
 
-			case 6:
-				IMAGEMANAGER->render("grabBase", getMemDC(), 1000, 90);
-				_itemGrabbed.getItemImg()->render(getMemDC(), 1012, 100);
-				itemCountRender(_itemGrabbed.getCount(), 1052, 136, COLOR_BLACK);
-				break;
+		case 6:
+			IMAGEMANAGER->render("grabBase", getMemDC(), 1000, 90);
+			_itemGrabbed.getItemImg()->render(getMemDC(), 1012, 100);
+			countRender(_itemGrabbed.getCount(), 1052, 136, COLOR_BLACK);
+			break;
 
-			case 19:
-				IMAGEMANAGER->render("grabBase", getMemDC(), 744, 308);
-				_itemGrabbed.getItemImg()->render(getMemDC(), 756, 318);
-				itemCountRender(_itemGrabbed.getCount(), 796, 354, COLOR_BLACK);
-				break;
+		case 19:
+			IMAGEMANAGER->render("grabBase", getMemDC(), 744, 308);
+			_itemGrabbed.getItemImg()->render(getMemDC(), 756, 318);
+			countRender(_itemGrabbed.getCount(), 796, 354, COLOR_BLACK);
+			break;
 
-			case 20:
-				IMAGEMANAGER->render("grabBase", getMemDC(), 1000, 308);
-				_itemGrabbed.getItemImg()->render(getMemDC(), 1012, 318);
-				itemCountRender(_itemGrabbed.getCount(), 1052, 354, COLOR_BLACK);
-				break;
-
-			default:
-				break;
+		case 20:
+			IMAGEMANAGER->render("grabBase", getMemDC(), 1000, 308);
+			_itemGrabbed.getItemImg()->render(getMemDC(), 1012, 318);
+			countRender(_itemGrabbed.getCount(), 1052, 354, COLOR_BLACK);
+			break;
 		}
 	}
 }
@@ -1062,25 +1270,199 @@ void displayStand::itemNameRender()
 	}
 }
 
-void displayStand::itemCountRender(int count, int destX, int destY, COLOR_TYPE colorIdx)
+void displayStand::displayCountRender()
 {
+	//비어있을 경우 0개로 출력 
+	for (int i = 0; i < MAXSHOPSLOT; i++)
+	{
+		if (!_shopSlot[i].isEmpty) continue;
+
+		switch (_shopSlot[i].slotIdx)
+		{
+		case 5:
+			greenCountRender(0, 842, 286);
+			break;
+
+		case 6:
+			greenCountRender(0, 1098, 286);
+			break;
+
+		case 19:
+			greenCountRender(0, 842, 512);
+			break;
+
+		case 20:
+			greenCountRender(0, 1098, 512);
+			break;
+		}
+	}
+
+	//비어있지 않은 경우 해당 아이템의 카운트를 출력 
+	for (int i = 0; i < _vShopInven.size(); i++)
+	{
+		switch (_vShopInven[i]->getInvenPosIdx())
+		{
+		case 5:
+			greenCountRender(_vShopInven[i]->getCount(), 842, 286);
+			break;
+
+		case 6:
+			greenCountRender(_vShopInven[i]->getCount(), 1098, 286);
+			break;
+
+		case 19:
+			greenCountRender(_vShopInven[i]->getCount(), 842, 512);
+			break;
+
+		case 20:
+			greenCountRender(_vShopInven[i]->getCount(), 1098, 512);
+			break;
+
+		}//end of switch
+	}//end of for 
+}
+
+void displayStand::unitPriceRender()
+{
+	//비어있을 경우 0원으로 출력 
+	for (int i = 0; i < MAXSHOPSLOT; i++)
+	{
+		if (!_shopSlot[i].isEmpty) continue;
+
+		switch (_shopSlot[i].slotIdx)
+		{
+		case 5:
+			priceCountRender(0, 810, 266);
+			break;
+
+		case 6:
+			priceCountRender(0, 1066, 266);
+			break;
+
+		case 19:
+			priceCountRender(0, 810, 492);
+			break;
+
+		case 20:
+			priceCountRender(0, 1066, 492);
+			break;
+		}
+	}
+
+	//비어있지 않을 경우 아이템 한 개당 가격을 출력 
+	for (int i = 0; i < _vShopInven.size(); i++)
+	{
+		switch (_vShopInven[i]->getInvenPosIdx())
+		{
+		case 5:
+			priceCountRender(_vShopInven[i]->getPrice(), 810, 266);
+			break;
+
+		case 6:
+			priceCountRender(_vShopInven[i]->getPrice(), 1066, 266);
+			break;
+
+		case 19:
+			priceCountRender(_vShopInven[i]->getPrice(), 810, 492);
+			break;
+
+		case 20:
+			priceCountRender(_vShopInven[i]->getPrice(), 1066, 492);
+			break;
+
+		}//end of switch
+	}//end of for 
+}
+
+void displayStand::totalPriceRender()
+{
+	//비어있을 경우 0원으로 출력 
+	for (int i = 0; i < MAXSHOPSLOT; i++)
+	{
+		if (!_shopSlot[i].isEmpty) continue;
+
+		switch (_shopSlot[i].slotIdx)
+		{
+		case 5:
+			countRender(0, 842, 316, COLOR_WHITE);
+			break;
+
+		case 6:
+			countRender(0, 1098, 316, COLOR_WHITE);
+			break;
+
+		case 19:
+			countRender(0, 842, 542, COLOR_WHITE);
+			break;
+
+		case 20:
+			countRender(0, 1098, 542, COLOR_WHITE);
+			break;
+		}
+	}
+
+	//비어있지 않은 경우 해당 아이템의 개수와 가격을 곱한 총 가격을 출력 
+	for (int i = 0; i < _vShopInven.size(); i++)
+	{
+		switch (_vShopInven[i]->getInvenPosIdx())
+		{
+		case 5:
+			countRender(_vShopInven[i]->getCount() * _vShopInven[i]->getPrice(),
+				842, 316, COLOR_WHITE);
+			break;
+
+		case 6:
+			countRender(_vShopInven[i]->getCount() * _vShopInven[i]->getPrice(),
+				1098, 316, COLOR_WHITE);
+			break;
+
+		case 19:
+			countRender(_vShopInven[i]->getCount() * _vShopInven[i]->getPrice(),
+				842, 542, COLOR_WHITE);
+			break;
+
+		case 20:
+			countRender(_vShopInven[i]->getCount() * _vShopInven[i]->getPrice(),
+				1098, 542, COLOR_WHITE);
+			break;
+
+		}//end of switch
+	}//end of for 
+}
+
+void displayStand::countRender(int count, int destX, int destY, COLOR_TYPE colorIdx)
+{
+	if (count == 0)
+	{
+		switch (colorIdx)
+		{
+		case COLOR_BLACK:
+			IMAGEMANAGER->render("0_black", getMemDC(), destX, destY);
+			return;
+
+		case COLOR_WHITE:
+			IMAGEMANAGER->render("0", getMemDC(), destX, destY);
+			return;
+		}
+	}
+
 	for (int i = 1, distance = 0; i <= count; i *= 10)
 	{
 		int number = (count / i) % 10;
 
 		char keyName[16];
-		
+
 		switch (colorIdx)
 		{
-			case COLOR_BLACK:
-				wsprintf(keyName, "%d_black", number);
-				IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
-				break;
+		case COLOR_BLACK:
+			wsprintf(keyName, "%d_black", number);
+			IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
+			break;
 
-			case COLOR_WHITE:
-				wsprintf(keyName, "%d", number);
-				IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
-				break;
+		case COLOR_WHITE:
+			wsprintf(keyName, "%d", number);
+			IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
+			break;
 		}
 
 		distance++;
@@ -1090,6 +1472,13 @@ void displayStand::itemCountRender(int count, int destX, int destY, COLOR_TYPE c
 
 void displayStand::greenCountRender(int count, int destX, int destY)
 {
+	if (count == 0)
+	{
+		IMAGEMANAGER->render("0_green", getMemDC(), destX, destY);
+		IMAGEMANAGER->findImage("x_green")->render(getMemDC(), (destX - 12), destY);
+		return;
+	}
+
 	for (int i = 1, distance = 0; i <= count; i *= 10)
 	{
 		int number = (count / i) % 10;
@@ -1107,52 +1496,38 @@ void displayStand::greenCountRender(int count, int destX, int destY)
 	}//end of for 
 }
 
-void displayStand::displayCount()
+void displayStand::priceCountRender(int count, int destX, int destY)
 {
-	//비어있을 경우 0개로 출력 
-	for (int i = 0; i < MAXSHOPSLOT; i++)
+	//count가 0일 때 출력되는 자리수(7자리)만큼 0 표기 
+	if (count == 0)
 	{
-		if (!_shopSlot[i].isEmpty) continue;
-
-		switch (i)
+		for (int i = 1, distance = 0; i <= 1000000; i *= 10)
 		{
-			case 5: 
-				greenCountRender(0, 846, 268);
-				break;
-
-			case 6:
-				greenCountRender(0, 1102, 268);
-				break;
-
-			case 19:
-				greenCountRender(0, 846, 492);
-				break;
-
-			case 20:
-				greenCountRender(0, 1 - 82, 492);
-				break;
+			IMAGEMANAGER->render("0_gray", getMemDC(), destX - (distance * 12), destY);
+			distance++;
 		}
+		return;
 	}
 
-	for (int i = 0; i < _vShopInven.size(); i++)
+	for (int i = 1, distance = 0; i <= 1000000; i *= 10)
 	{
-		switch (_vShopInven[i]->getInvenPosIdx())
+		int number = (count / i) % 10;
+
+		char keyName[16];
+
+		//출력하고자 하는 숫자보다 큰 자리수는 회색의 0으로 채우기 
+		if (i > count && number == 0)
 		{
-			case 5:
-				greenCountRender(0, 846, 268);
-				break;
+			IMAGEMANAGER->render("0_gray", getMemDC(), destX - (distance * 12), destY);
+		}
+		else
+		{
+			wsprintf(keyName, "%d_black", number);
+			IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
+		}
 
-			case 6:
-				greenCountRender(0, 846, 268);
-			case 19:
-				break;
+		distance++;
 
-			case 20:
-				greenCountRender(0, 846, 268);
-
-				break;
-
-		}//end of switch
 	}//end of for 
 }
 

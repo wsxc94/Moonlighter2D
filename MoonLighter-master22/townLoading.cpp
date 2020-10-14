@@ -27,7 +27,7 @@ void townLoading::update()
 	_loading->update();
 	if (_loading->loadingDone())
 	{
-		SCENEMANAGER->loadScene("타운화면");
+		SCENEMANAGER->loadScene("상점가판대");
 	}
 }
 
@@ -209,6 +209,7 @@ void townLoading::loadingImage()
 	//상점 이미지 
 	_loading->loadImage("menu_shopInventory", "Images/Shop/menu_shopInventory.bmp", 482, 544, true, RGB(255, 0, 255));
 	_loading->loadImage("menu_display", "Images/Shop/menu_display.bmp", 500, 464, true, RGB(255, 0, 255));
+	_loading->loadImage("arrow_price", "Images/Shop/arrow_price.bmp", 14, 46, true, RGB(255, 0, 255));
 
 	//숫자(흰색) 이미지 초기화 
 	_loading->loadImage("0", "Images/Number/0.bmp", 10, 14, true, RGB(255, 0, 255));
