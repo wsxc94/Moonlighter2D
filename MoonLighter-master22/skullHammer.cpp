@@ -465,9 +465,9 @@ void skullHammer::skullHammerCollision()
 			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
 			PLAYER->setPlayerState(HIT_IDLE);
 			PLAYER->setHit(true);
-			if (PLAYERDATA->getInDungeonHp() < 0)
+			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
-				PLAYERDATA->setInDungeonHp(1);
+				PLAYER->setPlayerState(PLAYER_DIE);
 			}
 		}
 	}

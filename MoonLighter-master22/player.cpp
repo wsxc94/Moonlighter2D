@@ -47,7 +47,7 @@ HRESULT player::init()
 	_aniRunHit = new ::animation;
 	_aniSwordHit = new ::animation;
 	_aniSwordTwoHit = new ::animation;
-	_deathPortal = new ::animation;
+	_aniDiePortal = new ::animation;
 
 	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
 	_aniTownRun->init(IMAGEMANAGER->findImage("´Þ¸®±â"), 0, 5, true);
@@ -74,8 +74,8 @@ HRESULT player::init()
 	_aniSwordHit->aniStop();
 	_aniSwordTwoHit->init(IMAGEMANAGER->findImage("¼ô¼Òµå2¿¬°ÝHIT"), 0, 5);
 	_aniSwordTwoHit->aniStop();
-	_deathPortal->init(IMAGEMANAGER->findImage("Á×À½Æ÷Å»"), 0, 7);
-	_deathPortal->aniStop();
+	_aniDiePortal->init(IMAGEMANAGER->findImage("Á×À½Æ÷Å»"), 0, 7);
+	_aniDiePortal->aniStop();
 
 	_player.x = 200;
 	_player.y = 200;
@@ -213,6 +213,9 @@ void player::render(HDC hdc)
 		case PLAYER_DIE:
 			_aniDie->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
+		case PLAYER_DIE_PORTAL:
+			_aniDiePortal->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			break;
 		case PLAYER_SWIM:
 			_aniSwim->ZoderRender(_player.y, pt.x - 20, pt.y - 15);
 			break;
@@ -346,7 +349,7 @@ void player::playerState()
 				_aniDgRoll->aniRestart();
 			}
 
-			if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
+			if (INPUT->GetKey('J') && _place == TOWN_DUNGEON )
 			{
 
 				switch (_player.weapon)
@@ -455,12 +458,6 @@ void player::playerState()
 					break;
 				}
 			}
-			if (_attackIndex == IMAGEMANAGER->findImage("È°³¯¸®±â")->getMaxFrameX())
-			{
-				_attackCount = 0;
-				_attackIndex = 0;
-				_state = PLAYER_IDLE;
-			}
 
 			break;
 
@@ -476,6 +473,10 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_DIE:
+			_state = PLAYER_DIE_PORTAL;
+			break;
+		case PLAYER_DIE_PORTAL:
+			_state = PLAYER_IDLE;
 			break;
 		case PLAYER_SWIM:
 			this->playerMove();

@@ -16,6 +16,7 @@ enum PLAYER_STATE
 	PLAYER_ATTACK_SWORD, PLAYER_ATTACK_SWORD_SECOND, PLAYER_ATTACK_BOW,
 	PLAYER_TALK,
 	PLAYER_DIE,
+	PLAYER_DIE_PORTAL,
 	PLAYER_FALL,
 	PLAYER_SWIM,
 	HIT_IDLE,
@@ -117,7 +118,7 @@ private:
 	animation* _aniSwordHit;
 	animation* _aniSwordTwoHit;
 
-	animation* _deathPortal;
+	animation* _aniDiePortal;
 
 public:
 	HRESULT init();
