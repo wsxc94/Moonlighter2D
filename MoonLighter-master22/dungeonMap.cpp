@@ -757,6 +757,7 @@ void DungeonMap::checkColiHole()
 					if (_wid >= 34 && _hei >= 34)
 					{
 						PLAYER->setPlayerState(PLAYER_FALL);
+						PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
 					}
 					else
 					{

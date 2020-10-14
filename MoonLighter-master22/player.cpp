@@ -13,6 +13,7 @@ HRESULT player::init()
 
 	IMAGEMANAGER->addFrameImage("죽음", "Images/플레이어/player_die10X1.bmp", 1200, 120, 10, 1);
 	IMAGEMANAGER->addFrameImage("구멍빠짐", "Images/플레이어/hole_fall3X1.bmp", 360, 120, 3, 1);
+	IMAGEMANAGER->addFrameImage("죽음포탈", "Images/플레이어/teleportOut58x1.bmp", 7424, 128, 58, 1);
 
 	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack9X4.bmp", 1080, 480, 9, 4);
 	IMAGEMANAGER->addFrameImage("활스킬", "Images/플레이어/bow_skill2X4.bmp", 240, 480, 2, 4);
@@ -46,6 +47,7 @@ HRESULT player::init()
 	_aniRunHit = new ::animation;
 	_aniSwordHit = new ::animation;
 	_aniSwordTwoHit = new ::animation;
+	_deathPortal = new ::animation;
 
 	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
 	_aniTownRun->init(IMAGEMANAGER->findImage("달리기"), 0, 5, true);
@@ -72,6 +74,8 @@ HRESULT player::init()
 	_aniSwordHit->aniStop();
 	_aniSwordTwoHit->init(IMAGEMANAGER->findImage("숏소드2연격HIT"), 0, 5);
 	_aniSwordTwoHit->aniStop();
+	_deathPortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
+	_deathPortal->aniStop();
 
 	_player.x = 200;
 	_player.y = 200;
@@ -102,6 +106,8 @@ HRESULT player::init()
 	_isShoot = false;
 	_isTalk = false;
 
+	_isHit = false;
+
 	_rollCount = 0;
 	_rollIndex = 0;
 	_rollJumpPower = 0;
@@ -110,7 +116,7 @@ HRESULT player::init()
 	_attackCount = 0;
 	_attackIndex = 0;;
 
-	_playerHp = 100;
+	_playerHp = PLAYERDATA->getInDungeonHp();
 
 	_arrow = new arrow;
 	_arrow->init();
@@ -125,7 +131,7 @@ void player::release()
 
 void player::update()
 {
-
+	cout << _holeAlpha << endl;
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -135,7 +141,10 @@ void player::update()
 	_arrow->update();
 	this->keyInput();
 	this->updateWeaponState();
-	_playerHp = PLAYERDATA->getInDungeonHp();;
+	if (!_isHit)
+	{
+		_playerHp = PLAYERDATA->getInDungeonHp();
+	}
 }
 
 void player::render(HDC hdc)
@@ -187,7 +196,7 @@ void player::render(HDC hdc)
 			_aniDgRoll->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_FALL:
-			_aniFall->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniFall->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _holeAlpha);
 			break;
 		case PLAYER_ATTACK_SWORD:
 			_aniSword->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
@@ -258,7 +267,7 @@ void player::animation(int frameY)
 	_aniDgIdle->setFrameY(_player.direction);
 	_aniDgRun->setFrameY(_player.direction);
 	_aniDgRoll->setFrameY(_player.direction);
-	_aniFall->setFrameY(_player.direction);
+	_aniFall->setFrameY(0);
 	_aniSword->setFrameY(_player.direction);
 	_aniSwordTwo->setFrameY(_player.direction);
 	_aniBow->setFrameY(_player.direction);
@@ -280,13 +289,9 @@ void player::playerState()
 		case PLAYER_IDLE:
 			if (_isHit)
 			{
-				if (INPUT->GetKey('W') || INPUT->GetKey('S')
-					|| INPUT->GetKey('A')
-					|| INPUT->GetKey('D')) _state = HIT_RUN;
+				if (this->getKeyMove()) _state = HIT_RUN;
 			}
-			if (INPUT->GetKey('W') || INPUT->GetKey('S')
-				|| INPUT->GetKey('A')
-				|| INPUT->GetKey('D')) _state = PLAYER_RUN;
+			if (this->getKeyMove()) _state = PLAYER_RUN;
 
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
@@ -319,7 +324,6 @@ void player::playerState()
 				}
 
 			}
-
 			if (_attackIndex != 0)
 			{
 				_attackIndex = 0;
@@ -328,14 +332,10 @@ void player::playerState()
 		case PLAYER_RUN:
 			if (_isHit)
 			{
-				if (INPUT->GetKey('W') || INPUT->GetKey('S')
-					|| INPUT->GetKey('A')
-					|| INPUT->GetKey('D')) _state = HIT_RUN;
+				if (this->getKeyMove()) _state = HIT_RUN;
 			}
-			if (INPUT->GetKeyUp('W') || INPUT->GetKeyUp('S')
-				|| INPUT->GetKeyUp('A')
-				|| INPUT->GetKeyUp('D')) _state = PLAYER_IDLE;
-
+			if (!this->getKeyMove()) _state = PLAYER_IDLE;
+			this->playerMove();
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
 				_lastRollX = _player.x;
@@ -366,50 +366,6 @@ void player::playerState()
 					_isShoot = true;
 					break;
 				}
-			}
-
-			if (_attackIndex != 0)
-			{
-				_attackIndex = 0;
-			}
-
-			if (INPUT->GetKey('W'))
-			{
-				_player.y -= 4;
-				_player.direction = 1;
-				_up = true;
-			}
-			else {
-				_up = false;
-			}
-
-			if (INPUT->GetKey('S'))
-			{
-				_player.y += 4;
-				_player.direction = 0;
-				_down = true;
-			}
-			else {
-				_down = false;
-			}
-
-			if (INPUT->GetKey('A'))
-			{
-				_player.x -= 4;
-				_player.direction = 3;
-				_left = true;
-			}
-			else {
-				_left = false;
-			}
-			if (INPUT->GetKey('D'))
-			{
-				_player.x += 4;
-				_player.direction = 2;
-				_right = true;
-			}
-			else {
-				_right = false;
 			}
 			break;
 
@@ -450,6 +406,7 @@ void player::playerState()
 			_holeAlpha -= 3;
 			if (_holeAlpha <= 0)
 			{
+				_holeAlpha = 255;
 				_player.x = _lastRollX;
 				_player.y = _lastRollY;
 				_state = PLAYER_IDLE;
@@ -457,14 +414,8 @@ void player::playerState()
 			break;
 
 		case PLAYER_ATTACK_SWORD:
-
-			_attackCount++;
-
 			if (_aniSword->getAniState() == ANIMATION_END)
 			{
-				_attackCount = 0;
-				_attackIndex = 0;
-				_attackIndex = 0;
 				_state = PLAYER_IDLE;
 				if (INPUT->GetKey('J'))
 				{
@@ -475,23 +426,15 @@ void player::playerState()
 			break;
 
 		case PLAYER_ATTACK_SWORD_SECOND:
-
-			_attackCount++;
-
 			if (_aniSwordTwo->getAniState() == ANIMATION_END)
 			{
-				_attackCount = 0;
-				_attackIndex = 0;
 				_state = PLAYER_IDLE;
 			}
 			break;
 
 		case PLAYER_ATTACK_BOW:
-			_attackCount++;
 			if (_aniBow->getAniState() == ANIMATION_END)
 			{
-				_attackCount = 0;
-				_attackIndex = 0;
 				_state = PLAYER_IDLE;
 			}
 			if (_aniBow->getCurIndex() == 1)
@@ -522,9 +465,7 @@ void player::playerState()
 			break;
 
 		case PLAYER_TALK:
-			if (INPUT->GetKey('W') || INPUT->GetKey('S')
-				|| INPUT->GetKey('A')
-				|| INPUT->GetKey('D')) _state = PLAYER_RUN;
+			if (this->getKeyMove()) _state = PLAYER_RUN;
 
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
@@ -537,35 +478,10 @@ void player::playerState()
 		case PLAYER_DIE:
 			break;
 		case PLAYER_SWIM:
-			if (INPUT->GetKey('W'))
-			{
-				_player.y -= 4;
-				_player.direction = 1;
-				_up = true;
-			}
-			if (INPUT->GetKey('S'))
-			{
-				_player.y += 4;
-				_player.direction = 0;
-				_down = true;
-			}
-			if (INPUT->GetKey('A'))
-			{
-				_player.x -= 4;
-				_player.direction = 3;
-				_left = true;
-			}
-			if (INPUT->GetKey('D'))
-			{
-				_player.x += 4;
-				_player.direction = 2;
-				_right = true;
-			}
+			this->playerMove();
 			break;
 		case HIT_IDLE:
-			if (INPUT->GetKey('W') || INPUT->GetKey('S')
-				|| INPUT->GetKey('A')
-				|| INPUT->GetKey('D')) _state = HIT_RUN;
+			if (this->getKeyMove()) _state = HIT_RUN;
 			if (!_isHit)
 			{
 				_state = PLAYER_IDLE;
@@ -573,44 +489,8 @@ void player::playerState()
 			break;
 		case HIT_RUN:
 
-			if (INPUT->GetKey('W') || INPUT->GetKey('S')
-				|| INPUT->GetKey('A')
-				|| INPUT->GetKey('D')) _state = HIT_RUN;
-			if (INPUT->GetKey('W'))
-			{
-				_player.y -= 4;
-				_player.direction = 1;
-				_up = true;
-			}
-			else {
-				_up = false;
-			}
-
-			if (INPUT->GetKey('S'))
-			{
-				_player.y += 4;
-				_player.direction = 0;
-				_down = true;
-			}
-			else {
-				_down = false;
-			}
-
-			if (INPUT->GetKey('A'))
-			{
-				_player.x -= 4;
-				_player.direction = 3;
-				_left = true;
-			}
-			else {
-				_left = false;
-			}
-			if (INPUT->GetKey('D'))
-			{
-				_player.x += 4;
-				_player.direction = 2;
-				_right = true;
-			}
+			if (this->getKeyMove()) _state = HIT_RUN;
+			this->playerMove();
 			if (!_isHit)
 			{
 				_state = PLAYER_RUN;
@@ -736,19 +616,71 @@ void player::npcTalk(bool& isTalk)
 
 void player::hitPlayer()
 {
-	if (_playerHp > PLAYERDATA->getInDungeonHp())
-	{
-		_isHit = true;
-	}
+	if (!PLAYERDATA->getIsInDungeon()) return; 
+
+
 	if (_isHit)
 	{
 		_playerHp = PLAYERDATA->getInDungeonHp();
 
-		_hitAlpha -= 10;
+		_hitAlpha -= 20;
 		if (_hitAlpha < 0)
 		{
 			_hitAlpha = 255;
 			_isHit = false;
 		}
 	}
+
 }
+
+void player::playerMove()
+{
+
+	if (INPUT->GetKey('W'))
+	{
+		_player.y -= 4;
+		_player.direction = 1;
+		_up = true;
+	}
+	else {
+		_up = false;
+	}
+
+	if (INPUT->GetKey('S'))
+	{
+		_player.y += 4;
+		_player.direction = 0;
+		_down = true;
+	}
+	else {
+		_down = false;
+	}
+
+	if (INPUT->GetKey('A'))
+	{
+		_player.x -= 4;
+		_player.direction = 3;
+		_left = true;
+	}
+	else {
+		_left = false;
+	}
+	if (INPUT->GetKey('D'))
+	{
+		_player.x += 4;
+		_player.direction = 2;
+		_right = true;
+	}
+	else {
+		_right = false;
+	}
+}
+
+bool player::getKeyMove()
+{
+	if (INPUT->GetKey('W') || INPUT->GetKey('S')
+		|| INPUT->GetKey('A')
+		|| INPUT->GetKey('D')) return true;
+	return false;
+}
+
