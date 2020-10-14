@@ -32,7 +32,7 @@ HRESULT inventory::init()
 	_menuMoveSpeed = 90.f;
 
 	//사운드 관련 변수 
-	_grabSoundPlayed = false; 
+	_grabSoundPlayed = false;
 
 	return S_OK;
 }
@@ -107,14 +107,14 @@ int inventory::getCurItemCount()
 	{
 		switch (_vInven[i]->getInvenPosIdx())
 		{
-			case 5: case 6: case 12: case 13:
-			case 19: case 20: case 26: case 27:
-			case 28: case 29: case 30:
-				break;
+		case 5: case 6: case 12: case 13:
+		case 19: case 20: case 26: case 27:
+		case 28: case 29: case 30:
+			break;
 
-			default:
-				if (_vInven[i]->getType() != ITEM_EMPTY) itemCount++;
-				break;
+		default:
+			if (_vInven[i]->getType() != ITEM_EMPTY) itemCount++;
+			break;
 
 		}//end of switch
 	}//end of for 
@@ -304,12 +304,13 @@ void inventory::initItem()
 		for (int j = 0; j < MAXSLOT; j++)
 		{
 			if (!_invenSlot[j].isEmpty || _invenSlot[j].slotType != SLOT_ITEM) continue;
-
+	
 			if (i == 15)
 			{
-				_invenSlot[5].isEmpty = false; 
+				_invenSlot[5].isEmpty = false;
 				item->setInvenPosIdx(5);
 				_vInven.push_back(item);
+				break;
 			}
 			else
 			{
@@ -326,7 +327,6 @@ void inventory::initItem()
 	_vInven[2]->setCount(5);
 	_vInven[3]->setCount(5);
 	_vInven[13]->setCount(5);
-
 }
 
 bool inventory::addItemToInven(gameItem item)
@@ -361,12 +361,12 @@ bool inventory::addItemToInven(gameItem item)
 				_vInven.push_back(tempItem);
 				_invenSlot[j].isEmpty = false;
 				SOUNDMANAGER->play("cursor_pick", 0.6f);
-				return true; 
-			
+				return true;
+
 			}//end of for(j)
 
 			//인벤토리가 꽉 차있는 경우 아이템을 줍지 않음 
-			return false; 
+			return false;
 		}
 	}//end of for(i)
 }
@@ -377,16 +377,16 @@ void inventory::deleteInvenItem()
 	{
 		switch (_vInven[i]->getInvenPosIdx())
 		{
-			case 5: case 6: case 12: case 13:
-			case 19: case 20: case 26: case 27:
-			case 28: case 29: case 30:
-				i++;
-				break;
+		case 5: case 6: case 12: case 13:
+		case 19: case 20: case 26: case 27:
+		case 28: case 29: case 30:
+			i++;
+			break;
 
-			default:
-				SAFE_DELETE(_vInven[i]);
-				_vInven.erase(_vInven.begin() + i);
-				break;
+		default:
+			SAFE_DELETE(_vInven[i]);
+			_vInven.erase(_vInven.begin() + i);
+			break;
 		}
 	}
 }
@@ -402,17 +402,17 @@ void inventory::syncWithShopInven(vector<gameItem*> vShopInven)
 		//장착 슬롯에 있는 아이템을 제외하고 인벤토리 슬롯에 있던 아이템 가져오기 
 		switch (vShopInven[i]->getInvenPosIdx())
 		{
-			case 5: case 6: case 12: case 13:
-			case 19: case 20: case 26: case 27:
-				break;
+		case 5: case 6: case 12: case 13:
+		case 19: case 20: case 26: case 27:
+			break;
 
-			default:
-				gameItem *item = new gameItem;
-				item->init(vShopInven[i]);
-				_vInven.push_back(item);
+		default:
+			gameItem *item = new gameItem;
+			item->init(vShopInven[i]);
+			_vInven.push_back(item);
 
-				_invenSlot[item->getInvenPosIdx()].isEmpty = false;
-				break;
+			_invenSlot[item->getInvenPosIdx()].isEmpty = false;
+			break;
 
 		}//end of switch 
 	}//end of for 
@@ -471,7 +471,7 @@ void inventory::keyInput()
 		if (!_isPuttingItem) grabItem();
 
 		_isPuttingItem = false;
-		_grabSoundPlayed = false; 
+		_grabSoundPlayed = false;
 		_cursor->setClickTime(0);
 	}
 
@@ -490,29 +490,29 @@ void inventory::leftKeyDown()
 
 	switch (_cursor->getSlotIdx())
 	{
-		case 0:
-			_cursor->setSlotIdx(6);
-			break;
+	case 0:
+		_cursor->setSlotIdx(6);
+		break;
 
-		case 7:
-			_cursor->setSlotIdx(13);
-			break;
+	case 7:
+		_cursor->setSlotIdx(13);
+		break;
 
-		case 14:
-			_cursor->setSlotIdx(20);
-			break;
+	case 14:
+		_cursor->setSlotIdx(20);
+		break;
 
-		case 21:
-			_cursor->setSlotIdx(27);
-			break;
+	case 21:
+		_cursor->setSlotIdx(27);
+		break;
 
-		case 28:
-			_cursor->setSlotIdx(26);
-			break;
+	case 28:
+		_cursor->setSlotIdx(26);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() - 1);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() - 1);
+		break;
 	}
 }
 
@@ -520,29 +520,29 @@ void inventory::rightKeyDown()
 {
 	switch (_cursor->getSlotIdx())
 	{
-		case 6:
-			_cursor->setSlotIdx(0);
-			break;
+	case 6:
+		_cursor->setSlotIdx(0);
+		break;
 
-		case 13:
-			_cursor->setSlotIdx(7);
-			break;
+	case 13:
+		_cursor->setSlotIdx(7);
+		break;
 
-		case 20:
-			_cursor->setSlotIdx(14);
-			break;
+	case 20:
+		_cursor->setSlotIdx(14);
+		break;
 
-		case 27:
-			_cursor->setSlotIdx(21);
-			break;
+	case 27:
+		_cursor->setSlotIdx(21);
+		break;
 
-		case 30:
-			_cursor->setSlotIdx(26);
-			break;
+	case 30:
+		_cursor->setSlotIdx(26);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() + 1);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() + 1);
+		break;
 	}
 }
 
@@ -550,37 +550,37 @@ void inventory::upKeyDown()
 {
 	switch (_cursor->getSlotIdx())
 	{
-		case 0: case 1:
-			_cursor->setSlotIdx(28);
-			break;
+	case 0: case 1:
+		_cursor->setSlotIdx(28);
+		break;
 
-		case 2:
-			_cursor->setSlotIdx(29);
-			break;
+	case 2:
+		_cursor->setSlotIdx(29);
+		break;
 
-		case 3: case 4:
-			_cursor->setSlotIdx(30);
-			break;
+	case 3: case 4:
+		_cursor->setSlotIdx(30);
+		break;
 
-		case 5: case 6:
-			_cursor->setSlotIdx(27);
-			break;
+	case 5: case 6:
+		_cursor->setSlotIdx(27);
+		break;
 
-		case 13:
-			_cursor->setSlotIdx(5);
-			break;
+	case 13:
+		_cursor->setSlotIdx(5);
+		break;
 
-		case 29:
-			_cursor->setSlotIdx(23);
-			break;
+	case 29:
+		_cursor->setSlotIdx(23);
+		break;
 
-		case 30:
-			_cursor->setSlotIdx(25);
-			break;
+	case 30:
+		_cursor->setSlotIdx(25);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() - 7);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() - 7);
+		break;
 	}
 }
 
@@ -588,41 +588,41 @@ void inventory::downKeyDown()
 {
 	switch (_cursor->getSlotIdx())
 	{
-		case 5: case 6:
-			_cursor->setSlotIdx(13);
-			break;
+	case 5: case 6:
+		_cursor->setSlotIdx(13);
+		break;
 
-		case 21: case 22:
-			_cursor->setSlotIdx(28);
-			break;
+	case 21: case 22:
+		_cursor->setSlotIdx(28);
+		break;
 
-		case 23:
-			_cursor->setSlotIdx(29);
-			break;
+	case 23:
+		_cursor->setSlotIdx(29);
+		break;
 
-		case 24: case 25:
-			_cursor->setSlotIdx(30);
-			break;
+	case 24: case 25:
+		_cursor->setSlotIdx(30);
+		break;
 
-		case 26: case 27:
-			_cursor->setSlotIdx(5);
-			break;
+	case 26: case 27:
+		_cursor->setSlotIdx(5);
+		break;
 
-		case 28:
-			_cursor->setSlotIdx(0);
-			break;
+	case 28:
+		_cursor->setSlotIdx(0);
+		break;
 
-		case 29:
-			_cursor->setSlotIdx(2);
-			break;
+	case 29:
+		_cursor->setSlotIdx(2);
+		break;
 
-		case 30:
-			_cursor->setSlotIdx(4);
-			break;
+	case 30:
+		_cursor->setSlotIdx(4);
+		break;
 
-		default:
-			_cursor->setSlotIdx(_cursor->getSlotIdx() + 7);
-			break;
+	default:
+		_cursor->setSlotIdx(_cursor->getSlotIdx() + 7);
+		break;
 	}
 }
 
@@ -685,7 +685,7 @@ void inventory::switchWeaponIdx()
 void inventory::usePotionEquipped()
 {
 	//현재 장착 중인 포션이 없다면 함수 종료
-	if (_invenSlot[20].isEmpty) return; 
+	if (_invenSlot[20].isEmpty) return;
 
 	for (int i = 0; i < _vInven.size(); i++)
 	{
@@ -700,7 +700,7 @@ void inventory::usePotionEquipped()
 		//포션의 개수가 0개가 되면 인벤토리에서 삭제 
 		if (_vInven[i]->getCount() <= 0)
 		{
-			_invenSlot[20].isEmpty = true; 
+			_invenSlot[20].isEmpty = true;
 			SAFE_DELETE(_vInven[i]);
 			_vInven.erase(_vInven.begin() + i);
 		}
@@ -714,7 +714,7 @@ void inventory::grabItem()
 	{
 		if (!_grabSoundPlayed)
 		{
-			_grabSoundPlayed = true; 
+			_grabSoundPlayed = true;
 			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 		return;
@@ -850,21 +850,21 @@ void inventory::putItem()
 	//장비 및 포션 슬롯은 해당 타입이 같은 아이템만 장착 가능 
 	switch (_cursor->getSlotIdx())
 	{
-		case 5: case 6: case 12: case 13:
-		case 19: case 20: case 26: case 27:
-			if (_itemGrabbed.getType() != _invenSlot[_cursor->getSlotIdx()].type)
-			{
-				SOUNDMANAGER->play("cursor_error", 0.6f);
-				return;
-			}
-			break;
-
-		case 28: case 29: case 30:
+	case 5: case 6: case 12: case 13:
+	case 19: case 20: case 26: case 27:
+		if (_itemGrabbed.getType() != _invenSlot[_cursor->getSlotIdx()].type)
+		{
 			SOUNDMANAGER->play("cursor_error", 0.6f);
 			return;
+		}
+		break;
 
-		default:
-			break;
+	case 28: case 29: case 30:
+		SOUNDMANAGER->play("cursor_error", 0.6f);
+		return;
+
+	default:
+		break;
 	}
 
 	//빈 슬롯은 클릭했을 때 해당 슬롯에 잡고있던 아이템을 놓는다.
@@ -955,21 +955,21 @@ void inventory::putItemOnOccupiedSlot()
 			//장비 및 포션 슬롯의 아이템을 일반 아이템과 바꾸려고 할 경우 함수 종료 
 			switch (_itemGrabbed.getInvenPosIdx())
 			{
-				case 5: case 6: case 12: case 13:
-				case 19: case 20: case 26: case 27:
-					if (_itemGrabbed.getType() != _invenSlot[_cursor->getSlotIdx()].type)
-					{
-						SOUNDMANAGER->play("cursor_error", 0.6f);
-						return;
-					}
-					break;
-
-				case 28: case 29: case 30:
+			case 5: case 6: case 12: case 13:
+			case 19: case 20: case 26: case 27:
+				if (_itemGrabbed.getType() != _invenSlot[_cursor->getSlotIdx()].type)
+				{
 					SOUNDMANAGER->play("cursor_error", 0.6f);
 					return;
+				}
+				break;
 
-				default:
-					break;
+			case 28: case 29: case 30:
+				SOUNDMANAGER->play("cursor_error", 0.6f);
+				return;
+
+			default:
+				break;
 			}
 
 			SOUNDMANAGER->play("cursor_drop", 0.4f);
@@ -1019,61 +1019,61 @@ void inventory::cursorRender(HDC hdc)
 
 		switch (_cursor->getSlotIdx())
 		{
-			case 0: case 1: case 2: case 3: case 4:
-				_cursor->getImg()->frameRender(hdc,
-					204 + (columnIdx * 72), 158, _cursor->getIdx(), 0);
-				break;
+		case 0: case 1: case 2: case 3: case 4:
+			_cursor->getImg()->frameRender(hdc,
+				204 + (columnIdx * 72), 158, _cursor->getIdx(), 0);
+			break;
 
-			case 7: case 8: case 9: case 10: case 11:
-			case 14: case 15: case 16: case 17: case 18:
-			case 21: case 22: case 23: case 24: case 25:
-				_cursor->getImg()->frameRender(hdc,
-					204 + (columnIdx * 72), 244 + ((rowIdx - 1) * 72), _cursor->getIdx(), 0);
-				break;
+		case 7: case 8: case 9: case 10: case 11:
+		case 14: case 15: case 16: case 17: case 18:
+		case 21: case 22: case 23: case 24: case 25:
+			_cursor->getImg()->frameRender(hdc,
+				204 + (columnIdx * 72), 244 + ((rowIdx - 1) * 72), _cursor->getIdx(), 0);
+			break;
 
-			case 5:
-				_cursor->getImg()->frameRender(hdc, 734, 154, _cursor->getIdx(), 0);
-				break;
+		case 5:
+			_cursor->getImg()->frameRender(hdc, 734, 154, _cursor->getIdx(), 0);
+			break;
 
-			case 6:
-				_cursor->getImg()->frameRender(hdc, 908, 154, _cursor->getIdx(), 0);
-				break;
+		case 6:
+			_cursor->getImg()->frameRender(hdc, 908, 154, _cursor->getIdx(), 0);
+			break;
 
-			case 12:
-				_cursor->getImg()->frameRender(hdc, 650, 244, _cursor->getIdx(), 0);
-				break;
+		case 12:
+			_cursor->getImg()->frameRender(hdc, 650, 244, _cursor->getIdx(), 0);
+			break;
 
-			case 13:
-				_cursor->getImg()->frameRender(hdc, 722, 244, _cursor->getIdx(), 0);
-				break;
+		case 13:
+			_cursor->getImg()->frameRender(hdc, 722, 244, _cursor->getIdx(), 0);
+			break;
 
-			case 19:
-				_cursor->getImg()->frameRender(hdc, 650, 316, _cursor->getIdx(), 0);
-				break;
+		case 19:
+			_cursor->getImg()->frameRender(hdc, 650, 316, _cursor->getIdx(), 0);
+			break;
 
-			case 20:
-				_cursor->getImg()->frameRender(hdc, 722, 316, _cursor->getIdx(), 0);
-				break;
+		case 20:
+			_cursor->getImg()->frameRender(hdc, 722, 316, _cursor->getIdx(), 0);
+			break;
 
-			case 26:
-				_cursor->getImg()->frameRender(hdc, 650, 388, _cursor->getIdx(), 0);
-				break;
+		case 26:
+			_cursor->getImg()->frameRender(hdc, 650, 388, _cursor->getIdx(), 0);
+			break;
 
-			case 27:
-				_cursor->getImg()->frameRender(hdc, 722, 388, _cursor->getIdx(), 0);
-				break;
+		case 27:
+			_cursor->getImg()->frameRender(hdc, 722, 388, _cursor->getIdx(), 0);
+			break;
 
-			case 28:
-				_cursor->getImg()->frameRender(hdc, 204, 506, _cursor->getIdx(), 0);
-				break;
+		case 28:
+			_cursor->getImg()->frameRender(hdc, 204, 506, _cursor->getIdx(), 0);
+			break;
 
-			case 29:
-				_cursor->getImg()->frameRender(hdc, 356, 484, _cursor->getIdx(), 0);
-				break;
+		case 29:
+			_cursor->getImg()->frameRender(hdc, 356, 484, _cursor->getIdx(), 0);
+			break;
 
-			case 30:
-				_cursor->getImg()->frameRender(hdc, 470, 484, _cursor->getIdx(), 0);
-				break;
+		case 30:
+			_cursor->getImg()->frameRender(hdc, 470, 484, _cursor->getIdx(), 0);
+			break;
 		}
 	}
 }
@@ -1227,10 +1227,10 @@ void inventory::itemRender(HDC hdc)
 				case 27:
 					_vInven[j]->getItemImg()->render(hdc, 736, 402);
 					break;
-				}//end of switch 
+			}//end of switch 
 
-				//슬롯의 인덱스와 일치하는 아이템을 출력했다면 for문 탈출 
-				break;
+			//슬롯의 인덱스와 일치하는 아이템을 출력했다면 for문 탈출 
+			break;
 
 		}//end of for(j)
 	}//end of for(i)
@@ -1350,7 +1350,7 @@ void inventory::itemNameRender(HDC hdc)
 	}
 }
 
-void inventory::itemCountRender(HDC hdc ,int count, int destX, int destY)
+void inventory::itemCountRender(HDC hdc, int count, int destX, int destY)
 {
 	for (int i = 1, distance = 0; i <= count; i *= 10)
 	{
@@ -1364,7 +1364,7 @@ void inventory::itemCountRender(HDC hdc ,int count, int destX, int destY)
 	}
 }
 
-void inventory::statusNumRender(HDC hdc ,int number, int destY)
+void inventory::statusNumRender(HDC hdc, int number, int destY)
 {
 	// number < 10  
 	if (number < 10)

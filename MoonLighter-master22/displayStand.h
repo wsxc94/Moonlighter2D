@@ -7,19 +7,24 @@
 #define DISPLAYPOSX		658
 #define DISPLAYPOSY		142
 #define MAXSHOPSLOT		28
+#define MAXDIGIT		7
+#define MAXPRICE		9999999
 
+//상점 컨트롤러(인벤토리 or 가격책정) 
 enum SHOP_CTRL
 {
 	CTRL_INVENTORY,
 	CTRL_PRICE
 };
 
+//숫자 이미지 색상 
 enum COLOR_TYPE
 {
 	COLOR_BLACK,
 	COLOR_WHITE
 };
 
+//상점 인벤토리 슬롯의 타입 
 enum SHOPSLOT
 {
 	SLOT_INVEN,
@@ -27,6 +32,7 @@ enum SHOPSLOT
 	SLOT_PRICE
 };
 
+//상점 슬롯 구조체 
 typedef struct
 {
 	SHOPSLOT slotType;
@@ -35,6 +41,15 @@ typedef struct
 	bool isEmpty;
 
 }shopSlot;
+
+//가격 커서 구조체 
+typedef struct
+{
+	image *img;				//커서 이미지 
+	int posIdx;				//커서의 위치 인덱스 
+	int digit[MAXDIGIT];	//자리수마다의 숫자 
+
+}priceCursor;
 
 class displayStand : public gameNode
 {
@@ -46,13 +61,13 @@ private:
 	viShopInven _viShopInven;
 
 private:
-	cursor *_cursor;
-	shopSlot _shopSlot[MAXSHOPSLOT];
-	SHOP_CTRL _shopCtrl;
+	cursor *_cursor;					//메뉴 이동 커서 
+	shopSlot _shopSlot[MAXSHOPSLOT];	//슬롯 구조체 
+	priceCursor _priceCursor;			//가격책정 시 이동 커서 
+	SHOP_CTRL _shopCtrl;				//상점 컨트롤러(인벤토리/가격책정)
 
-	gameItem _tempItem;
-	gameItem _itemEmpty;
-	gameItem _itemGrabbed;
+	gameItem _itemEmpty;				//빈 아이템 구조체 
+	gameItem _itemGrabbed;				//잡고 있는 아이템 구조체 
 
 	gameItem _displayItem1;
 	gameItem _displayItem2;
@@ -95,8 +110,12 @@ public:
 	//상점 인벤토리 관련 함수 
 	void initShopSlot();			//최초의 상점 슬롯 초기화 
 	void initInvenSlot();			//인벤토리 슬롯 초기화(가판대를 열 때마다 실행)
-	void initInvenItem();			//인벤토리 아이템 포기화(가판대를 열 때마다 실행)
+	void initInvenItem();			//인벤토리 아이템 초기화(가판대를 열 때마다 실행)
 	void deleteInvenItems();		//인벤토리에 있는 아이템 전부 삭제 
+	gameItem getDisplayOne();		//가판대의 물건1 반환
+	gameItem getDisplayTwo();		//가판대의 물건2 반환 
+	gameItem getDisplayThree();		//가판대의 물건3 반환 
+	gameItem getDisplayFour();		//가판대의 물건4 반환 
 
 	//키 입력 함수 
 	void setShopCtrl(SHOP_CTRL state);	//상점 컨트롤러 세팅 함수 
@@ -117,14 +136,25 @@ public:
 	void putItemOnEmptySlot();
 	void putItemOnOccupiedSlot();
 
+	//가격책정 관련 함수 
+	void setPriceUp();				//가격 올리기
+	void setPriceDown();			//가격 내리기 
+	void saveLastPrice();			//해당 아이템에 마지막으로 책정한 가격값 저장하기 
+	void loadLastPrice(int index);	//인덱스 위치의 아이템에 마지막으로 책정한 가격값 받아오기 
+
 	//렌더 함수 
-	void menuRender();
-	void cursorRender();
-	void itemRender();
-	void itemGrabbedRender();
-	void itemNameRender();
-	void itemCountRender(int count, int destX, int destY, COLOR_TYPE colorIdx);
-	void greenCountRender(int count, int destX, int destY);
-	void displayCount();
+	void menuRender();				//메뉴 이미지 출력 
+	void cursorRender();			//커서 이미지 출력 
+	void priceCursorRender();		//가격 커서 이미지 출력(화살표)
+	void itemRender();				//아이템 이미지 출력 
+	void itemGrabbedRender();		//현재 잡고 있는 아이템 이미지 출력 
+	void itemNameRender();			//현재 커서가 가리키는 아이템 이름 출력 
+	void displayCountRender();		//가판대에 있는 아이템의 숫자 출력 
+	void unitPriceRender();			//아이템 한 개당 가격 출력 
+	void totalPriceRender();		//아이템 가격 x 개수를 계산한 총 가격 출력 
+	void countRender(int count, int destX, int destY, COLOR_TYPE colorIdx);	//아이템 카운트 출력 
+	void greenCountRender(int count, int destX, int destY);					//아이템 카운트 출력(연두색)
+	void priceCountRender(int count, int destX, int destY);
+
 };
 

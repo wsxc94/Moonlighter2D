@@ -76,6 +76,7 @@ typedef struct
 	int potionValue;		//아이템이 포션일 때 체력 회복값
 	int ability[4];			//아이템이 장비일 때 아이템의 능력치값 (0.hp/1.atk/2.def/3.spd) 
 	int priceRange[4];		//아이템의 가격 범위 (0.저렴한/1.합리적인/2.비싼/3.터무니없는)
+	int price;				//아이템의 가격(상점에서 판매하는 가격)
 	int popularity;			//아이템 판매 시의 인기수준(-1.인기없는/0.평범한/1.인기있는)
 	int count;				//아이템 개수 
 	int maxCount;			//한 칸의 슬롯에 소지 가능한 최대 아이템 개수 
@@ -126,6 +127,7 @@ public:
 	int getPotionValue() { return _item.potionValue; }
 	int *getAbility() { return _item.ability; }
 	int *getPriceRange() { return _item.priceRange; }
+	int getPrice() { return _item.price; }
 	int getPopularity() { return _item.popularity; }
 	int getCount() { return _item.count; }
 	int getMaxCount() { return _item.maxCount; }
@@ -134,6 +136,9 @@ public:
 	//set함수 
 	void setType(ITEM type) { _item.type = type; }
 	void setInvenPosIdx(int index) { _item.invenPosIdx = index; }
+	void setPrice(int price) { _item.price = price; }
+	void addPrice(int addValue) { _item.price += addValue; }
+	void subPrice(int subValue) { _item.price -= subValue; }	
 	void setCount(int count) { _item.count = count; }
 	void plusOneCount() { _item.count++; }				//아이템 개수 +1
 	void minusOneCount() { _item.count--; }				//아이템 개수 -1
