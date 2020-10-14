@@ -23,6 +23,9 @@ HRESULT townScene::init()
 
 	ObjectSetAnim();
 
+	CAMERAMANAGER->FadeInit(80, FADE_IN);
+	CAMERAMANAGER->FadeStart();
+
 	return S_OK;
 }
 

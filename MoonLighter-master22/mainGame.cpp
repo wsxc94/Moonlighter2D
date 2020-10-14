@@ -34,7 +34,6 @@ HRESULT mainGame::init()
 
 	CAMERAMANAGER->FadeInit(1, FADE_IN);
 
-
 	return S_OK;
 }
 
@@ -58,6 +57,14 @@ void mainGame::update()
 	//사운드매니져 업데이트 (이게 없으면 사운드매니져 제대로 동작하지 않는다!!!)
 	SOUNDMANAGER->update();
 
+	//이펙트 매니저 업데이트
+	EFFECTMANAGER->update();
+
+	if (INPUT->GetKeyDown(VK_LBUTTON))
+	{
+		EFFECTMANAGER->addEffect("대시이펙트", _ptMouse.y, _ptMouse.x, _ptMouse.y, 0, 4);
+	}
+
 	CAMERAMANAGER->FadeUpdate();
 }
 
@@ -69,15 +76,16 @@ void mainGame::render()
 	//흰색 빈 비트맵 (이것은 렌더에 그냥 두기)
 	PatBlt(getMemDC(), 0, 0, WINSIZEX, WINSIZEY, BLACKNESS);
 //=============================================================
-	
 	//글자색 배경 없애기
 	SetBkMode(getMemDC(), TRANSPARENT);
 	SCENEMANAGER->render();
 
+	//이펙트 매니저렌더
+	EFFECTMANAGER->render();
 	//프레임을 보고싶으면 주석해제
 	TIMEMANAGER->render(getMemDC());
+	
 	PLAYERDATA->render(getMemDC());
-
 	CAMERAMANAGER->FadeRender(getMemDC());
 
 //=============================================================

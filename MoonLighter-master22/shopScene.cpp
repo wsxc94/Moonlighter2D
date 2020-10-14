@@ -1,6 +1,23 @@
 #include "stdafx.h"
 #include "shopScene.h"
 
+void shopScene::ItemPosSet()
+{
+	/*int displayX[4] = { 472 , 520 , 472 , 520 };
+	int displayY[4] = { 646 , 646 , 694 , 694 };*/
+
+	v_itemPos.push_back(make_pair(472, 646));
+	v_itemPos.push_back(make_pair(520, 646));
+	v_itemPos.push_back(make_pair(472, 694));
+	v_itemPos.push_back(make_pair(520, 694));
+
+	v_itemShadowPos.push_back(make_pair(486, 690));
+	v_itemShadowPos.push_back(make_pair(534, 690));
+	v_itemShadowPos.push_back(make_pair(486, 738));
+	v_itemShadowPos.push_back(make_pair(534, 738));
+
+}
+
 HRESULT shopScene::init()
 {
 	//클래스 초기화
@@ -27,6 +44,8 @@ HRESULT shopScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
+	ItemPosSet();
+
 	_visit = false;
 	return S_OK;
 }
@@ -41,7 +60,7 @@ void shopScene::release()
 
 void shopScene::update()
 {
-	if (!CAMERAMANAGER->FadeIsStart() && !_visit) {
+	if (!CAMERAMANAGER->getFadeIsStart() && !_visit) {
 		_visit = true;
 		SOUNDMANAGER->play("문닫아");
 	}
@@ -70,7 +89,6 @@ void shopScene::render()
 	//CAMERAMANAGER->Render(getMemDC() , IMAGEMANAGER->findImage("상점픽셀"), 304, 132);
 	
 	_npc->render();
-	_displayStand->render();
 	
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점길목"), 458 + IMAGEMANAGER->findImage("상점길목")->getFrameHeight(), 654, 458);
 
@@ -81,19 +99,33 @@ void shopScene::render()
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점좌판"), 674 + IMAGEMANAGER->findImage("상점좌판")->getFrameHeight()/4, 472, 674);
 
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점책상"), 670 + IMAGEMANAGER->findImage("상점책상")->getFrameHeight()/4, 646, 670);
+	
+	for (int i = 0; i < ITEMDESKCOUNT; i++)
+	{
+		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY) continue; 
+		
+		CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
+			680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
+			, v_itemPos[i].first, v_itemPos[i].second);
+		
+		CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("아이템그림자")
+			, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
+			, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
+	}
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 
-	/*char str[256];
+	char str[256];
 	POINT tmp = CAMERAMANAGER->getRelativeMouse(_ptMouse);
 
 	wsprintf(str, "X: %d", tmp.x);
 	TextOut(getMemDC(), 5, 150, str, strlen(str));
 	wsprintf(str, "Y: %d", tmp.y);
-	TextOut(getMemDC(), 5, 170, str, strlen(str));*/
+	TextOut(getMemDC(), 5, 170, str, strlen(str));
 
 	PLAYER->render(getMemDC());
 	ITEMMENU->render(getMemDC());
+	_displayStand->render();
 	//IMAGEMANAGER->findImage("상점맵")->render(getMemDC(), 304, 132);
 
 	//CAMERAMANAGER->Rectangle(getMemDC(), GoTownPortal);

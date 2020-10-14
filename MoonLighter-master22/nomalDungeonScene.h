@@ -23,7 +23,7 @@ private:
 	typedef vector<gameItem*> vGameItem;
 private:
 	vGameItem _vItem;
-	dungeonSlot _vItemSlot[28];
+	dungeonSlot _dungeonSlot[28];
 private:
 	DUNGEONSCENESTATE _dState;
 
@@ -66,5 +66,8 @@ public:
 	void initItemSlot();
 	void getInvenItem();
 	void deleteInvenItems();
+	void itemResultRender();
+	void countRender(int count, int destX, int destY);	//아이템 카운트 출력 
+
 };
 

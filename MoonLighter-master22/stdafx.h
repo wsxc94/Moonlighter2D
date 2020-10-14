@@ -45,6 +45,7 @@ using namespace MY_UTIL;
 #include "animation.h"
 #include "player.h"
 #include "itemMenu.h"
+#include "effectManager.h"
 
 
 //=============================================================
@@ -61,6 +62,7 @@ using namespace MY_UTIL;
 #define TIMEMANAGER timeManager::getSingleton()
 #define PLAYER player::getSingleton()
 #define ITEMMENU itemMenu::getSingleton()
+#define EFFECTMANAGER effectManager::getSingleton()
 
 //=============================================================
 //	## 디파인문 ## (윈도우창 초기화)

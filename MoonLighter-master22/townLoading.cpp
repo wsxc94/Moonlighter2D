@@ -137,23 +137,23 @@ void townLoading::loadingImage()
 	_loading->loadFrameImage("cursor_price", "Images/Shop/cursor_price.bmp", 408, 94, 2, 1);
 
 	//아이템 이미지 초기화 
-	_loading->loadImage("item_richJelly", "Images/Item/item_richJelly.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_venomJelly", "Images/Item/item_venomJelly.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_crystal", "Images/Item/item_crystal.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_vine", "Images/Item/item_vine.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_teethStone", "Images/Item/item_teethStone.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_root", "Images/Item/item_root.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_ironBar", "Images/Item/item_ironBar.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_foundryRests", "Images/Item/item_foundryRests.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_brokenSword", "Images/Item/item_brokenSword.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_fabric", "Images/Item/item_fabric.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_hardenedSteel", "Images/Item/item_hardenedSteel.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("richJelly", "Images/Item/item_richJelly.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("venomJelly", "Images/Item/item_venomJelly.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("crystal", "Images/Item/item_crystal.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("vine", "Images/Item/item_vine.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("teethStone", "Images/Item/item_teethStone.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("root", "Images/Item/item_root.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("ironBar", "Images/Item/item_ironBar.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("foundryRests", "Images/Item/item_foundryRests.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("brokenSword", "Images/Item/item_brokenSword.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("fabric", "Images/Item/item_fabric.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("hardenedSteel", "Images/Item/item_hardenedSteel.bmp", 48, 48, true, RGB(255, 0, 255));
 
-	_loading->loadImage("item_trainingShortSword", "Images/Item/item_trainingShortSword.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_trainingBow", "Images/Item/item_trainingBow.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("trainingShortSword", "Images/Item/item_trainingShortSword.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("trainingBow", "Images/Item/item_trainingBow.bmp", 48, 48, true, RGB(255, 0, 255));
 
-	_loading->loadImage("item_hpPotion1", "Images/Item/item_hpPotion1.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("item_hpPotion2", "Images/Item/item_hpPotion2.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("hpPotion1", "Images/Item/item_hpPotion1.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("hpPotion2", "Images/Item/item_hpPotion2.bmp", 48, 48, true, RGB(255, 0, 255));
 
 	//아이템 이름 이미지 초기화
 	_loading->loadImage("name_richJelly", "Images/Item/name_richJelly.bmp", 160, 24);

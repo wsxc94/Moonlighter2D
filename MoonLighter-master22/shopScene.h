@@ -2,6 +2,8 @@
 #include "gameNode.h"
 #include "ShopNpcManager.h"
 #include "displayStand.h"
+
+#define ITEMDESKCOUNT 4
 class shopScene : public gameNode
 {
 private:
@@ -11,8 +13,11 @@ private:
 	RECT GoTownPortal;
 
 	int _npcTime;
-	
 	bool _visit;
+
+	vector <pair<int, int>> v_itemPos;
+	vector <pair<int, int>> v_itemShadowPos;
+	void ItemPosSet();
 
 public:
 	HRESULT init();
