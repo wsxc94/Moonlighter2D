@@ -109,10 +109,6 @@ public:
 	void initInvenItem();				//인벤토리 아이템 초기화(가판대를 열 때마다 실행)
 	void deleteInvenItems();			//인벤토리에 있는 아이템 전부 삭제 
 	gameItem findItemByIdx(int index);	//해당 인벤토리 인덱스에 있는 아이템 찾기 
-	gameItem getDisplayOne();			//가판대의 물건1 반환
-	gameItem getDisplayTwo();			//가판대의 물건2 반환 
-	gameItem getDisplayThree();			//가판대의 물건3 반환 
-	gameItem getDisplayFour();			//가판대의 물건4 반환 
 	gameItem *getDisplayItem();			//가판대의 물건 반환 
 
 	//키 입력 함수 

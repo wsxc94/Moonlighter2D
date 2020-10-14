@@ -10,8 +10,20 @@ enum DUNGEONSCENESTATE
 	DS_UPDATE, DS_RESULT
 };
 
+typedef struct
+{
+	int slotIdx;
+	bool isEmpty;
+
+}dungeonSlot;
+
 class nomalDungeonScene : public gameNode
 {
+private:
+	typedef vector<gameItem*> vGameItem;
+private:
+	vGameItem _vItem;
+	dungeonSlot _vItemSlot[28];
 private:
 	DUNGEONSCENESTATE _dState;
 
@@ -49,5 +61,10 @@ public:
 	void minimapRender();			//미니맵을 렌더하자
 	void setNewFloor();				//다음층 초기화하는것
 	void soundUpdate();				//배경음 업뎃
+
+public:
+	void initItemSlot();
+	void getInvenItem();
+	void deleteInvenItems();
 };
 
