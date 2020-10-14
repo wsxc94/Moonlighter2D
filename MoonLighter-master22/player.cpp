@@ -25,8 +25,10 @@ HRESULT player::init()
 	IMAGEMANAGER->addImage("그림자", "Images/플레이어/player_Shadow.bmp", 70, 50, true, RGB(255, 0, 255));
 	IMAGEMANAGER->addFrameImage("온천", "Images/플레이어/swimState10X4.bmp", 500, 208, 10, 4);
 
-	IMAGEMANAGER->addFrameImage("던전달리기HIT", "Images/플레이어/player_run_dungeon_Hit8X4.bmp", 960, 480, 8, 4);
 	IMAGEMANAGER->addFrameImage("던전idleHIT", "Images/플레이어/player_idle_dungeon_Hit10X4.bmp", 1200, 480, 10, 4);
+	IMAGEMANAGER->addFrameImage("던전달리기HIT", "Images/플레이어/player_run_dungeon_Hit8X4.bmp", 960, 480, 8, 4);
+	IMAGEMANAGER->addFrameImage("숏소드HIT", "Images/플레이어/short_attack_Hit6X4.bmp", 720, 480, 6, 4);
+	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
 
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;
@@ -40,6 +42,10 @@ HRESULT player::init()
 	_aniBow = new ::animation;
 	_aniDie = new ::animation;
 	_aniSwim = new ::animation;
+	_aniHit = new ::animation;
+	_aniRunHit = new ::animation;
+	_aniSwordHit = new ::animation;
+	_aniSwordTwoHit = new ::animation;
 
 	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
 	_aniTownRun->init(IMAGEMANAGER->findImage("달리기"), 0, 5, true);
@@ -60,6 +66,12 @@ HRESULT player::init()
 	_aniDie->init(IMAGEMANAGER->findImage("죽음"), 0, 7);
 	_aniDie->aniStop();
 	_aniSwim->init(IMAGEMANAGER->findImage("온천"), 0, 7);
+	_aniHit->init(IMAGEMANAGER->findImage("던전idleHIT"), 0, 7, true);
+	_aniRunHit->init(IMAGEMANAGER->findImage("던전달리기HIT"), 0, 5, true);
+	_aniSwordHit->init(IMAGEMANAGER->findImage("숏소드HIT"), 0, 5);
+	_aniSwordHit->aniStop();
+	_aniSwordTwoHit->init(IMAGEMANAGER->findImage("숏소드2연격HIT"), 0, 5);
+	_aniSwordTwoHit->aniStop();
 
 	_player.x = 200;
 	_player.y = 200;
@@ -78,6 +90,7 @@ HRESULT player::init()
 	_playerAttackTwoBox.isHit = false;
 
 	_holeAlpha = 255;
+	_hitAlpha = 255;
 
 	_place = TOWN_DUNGEON;
 	_state = PLAYER_STATE::PLAYER_IDLE;
@@ -97,6 +110,8 @@ HRESULT player::init()
 	_attackCount = 0;
 	_attackIndex = 0;;
 
+	_playerHp = 100;
+
 	_arrow = new arrow;
 	_arrow->init();
 
@@ -108,28 +123,26 @@ void player::release()
 	_arrow->release();
 }
 
-void player::update( )
+void player::update()
 {
-	
+
 	this->playerState();
 	this->animation(_player.direction);
+	this->hitPlayer();
 	this->attackRCUpdate();
-	_player.shadowRc = RectMakeCenter(_player.x , _player.y, 35, 35);
+	_player.shadowRc = RectMakeCenter(_player.x, _player.y, 35, 35);
 	_player.rc = RectMakeCenter(_player.x, _player.y - 12, 45, 60);
 	_arrow->update();
 	this->keyInput();
 	this->updateWeaponState();
+	_playerHp = PLAYERDATA->getInDungeonHp();;
 }
 
 void player::render(HDC hdc)
 {
-	//char str[100];
-	//wsprintf(str, "weapon : %d", _player.weapon);
-	//TextOut(hdc, 10, 90, str, strlen(str));
 	POINT pt = CAMERAMANAGER->getRelativeMouse(PointMake(CAMERAMANAGER->getDistanceX(), CAMERAMANAGER->getDistanceY()));
 
-	//IMAGEMANAGER->alphaRender("그림자", hdc, CAMERAMANAGER->getDistanceX() - 35, CAMERAMANAGER->getDistanceY() - 10 , 100);
-	if(_state != PLAYER_SWIM) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, pt.x - 35, pt.y - 10, 100);
+	if (_state != PLAYER_SWIM) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, pt.x - 35, pt.y - 10, 100);
 	if (_isShoot)
 	{
 		_arrow->render(hdc);
@@ -140,30 +153,24 @@ void player::render(HDC hdc)
 		switch (_state)
 		{
 		case PLAYER_IDLE:
-			//IMAGEMANAGER->frameRender("idle", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("idle"),_player.y ,CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, _player.index,IMAGEMANAGER->findImage("idle")->getFrameY());
 			_aniTownIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_RUN:
-			//IMAGEMANAGER->frameRender("달리기", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("달리기"),_player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("달리기")->getFrameX(), IMAGEMANAGER->findImage("달리기")->getFrameY());
 			_aniTownRun->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_ROLL:
-			//IMAGEMANAGER->frameRender("구르기", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("구르기"),_player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("구르기")->getFrameX(), IMAGEMANAGER->findImage("구르기")->getFrameY());
 			_aniTownRoll->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_ATTACK_SWORD:
 
-		break;
+			break;
 		case PLAYER_ATTACK_BOW:
 
 			break;
 		case PLAYER_DIE:
 
 
-		break;
+			break;
 		}
 		break;
 
@@ -171,56 +178,53 @@ void player::render(HDC hdc)
 		switch (_state)
 		{
 		case PLAYER_IDLE:
-			//IMAGEMANAGER->frameRender("던전idle", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("던전idle"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("던전idle")->getFrameX(), IMAGEMANAGER->findImage("던전idle")->getFrameY());
 			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_RUN:
-			//IMAGEMANAGER->frameRender("던전달리기", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("던전달리기"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("던전달리기")->getFrameX(), IMAGEMANAGER->findImage("던전달리기")->getFrameY());
 			_aniDgRun->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_ROLL:
-			//IMAGEMANAGER->frameRender("던전구르기", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("던전구르기"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("던전구르기")->getFrameX(), IMAGEMANAGER->findImage("던전구르기")->getFrameY());
 			_aniDgRoll->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_FALL:
-			//IMAGEMANAGER->findImage("구멍빠짐")->alphaFrameRender(hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, 0, 0, _holeAlpha);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("구멍빠짐"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("구멍빠짐")->getFrameX(), IMAGEMANAGER->findImage("구멍빠짐")->getFrameY());
 			_aniFall->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_ATTACK_SWORD:
-			//IMAGEMANAGER->frameRender("숏소드", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("숏소드"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("숏소드")->getFrameX(), IMAGEMANAGER->findImage("숏소드")->getFrameY());
 			_aniSword->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_ATTACK_SWORD_SECOND:
-			//IMAGEMANAGER->frameRender("숏소드2연격", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("숏소드2연격"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("숏소드2연격")->getFrameX(), IMAGEMANAGER->findImage("숏소드2연격")->getFrameY());
 			_aniSwordTwo->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_TALK:
-			//IMAGEMANAGER->frameRender("던전idle", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("던전idle"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("던전idle")->getFrameX(), IMAGEMANAGER->findImage("던전idle")->getFrameY());
 			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_ATTACK_BOW:
-			//IMAGEMANAGER->frameRender("활날리기", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("활날리기"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("활날리기")->getFrameX(), IMAGEMANAGER->findImage("활날리기")->getFrameY());
 			_aniBow->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_DIE:
-			//IMAGEMANAGER->frameRender("죽음", hdc, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68);
-			//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("죽음"), _player.y, CAMERAMANAGER->getDistanceX() - 60, CAMERAMANAGER->getDistanceY() - 68, IMAGEMANAGER->findImage("죽음")->getFrameX(), IMAGEMANAGER->findImage("죽음")->getFrameY());
 			_aniDie->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-		break;
+			break;
 		case PLAYER_SWIM:
 			_aniSwim->ZoderRender(_player.y, pt.x - 20, pt.y - 15);
 			break;
+		case HIT_IDLE:
+			_aniHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			break;
+		case HIT_RUN:
+			_aniRunHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			break;
+		case HIT_SWORD:
+			_aniSwordHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			break;
+		case HIT_SWORD_TWO:
+			_aniSwordTwoHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			break;
 		}
 		break;
+
+
 	}
+
 }
 
 int player::getMaxItemSlot()
@@ -243,6 +247,10 @@ void player::animation(int frameY)
 	_aniBow->update();
 	_aniDie->update();
 	_aniSwim->update();
+	_aniHit->update();
+	_aniRunHit->update();
+	_aniSwordHit->update();
+	_aniSwordTwoHit->update();
 
 	_aniTownIdle->setFrameY(_player.direction);
 	_aniTownRun->setFrameY(_player.direction);
@@ -256,6 +264,10 @@ void player::animation(int frameY)
 	_aniBow->setFrameY(_player.direction);
 	_aniDie->setFrameY(_player.direction);
 	_aniSwim->setFrameY(_player.direction);
+	_aniHit->setFrameY(_player.direction);
+	_aniRunHit->setFrameY(_player.direction);
+	_aniSwordHit->setFrameY(_player.direction);
+	_aniSwordTwoHit->setFrameY(_player.direction);
 
 }
 
@@ -266,6 +278,12 @@ void player::playerState()
 		switch (_state)
 		{
 		case PLAYER_IDLE:
+			if (_isHit)
+			{
+				if (INPUT->GetKey('W') || INPUT->GetKey('S')
+					|| INPUT->GetKey('A')
+					|| INPUT->GetKey('D')) _state = HIT_RUN;
+			}
 			if (INPUT->GetKey('W') || INPUT->GetKey('S')
 				|| INPUT->GetKey('A')
 				|| INPUT->GetKey('D')) _state = PLAYER_RUN;
@@ -284,23 +302,23 @@ void player::playerState()
 			{
 				switch (_player.weapon)
 				{
-					case EMPTY:
+				case EMPTY:
 					_state = PLAYER_TALK;
 					break;
-					case SHORT_SOWRD:
-						_state = PLAYER_ATTACK_SWORD;
-						_aniSword->aniRestart();
-						break;
+				case SHORT_SOWRD:
+					_state = PLAYER_ATTACK_SWORD;
+					_aniSword->aniRestart();
+					break;
 
-					case BOW:
-						_state = PLAYER_ATTACK_BOW;
-						_aniBow->aniRestart();
-						_isShoot = true;
+				case BOW:
+					_state = PLAYER_ATTACK_BOW;
+					_aniBow->aniRestart();
+					_isShoot = true;
 
-						break;
+					break;
 				}
 
-			}	
+			}
 
 			if (_attackIndex != 0)
 			{
@@ -308,6 +326,12 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_RUN:
+			if (_isHit)
+			{
+				if (INPUT->GetKey('W') || INPUT->GetKey('S')
+					|| INPUT->GetKey('A')
+					|| INPUT->GetKey('D')) _state = HIT_RUN;
+			}
 			if (INPUT->GetKeyUp('W') || INPUT->GetKeyUp('S')
 				|| INPUT->GetKeyUp('A')
 				|| INPUT->GetKeyUp('D')) _state = PLAYER_IDLE;
@@ -322,7 +346,7 @@ void player::playerState()
 				_aniDgRoll->aniRestart();
 			}
 
-			if (INPUT->GetKey('J') && _place == TOWN_DUNGEON )
+			if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 			{
 
 				switch (_player.weapon)
@@ -358,7 +382,7 @@ void player::playerState()
 			else {
 				_up = false;
 			}
-			
+
 			if (INPUT->GetKey('S'))
 			{
 				_player.y += 4;
@@ -396,18 +420,18 @@ void player::playerState()
 			_rollCount++;
 			switch (_player.direction)
 			{
-				case 0:
-					_player.y += _rollJumpPower;
-					break;
-				case 1:
-					_player.y -= _rollJumpPower;
-					break;
-				case 2:
-					_player.x += _rollJumpPower;
-					break;
-				case 3:
-					_player.x -= _rollJumpPower;
-					break;
+			case 0:
+				_player.y += _rollJumpPower;
+				break;
+			case 1:
+				_player.y -= _rollJumpPower;
+				break;
+			case 2:
+				_player.x += _rollJumpPower;
+				break;
+			case 3:
+				_player.x -= _rollJumpPower;
+				break;
 			}
 
 			_rollJumpPower -= _rollGravity;
@@ -494,8 +518,8 @@ void player::playerState()
 				_attackIndex = 0;
 				_state = PLAYER_IDLE;
 			}
-			
-			break; 
+
+			break;
 
 		case PLAYER_TALK:
 			if (INPUT->GetKey('W') || INPUT->GetKey('S')
@@ -538,6 +562,72 @@ void player::playerState()
 				_right = true;
 			}
 			break;
+		case HIT_IDLE:
+			if (INPUT->GetKey('W') || INPUT->GetKey('S')
+				|| INPUT->GetKey('A')
+				|| INPUT->GetKey('D')) _state = HIT_RUN;
+			if (!_isHit)
+			{
+				_state = PLAYER_IDLE;
+			}
+			break;
+		case HIT_RUN:
+
+			if (INPUT->GetKey('W') || INPUT->GetKey('S')
+				|| INPUT->GetKey('A')
+				|| INPUT->GetKey('D')) _state = HIT_RUN;
+			if (INPUT->GetKey('W'))
+			{
+				_player.y -= 4;
+				_player.direction = 1;
+				_up = true;
+			}
+			else {
+				_up = false;
+			}
+
+			if (INPUT->GetKey('S'))
+			{
+				_player.y += 4;
+				_player.direction = 0;
+				_down = true;
+			}
+			else {
+				_down = false;
+			}
+
+			if (INPUT->GetKey('A'))
+			{
+				_player.x -= 4;
+				_player.direction = 3;
+				_left = true;
+			}
+			else {
+				_left = false;
+			}
+			if (INPUT->GetKey('D'))
+			{
+				_player.x += 4;
+				_player.direction = 2;
+				_right = true;
+			}
+			if (!_isHit)
+			{
+				_state = PLAYER_RUN;
+			}
+			break;
+		case HIT_SWORD:
+			if (!_isHit)
+			{
+				_state = PLAYER_ATTACK_SWORD;
+			}
+			break;
+		case HIT_SWORD_TWO:
+			if (!_isHit)
+			{
+				_state = PLAYER_IDLE;
+			}
+			break;
 		}
 	}
 }
@@ -549,35 +639,35 @@ void player::attackRCUpdate()
 	case PLAYER_ATTACK_SWORD:
 		switch (_player.direction)
 		{
-			case 0:
-				_playerAttackBox.rc = RectMakeCenter(_player.x, _player.y + 30, 80, 40);
-				break;
-			case 1:
-				_playerAttackBox.rc = RectMakeCenter(_player.x, _player.y - 35, 80, 40);
-				break;
-			case 2:
-				_playerAttackBox.rc = RectMakeCenter(_player.x + 30, _player.y, 40, 60);
-				break;
-			case 3:
-				_playerAttackBox.rc = RectMakeCenter(_player.x - 30, _player.y, 40, 60);
-				break;
+		case 0:
+			_playerAttackBox.rc = RectMakeCenter(_player.x, _player.y + 30, 80, 40);
+			break;
+		case 1:
+			_playerAttackBox.rc = RectMakeCenter(_player.x, _player.y - 35, 80, 40);
+			break;
+		case 2:
+			_playerAttackBox.rc = RectMakeCenter(_player.x + 30, _player.y, 40, 60);
+			break;
+		case 3:
+			_playerAttackBox.rc = RectMakeCenter(_player.x - 30, _player.y, 40, 60);
+			break;
 		}
 		break;
 	case PLAYER_ATTACK_SWORD_SECOND:
 		switch (_player.direction)
 		{
-			case 0:
-				_playerAttackTwoBox.rc = RectMakeCenter(_player.x, _player.y + 30, 80, 40);
-				break;
-			case 1:
-				_playerAttackTwoBox.rc = RectMakeCenter(_player.x, _player.y - 35, 80, 40);
-				break;
-			case 2:
-				_playerAttackTwoBox.rc = RectMakeCenter(_player.x + 30, _player.y, 40, 60);
-				break;
-			case 3:
-				_playerAttackTwoBox.rc = RectMakeCenter(_player.x - 30, _player.y, 40, 60);
-				break;
+		case 0:
+			_playerAttackTwoBox.rc = RectMakeCenter(_player.x, _player.y + 30, 80, 40);
+			break;
+		case 1:
+			_playerAttackTwoBox.rc = RectMakeCenter(_player.x, _player.y - 35, 80, 40);
+			break;
+		case 2:
+			_playerAttackTwoBox.rc = RectMakeCenter(_player.x + 30, _player.y, 40, 60);
+			break;
+		case 3:
+			_playerAttackTwoBox.rc = RectMakeCenter(_player.x - 30, _player.y, 40, 60);
+			break;
 		}
 		break;
 
@@ -620,17 +710,17 @@ void player::updateWeaponState()
 {
 	switch (ITEMMENU->getInventory()->getWeaponEquipped().getItemIdx())
 	{
-		case 16:
-			_player.weapon = SHORT_SOWRD;
-			break;
+	case 16:
+		_player.weapon = SHORT_SOWRD;
+		break;
 
-		case 15:
-			_player.weapon = BOW;
-			break;
+	case 15:
+		_player.weapon = BOW;
+		break;
 
-		default:
-			_player.weapon = SHORT_SOWRD;
-			break;
+	default:
+		_player.weapon = SHORT_SOWRD;
+		break;
 	}
 }
 
@@ -644,3 +734,21 @@ void player::npcTalk(bool& isTalk)
 	}
 }
 
+void player::hitPlayer()
+{
+	if (_playerHp > PLAYERDATA->getInDungeonHp())
+	{
+		_isHit = true;
+	}
+	if (_isHit)
+	{
+		_playerHp = PLAYERDATA->getInDungeonHp();
+
+		_hitAlpha -= 10;
+		if (_hitAlpha < 0)
+		{
+			_hitAlpha = 255;
+			_isHit = false;
+		}
+	}
+}

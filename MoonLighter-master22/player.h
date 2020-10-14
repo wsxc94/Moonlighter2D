@@ -17,7 +17,11 @@ enum PLAYER_STATE
 	PLAYER_TALK,
 	PLAYER_DIE,
 	PLAYER_FALL,
-	PLAYER_SWIM
+	PLAYER_SWIM,
+	HIT_IDLE,
+	HIT_RUN,
+	HIT_SWORD,
+	HIT_SWORD_TWO
 };
 
 enum WEAPONSTATE
@@ -70,6 +74,7 @@ private:
 	bool _down;
 	bool _isShoot;
 	bool _isTalk;
+	bool _isHit;
 
 	int _frameX;
 	int _frameY;
@@ -86,9 +91,13 @@ private:
 	int _attackCount;
 	int _attackIndex;
 
+	int _playerHp;
+	int _hitAlpha;
+
 	float _rollJumpPower;
 	float _rollGravity;
 private:
+
 	animation* _aniTownIdle;
 	animation* _aniTownRun;
 	animation* _aniTownRoll;
@@ -101,6 +110,11 @@ private:
 	animation* _aniBow;
 	animation* _aniDie;
 	animation* _aniSwim;
+
+	animation* _aniHit;
+	animation* _aniRunHit;
+	animation* _aniSwordHit;
+	animation* _aniSwordTwoHit;
 
 public:
 	HRESULT init();
@@ -117,6 +131,7 @@ public:
 	void updateWeaponState();	//플레이어의 무기 장착 상태 업데이트 
 	void keyInput();		//플레이어의 상태에 상관없이 키 입력을 받는 함수 
 	void npcTalk(bool& isTalk);
+	void hitPlayer();
 
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }
