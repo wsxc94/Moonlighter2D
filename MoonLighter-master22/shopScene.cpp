@@ -64,6 +64,7 @@ void shopScene::render()
 	IMAGEMANAGER->findImage("»óÁ¡ÇÈ¼¿")->render(IMAGEMANAGER->findImage("temp")->getMemDC(), 304, 132);
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("»óÁ¡¸Ê"), 304, 132);
 	//CAMERAMANAGER->Render(getMemDC() , IMAGEMANAGER->findImage("»óÁ¡ÇÈ¼¿"), 304, 132);
+	
 	_npc->render();
 	_displayStand->render();
 	
@@ -116,8 +117,6 @@ void shopScene::PlayerCol()
 	{
 		PLAYER->setPlayerState(PLAYER_STATE::PLAYER_IDLE);
 	}
-
-
 	if (GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),
 		(PLAYER->getShadowRect().left + PLAYER->getShadowRect().right) /2 , PLAYER->getShadowRect().top) == RGB(255, 0, 0) ||
 		GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),

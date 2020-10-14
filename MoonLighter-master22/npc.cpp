@@ -175,11 +175,12 @@ void npc::render()
 			DrawText(getMemDC(), str, -1, &_textRect, DT_LEFT | DT_WORDBREAK);
 
 		}
-	    // CAMERAMANAGER->Rectangle(getMemDC(), _rc);
+		//CAMERAMANAGER->FrameRect(getMemDC(), _rc, RGB(255, 0, 0));
 }
 
 void npc::render(NPC_MAP NPC_SHOP)
 {
+
 	if (_stop)
 	{
 		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
@@ -198,22 +199,6 @@ void npc::render(NPC_MAP NPC_SHOP)
 
 void npc::anim()
 {
-	/*_count++;
-	if (_count % 7 == 0)
-	{
-		_idx++;
-		if(RadianToDegree(_angle) >= 225 && RadianToDegree(_angle) <= 360) IMAGEMANAGER->findImage(_key)->setFrameY(0);
-		if(RadianToDegree(_angle) >= 45 && RadianToDegree(_angle) < 135) IMAGEMANAGER->findImage(_key)->setFrameY(1);
-		if(RadianToDegree(_angle) >= 0 && RadianToDegree(_angle) < 45) IMAGEMANAGER->findImage(_key)->setFrameY(2);
-		if(RadianToDegree(_angle) >= 135 && RadianToDegree(_angle) < 225) IMAGEMANAGER->findImage(_key)->setFrameY(3);
-
-		if (_idx > IMAGEMANAGER->findImage(_key)->getMaxFrameX())
-		{
-			_idx = 0;
-		}
-
-		IMAGEMANAGER->findImage(_key)->setFrameX(_idx);
-	}*/
 
 	_aniNpc->update();
 	if (!_stop)
@@ -248,8 +233,6 @@ void npc::boxAnim()
 void npc::move()
 {
 	_time++;
-
-	
 
 	if (!_stop) {
 
@@ -344,12 +327,14 @@ void npc::action(string talk)
 void npc::collision()
 {
 	if (_key != "¿¡¸®½º") {
-		_rc = RectMake(_pos.x, _pos.y,
-			IMAGEMANAGER->findImage(_key)->getFrameWidth(), IMAGEMANAGER->findImage(_key)->getFrameHeight());
+		_rc = RectMake(_pos.x - IMAGEMANAGER->findImage(_key)->getFrameWidth() / 2,
+			_pos.y - IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2,
+			IMAGEMANAGER->findImage(_key)->getFrameWidth() * 2,
+			IMAGEMANAGER->findImage(_key)->getFrameHeight() * 2);
 	}
 	else {
-		_rc = RectMake(_pos.x, _pos.y,
-			IMAGEMANAGER->findImage(_key)->getFrameWidth(), IMAGEMANAGER->findImage(_key)->getFrameHeight()*2);
+		_rc = RectMake(_pos.x - 10, _pos.y - 10,
+			IMAGEMANAGER->findImage(_key)->getFrameWidth() + 20, IMAGEMANAGER->findImage(_key)->getFrameHeight() * 2 + 20);
 	}
 
 }

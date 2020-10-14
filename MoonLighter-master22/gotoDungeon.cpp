@@ -17,7 +17,6 @@ HRESULT gotoDungeon::init()
 	_DungeonDoorAnim->init(IMAGEMANAGER->findImage("던전가는길문") , 0 ,7 , false , false);
 
 	_dungeonDoorCheck = false;
-
 	_portalPosCheck = false;
 
 	return S_OK;
@@ -25,8 +24,8 @@ HRESULT gotoDungeon::init()
 
 void gotoDungeon::release()
 {
-	SAFE_DELETE(_playerGotoAnim);
-	SAFE_DELETE(_DungeonDoorAnim);
+	/*SAFE_DELETE(_playerGotoAnim);
+	SAFE_DELETE(_DungeonDoorAnim);*/
 }
 
 void gotoDungeon::update()
@@ -39,7 +38,7 @@ void gotoDungeon::update()
 	if (y > 1500) _portalPosCheck = true;
 	else _portalPosCheck = false;
 
-	if ((y < 1150) && _dungeonDoorCheck) {
+	if ((y < 1030) && _dungeonDoorCheck) {
 		/*cout << "문열기" << endl;
 		_DungeonDoorAnim = new animation;
 		_DungeonDoorAnim->init(IMAGEMANAGER->findImage("던전가는길문"), 0, 7, false, false);
@@ -50,14 +49,12 @@ void gotoDungeon::update()
 			_dungeonDoorCheck = false;
 		}
 	}
-	else if ((y > 1150) && !_dungeonDoorCheck) {
-		/*cout << "문닫기" << endl;
-		_DungeonDoorAnim = new animation;
-		_DungeonDoorAnim->init(IMAGEMANAGER->findImage("던전가는길문"), 0, 7, false, true);
-		_dungeonDoorCheck = true;*/
+	else if ((y > 1030) && !_dungeonDoorCheck) {
+		
 		if (_DungeonDoorAnim->getAniState() != ANIMATION_PLAY)
 		{
-			_dungeonDoorCheck = false;
+			_DungeonDoorAnim->aniReverse();
+			_dungeonDoorCheck = true;
 		}
 
 	}
@@ -66,7 +63,7 @@ void gotoDungeon::update()
 
 	CAMERAMANAGER->update(x, y);
 	CAMERAMANAGER->movePivot(x, y);
-	//collTile();
+	collTile();
 
 	//cout << x << " " << y << endl;
 	//_playerGotoAnim->update();

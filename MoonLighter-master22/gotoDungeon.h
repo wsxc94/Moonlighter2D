@@ -6,7 +6,6 @@ class gotoDungeon : public gameNode
 {
 private:
 	vector<tagTile> _vTile;
-
 	bool _portalPosCheck;
 
 	bool _dungeonDoorCheck;

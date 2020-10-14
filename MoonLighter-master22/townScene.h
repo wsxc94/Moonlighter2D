@@ -16,7 +16,7 @@ private:
 
 	npcManager* _npcManager;
 
-	vector<animation*> _objManager; // 애니메이션 벡터 - 팀장급 디렉터
+	vector<animation*> _objManager; // 건물 애니메이션 벡터 - 팀장급 디렉터
 	//카메라 테스트용 피벗
 	float _pivotX, _pivotY;
 
