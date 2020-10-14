@@ -79,6 +79,8 @@ HRESULT npc::init(tagPosF pos, string key)
 	_aniNpc = new animation;
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
 
+	_isBarking = false;
+
 	return S_OK;
 }
 
@@ -135,21 +137,17 @@ void npc::render()
 	
 		if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc) && !_Istalk)
 		{
-			//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage("npc대화"), _pos.x + 30, _pos.y - 50, _boxidx, 0);
 			CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("npc대화"), 2000, _pos.x + 30, _pos.y - 50, _boxidx, 0);
 		}
 		
 		if (_stop)
 		{
-			//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
-			//	0, IMAGEMANAGER->findImage(_key)->getFrameY());
-			// 영훈이형 z오더를 했더니 IMAGEMANAGER->getFrameX() 이게안되서 제가 애니메이션으로 바꿨습니다.....죄송합니다ㅠㅠ
+		
 			_aniNpc->aniStop();
 			_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 		}
 		else {
-			//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
-			//	IMAGEMANAGER->findImage(_key)->getFrameX(), IMAGEMANAGER->findImage(_key)->getFrameY());
+			
 			if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 			_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 		}
@@ -324,6 +322,29 @@ void npc::action(string talk)
 
 }
 
+void npc::action()
+{
+
+	RECT tmp;
+
+	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc))
+		boxAnim();
+	else
+		_boxidx = 0;
+
+	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc) && INPUT->GetKeyDown('J'))
+	{
+
+		if (!SOUNDMANAGER->isPlaySound("개소리"))
+		{
+			SOUNDMANAGER->play("개소리");
+			_isBarking = true;
+		}
+
+	}
+
+}
+
 void npc::collision()
 {
 	if (_key != "에리스") {
@@ -341,7 +362,15 @@ void npc::collision()
 
 void npc::lookPlayer()
 {
-	_aniNpc->update();
+
+	if (_isBarking)
+	{
+		_aniNpc->update();
+		if (_aniNpc->getAniState() == ANIMATION_END)
+		{
+			_isBarking = false;
+		}
+	}
 
 	if ((_pos.y < PLAYER->getY() && _pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() > PLAYER->getY()) &&
 		_pos.x > PLAYER->getX())

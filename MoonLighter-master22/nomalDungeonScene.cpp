@@ -4,6 +4,8 @@
 
 HRESULT nomalDungeonScene::init()
 {
+	//던전 업데이트 종류
+	_dState = DS_UPDATE;
 	//던전층수
 	_dgFloor = 1;
 
@@ -17,11 +19,14 @@ HRESULT nomalDungeonScene::init()
 
 	//플레이어 테스트
 	_player = RectMakeCenter(WINSIZEX / 2, WINSIZEY / 2, 40, 40);
+	PLAYERDATA->setIsInDungeon(true);
 	//에너미 테스트
 
 
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
+
+	SOUNDMANAGER->play("bossRoomBGM");
 
 
 	//카메라 초기화
@@ -38,39 +43,35 @@ void nomalDungeonScene::release()
 
 void nomalDungeonScene::update()
 {
-	// 던전 배경음 
-	if (!SOUNDMANAGER->isPlaySound("dungeonBGM"))
-	{
-		SOUNDMANAGER->play("dungeonBGM",0.2f);
-	}
+	
+	//this->soundUpdate();
+
 
 	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
-		if (_currentDungeon->getDungeonKind() == DG_NOMAL)
+		//플레이어 이동
+		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
 		{
-			//플레이어 이동
-			switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
-			{
-			case 1:
-				PLAYER->setX(1085 + 17);
-				PLAYER->setY(350 + 17);
-				break;
-			case 2:
-				PLAYER->setX(140 + 17);
-				PLAYER->setY(350 + 17);
-				break;
-			case 3:
-				PLAYER->setX(595 + 17);
-				PLAYER->setY(595 + 17);
-				break;
-			case 4:
-				PLAYER->setX(595 + 17);
-				PLAYER->setY(105 + 17);
-				break;
-			}
-			//던전 이동
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+		case 1:
+			PLAYER->setX(1085 + 17);
+			PLAYER->setY(350 + 17);
+			break;
+		case 2:
+			PLAYER->setX(140 + 17);
+			PLAYER->setY(350 + 17);
+			break;
+		case 3:
+			PLAYER->setX(595 + 17);
+			PLAYER->setY(595 + 17);
+			break;
+		case 4:
+			PLAYER->setX(595 + 17);
+			PLAYER->setY(105 + 17);
+			break;
 		}
+		//던전 이동
+		_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+		
 	}
 	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
@@ -189,4 +190,9 @@ void nomalDungeonScene::setNewFloor()
 
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
+}
+
+void nomalDungeonScene::soundUpdate()
+{
+
 }

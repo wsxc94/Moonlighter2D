@@ -10,10 +10,9 @@ private:
 
 	RECT GoTownPortal;
 
-	float _pivotX;
-	float _pivotY;
-
 	int _npcTime;
+	
+	bool _visit;
 
 public:
 	HRESULT init();

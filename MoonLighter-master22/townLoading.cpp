@@ -9,7 +9,6 @@ HRESULT townLoading::init()
 	this->loadingImage();
 	this->loadingSound();
 
-
 	return S_OK;
 }
 
@@ -38,7 +37,6 @@ void townLoading::render()
 
 void townLoading::loadingImage()
 {
-
 	/*for (int i = 0; i < 2000; i++)
 	{
 		_loading->loadImage("test", 0, 0);
@@ -118,6 +116,7 @@ void townLoading::loadingImage()
 	_loading->loadImage("menu_calendar", "Images/ItemMenu/menu_calendar.bmp", 1002, 592, true, RGB(255, 0, 255));
 	_loading->loadImage("menu_wishlist", "Images/ItemMenu/menu_wishlist.bmp", 818, 518, true, RGB(255, 0, 255));
 	_loading->loadImage("menu_inventory", "Images/ItemMenu/menu_inventory.bmp", 1044, 598, true, RGB(255, 0, 255));
+	_loading->loadImage("menu_inventory_inDungeon", "Images/ItemMenu/menu_inventory_inDungeon.bmp", 1044, 598, true, RGB(255, 0, 255));
 	_loading->loadImage("menu_notebook", "Images/ItemMenu/menu_notebook.bmp", 827, 574, true, RGB(255, 0, 255));
 	_loading->loadImage("btn_qe", "Images/ItemMenu/btn_qe.bmp", 300, 38, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("toggle_calendar", "Images/ItemMenu/toggle_calendar.bmp", 92, 50, 2, 1);
@@ -284,5 +283,13 @@ void townLoading::loadingSound()
 	//플레이어 사운드 
 	_loading->loadSound("heal", "Sound/playerSound/heal.wav");
 	_loading->loadSound("weaponChange", "Sound/playerSound/weaponChange.wav");
+	_loading->loadSound("doorBGM", "Sound/door.wav");
+
+	_loading->loadSound("상점입장0", "Sound/shopSound/shopDoorOpen0.wav");
+	_loading->loadSound("상점입장1", "Sound/shopSound/shopDoorOpen1.wav");
+	_loading->loadSound("문닫아", "Sound/shopSound/문닫힘.wav");
+
+	//마을 사운드
+	_loading->loadSound("개소리" , "Sound/townSound/개소리.wav");
 
 }

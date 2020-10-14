@@ -55,8 +55,17 @@ void inventory::update()
 
 void inventory::render(HDC hdc)
 {
-	IMAGEMANAGER->findImage("menu_inventory")->render(hdc, _invenPos.x, _invenPos.y);
+	//던전에 있는지 여부에 따라 메뉴이미지 다르게 출력 
+	if (PLAYERDATA->getIsInDungeon())
+	{
+		IMAGEMANAGER->findImage("menu_inventory_inDungeon")->render(hdc, _invenPos.x, _invenPos.y);
+	}
+	else
+	{
+		IMAGEMANAGER->findImage("menu_inventory")->render(hdc, _invenPos.x, _invenPos.y);
+	}
 
+	//메뉴가 현재 고정된 상태일 때 출력 
 	if (_cursor->getShowCursor())
 	{
 		itemRender(hdc);

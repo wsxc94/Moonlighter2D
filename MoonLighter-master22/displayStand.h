@@ -68,18 +68,14 @@ private:
 
 	gameItem _itemEmpty;				//빈 아이템 구조체 
 	gameItem _itemGrabbed;				//잡고 있는 아이템 구조체 
+	gameItem _displayItem[4];			//상점 디스플레이 아이템 배열 
 
-	gameItem _displayItem1;
-	gameItem _displayItem2;
-	gameItem _displayItem3;
-	gameItem _displayItem4;
+	POINT _shopInvenPos;				//상점 인벤토리 위치 
+	POINT _displayPos;					//상점 디스플레이 위치 
 
-	POINT _shopInvenPos;
-	POINT _displayPos;
-
-	float _menuMoveSpeed;
-	int _grabTime;
-	int _itemPrice[MAXITEM];
+	float _menuMoveSpeed;				//메뉴 이동속도 
+	int _grabTime;						//아이템을 잡는 기준 시간(1개 잡을지/전부 잡을지)
+	int _lastPrice[MAXITEM];			//아이템 가격()
 
 	bool _menuOn;
 	bool _openMenu;
@@ -108,14 +104,12 @@ public:
 	void menuMoveDown(POINT *pos, const int destPos);		//위치값을 받아 목적지로 아래쪽 이동 
 
 	//상점 인벤토리 관련 함수 
-	void initShopSlot();			//최초의 상점 슬롯 초기화 
-	void initInvenSlot();			//인벤토리 슬롯 초기화(가판대를 열 때마다 실행)
-	void initInvenItem();			//인벤토리 아이템 초기화(가판대를 열 때마다 실행)
-	void deleteInvenItems();		//인벤토리에 있는 아이템 전부 삭제 
-	gameItem getDisplayOne();		//가판대의 물건1 반환
-	gameItem getDisplayTwo();		//가판대의 물건2 반환 
-	gameItem getDisplayThree();		//가판대의 물건3 반환 
-	gameItem getDisplayFour();		//가판대의 물건4 반환 
+	void initShopSlot();				//최초의 상점 슬롯 초기화 
+	void initInvenSlot();				//인벤토리 슬롯 초기화(가판대를 열 때마다 실행)
+	void initInvenItem();				//인벤토리 아이템 초기화(가판대를 열 때마다 실행)
+	void deleteInvenItems();			//인벤토리에 있는 아이템 전부 삭제 
+	gameItem findItemByIdx(int index);	//해당 인벤토리 인덱스에 있는 아이템 찾기 
+	gameItem *getDisplayItem();			//가판대의 물건 반환 
 
 	//키 입력 함수 
 	void setShopCtrl(SHOP_CTRL state);	//상점 컨트롤러 세팅 함수 
@@ -128,13 +122,13 @@ public:
 	void downKeyDown();					//아래쪽 키(S) 입력 함수 
 
 	//아이템 잡기 및 놓기 함수 
-	void grabItem();
-	void grabOneItem();
-	void grabAllItem();
-	void grabOneMoreItem();
-	void putItem();
-	void putItemOnEmptySlot();
-	void putItemOnOccupiedSlot();
+	void grabItem();					//전체 아이템 잡기 함수 
+	void grabOneItem();					//아이템 한 개 잡기 함수 
+	void grabAllItem();					//아이템 전체 잡기 함수 
+	void grabOneMoreItem();				//잡고 있는 아이템과 같은 아이템을 슬롯에서 한 개 더 잡는 함수 
+	void putItem();						//전체 아이템 놓기 함수 
+	void putItemOnEmptySlot();			//빈 곳에 아이템 놓기 함수 
+	void putItemOnOccupiedSlot();		//비어있지 않은 곳에 아이템 놓기 함수 
 
 	//가격책정 관련 함수 
 	void setPriceUp();				//가격 올리기
@@ -149,12 +143,12 @@ public:
 	void itemRender();				//아이템 이미지 출력 
 	void itemGrabbedRender();		//현재 잡고 있는 아이템 이미지 출력 
 	void itemNameRender();			//현재 커서가 가리키는 아이템 이름 출력 
-	void displayCountRender();		//가판대에 있는 아이템의 숫자 출력 
+	void displayCountRender();		//가판대에 있는 각 아이템의 숫자 출력 
 	void unitPriceRender();			//아이템 한 개당 가격 출력 
 	void totalPriceRender();		//아이템 가격 x 개수를 계산한 총 가격 출력 
 	void countRender(int count, int destX, int destY, COLOR_TYPE colorIdx);	//아이템 카운트 출력 
 	void greenCountRender(int count, int destX, int destY);					//아이템 카운트 출력(연두색)
-	void priceCountRender(int count, int destX, int destY);
+	void priceCountRender(int count, int destX, int destY);					//아이템 가격 출력 
 
 };
 
