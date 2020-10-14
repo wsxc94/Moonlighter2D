@@ -135,7 +135,8 @@ void player::render(HDC hdc)
 			_aniSwordTwo->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_SHILED:
-			_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			//_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDiePortal->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_TALK:
 			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
@@ -615,6 +616,7 @@ void player::playerSkill()
 			break;
 		case SHORT_SOWRD:
 			_state = PLAYER_SHILED;
+			_aniDiePortal->aniRestart();
 			break;
 		case BOW:
 			break;
