@@ -60,11 +60,6 @@ void mainGame::update()
 	//이펙트 매니저 업데이트
 	EFFECTMANAGER->update();
 
-	if (INPUT->GetKeyDown(VK_LBUTTON))
-	{
-		EFFECTMANAGER->addEffect("대시이펙트", _ptMouse.y, _ptMouse.x, _ptMouse.y, 0, 4);
-	}
-
 	CAMERAMANAGER->FadeUpdate();
 }
 

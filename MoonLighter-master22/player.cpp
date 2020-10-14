@@ -54,6 +54,8 @@ HRESULT player::init()
 	_arrow = new arrow;
 	_arrow->init();
 
+	_displayOn = false;
+
 	return S_OK;
 }
 
