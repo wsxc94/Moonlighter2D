@@ -54,6 +54,8 @@ HRESULT player::init()
 	_arrow = new arrow;
 	_arrow->init();
 
+	_displayOn = false;
+
 	return S_OK;
 }
 
@@ -223,7 +225,7 @@ void player::animation(int frameY)
 
 void player::playerState()
 {
-	if (!ITEMMENU->getOpenMenu())
+	if (!ITEMMENU->getOpenMenu() && !_displayOn)
 	{
 		switch (_state)
 		{
