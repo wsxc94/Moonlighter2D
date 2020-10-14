@@ -2,6 +2,15 @@
 #include "singletonBase.h"
 #include "itemManager.h"
 
+class animation;
+
+//결과창에서 보여줄 에너미 공격애니메이션
+typedef struct tagResultEnemyAnimation
+{
+	animation* attack;
+	int frameY;
+}RESULTENEMY;
+
 class playerData : public singletonBase <playerData>
 {
 private:
@@ -24,6 +33,9 @@ private:
 	float _x, _y;
 
 	bool _isInDungeon;			//플레이어가 던전에 있는지 여부 확인
+
+private:
+	vector<RESULTENEMY> _vEnemy;		//결과창 에너미
 
 private:
 	gameItem _potionEquipped;	//현재 장착 중인 포션 아이템 
@@ -53,6 +65,9 @@ public:
 	float getX() { return _x; }
 	float getY() { return _y; }
 	bool getIsInDungeon() { return _isInDungeon; }
+	vector<RESULTENEMY> getVEnemy() { return _vEnemy; }
+	void pushVEnemy(RESULTENEMY enemy) { _vEnemy.push_back(enemy); }
+	void vEnemyClear() { _vEnemy.clear(); }
 
 	//set함수 
 	void setHp(int hp) { _hp = hp; }

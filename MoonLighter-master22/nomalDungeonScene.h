@@ -31,7 +31,9 @@ private:
 
 	DungeonMap* _currentDungeon;				//현재 플레이어가 있는 던전
 
-	vector<pair<POINT, DungeonMap*>> _vMinimap;
+	vector<pair<POINT, DungeonMap*>> _vMinimap;		//미니맵
+
+	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
 
 	//스타트던전 두루마리
 	animation* _golemScroll;
@@ -61,6 +63,8 @@ public:
 	void minimapRender();			//미니맵을 렌더하자
 	void setNewFloor();				//다음층 초기화하는것
 	void soundUpdate();				//배경음 업뎃
+	void dungeonUpdate();			//일반적인 업데이트
+	void resultUpdate();			//결과창 업데이트
 
 public:
 	void initItemSlot();

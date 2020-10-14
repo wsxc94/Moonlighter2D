@@ -516,3 +516,13 @@ void gasMan::gasManCollision()
 		}
 	}
 }
+
+animation * gasMan::getAttackAnimation()
+{
+	return _attack;
+}
+
+int gasMan::getDownDirectionY()
+{
+	return 3;
+}

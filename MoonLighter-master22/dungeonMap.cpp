@@ -546,11 +546,18 @@ void DungeonMap::enemyUpdate()
 		}
 		if (_vEnemy[i]->getIsActivate() == false)
 		{
+			//삭제하기 전에 애니메이션을 플레이어데이터에 저장한당
+			RESULTENEMY em;
+			em.attack = new animation;
+			em.attack->init(_vEnemy[i]->getAttackAnimation()->getImage(), 0, _vEnemy[i]->getAttackAnimation()->getAniFrame(), _vEnemy[i]->getAttackAnimation()->getIsLoop(), _vEnemy[i]->getAttackAnimation()->getIsReverse());
+			em.frameY = _vEnemy[i]->getDownDirectionY();
+			PLAYERDATA->pushVEnemy(em);
 			_vEnemy[i]->release();
 			SAFE_DELETE(_vEnemy[i]);
 			_vEnemy.erase(_vEnemy.begin() + i);
 		}
 	}
+	cout << PLAYERDATA->getVEnemy().size() << endl;
 }
 
 void DungeonMap::popEnemy(int arr)

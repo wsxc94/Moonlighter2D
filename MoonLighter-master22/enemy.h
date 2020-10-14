@@ -132,6 +132,8 @@ public:
 	virtual float getY() { return _y; }
 	virtual bool getIsItemDrop() { return _isItemDrop; }
 	virtual void setIsItemDrop(bool drop) { _isItemDrop = drop; }
+	virtual animation* getAttackAnimation() { return nullptr; };
+	virtual int getDownDirectionY() { return 0; };
 };
 
 class redGolem : public enemy
@@ -173,6 +175,8 @@ public:
 	void hitSoundPlay() override;
 	void dropItem();
 	void redGolemCollision();
+	virtual animation* getAttackAnimation();
+	virtual int getDownDirectionY();
 
 	RECT getAttackBox() { return _attackBox; }
 };
@@ -215,7 +219,8 @@ public:
 	void setStartNode();
 	void hitSoundPlay() override;
 	void golemCollision();
-
+	virtual animation* getAttackAnimation();
+	virtual int getDownDirectionY();
 };
 
 class potGolem : public enemy
@@ -273,7 +278,8 @@ public:
 	virtual void setWallTile(vector<tagTile> vTile);
 	void hitSoundPlay() override;
 	void potGolemCollision();
-
+	virtual animation* getAttackAnimation();
+	virtual int getDownDirectionY();
 };
 
 class skullHammer : public enemy
@@ -314,6 +320,8 @@ public:
 	void setStartNode();
 	void hitSoundPlay() override;
 	void skullHammerCollision();
+	virtual animation* getAttackAnimation();
+	virtual int getDownDirectionY();
 };
 
 class gasMan : public enemy
@@ -370,6 +378,8 @@ public:
 	void arrowRender();
 	void hitSoundPlay() override;
 	void gasManCollision();
+	virtual animation* getAttackAnimation();
+	virtual int getDownDirectionY();
 };
 
 class bossSkeleton : public enemy
@@ -454,4 +464,6 @@ public:
 	void hitUpdate();
 	void hitToPlayer();
 	void hitSoundPlay();
+	virtual animation* getAttackAnimation();
+	virtual int getDownDirectionY();
 };

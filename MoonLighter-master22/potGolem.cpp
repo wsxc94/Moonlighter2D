@@ -512,3 +512,13 @@ void potGolem::potGolemCollision()
 	}
 
 }
+
+animation * potGolem::getAttackAnimation()
+{
+	return _attack;
+}
+
+int potGolem::getDownDirectionY()
+{
+	return 0;
+}

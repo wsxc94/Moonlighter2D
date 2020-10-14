@@ -457,3 +457,13 @@ void golem::golemCollision()
 	}
 
 }
+
+animation * golem::getAttackAnimation()
+{
+	return _attack;
+}
+
+int golem::getDownDirectionY()
+{
+	return 3;
+}

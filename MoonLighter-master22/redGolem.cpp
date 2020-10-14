@@ -466,3 +466,13 @@ void redGolem::redGolemCollision()
 	}
 
 }
+
+animation * redGolem::getAttackAnimation()
+{
+	return _attack;
+}
+
+int redGolem::getDownDirectionY()
+{
+	return 3;
+}

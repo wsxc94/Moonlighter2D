@@ -488,3 +488,13 @@ void skullHammer::skullHammerCollision()
 		}
 	}
 }
+
+animation * skullHammer::getAttackAnimation()
+{
+	return _attack;
+}
+
+int skullHammer::getDownDirectionY()
+{
+	return 2;
+}

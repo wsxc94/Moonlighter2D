@@ -26,7 +26,7 @@ HRESULT nomalDungeonScene::init()
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
-	SOUNDMANAGER->play("bossRoomBGM");
+	SOUNDMANAGER->play("dungeonBGM");
 
 
 	//카메라 초기화
@@ -47,57 +47,21 @@ void nomalDungeonScene::release()
 void nomalDungeonScene::update()
 {
 	
-	//this->soundUpdate();
+	this->soundUpdate();
 
-
-	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN 
-		&& _currentDungeon->getDungeonKind() != DG_SEMIBOSS)
+	switch (_dState)
 	{
-		//플레이어 이동
-		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
-		{
-		case 1:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(1085 + 17);
-			PLAYER->setY(350 + 17);
-			break;
-		case 2:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(140 + 17);
-			PLAYER->setY(350 + 17);
-			break;
-		case 3:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(595 + 17);
-			PLAYER->setY(595 + 17);
-			break;
-		case 4:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(595 + 17);
-			PLAYER->setY(105 + 17);
-			break;
-		}
-		//던전 이동
-		
-		
-	}
-	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
-	{
-		this->setNewFloor();
+	case DS_UPDATE:
+		this->dungeonUpdate();
+		break;
+	case DS_RESULT:
+		break;
+	default:
+		break;
 	}
 
-
-	//골렘스크롤 업뎃
-	_golemScroll->update();
-	//미니맵 안간부분 추가해줌 (건들필요없음)
-	if (this->minimapPush(_currentDungeon->getDungeonXY()))
-	{
-		_vMinimap.push_back(make_pair(_currentDungeon->getDungeonXY(), _currentDungeon));
-	}
-
-
-	//던전 업뎃
-	_currentDungeon->update();
+	_vEnemy = PLAYERDATA->getVEnemy();
+	
 	//카메라 업뎃
 	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
@@ -128,6 +92,12 @@ void nomalDungeonScene::render()
 	if (INPUT->GetKey(VK_TAB))
 	{
 		this->minimapRender();
+	}
+
+	for (int i = 0; i < _vEnemy.size(); i++)
+	{
+		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
+		_vEnemy[i].attack->render(getMemDC(), i * (200), (i / 10) * 200);
 	}
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
@@ -204,6 +174,85 @@ void nomalDungeonScene::setNewFloor()
 }
 
 void nomalDungeonScene::soundUpdate()
+{
+	switch (_currentDungeon->getDungeonKind())
+	{
+	case DG_NOMAL:
+		if (!SOUNDMANAGER->isPlaySound("dungeonBGM"))
+			SOUNDMANAGER->play("dungeonBGM", 0.4f);
+		SOUNDMANAGER->pause("spaRoomBGM");
+		SOUNDMANAGER->pause("bossRoomBGM");
+		break;
+	case DG_SEMIBOSS:
+		if (!SOUNDMANAGER->isPlaySound("bossRoomBGM"))
+			SOUNDMANAGER->play("bossRoomBGM", 0.4f);
+		SOUNDMANAGER->pause("spaRoomBGM");
+		SOUNDMANAGER->pause("dungeonBGM");
+		break;
+	case DG_SPA:
+		if (!SOUNDMANAGER->isPlaySound("spaRoomBGM"))
+			SOUNDMANAGER->play("spaRoomBGM", 0.4f);
+		SOUNDMANAGER->pause("dungeonBGM");
+		SOUNDMANAGER->pause("bossRoomBGM");
+		break;
+	default:
+		break;
+	}
+}
+
+void nomalDungeonScene::dungeonUpdate()
+{
+	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN
+		&& _currentDungeon->getDungeonKind() != DG_SEMIBOSS)
+	{
+		//플레이어 이동
+		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
+		{
+		case 1:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(1085 + 17);
+			PLAYER->setY(350 + 17);
+			break;
+		case 2:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(140 + 17);
+			PLAYER->setY(350 + 17);
+			break;
+		case 3:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(595 + 17);
+			PLAYER->setY(595 + 17);
+			break;
+		case 4:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(595 + 17);
+			PLAYER->setY(105 + 17);
+			break;
+		}
+		//던전 이동
+
+
+	}
+	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
+	{
+		this->setNewFloor();
+	}
+
+
+	//골렘스크롤 업뎃
+	_golemScroll->update();
+	//미니맵 안간부분 추가해줌 (건들필요없음)
+	if (this->minimapPush(_currentDungeon->getDungeonXY()))
+	{
+		_vMinimap.push_back(make_pair(_currentDungeon->getDungeonXY(), _currentDungeon));
+	}
+
+
+	//던전 업뎃
+	_currentDungeon->update();
+}
+
+void nomalDungeonScene::resultUpdate()
 {
 
 }
