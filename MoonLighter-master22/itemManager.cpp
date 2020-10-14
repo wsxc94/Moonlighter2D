@@ -237,30 +237,30 @@ void itemManager::addEquipmentItem(string itemKey, string nameKey, string desKey
 void itemManager::addGameItems()
 {
 	//일반 아이템 추가
-	addNormalItem("item_richJelly", "name_richJelly", "des_richJelly", "richJelly", RICHJELLY_IDX, 3, 6, 8, 9, 10);
-	addNormalItem("item_venomJelly", "name_venomJelly", "des_venomJelly", "venomJelly", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
-	addNormalItem("item_crystal", "name_crystal", "des_crystal", "crystal", CRYSTAL_IDX, 89, 110, 115, 116, 5);
-	addNormalItem("item_crystal", "name_crystal", "des_crystal", "crystal", CRYSTAL_IDX, 89, 110, 115, 116, 5);
+	addNormalItem("richJelly", "name_richJelly", "des_richJelly", "richJelly", RICHJELLY_IDX, 3, 6, 8, 9, 10);
+	addNormalItem("venomJelly", "name_venomJelly", "des_venomJelly", "venomJelly", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
+	addNormalItem("crystal", "name_crystal", "des_crystal", "crystal", CRYSTAL_IDX, 89, 110, 115, 116, 5);
+	addNormalItem("crystal", "name_crystal", "des_crystal", "crystal", CRYSTAL_IDX, 89, 110, 115, 116, 5);
 
-	addNormalItem("item_vine", "name_vine", "des_vine", "vine", VINE_IDX, 2, 3, 5, 6, 10);
-	addNormalItem("item_teethStone", "name_teethStone", "des_teethStone", "teethStone", TEETHSTONE_IDX, 3, 6, 8, 9, 10);
-	addNormalItem("item_root", "name_root", "des_root", "root", ROOT_IDX, 3, 6, 8, 9, 10);
-	addNormalItem("item_ironBar", "name_ironBar", "des_ironBar", "ironBar", IRONBAR_IDX, 21, 28, 30, 31, 10);
-	addNormalItem("item_foundryRests", "name_foundryRests", "des_foundryRests", "foundryRests", FOUNDRYRESTS_IDX, 134, 165, 173, 174, 5);
-	addNormalItem("item_brokenSword", "name_brokenSword", "des_brokenSword", "brokenSword", BROKENSWORD_IDX, 134, 165, 173, 174, 5);
-	addNormalItem("item_fabric", "name_fabric", "des_fabric", "fabric", FABRIC_IDX, 224, 275, 288, 289, 5);
-	addNormalItem("item_hardenedSteel", "name_hardenedSteel", "des_hardenedSteel", "hardenedSteel", HARDENEDSTEEL_IDX, 269, 330, 345, 346, 5);
+	addNormalItem("vine", "name_vine", "des_vine", "vine", VINE_IDX, 2, 3, 5, 6, 10);
+	addNormalItem("teethStone", "name_teethStone", "des_teethStone", "teethStone", TEETHSTONE_IDX, 3, 6, 8, 9, 10);
+	addNormalItem("root", "name_root", "des_root", "root", ROOT_IDX, 3, 6, 8, 9, 10);
+	addNormalItem("ironBar", "name_ironBar", "des_ironBar", "ironBar", IRONBAR_IDX, 21, 28, 30, 31, 10);
+	addNormalItem("foundryRests", "name_foundryRests", "des_foundryRests", "foundryRests", FOUNDRYRESTS_IDX, 134, 165, 173, 174, 5);
+	addNormalItem("brokenSword", "name_brokenSword", "des_brokenSword", "brokenSword", BROKENSWORD_IDX, 134, 165, 173, 174, 5);
+	addNormalItem("fabric", "name_fabric", "des_fabric", "fabric", FABRIC_IDX, 224, 275, 288, 289, 5);
+	addNormalItem("hardenedSteel", "name_hardenedSteel", "des_hardenedSteel", "hardenedSteel", HARDENEDSTEEL_IDX, 269, 330, 345, 346, 5);
 
 	//포션 아이템 추가 
-	addPotionItem("item_hpPotion1", "name_hpPotion1", "des_hpPotion1", "hpPotion1",
+	addPotionItem("hpPotion1", "name_hpPotion1", "des_hpPotion1", "hpPotion1",
 		POTION1_IDX, 40, 111, 138, 144, 145, 5);
-	addPotionItem("item_hpPotion2", "name_hpPotion2", "des_hpPotion2", "hpPotion2",
+	addPotionItem("hpPotion2", "name_hpPotion2", "des_hpPotion2", "hpPotion2",
 		POTION2_IDX, 75, 719, 880, 920, 921, 5);
 
 	//무기 아이템 추가 
-	addEquipmentItem("item_trainingBow", "name_trainingBow", "des_trainingBow",
+	addEquipmentItem("trainingBow", "name_trainingBow", "des_trainingBow",
 		"trainingBow", ITEM_WEAPON, TRAININGBOW_IDX, 0, 15, 0, 0, 899, 1100, 1150, 1151, 1);
-	addEquipmentItem("item_trainingShortSword", "name_trainingShortSword", "des_trainingShortSword",
+	addEquipmentItem("trainingShortSword", "name_trainingShortSword", "des_trainingShortSword",
 		"trainingShortSword", ITEM_WEAPON, TRAININGSWORD_IDX, 0, 20, 0, 0, 899, 1100, 1150, 1151, 1);
 
 }
