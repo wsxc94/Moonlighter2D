@@ -492,12 +492,20 @@ void potGolem::potGolemCollision()
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_bullet[i].rc) && _bullet[i].isFire  && PLAYER->getPlayerState() != PLAYER_ROLL)
 		{
 
-			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
-			PLAYER->setPlayerState(HIT_IDLE);
-			PLAYER->setHit(true);
-			if (PLAYERDATA->getInDungeonHp() < 0)
+			if (PLAYER->getPlayerState() == PLAYER_SHILED)
 			{
-				PLAYERDATA->setInDungeonHp(1);
+				PLAYER->playerPush();
+			}
+			else
+			{
+				PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
+			}
+			if (PLAYERDATA->getInDungeonHp() <= 0)
+			{
+				PLAYERDATA->setInDungeonHp(0);
+				PLAYER->setPlayerState(PLAYER_DIE);
 			}
 			_bullet[i].isFire = false;
 		}

@@ -792,6 +792,7 @@ void DungeonMap::checkColiHole()
 					{
 						PLAYER->setPlayerState(PLAYER_FALL);
 						PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
+						
 					}
 					else
 					{

@@ -462,19 +462,27 @@ void skullHammer::skullHammerCollision()
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_attackBox))
 		{
 			_emPlayerColi = true;
-			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
-			PLAYER->setPlayerState(HIT_IDLE);
-			PLAYER->setHit(true);
-			if (PLAYERDATA->getInDungeonHp() < 0)
+			if (PLAYER->getPlayerState() == PLAYER_SHILED)
 			{
-				PLAYERDATA->setInDungeonHp(1);
+				PLAYER->playerPush();
+			}
+			else
+			{
+				PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
+			}
+			if (PLAYERDATA->getInDungeonHp() <= 0)
+			{
+				PLAYERDATA->setInDungeonHp(0);
+				PLAYER->setPlayerState(PLAYER_DIE);
 			}
 		}
 	}
 
 	if (_emPlayerColi)
 	{
-		if (_attack->getAniState() == ANIMATION_END)
+		if (_attack->getCurIndex() == 21)
 		{
 			_emPlayerColi = false;
 		}

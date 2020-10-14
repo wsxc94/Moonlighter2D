@@ -3,6 +3,7 @@
 
 HRESULT player::init()
 {
+<<<<<<< HEAD
 	IMAGEMANAGER->addFrameImage("던전구르기", "Images/플레이어/player_roll_dungeon8X4.bmp", 960, 480, 8, 4);
 	IMAGEMANAGER->addFrameImage("던전달리기", "Images/플레이어/player_run_dungeon8X4.bmp", 960, 480, 8, 4);
 	IMAGEMANAGER->addFrameImage("던전idle", "Images/플레이어/player_idle_dungeon10X4.bmp", 1200, 480, 10, 4);
@@ -77,10 +78,15 @@ HRESULT player::init()
 	_aniSwordTwoHit->aniStop();
 	_deathPortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
 	_deathPortal->aniStop();
+=======
+	
+	this->imageInit();
+>>>>>>> player
 
 	_player.x = 200;
 	_player.y = 200;
 
+	_player.speed = 4;
 	_player.shadowRc = RectMakeCenter(_player.x, _player.y, 35, 35);
 	_player.rc = RectMakeCenter(_player.x, _player.y, 45, 60);
 
@@ -108,7 +114,8 @@ HRESULT player::init()
 	_isShoot = false;
 	_isTalk = false;
 
-	_isHit = false;
+	_isHit = false;	//맞았냐
+	_isDie = false; //죽었냐
 
 	_rollCount = 0;
 	_rollIndex = 0;
@@ -133,7 +140,8 @@ void player::release()
 
 void player::update()
 {
-	cout << _holeAlpha << endl;
+	
+	
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -143,10 +151,7 @@ void player::update()
 	_arrow->update();
 	this->keyInput();
 	this->updateWeaponState();
-	if (!_isHit)
-	{
-		_playerHp = PLAYERDATA->getInDungeonHp();
-	}
+	
 }
 
 void player::render(HDC hdc)
@@ -206,6 +211,9 @@ void player::render(HDC hdc)
 		case PLAYER_ATTACK_SWORD_SECOND:
 			_aniSwordTwo->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
+		case PLAYER_SHILED:
+			_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			break;
 		case PLAYER_TALK:
 			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
@@ -214,6 +222,9 @@ void player::render(HDC hdc)
 			break;
 		case PLAYER_DIE:
 			_aniDie->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			break;
+		case PLAYER_DIE_PORTAL:
+			_aniDiePortal->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_SWIM:
 			_aniSwim->ZoderRender(_player.y, pt.x - 20, pt.y - 15);
@@ -255,8 +266,10 @@ void player::animation(int frameY)
 	_aniFall->update();
 	_aniSword->update();
 	_aniSwordTwo->update();
+	_aniShiled->update();
 	_aniBow->update();
 	_aniDie->update();
+	_aniDiePortal->update();
 	_aniSwim->update();
 	_aniHit->update();
 	_aniRunHit->update();
@@ -272,8 +285,10 @@ void player::animation(int frameY)
 	_aniFall->setFrameY(0);
 	_aniSword->setFrameY(_player.direction);
 	_aniSwordTwo->setFrameY(_player.direction);
+	_aniShiled->setFrameY(_player.direction);
 	_aniBow->setFrameY(_player.direction);
-	_aniDie->setFrameY(_player.direction);
+	_aniDie->setFrameY(0);
+	_aniDiePortal->setFrameY(0);
 	_aniSwim->setFrameY(_player.direction);
 	_aniHit->setFrameY(_player.direction);
 	_aniRunHit->setFrameY(_player.direction);
@@ -294,7 +309,7 @@ void player::playerState()
 				if (this->getKeyMove()) _state = HIT_RUN;
 			}
 			if (this->getKeyMove()) _state = PLAYER_RUN;
-
+		
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
 				_lastRollX = _player.x;
@@ -305,30 +320,14 @@ void player::playerState()
 				_aniDgRoll->aniRestart();
 			}
 
-			if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
+			this->playerAttack();
+			this->playerSkill();
+
+			
+			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
-				switch (_player.weapon)
-				{
-				case EMPTY:
-					_state = PLAYER_TALK;
-					break;
-				case SHORT_SOWRD:
-					_state = PLAYER_ATTACK_SWORD;
-					_aniSword->aniRestart();
-					break;
-
-				case BOW:
-					_state = PLAYER_ATTACK_BOW;
-					_aniBow->aniRestart();
-					_isShoot = true;
-
-					break;
-				}
-
-			}
-			if (_attackIndex != 0)
-			{
-				_attackIndex = 0;
+				PLAYERDATA->setInDungeonHp(0);
+				PLAYER->setPlayerState(PLAYER_DIE);
 			}
 			break;
 		case PLAYER_RUN:
@@ -347,28 +346,9 @@ void player::playerState()
 				_aniTownRoll->aniRestart();
 				_aniDgRoll->aniRestart();
 			}
-
-			if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
-			{
-
-				switch (_player.weapon)
-				{
-				case EMPTY:
-					_state = PLAYER_TALK;
-					break;
-
-				case SHORT_SOWRD:
-					_state = PLAYER_ATTACK_SWORD;
-					_aniSword->aniRestart();
-					break;
-
-				case BOW:
-					_state = PLAYER_ATTACK_BOW;
-					_aniBow->aniRestart();
-					_isShoot = true;
-					break;
-				}
-			}
+			this->playerAttack();
+			this->playerSkill();
+			
 			break;
 
 		case PLAYER_ROLL:
@@ -416,7 +396,9 @@ void player::playerState()
 				_player.x = _lastRollX;
 				_player.y = _lastRollY;
 				_state = PLAYER_IDLE;
+			
 			}
+		
 			break;
 
 		case PLAYER_ATTACK_SWORD:
@@ -437,7 +419,12 @@ void player::playerState()
 				_state = PLAYER_IDLE;
 			}
 			break;
-
+		case PLAYER_SHILED:
+			if (INPUT->GetKeyUp('K'))
+			{
+				_state = PLAYER_IDLE;
+			}
+			break;
 		case PLAYER_ATTACK_BOW:
 			if (_aniBow->getAniState() == ANIMATION_END)
 			{
@@ -445,27 +432,7 @@ void player::playerState()
 			}
 			if (_aniBow->getCurIndex() == 1)
 			{
-				switch (_player.direction)
-				{
-				case 0:
-					_player.y -= 3;
-					break;
-				case 1:
-					_player.y += 3;
-					break;
-				case 2:
-					_player.x -= 3;
-					break;
-				case 3:
-					_player.x += 3;
-					break;
-				}
-			}
-			if (_attackIndex == IMAGEMANAGER->findImage("활날리기")->getMaxFrameX())
-			{
-				_attackCount = 0;
-				_attackIndex = 0;
-				_state = PLAYER_IDLE;
+				this->playerPush();
 			}
 
 			break;
@@ -482,6 +449,14 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_DIE:
+			if (_aniDie->getAniState() == ANIMATION_END && !_isDie)
+			{
+				_aniDie->aniRestart();
+				_isDie = true;
+			}
+			break;
+		case PLAYER_DIE_PORTAL:
+		
 			break;
 		case PLAYER_SWIM:
 			this->playerMove();
@@ -644,7 +619,7 @@ void player::playerMove()
 
 	if (INPUT->GetKey('W'))
 	{
-		_player.y -= 4;
+		_player.y -= _player.speed;
 		_player.direction = 1;
 		_up = true;
 	}
@@ -654,7 +629,7 @@ void player::playerMove()
 
 	if (INPUT->GetKey('S'))
 	{
-		_player.y += 4;
+		_player.y += _player.speed;
 		_player.direction = 0;
 		_down = true;
 	}
@@ -664,7 +639,7 @@ void player::playerMove()
 
 	if (INPUT->GetKey('A'))
 	{
-		_player.x -= 4;
+		_player.x -= _player.speed;
 		_player.direction = 3;
 		_left = true;
 	}
@@ -673,12 +648,73 @@ void player::playerMove()
 	}
 	if (INPUT->GetKey('D'))
 	{
-		_player.x += 4;
+		_player.x += _player.speed;
 		_player.direction = 2;
 		_right = true;
 	}
 	else {
 		_right = false;
+	}
+}
+
+void player::playerAttack()
+{
+	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON && !_isShoot)
+	{
+
+		switch (_player.weapon)
+		{
+		case EMPTY:
+			_state = PLAYER_TALK;
+			break;
+
+		case SHORT_SOWRD:
+			_state = PLAYER_ATTACK_SWORD;
+			_aniSword->aniRestart();
+			break;
+
+		case BOW:
+			_state = PLAYER_ATTACK_BOW;
+			_aniBow->aniRestart();
+			_isShoot = true;
+			break;
+		}
+	}
+}
+
+void player::playerSkill()
+{
+	if (INPUT->GetKey('K'))
+	{
+		switch (_player.weapon)
+		{
+		case EMPTY:
+			break;
+		case SHORT_SOWRD:
+			_state = PLAYER_SHILED;
+			break;
+		case BOW:
+			break;
+		}
+	}
+}
+
+void player::playerPush()
+{
+	switch (_player.direction)
+	{
+	case 0:
+		_player.y -= 3;
+		break;
+	case 1:
+		_player.y += 3;
+		break;
+	case 2:
+		_player.x -= 3;
+		break;
+	case 3:
+		_player.x += 3;
+		break;
 	}
 }
 
@@ -688,5 +724,86 @@ bool player::getKeyMove()
 		|| INPUT->GetKey('A')
 		|| INPUT->GetKey('D')) return true;
 	return false;
+}
+
+void player::imageInit()
+{
+	IMAGEMANAGER->addFrameImage("던전구르기", "Images/플레이어/player_roll_dungeon8X4.bmp", 960, 480, 8, 4);
+	IMAGEMANAGER->addFrameImage("던전달리기", "Images/플레이어/player_run_dungeon8X4.bmp", 960, 480, 8, 4);
+	IMAGEMANAGER->addFrameImage("던전idle", "Images/플레이어/player_idle_dungeon10X4.bmp", 1200, 480, 10, 4);
+
+	IMAGEMANAGER->addFrameImage("구르기", "Images/플레이어/shop_roll.bmp", 960, 480, 8, 4);
+	IMAGEMANAGER->addFrameImage("달리기", "Images/플레이어/shop_run8x4.bmp", 960, 480, 8, 4);
+	IMAGEMANAGER->addFrameImage("idle", "Images/플레이어/shop_idle10x4.bmp", 1200, 480, 10, 4);
+
+	IMAGEMANAGER->addFrameImage("죽음", "Images/플레이어/player_die10X1.bmp", 1200, 120, 10, 1);
+	IMAGEMANAGER->addFrameImage("구멍빠짐", "Images/플레이어/hole_fall3X1.bmp", 360, 120, 3, 1);
+	IMAGEMANAGER->addFrameImage("죽음포탈", "Images/플레이어/teleportOut58x1.bmp", 7424, 128, 58, 1);
+
+	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack9X4.bmp", 1080, 480, 9, 4);
+	IMAGEMANAGER->addFrameImage("활스킬", "Images/플레이어/bow_skill2X4.bmp", 240, 480, 2, 4);
+
+	IMAGEMANAGER->addFrameImage("숏소드", "Images/플레이어/short_attack6X4.bmp", 720, 480, 6, 4);
+	IMAGEMANAGER->addFrameImage("숏소드2연격", "Images/플레이어/short_attack_two5X4.bmp", 600, 480, 5, 4);
+	IMAGEMANAGER->addFrameImage("방패", "Images/플레이어/shiled_state1X4.bmp", 120, 480, 1, 4);
+
+	IMAGEMANAGER->addImage("그림자", "Images/플레이어/player_Shadow.bmp", 70, 50, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addFrameImage("온천", "Images/플레이어/swimState10X4.bmp", 500, 208, 10, 4);
+
+	IMAGEMANAGER->addFrameImage("던전idleHIT", "Images/플레이어/player_idle_dungeon_Hit10X4.bmp", 1200, 480, 10, 4);
+	IMAGEMANAGER->addFrameImage("던전달리기HIT", "Images/플레이어/player_run_dungeon_Hit8X4.bmp", 960, 480, 8, 4);
+	IMAGEMANAGER->addFrameImage("숏소드HIT", "Images/플레이어/short_attack_Hit6X4.bmp", 720, 480, 6, 4);
+	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
+
+	_aniTownIdle = new ::animation;
+	_aniTownRun = new ::animation;
+	_aniTownRoll = new ::animation;
+	_aniDgIdle = new ::animation;
+	_aniDgRun = new ::animation;
+	_aniDgRoll = new ::animation;
+	_aniFall = new ::animation;
+	_aniSword = new ::animation;
+	_aniSwordTwo = new ::animation;
+	_aniShiled = new ::animation;
+	_aniBow = new ::animation;
+	_aniDie = new ::animation;
+	_aniSwim = new ::animation;
+	_aniHit = new ::animation;
+	_aniRunHit = new ::animation;
+	_aniSwordHit = new ::animation;
+	_aniSwordTwoHit = new ::animation;
+	_aniDiePortal = new ::animation;
+
+	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
+	_aniTownRun->init(IMAGEMANAGER->findImage("달리기"), 0, 5, true);
+	_aniTownRoll->init(IMAGEMANAGER->findImage("구르기"), 0, 7);
+	_aniTownRoll->aniStop();
+	_aniDgIdle->init(IMAGEMANAGER->findImage("던전idle"), 0, 7, true);
+	_aniDgRun->init(IMAGEMANAGER->findImage("던전달리기"), 0, 5, true);
+	_aniDgRoll->init(IMAGEMANAGER->findImage("던전구르기"), 0, 5);
+	_aniDgRoll->aniStop();
+	_aniFall->init(IMAGEMANAGER->findImage("구멍빠짐"), 0, 7);
+	_aniFall->aniStop();
+	_aniSword->init(IMAGEMANAGER->findImage("숏소드"), 0, 5);
+	_aniSword->aniStop();
+	_aniSwordTwo->init(IMAGEMANAGER->findImage("숏소드2연격"), 0, 5);
+	_aniSwordTwo->aniStop();
+
+	_aniShiled->init(IMAGEMANAGER->findImage("방패"), 0, 1);
+
+	_aniBow->init(IMAGEMANAGER->findImage("활날리기"), 0, 5);
+	_aniBow->aniStop();
+	_aniDie->init(IMAGEMANAGER->findImage("죽음"), 0, 7);
+	_aniDie->aniStop();
+	_aniSwim->init(IMAGEMANAGER->findImage("온천"), 0, 7);
+	_aniHit->init(IMAGEMANAGER->findImage("던전idleHIT"), 0, 7, true);
+	_aniRunHit->init(IMAGEMANAGER->findImage("던전달리기HIT"), 0, 5, true);
+	_aniSwordHit->init(IMAGEMANAGER->findImage("숏소드HIT"), 0, 5);
+	_aniSwordHit->aniStop();
+	_aniSwordTwoHit->init(IMAGEMANAGER->findImage("숏소드2연격HIT"), 0, 5);
+	_aniSwordTwoHit->aniStop();
+	_aniDiePortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
+	_aniDiePortal->aniStop();
+
 }
 

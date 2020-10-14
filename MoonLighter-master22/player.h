@@ -14,8 +14,10 @@ enum PLAYER_STATE
 	PLAYER_RUN,
 	PLAYER_ROLL,
 	PLAYER_ATTACK_SWORD, PLAYER_ATTACK_SWORD_SECOND, PLAYER_ATTACK_BOW,
+	PLAYER_SHILED,
 	PLAYER_TALK,
 	PLAYER_DIE,
+	PLAYER_DIE_PORTAL,
 	PLAYER_FALL,
 	PLAYER_SWIM,
 	HIT_IDLE,
@@ -77,6 +79,7 @@ private:
 	bool _isShoot;
 	bool _isTalk;
 	bool _isHit;
+	bool _isDie;
 
 	int _frameX;
 	int _frameY;
@@ -112,13 +115,16 @@ private:
 	animation* _aniBow;
 	animation* _aniDie;
 	animation* _aniSwim;
+	
+	animation* _aniShiled;
+	animation* _bowCharge;
 
 	animation* _aniHit;
 	animation* _aniRunHit;
 	animation* _aniSwordHit;
 	animation* _aniSwordTwoHit;
 
-	animation* _deathPortal;
+	animation* _aniDiePortal;
 
 public:
 	HRESULT init();
@@ -137,8 +143,13 @@ public:
 	void npcTalk(bool& isTalk);
 	void hitPlayer();
 	void playerMove();
+	void playerAttack();
+	void playerSkill();
+	void playerPush();		//방패를 든채로 맞거나 화살을 쏠때 밀려나나
 	bool getKeyMove();
 
+
+	void imageInit();
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }
 
@@ -148,6 +159,7 @@ public:
 	arrow *getArrow() { return _arrow; }
 
 	int getPlayerDirection() { return _player.direction; }
+	int getSpeed() { return _player.speed; }
 
 	bool& getRight() { return _right; }
 	bool& getLeft() { return _left; }
