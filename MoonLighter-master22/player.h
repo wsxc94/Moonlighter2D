@@ -147,6 +147,8 @@ public:
 	void playerPush();		//방패를 든채로 맞거나 화살을 쏠때 밀려나나
 	bool getKeyMove();
 
+
+	void imageInit();
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }
 
