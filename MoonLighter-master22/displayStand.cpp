@@ -15,11 +15,8 @@ HRESULT displayStand::init()
 	//아이템 구조체 초기화 
 	memset(&_itemEmpty, 0, sizeof(_itemEmpty));
 	memset(&_itemGrabbed, 0, sizeof(_itemGrabbed));
-	memset(&_displayItem1, 0, sizeof(_displayItem1));
-	memset(&_displayItem2, 0, sizeof(_displayItem2));
-	memset(&_displayItem3, 0, sizeof(_displayItem3));
-	memset(&_displayItem4, 0, sizeof(_displayItem4));
-	memset(_itemPrice, 0, sizeof(_itemPrice));
+	memset(&_displayItem, 0, sizeof(_displayItem));
+	memset(_lastPrice, 0, sizeof(_lastPrice));
 
 	//가격 커서 구조체 초기화 
 	_priceCursor.img = IMAGEMANAGER->findImage("arrow_price");
@@ -72,6 +69,8 @@ void displayStand::update()
 			//키 입력 함수 
 			keyInput();
 
+			getDisplayItem();
+
 			//커서 애니메이션 함수 
 			_cursor->update();
 		}
@@ -93,8 +92,25 @@ void displayStand::render()
 
 	ITEMMENU->render(getMemDC());
 
+	for (int i = 0; i < 4; i++)
+	{
+		if (_displayItem[i].getType() == ITEM_EMPTY) continue;
+
+		wsprintf(str, "displayItem[%d] : %d", i, _displayItem[i].getType());
+		TextOut(getMemDC(), 10, 130 + (i * 25), str, strlen(str));
+
+		_displayItem[i].getItemImg()->render(getMemDC(), 10, 130 + (i * 25));
+	}
+
 	if (_menuOn)
 	{
+		//for (int i = 0; i < 4; i++)
+		//{
+		//	if (_displayItem[i].getType() == ITEM_EMPTY) continue; 
+
+		//	_displayItem[i].getItemImg()->render(getMemDC(), WINSIZEX + (i * 100), WINSIZEY);
+		//}
+
 		menuRender();
 
 		if (_cursor->getShowCursor())
@@ -305,18 +321,18 @@ void displayStand::initInvenItem()
 		//장착 슬롯에 있는 아이템을 제외하고 인벤토리 슬롯에 있던 아이템 가져오기 
 		switch (ITEMMENU->getInventory()->getItem()[i]->getInvenPosIdx())
 		{
-		case 5: case 6: case 12: case 13:
-		case 19: case 20: case 26: case 27:
-		case 28: case 29: case 30:
-			break;
+			case 5: case 6: case 12: case 13:
+			case 19: case 20: case 26: case 27:
+			case 28: case 29: case 30:
+				break;
 
-		default:
-			gameItem *item = new gameItem;
-			item->init(ITEMMENU->getInventory()->getItem()[i]);
-			_vShopInven.push_back(item);
+			default:
+				gameItem *item = new gameItem;
+				item->init(ITEMMENU->getInventory()->getItem()[i]);
+				_vShopInven.push_back(item);
 
-			_shopSlot[item->getInvenPosIdx()].isEmpty = false;
-			break;
+				_shopSlot[item->getInvenPosIdx()].isEmpty = false;
+				break;
 		}
 	}
 
@@ -342,61 +358,53 @@ void displayStand::deleteInvenItems()
 	}
 }
 
-gameItem displayStand::getDisplayOne()
+gameItem displayStand::findItemByIdx(int index)
 {
-	if (_shopSlot[5].isEmpty) return _itemEmpty;
-	else
+	for (int i = 0; i < _vShopInven.size(); i++)
 	{
-		for (int i = 0; i < _vShopInven.size(); i++)
-		{
-			if (_vShopInven[i]->getInvenPosIdx() != 5) continue;
+		if (_vShopInven[i]->getInvenPosIdx() != index) continue;
 
-			return *(_vShopInven[i]);
-		}
+		gameItem *item = new gameItem;
+		item->init(_vShopInven[i]);
+		return *item;
 	}
+
+	return _itemEmpty;
 }
 
-gameItem displayStand::getDisplayTwo()
+gameItem * displayStand::getDisplayItem()
 {
-	if (_shopSlot[6].isEmpty) return _itemEmpty;
-	else
+	for (int i = 0; i < MAXSHOPSLOT; i++)
 	{
-		for (int i = 0; i < _vShopInven.size(); i++)
+		switch (_shopSlot[i].slotIdx)
 		{
-			if (_vShopInven[i]->getInvenPosIdx() != 6) continue;
+		case 5:
+			_displayItem[0] = findItemByIdx(_shopSlot[i].slotIdx);
+			//if (_shopSlot[i].isEmpty) _displayItem[0] = _itemEmpty;
+			//else _displayItem[0] = findItemByIdx(_shopSlot[i].slotIdx);
+			break;
 
-			return *(_vShopInven[i]);
-		}
-	}
-}
+		case 6:
+			_displayItem[1] = findItemByIdx(_shopSlot[i].slotIdx);
+			//if (_shopSlot[i].isEmpty) _displayItem[1] = _itemEmpty;
+			//else _displayItem[1] = findItemByIdx(_shopSlot[i].slotIdx);
+			break;
 
-gameItem displayStand::getDisplayThree()
-{
-	if (_shopSlot[19].isEmpty) return _itemEmpty;
-	else
-	{
-		for (int i = 0; i < _vShopInven.size(); i++)
-		{
-			if (_vShopInven[i]->getInvenPosIdx() != 19) continue;
+		case 19:
+			_displayItem[2] = findItemByIdx(_shopSlot[i].slotIdx);
+			//if (_shopSlot[i].isEmpty) _displayItem[2] = _itemEmpty;
+			//else _displayItem[2] = findItemByIdx(_shopSlot[i].slotIdx);
+			break;
 
-			return *(_vShopInven[i]);
-		}
-	}
-}
+		case 20:
+			_displayItem[3] = findItemByIdx(_shopSlot[i].slotIdx);
+			//if (_shopSlot[i].isEmpty) _displayItem[3] = _itemEmpty;
+			//else _displayItem[3] = findItemByIdx(_shopSlot[i].slotIdx);
+			break;
+		}//end of switch 
+	}//end of for 
 
-gameItem displayStand::getDisplayFour()
-{
-	if (_shopSlot[20].isEmpty) return _itemEmpty;
-	else
-	{
-		for (int i = 0; i < _vShopInven.size(); i++)
-		{
-			if (_vShopInven[i]->getInvenPosIdx() != 20) continue;
-
-			return *(_vShopInven[i]);
-		}
-	}
-	return gameItem();
+	return _displayItem;
 }
 
 void displayStand::setShopCtrl(SHOP_CTRL state)
@@ -1037,7 +1045,7 @@ void displayStand::saveLastPrice()
 			if (_vShopInven[i]->getInvenPosIdx() != (_cursor->getSlotIdx() - 7)) continue;
 
 			//현재 책정한 가격을 마지막 가격으로 저장하기 
-			_itemPrice[_vShopInven[i]->getItemIdx()] = _vShopInven[i]->getPrice();
+			_lastPrice[_vShopInven[i]->getItemIdx()] = _vShopInven[i]->getPrice();
 		}
 		return;
 	}//end of switch 
@@ -1049,7 +1057,7 @@ void displayStand::loadLastPrice(int index)
 	{
 		if (_vShopInven[i]->getInvenPosIdx() != index) continue;
 
-		_vShopInven[i]->setPrice(_itemPrice[_vShopInven[i]->getItemIdx()]);
+		_vShopInven[i]->setPrice(_lastPrice[_vShopInven[i]->getItemIdx()]);
 	}
 }
 

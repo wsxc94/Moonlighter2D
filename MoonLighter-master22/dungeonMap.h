@@ -12,7 +12,7 @@ enum DUNGEONDOOR
 
 enum DUNGEONKIND
 {
-	DG_NOMAL,DG_SEMIBOSS
+	DG_NOMAL,DG_SEMIBOSS,DG_SPA
 };
 
 class DungeonMap : public gameNode

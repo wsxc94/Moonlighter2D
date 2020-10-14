@@ -111,7 +111,7 @@ void dungeonLoading::loadImage()
 	_loading->loadFrameImage("´øÀü¹®(¾ç¿·)", "Images/´øÀü/dungeonDoorLR6.bmp", 630, 350, 6, 2);
 	_loading->loadFrameImage("´øÀü¹®¶Ñ²±(À§¾Æ·¡)", "Images/´øÀü/dungeonDoorTopUD.bmp", 175, 212, 1, 2);
 	_loading->loadFrameImage("´øÀü¹®¶Ñ²±(¾ç¿·)", "Images/´øÀü/dungeonDoorTopLR.bmp", 105, 350, 1, 2);
-	_loading->loadFrameImage("º¸½º¹®(À§¾Æ·¡)", "Images/´øÀü/bossDoorH17.bmp", 1632, 108,17,2);
+	_loading->loadFrameImage("º¸½º¹®(À§¾Æ·¡)", "Images/´øÀü/bossDoorH17.bmp", 1632, 54,17,1);
 	_loading->loadFrameImage("º¸½º¹®(¾ç¿·)", "Images/´øÀü/bossDoorW17.bmp", 918, 192,17,2);
 	_loading->loadFrameImage("º¸½º¹®¶Ñ²±(¾ç¿·)", "Images/´øÀü/bossDoorTopW17.bmp", 54, 192,1,2);
 	_loading->loadFrameImage("º¸½º¹®¶Ñ²±(À§¾Æ·¡)", "Images/´øÀü/bossDoorTopH17.bmp", 96, 54,1,1);
@@ -120,10 +120,13 @@ void dungeonLoading::loadImage()
 
 void dungeonLoading::loadSound()
 {
-	_loading->loadSound("dungeonBGM", "Sound/dungeonBGM.mp3", true, true);
+	_loading->loadSound("dungeonBGM", "Sound/´øÀü/dungeonBGM.mp3", true, true);
+	_loading->loadSound("spaRoomBGM", "Sound/´øÀü/poolRoomBGM.mp3", true, true);
+	_loading->loadSound("bossRoomBGM", "Sound/´øÀü/bossRoomBGM.mp3", true, true);
+
+
 	_loading->loadSound("DungeonDoor", "Sound/door.wav");
 	_loading->loadSound("bossDoor", "Sound/bossDoor.wav");
-	_loading->loadSound("spaRoomBGM", "Sound/poolRoomBGM.mp3", true, true);
 	_loading->loadSound("golemAttack", "Sound/¿¡³Ê¹Ì/°ñ·½/°ñ·½°ø°Ý.wav");
 	_loading->loadSound("golemHit", "Sound/¿¡³Ê¹Ì/°ñ·½/°ñ·½¸ÂÀ½.wav");
 	_loading->loadSound("potFire", "Sound/¿¡³Ê¹Ì/Æý/ÃÑ¾Ë½î±â.wav");

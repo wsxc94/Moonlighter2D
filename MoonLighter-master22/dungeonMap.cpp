@@ -241,6 +241,7 @@ void DungeonMap::setBossMap(DungeonMap ** map, int percent)
 			cur->_topDg = new DungeonMap(cur->_x, cur->_y - 1);
 			cur->_topDg->_backImg = "dungeonSpa";
 			cur->_topDg->_fileName = "maptool/dungeonStart";
+			cur->_topDg->_dgKind = DG_SPA;
 			_vMaps.push_back(cur->_topDg);
 			cur->_topDg->_topDg = new DungeonMap(cur->_x, cur->_y - 2);
 			cur->_topDg->_topDg->_backImg = "dungeonBack";
@@ -391,8 +392,8 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 					(*map)->_vTile[i].rc.top != (*map)->_leftDoor->getRect().top &&
 					(*map)->_vTile[i].rc.bottom != (*map)->_leftDoor->getRect().bottom)
 				{
-					if (left == 1 && (*map)->_dgKind == DG_NOMAL) (*map)->_vTile[i].tState = TS_PORTAL;
 					if (left == 3 && (*map)->_dgKind == DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (left == 1 && (*map)->_dgKind != DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
 
 					left++;
 				}
@@ -407,8 +408,8 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 					(*map)->_vTile[i].rc.top != (*map)->_rightDoor->getRect().top &&
 					(*map)->_vTile[i].rc.bottom != (*map)->_rightDoor->getRect().bottom)
 				{
-					if (right == 1 && (*map)->_dgKind == DG_NOMAL) (*map)->_vTile[i].tState = TS_PORTAL;
 					if (right == 3 && (*map)->_dgKind == DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (right == 1 && (*map)->_dgKind != DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
 					right++;
 				}
 			}
@@ -422,8 +423,8 @@ void DungeonMap::loadTiles(DungeonMap ** map)
 					(*map)->_vTile[i].rc.left != (*map)->_topDoor->getRect().left &&
 					(*map)->_vTile[i].rc.right != (*map)->_topDoor->getRect().right)
 				{
-					if (top == 1 && (*map)->_dgKind == DG_NOMAL) (*map)->_vTile[i].tState = TS_PORTAL;
 					if (top == 3 && (*map)->_dgKind == DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
+					if (top == 1 && (*map)->_dgKind != DG_SEMIBOSS) (*map)->_vTile[i].tState = TS_PORTAL;
 					top++;
 				}
 			}
@@ -757,6 +758,7 @@ void DungeonMap::checkColiHole()
 					if (_wid >= 34 && _hei >= 34)
 					{
 						PLAYER->setPlayerState(PLAYER_FALL);
+						PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
 					}
 					else
 					{

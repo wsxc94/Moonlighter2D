@@ -485,15 +485,16 @@ void potGolem::hitSoundPlay()
 
 void potGolem::potGolemCollision()
 {
-	collisionEnemyBody();
 	RECT temp;
 
 	for (int i = 0; i < 30; i++)
 	{
-		if (IntersectRect(&temp, &PLAYER->getRect(), &_bullet[i].rc) && _bullet[i].isFire)
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_bullet[i].rc) && _bullet[i].isFire  && PLAYER->getPlayerState() != PLAYER_ROLL)
 		{
 
 			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
+			PLAYER->setPlayerState(HIT_IDLE);
+			PLAYER->setHit(true);
 			if (PLAYERDATA->getInDungeonHp() < 0)
 			{
 				PLAYERDATA->setInDungeonHp(1);

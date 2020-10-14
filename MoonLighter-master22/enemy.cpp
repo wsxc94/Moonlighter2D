@@ -267,30 +267,3 @@ void enemy::hitSoundPlay()
 {
 }
 
-void enemy::collisionEnemyBody()
-{
-	RECT temp;
-	if (!_emPlayerColi)
-	{
-		//에너미 몸통과 충돌
-		if (IntersectRect(&temp, &PLAYER->getRect(), &_emRC))
-		{
-			_emPlayerColi = true;
-			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
-			if (PLAYERDATA->getInDungeonHp() < 0)
-			{
-				PLAYERDATA->setInDungeonHp(1);
-			}
-		}
-	}
-
-	if (_emPlayerColi)
-	{
-		count++;
-		if (count > 50)
-		{
-			count = 0;
-			_emPlayerColi = false;
-		}
-	}
-}

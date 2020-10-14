@@ -18,7 +18,6 @@ enum PLAYER_STATE
 	PLAYER_DIE,
 	PLAYER_FALL,
 	PLAYER_SWIM,
-
 	HIT_IDLE,
 	HIT_RUN,
 	HIT_SWORD,
@@ -39,6 +38,7 @@ struct tagPlayer
 	float x;
 	float y;
 	int direction;
+	int speed;
 	WEAPONSTATE weapon;
 	int count;
 	int index;
@@ -89,7 +89,6 @@ private:
 	int _lastRollY;			// 구르기전 y
 	int	_holeAlpha;			// 구르기 알파값
 
-
 	int _attackCount;
 	int _attackIndex;
 
@@ -118,6 +117,8 @@ private:
 	animation* _aniSwordHit;
 	animation* _aniSwordTwoHit;
 
+	animation* _deathPortal;
+
 public:
 	HRESULT init();
 	void release();
@@ -134,16 +135,15 @@ public:
 	void keyInput();		//플레이어의 상태에 상관없이 키 입력을 받는 함수 
 	void npcTalk(bool& isTalk);
 	void hitPlayer();
+	void playerMove();
+	bool getKeyMove();
 
-
-	//게터 세터 모음
-public:
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }
 
 	RECT& getRect() { return _player.rc; }
 	RECT getShadowRect() { return _player.shadowRc; }
-	
+
 	arrow *getArrow() { return _arrow; }
 
 	int getPlayerDirection() { return _player.direction; }
@@ -172,5 +172,7 @@ public:
 	tagPlayerAttackBox& getPlayerAttackTwoBox() { return _playerAttackTwoBox; }
 	void setPlayerAttackTwoBoxHit(bool hit) { _playerAttackTwoBox.isHit = hit; }
 
+	void setPlace(PLACE place) { _place = place; }
+	void setHit(bool isHit) { _isHit = isHit; }
 };
 
