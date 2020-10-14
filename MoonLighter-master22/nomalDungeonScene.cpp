@@ -112,6 +112,7 @@ void nomalDungeonScene::render()
 		HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		CAMERAMANAGER->ZorderDrawText("°ñ·½   ´øÀü", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 50, 300, 40);
 		CAMERAMANAGER->ZorderDrawText(to_string(_dgFloor), WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
 	}
 

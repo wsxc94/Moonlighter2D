@@ -48,7 +48,7 @@ HRESULT dgDoor::init(int x, int y, string key, string topkey, int frameY)
 	_imgTopKey = topkey;
 	_rc = RectMake(x, y, IMAGEMANAGER->findImage(key)->getFrameWidth(), IMAGEMANAGER->findImage(key)->getFrameHeight());
 	_close = new animation;
-	_close->init(IMAGEMANAGER->findImage(key), frameY, 7);
+	_close->init(IMAGEMANAGER->findImage(key), frameY, 20);
 	_close->aniStop();
 	_open = new animation;
 	vector<POINT> _temp;
@@ -56,7 +56,7 @@ HRESULT dgDoor::init(int x, int y, string key, string topkey, int frameY)
 	{
 		_temp.push_back(PointMake(i, frameY));
 	}
-	_open->initArray(_temp, IMAGEMANAGER->findImage(key), 7);
+	_open->initArray(_temp, IMAGEMANAGER->findImage(key), 20);
 
 	_isOpen = false;
 	_isClose = false;
@@ -79,7 +79,6 @@ void dgDoor::update()
 
 void dgDoor::render()
 {
-	//_close->CameraRender(getMemDC(), _rc.left, _rc.top);
 	_close->ZoderRender(0, _rc.left, _rc.top);
 	if(_isOpen) _open->ZoderRender(1, _rc.left, _rc.top);
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage(_imgTopKey), 2000, _rc.left, _rc.top, 0, _frameY);
