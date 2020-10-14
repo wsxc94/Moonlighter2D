@@ -5,9 +5,15 @@
 #include "object.h"
 #include "enemy.h"
 
+enum DUNGEONSCENESTATE
+{
+	DS_UPDATE, DS_RESULT
+};
+
 class nomalDungeonScene : public gameNode
 {
 private:
+	DUNGEONSCENESTATE _dState;
 
 	DungeonMap* _startDungeon;				//전체 던전의 시작점
 
@@ -39,8 +45,9 @@ public:
 	void release();
 	void update();
 	void render();
-	bool minimapPush(POINT pt);
-	void minimapRender();
-	void setNewFloor();
+	bool minimapPush(POINT pt);		//처음가는 방이라면 미니맴에 푸시하자
+	void minimapRender();			//미니맵을 렌더하자
+	void setNewFloor();				//다음층 초기화하는것
+	void soundUpdate();				//배경음 업뎃
 };
 

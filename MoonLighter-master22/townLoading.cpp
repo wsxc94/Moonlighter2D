@@ -27,7 +27,7 @@ void townLoading::update()
 	_loading->update();
 	if (_loading->loadingDone())
 	{
-		SCENEMANAGER->loadScene("상점가판대");
+		SCENEMANAGER->loadScene("타운화면");
 	}
 }
 
