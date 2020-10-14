@@ -434,14 +434,15 @@ void redGolem::dropItem()
 
 void redGolem::redGolemCollision()
 {
-	collisionEnemyBody();
 	RECT temp;
-	if (!_emPlayerColi)
+	if (!_emPlayerColi && PLAYER->getPlayerState() != PLAYER_ROLL)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_attackBox))
 		{
 			_emPlayerColi = true;
 			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
+			PLAYER->setPlayerState(HIT_IDLE);
+			PLAYER->setHit(true);
 			if (PLAYERDATA->getInDungeonHp() < 0)
 			{
 				PLAYERDATA->setInDungeonHp(1);

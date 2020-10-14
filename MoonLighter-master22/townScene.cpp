@@ -33,6 +33,7 @@ void townScene::release()
 
 void townScene::update()
 {
+	//PLAYER->setPlace(SHOP);
 	if (!SOUNDMANAGER->isPlaySound("마을브금")) {
 		SOUNDMANAGER->play("마을브금", 0.3f);
 	}
@@ -67,7 +68,6 @@ void townScene::update()
 	portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	ObjectAnim();
 	ObjectColl();
-
 
 }
 

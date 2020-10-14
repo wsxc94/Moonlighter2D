@@ -119,7 +119,6 @@ public:
 	virtual void soundUpdate();
 	virtual void setProgressBar();
 	virtual void hitSoundPlay();
-	virtual void collisionEnemyBody();
 public:
 	virtual bool getIsActivate() { return _isActivate; }
 	virtual void setIsActivate(bool at) { _isActivate = at; }
