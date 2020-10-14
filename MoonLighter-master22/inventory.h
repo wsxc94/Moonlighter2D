@@ -1,6 +1,7 @@
 #pragma once
 #include "itemManager.h"
 #include "cursor.h"
+#include "selectMenu.h"
 #define INVENPOSX	120
 #define INVENPOSY	86
 #define MAXSLOT		31
@@ -23,6 +24,15 @@ enum SLOT
 	SLOT_EMBLEM
 };
 
+//인벤토리 컨트롤러 타입정의
+enum INVEN_CTRL
+{
+	INVEN_INVENTORY,
+	INVEN_MERCHANT_MIRROR,
+	INVEN_MERCHANT_PENDANT,
+	INVEN_MERCHANT_EMBLEM
+};
+
 //슬롯 구조체 
 typedef struct
 {
@@ -43,16 +53,19 @@ private:
 	viInven _viInven;
 
 private:
-	itemManager *_itemManager;
-	cursor *_cursor;
+	itemManager *_itemManager;				//아이템 매니저 클래스 
+	selectMenu *_selectMenu;				//선택메뉴 클래스 
+	cursor *_cursor;						//커서 클래스 
 
 	gameItem _tempItem;						//임시 게임아이템 구조체 
 	gameItem _itemEmpty;					//비어있는 아이템 구조체 
 	gameItem _itemGrabbed;					//현재 잡고있는 아이템 구조체 
 
 	slotUnit _invenSlot[MAXSLOT];			//인벤토리 슬롯용 구조체 
+	INVEN_CTRL _invenCtrl;					//인벤토리 컨트롤러 
 	POINT _invenPos;						//인벤토리메뉴 위치 
 
+private:
 	float _menuMoveSpeed;					//메뉴가 이동하는 속도 
 	int _curWeaponIdx;						//현재 착용 중인 무기 인덱스 
 	int _grabTime;							//커서가 모든 아이템을 잡는 클릭시간 
@@ -60,7 +73,9 @@ private:
 
 	bool _isGrabbingItem;					//현재 아이템을 잡고있는지 확인하는 변수 
 	bool _isPuttingItem;					//현재 아이템을 놓고있는지 확인하는 변수 
-	bool _grabSoundPlayed;
+	bool _grabSoundPlayed;					//잡는 사운드가 플레이되었는지 확인하는 변수(중복 출력 금지)
+	bool _canKeyInput;						//키입력 방지 함수 
+	bool _canGrab;
 
 public:
 	HRESULT init();
@@ -69,17 +84,17 @@ public:
 	void render(HDC hdc);
 
 	//get함수 
-	vector<gameItem*> getItem() { return _vInven; }	//인벤토리 아이템 반환 
-	itemManager* getItemManager() { return _itemManager; }
-	cursor *getCursor() { return _cursor; }				//인벤토리 커서 반환 
-	int getWeaponIdx() { return _curWeaponIdx; }		//현재의 무기인덱스 값을 반환 
-	int getMaxItemSlot() { return MAXITEMSLOT; }		//인벤토리에 소지 가능한 최대 아이템 개수 반환 
-	int getCurItemCount();								//현재 인벤토리에 소지하고 있는 아이템 수 반환
-	gameItem getPotionEquipped();						//현재 장착하고 있는 포션 아이템 클래스를 반환 
-	gameItem getWeaponEquipped();						//현재 장착하고 있는 무기 아이템 클래스를 반환 
+	vector<gameItem*> getItem() { return _vInven; }			//인벤토리 아이템 반환 
+	itemManager* getItemManager() { return _itemManager; }	//아이템매니저 클래스 반환 
+	cursor *getCursor() { return _cursor; }					//인벤토리 커서 반환 
+	int getWeaponIdx() { return _curWeaponIdx; }			//현재의 무기인덱스 값을 반환 
+	int getMaxItemSlot() { return MAXITEMSLOT; }			//인벤토리에 소지 가능한 최대 아이템 개수 반환 
+	int getCurItemCount();									//현재 인벤토리에 소지하고 있는 아이템 수 반환
+	gameItem getPotionEquipped();							//현재 장착하고 있는 포션 아이템 클래스를 반환 
+	gameItem getWeaponEquipped();							//현재 장착하고 있는 무기 아이템 클래스를 반환 
 
 	//set함수 
-	void setWeaponIdx(int index) { _curWeaponIdx = index; }
+	void setWeaponIdx(int index) { _curWeaponIdx = index; }	//장착하는 무기의 인덱스 값을 설정하는 함수 
 
 	//인벤토리메뉴 이동 관련 함수 
 	POINT getInvenPos() { return _invenPos; }				//인벤토리 위치값 get함수
@@ -89,24 +104,30 @@ public:
 	void moveInvenLeft(int destPos);						//인벤토리를 destPos까지 좌측으로 이동시킴
 	void moveInvenRight(int destPos);						//인벤토리를 destPos까지 우측으로 이동시킴
 
-	//초기화 및 아이템 획득 관련 함수 
+	//인벤토리 초기화 및 아이템 획득 관련 함수 
+	void initInven();						//인벤토리 창을 열때마다 초기화하는 함수 
 	void initInvenSlot();					//인벤토리 슬롯 설정값 초기화 	
 	void initItemSlot();					//아이템 슬롯 초기화(전부 비우기)
 	void initItem();						//아이템 초기화(임의로 아이템을 넣어놓음)  
 	bool addItemToInven(gameItem item);		//던전에서 획득한 아이템을 인벤토리에 추가 
 	void deleteInvenItem();					//인벤토리 슬롯에 있는 아이템들 전부 제거 
-	void syncWithShopInven(vector<gameItem*> vShopInven);
-
+	void syncWithShopInven(vector<gameItem*> vShopInven);	//상점의 인벤토리와 동기화하는 함수 
 
 	//키입력 관련 함수 
-	void keyInput();				//w,a,s,d(상하좌우) 키 값을 받아서 커서 움직이기 
-	void leftKeyDown();				//왼쪽 키 입력 시 커서의 위치값 변경 
-	void rightKeyDown();			//오른쪽 키 입력 시 커서의 위치값 변경 
-	void upKeyDown();				//위쪽 키 입력 시 커서의 위치값 변경 
-	void downKeyDown();				//아래쪽 키 입력 시 커서의 위치값 변경
-	void switchWeapon();			//무기 바꾸기(무기를 바꿀 수 있는 상황인지 확인해서 변경) 
-	void switchWeaponIdx();			//현재 무기 인덱스값 바꾸기 
-	void usePotionEquipped();		//현재 장착 중인 포션 사용하기 
+	void keyInput();						//w,a,s,d(상하좌우) 키 값을 받아서 커서 움직이기 
+	void setInvenCtrl(INVEN_CTRL state);	//인벤토리 컨트롤러 세팅 함수 
+	void setMerchantCtrl();					//현재 커서가 가리키는 상인아이템에 맞게 컨트롤러 변경
+	void invenKeyInput();					//인벤토리 컨트롤러 상태의 키 입력 
+	void mirrorKeyInput();					//상인의 거울 컨트롤러 상태의 키 입력 
+	void pendantKeyInput();					//상인의 펜던트 컨트롤러 상태의 키 입력 
+	void leftKeyDown();						//왼쪽 키 입력 시 커서의 위치값 변경 
+	void rightKeyDown();					//오른쪽 키 입력 시 커서의 위치값 변경 
+	void upKeyDown();						//위쪽 키 입력 시 커서의 위치값 변경 
+	void downKeyDown();						//아래쪽 키 입력 시 커서의 위치값 변경
+	void switchWeapon();					//무기 바꾸기(무기를 바꿀 수 있는 상황인지 확인해서 변경) 
+	void switchWeaponIdx();					//현재 무기 인덱스값 바꾸기 
+	void usePotionEquipped();				//현재 장착 중인 포션 사용하기 
+	void useMerchantItem();					//상인 아이템 사용하기(상인의 거울, 펜던트, 엠블렘) 
 
 	//아이템 잡기 함수 
 	void grabItem();							//전체 아이템 잡기 함수 
@@ -118,14 +139,17 @@ public:
 	void putItemOnOccupiedSlot();				//이미 채워진 슬롯에 잡고있는 아이템 놓기 
 
 	//렌더 함수 
-	void cursorRender(HDC hdc);				//커서 출력 함수
-	void statusRender(HDC hdc);				//플레이어 스테이터스 출력 함수 
-	void weaponIconRender(HDC hdc);			//무기 장착 관련 아이콘 출력 함수 
+	void cursorRender(HDC hdc);					//커서 출력 함수
+	void invenCursorRender(HDC hdc);			//인벤토리 메뉴의 커서 출력 
+	void selectCursorRender(HDC hdc);			//선택 메뉴(네,아니오)의 커서 출력 
+	void pendantCtrlRender(HDC hdc);			//펜던트 컨트롤러 상태에 필요한 이미지 출력 
+	void statusRender(HDC hdc);					//플레이어 스테이터스 출력 함수 
+	void weaponIconRender(HDC hdc);				//무기 장착 관련 아이콘 출력 함수 
 	void itemRender(HDC hdc);					//아이템 이미지 출력 함수 
 	void itemGrabbedRender(HDC hdc);			//잡고있는 아이템 이미지 출력 함수 
 	void itemNameRender(HDC hdc);				//인벤토리 하단에 아이템 이름을 출력하는 함수  
 	void itemCountRender(HDC hdc, int count, int destX, int destY);	//아이템의 개수를 출력하는 함수 
-	void statusNumRender(HDC hdc, int number, int destY);	//스테이터스 숫자 출력 함수 
+	void statusNumRender(HDC hdc, int number, int destY);			//스테이터스 숫자 출력 함수 
 
 };
 

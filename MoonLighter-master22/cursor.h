@@ -4,10 +4,13 @@
 enum CURSOR_STATE
 {
 	CURSOR_IDLE,
+	CURSOR_INACTIVE,
 	CURSOR_MOVE,
 	CURSOR_CLICK,
 	CURSOR_PRICE_OFF,
-	CURSOR_PRICE_ON
+	CURSOR_PRICE_ON,
+	CURSOR_SELECT_IDLE,
+	CURSOR_SELECT_MOVE
 };
 
 //커서 구조체 
@@ -40,6 +43,7 @@ public:
 
 	//get 함수 
 	cursorUnit getCursor() { return _cursor; }
+	CURSOR_STATE getState() { return _cursor.state; }
 	image *getImg() { return _cursor.img; }
 	int getIdx() { return _cursor.idx; }
 	int getSlotIdx() { return _cursor.slotIdx; }
@@ -54,8 +58,8 @@ public:
 	//animation 함수 
 	void setCursorState(CURSOR_STATE state);	//커서의 상태 setting 함수(커서 애니메이션 변경에 사용)
 	void animation();							//커서 애니메이션 함수 
-	void idleAnim();							//커서 idle 애니메이션 
-	void moveAnim();							//커서 move 애니메이션 
-	void clickAnim();							//커서 click 애니메이션 
+	void moveAnim();							//커서 이동 애니메이션 
+	void clickAnim();							//커서 클릭 애니메이션 
+	void selectMoveAnim();						//네,아니오 선택 메뉴의 커서 이동 애니메이션 
 };
 

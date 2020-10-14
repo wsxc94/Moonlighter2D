@@ -44,6 +44,7 @@ HRESULT itemMenu::init()
 	_closeTagMenu = false;
 	_movingLeft = false;
 	_movingRight = false;
+	_goToTown = false; 
 
 	return S_OK;
 }
@@ -85,18 +86,18 @@ void itemMenu::update()
 	{
 		switch (_ctrlState)
 		{
-		case CTRL_CALENDAR:
-			break;
+			case CTRL_CALENDAR:
+				break;
 
-		case CTRL_WISHLIST:
-			break;
+			case CTRL_WISHLIST:
+				break;
 
-		case CTRL_INVEN:
-			_inventory->update();
-			break;
+			case CTRL_INVEN:
+				_inventory->update();
+				break;
 
-		case CTRL_NOTEBOOK:
-			break;
+			case CTRL_NOTEBOOK:
+				break;
 		}
 	}
 }
@@ -159,15 +160,14 @@ void itemMenu::toggleMenu()
 	{
 		if (_menuOn)
 		{
-			_closeMenu = true;
-			_closeTagMenu = true;
-			
-			//인벤토리 창을 닫으므로 커서를 꺼준다.
-			_inventory->getCursor()->setShowCursor(false);
+			DoCloseMenu();
 		}
 		else
 		{
+			//컨트롤러 상태 초기화(인벤토리) 및 인벤토리 변수 초기화  
 			setCtrlState(CTRL_INVEN);
+			_inventory->initInven();
+
 			_tagIdx = CTRL_INVEN;
 			_menuOn = true;
 			_invenOn = true;
@@ -177,6 +177,15 @@ void itemMenu::toggleMenu()
 			SOUNDMANAGER->play("openInven", 0.4f);
 		}
 	}
+}
+
+void itemMenu::DoCloseMenu()
+{
+	_closeMenu = true;
+	_closeTagMenu = true;
+
+	//인벤토리 창을 닫으므로 커서를 꺼준다.
+	_inventory->getCursor()->setShowCursor(false);
 }
 
 void itemMenu::openMenu()
@@ -201,50 +210,50 @@ void itemMenu::closeMenu()
 	//현재의 컨트롤러 상태(열려있는 메뉴 상태)에 맞추어 그에 알맞은 동작 실행 
 	switch (_ctrlState)
 	{
-	case CTRL_CALENDAR:
-		_calendar->moveCalendarLeft(-IMAGEMANAGER->findImage("menu_calendar")->getWidth());
+		case CTRL_CALENDAR:
+			_calendar->moveCalendarLeft(-IMAGEMANAGER->findImage("menu_calendar")->getWidth());
 
-		if (_calendar->getCalendarPos().x == -IMAGEMANAGER->findImage("menu_calendar")->getWidth())
-		{
-			_closeMenu = false;
-			_calendarOn = false;
-			_menuOn = false;
-		}
-		break;
+			if (_calendar->getCalendarPos().x == -IMAGEMANAGER->findImage("menu_calendar")->getWidth())
+			{
+				_closeMenu = false;
+				_calendarOn = false;
+				_menuOn = false;
+			}
+			break;
 
-	case CTRL_WISHLIST:
-		_wishList->moveWishListLeft(-IMAGEMANAGER->findImage("menu_wishlist")->getWidth());
+		case CTRL_WISHLIST:
+			_wishList->moveWishListLeft(-IMAGEMANAGER->findImage("menu_wishlist")->getWidth());
 
-		if (_wishList->getWishListPos().x == -IMAGEMANAGER->findImage("menu_wishlist")->getWidth())
-		{
-			_closeMenu = false;
-			_wishListOn = false;
-			_menuOn = false;
-		}
-		break;
+			if (_wishList->getWishListPos().x == -IMAGEMANAGER->findImage("menu_wishlist")->getWidth())
+			{
+				_closeMenu = false;
+				_wishListOn = false;
+				_menuOn = false;
+			}
+			break;
 
-	case CTRL_INVEN:
-		_inventory->setInvenPosY(_inventory->getInvenPos().y + _menuMoveSpeed);
+		case CTRL_INVEN:
+			_inventory->setInvenPosY(_inventory->getInvenPos().y + _menuMoveSpeed);
 
-		if (_inventory->getInvenPos().y >= WINSIZEY)
-		{
-			_inventory->setInvenPosY(WINSIZEY);
-			_closeMenu = false;
-			_invenOn = false;
-			_menuOn = false;
-		}
-		break;
+			if (_inventory->getInvenPos().y >= WINSIZEY)
+			{
+				_inventory->setInvenPosY(WINSIZEY);
+				_closeMenu = false;
+				_invenOn = false;
+				_menuOn = false;
+			}
+			break;
 
-	case CTRL_NOTEBOOK:
-		_noteBook->moveNoteBookRight(WINSIZEX);
+		case CTRL_NOTEBOOK:
+			_noteBook->moveNoteBookRight(WINSIZEX);
 
-		if (_noteBook->getNoteBookPos().x == WINSIZEX)
-		{
-			_closeMenu = false;
-			_noteBookOn = false;
-			_menuOn = false;
-		}
-		break;
+			if (_noteBook->getNoteBookPos().x == WINSIZEX)
+			{
+				_closeMenu = false;
+				_noteBookOn = false;
+				_menuOn = false;
+			}
+			break;
 	}
 
 	//메뉴를 닫는 일련의 동작들이 다 끝났을 때, 모든 메뉴의 위치를 초기화
@@ -427,7 +436,7 @@ void itemMenu::ctrlWishListInput()
 			_wishListOn = false;
 			setCtrlState(CTRL_INVEN);
 
-			//인벤토리 창으로 넘어왔으므로 커서를 켜준다. 
+			//인벤토리 창으로 넘어왔으므로 커서를 켜준다.
 			_inventory->getCursor()->setShowCursor(true);	
 		}
 	}

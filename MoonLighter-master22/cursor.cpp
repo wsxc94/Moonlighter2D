@@ -38,7 +38,13 @@ void cursor::setCursorState(CURSOR_STATE state)
 	{
 		case CURSOR_IDLE:
 			_cursor.img = IMAGEMANAGER->findImage("cursor_move");
-			_cursor.idx = 2;
+			_cursor.idx = _cursor.img->getMaxFrameX() - 1;
+			_cursor.state = state;
+			break;
+
+		case CURSOR_INACTIVE:
+			_cursor.img = IMAGEMANAGER->findImage("cursor_move");
+			_cursor.idx = _cursor.img->getMaxFrameX();
 			_cursor.state = state;
 			break;
 
@@ -66,6 +72,18 @@ void cursor::setCursorState(CURSOR_STATE state)
 			_cursor.idx = 1;
 			_cursor.state = state;
 			break;
+
+		case CURSOR_SELECT_IDLE:
+			_cursor.img = IMAGEMANAGER->findImage("cursor_select");
+			_cursor.idx = _cursor.img->getMaxFrameX();
+			_cursor.state = state;
+			break;
+
+		case CURSOR_SELECT_MOVE:
+			_cursor.img = IMAGEMANAGER->findImage("cursor_select");
+			_cursor.idx = 0;
+			_cursor.state = state;
+			break;
 	}
 }
 
@@ -73,10 +91,6 @@ void cursor::animation()
 {
 	switch (_cursor.state)
 	{
-		case CURSOR_IDLE:
-			idleAnim();
-			break;
-
 		case CURSOR_MOVE:
 			moveAnim();
 			break;
@@ -84,11 +98,11 @@ void cursor::animation()
 		case CURSOR_CLICK:
 			clickAnim();
 			break;
-	}
-}
 
-void cursor::idleAnim()
-{
+		case CURSOR_SELECT_MOVE:
+			selectMoveAnim();
+			break;
+	}
 }
 
 void cursor::moveAnim()
@@ -97,7 +111,7 @@ void cursor::moveAnim()
 
 	if (_animTimer % _moveFrameUnit == 0)
 	{
-		if (_cursor.idx < _cursor.img->getMaxFrameX())
+		if (_cursor.idx < _cursor.img->getMaxFrameX() - 1)
 		{
 			_cursor.idx++;
 		}
@@ -121,6 +135,23 @@ void cursor::clickAnim()
 		else
 		{
 			setCursorState(CURSOR_IDLE);
+		}
+	}
+}
+
+void cursor::selectMoveAnim()
+{
+	_animTimer++;
+
+	if (_animTimer % _clickFrameUnit == 0)
+	{
+		if (_cursor.idx < _cursor.img->getMaxFrameX())
+		{
+			_cursor.idx++;
+		}
+		else
+		{
+			setCursorState(CURSOR_SELECT_IDLE);
 		}
 	}
 }

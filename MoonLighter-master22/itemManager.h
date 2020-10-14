@@ -17,7 +17,6 @@
 #define TRAININGBOW_IDX		15
 #define TRAININGSWORD_IDX	16
 
-
 //아이템의 종류 
 enum ITEM
 {

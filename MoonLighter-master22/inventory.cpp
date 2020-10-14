@@ -10,11 +10,15 @@ HRESULT inventory::init()
 	_cursor = new cursor;
 	_cursor->init();
 
+	_selectMenu = new selectMenu;
+	_selectMenu->init();
+
 	//인벤토리메뉴 위치 초기화 
 	initPos();
 
 	//인벤토리 슬롯 설정 초기화 
 	initInvenSlot();
+	_invenCtrl = INVEN_INVENTORY;
 
 	//아이템 초기화 
 	initItem();
@@ -22,6 +26,7 @@ HRESULT inventory::init()
 	//아이템 잡기 관련 변수 
 	_isGrabbingItem = false;
 	_isPuttingItem = false;
+	_canGrab = true; 
 	_grabTime = 12;
 
 	//무기 장착 관련 변수 
@@ -34,6 +39,8 @@ HRESULT inventory::init()
 	//사운드 관련 변수 
 	_grabSoundPlayed = false;
 
+	_canKeyInput = true; 
+
 	return S_OK;
 }
 
@@ -44,6 +51,9 @@ void inventory::release()
 
 	_cursor->release();
 	SAFE_DELETE(_cursor);
+
+	_selectMenu->release();
+	SAFE_DELETE(_selectMenu);
 }
 
 void inventory::update()
@@ -51,6 +61,12 @@ void inventory::update()
 	keyInput();
 
 	_cursor->update();
+
+	if (_invenCtrl == INVEN_MERCHANT_PENDANT ||
+		_invenCtrl == INVEN_MERCHANT_EMBLEM)
+	{
+		_selectMenu->update();
+	}
 }
 
 void inventory::render(HDC hdc)
@@ -68,6 +84,13 @@ void inventory::render(HDC hdc)
 	//메뉴가 현재 고정된 상태일 때 출력 
 	if (_cursor->getShowCursor())
 	{
+		//던전에 있을 때 골드 확인해서 상인의 아이템 출력 
+		if (PLAYERDATA->getIsInDungeon())
+		{
+			if (PLAYERDATA->getGold() >= 200) IMAGEMANAGER->render("bag_pendant", hdc, 360, 496);
+			if (PLAYERDATA->getGold() >= 1000) IMAGEMANAGER->render("bag_emblem", hdc, 474, 488);
+		}
+
 		itemRender(hdc);
 		itemNameRender(hdc);
 		statusRender(hdc);
@@ -76,20 +99,30 @@ void inventory::render(HDC hdc)
 
 		cursorRender(hdc);
 		weaponIconRender(hdc);
+
+		switch (_invenCtrl)
+		{
+			case INVEN_MERCHANT_MIRROR:
+				break;
+
+			case INVEN_MERCHANT_PENDANT:
+				pendantCtrlRender(hdc);
+				break;
+
+			case INVEN_MERCHANT_EMBLEM:
+				break;
+		}//end of switch 
 	}
 
-	//char str[128];
+	char str[128];
 	//wsprintf(str, "ivenSize : %d", _vInvenItem.size());
 	//TextOut(hdc, 10, 70, str, strlen(str));
 
-	//wsprintf(str, "cursor.soltIdx : %d", _cursor.slotIdx);
-	//TextOut(hdc, 10, 90, str, strlen(str));
+	wsprintf(str, "selectIdx : %d", ITEMMENU->getOpenMenu());
+	TextOut(hdc, 10, 90, str, strlen(str));
 
 	//wsprintf(str, "itemGrabbed.posIdx : %d", _itemGrabbed.getInvenPosIdx());
 	//TextOut(hdc, 10, 110, str, strlen(str));
-
-	//wsprintf(str, "itemGrabbed.count : %d", _itemGrabbed.getCount());
-	//TextOut(hdc, 10, 130, str, strlen(str));
 
 	//wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
 	//TextOut(hdc, 10, 150, str, strlen(str));
@@ -98,12 +131,6 @@ void inventory::render(HDC hdc)
 	//{
 	//	wsprintf(str, "inven[%d].invenIdx : %d", i, _vInvenItem[i]->getInvenPosIdx());
 	//	TextOut(hdc, 10, 170 + (i * 20), str, strlen(str));
-	//}
-
-	//for (int i = 0; i < _vInvenItem.size(); i++)
-	//{
-	//	wsprintf(str, "inven[%d].type : %d", i, _vInvenItem[i]->getType());
-	//	TextOut(hdc, 10, 330 + (i * 20), str, strlen(str));
 	//}
 
 }
@@ -116,14 +143,14 @@ int inventory::getCurItemCount()
 	{
 		switch (_vInven[i]->getInvenPosIdx())
 		{
-		case 5: case 6: case 12: case 13:
-		case 19: case 20: case 26: case 27:
-		case 28: case 29: case 30:
-			break;
+			case 5: case 6: case 12: case 13:
+			case 19: case 20: case 26: case 27:
+			case 28: case 29: case 30:
+				break;
 
-		default:
-			if (_vInven[i]->getType() != ITEM_EMPTY) itemCount++;
-			break;
+			default:
+				if (_vInven[i]->getType() != ITEM_EMPTY) itemCount++;
+				break;
 
 		}//end of switch
 	}//end of for 
@@ -199,6 +226,17 @@ void inventory::moveInvenRight(int destPos)
 	{
 		_invenPos.x = destPos;
 	}
+}
+
+void inventory::initInven()
+{
+	_isGrabbingItem = false; 
+	_isPuttingItem = false; 
+	_grabSoundPlayed = false; 
+	_canKeyInput = true;
+
+	_cursor->setSlotIdx(0);
+	setInvenCtrl(INVEN_INVENTORY);
 }
 
 void inventory::initInvenSlot()
@@ -429,6 +467,82 @@ void inventory::syncWithShopInven(vector<gameItem*> vShopInven)
 
 void inventory::keyInput()
 {
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			invenKeyInput();
+			break;
+
+		case INVEN_MERCHANT_MIRROR:
+			mirrorKeyInput();
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			pendantKeyInput();
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			break;
+	}
+
+	//키 입력을 받아서 무기 바꾸기 
+	if (INPUT->GetKeyDown('Z'))
+	{
+		switchWeapon();
+	}
+}
+
+void inventory::setInvenCtrl(INVEN_CTRL state)
+{
+	switch (state)
+	{
+		case INVEN_INVENTORY:
+			_cursor->setCursorState(CURSOR_MOVE);
+			_invenCtrl = state;
+			break;
+
+		case INVEN_MERCHANT_MIRROR:
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_invenCtrl = state;
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_invenCtrl = state;
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_invenCtrl = state;
+			break;
+	}
+}
+
+void inventory::setMerchantCtrl()
+{
+	switch (_cursor->getSlotIdx())
+	{
+		case 28:
+			setInvenCtrl(INVEN_MERCHANT_MIRROR);
+			break;
+
+		case 29:
+			if (PLAYERDATA->getIsInDungeon() && PLAYERDATA->getGold() >= 200)
+				setInvenCtrl(INVEN_MERCHANT_PENDANT);
+			break;
+
+		case 30:
+			//if (PLAYERDATA->getIsInDungeon() && PLAYERDATA->getGold() >= 1000)
+			//	setInvenCtrl(INVEN_MERCHANT_EMBLEM);
+			break;
+	}
+}
+
+void inventory::invenKeyInput()
+{
 	//상하좌우 키 입력 받아서 커서 움직이기 
 	//커서가 움직일 때마다 커서 애니메이션 실행 
 	if (INPUT->GetKeyDown('W'))
@@ -463,7 +577,7 @@ void inventory::keyInput()
 		_cursor->setClickTime(_cursor->getClickTime() + 1);
 
 		//꾹 누르고 있으면 한꺼번에 잡기 실행 
-		if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
+		if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem && _canGrab)
 		{
 			grabItem();
 		}
@@ -471,23 +585,73 @@ void inventory::keyInput()
 	if (INPUT->GetKeyDown('J'))
 	{
 		_cursor->setCursorState(CURSOR_CLICK);
+		setMerchantCtrl();
 		putItem();
 	}
 	if (INPUT->GetKeyUp('J'))
 	{
 		//한꺼번에 잡기를 실행할 정도로 길게 누르지 않고 손을 뗄 경우
 		//1개씩 아이템을 잡을 수 있도록 함수 실행 
-		if (!_isPuttingItem) grabItem();
+		if (!_isPuttingItem && _canGrab) grabItem();
 
 		_isPuttingItem = false;
 		_grabSoundPlayed = false;
+		_canGrab = true; 
 		_cursor->setClickTime(0);
 	}
+}
 
-	//키 입력을 받아서 무기 바꾸기 
-	if (INPUT->GetKeyDown('Z'))
+void inventory::mirrorKeyInput()
+{
+}
+
+void inventory::pendantKeyInput()
+{
+	//좌우 키 입력 시 selectIdx값 변경하기(네,아니오)
+	if (INPUT->GetKeyDown('A') || INPUT->GetKeyDown('D'))
 	{
-		switchWeapon();
+		if (_selectMenu->getSelectIdx() == SELECT_NO)
+		{
+			_selectMenu->setSelectIdx(SELECT_YES);
+			_selectMenu->setMenuState(SELECT_YES);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		}
+		else
+		{
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_selectMenu->setMenuState(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		}
+	}
+
+	//네,아니오 중 선택하기 
+	if (INPUT->GetKeyDown('J'))
+	{
+		//아니오 선택 시 인벤토리 컨트롤러로 변경 
+		if (_selectMenu->getSelectIdx() == SELECT_NO) setInvenCtrl(INVEN_INVENTORY);
+		else
+		{
+			//네 선택 시 마을로 돌아가기 
+			//1. gototown변수 true로 설정 
+			//2. 아이템메뉴 종료하기(메뉴 닫기)
+			//3. 사용비 골드에서 차감하기(200원)
+			//4. 인벤토리 컨트롤러 초기화 
+			//5. 선택메뉴의 상태 초기화(NO)
+
+			_canGrab = false; 
+
+			ITEMMENU->setGoToTown(true);
+			ITEMMENU->DoCloseMenu();
+			PLAYERDATA->subGold(200);
+			_selectMenu->setMenuState(SELECT_NO);
+		}
+	}
+
+	//뒤로가기 
+	if (INPUT->GetKeyDown('L'))
+	{
+		setInvenCtrl(INVEN_INVENTORY);
+		_selectMenu->setMenuState(SELECT_NO);
 	}
 }
 
@@ -597,41 +761,41 @@ void inventory::downKeyDown()
 {
 	switch (_cursor->getSlotIdx())
 	{
-	case 5: case 6:
-		_cursor->setSlotIdx(13);
-		break;
+		case 5: case 6:
+			_cursor->setSlotIdx(13);
+			break;
 
-	case 21: case 22:
-		_cursor->setSlotIdx(28);
-		break;
+		case 21: case 22:
+			_cursor->setSlotIdx(28);
+			break;
 
-	case 23:
-		_cursor->setSlotIdx(29);
-		break;
+		case 23:
+			_cursor->setSlotIdx(29);
+			break;
 
-	case 24: case 25:
-		_cursor->setSlotIdx(30);
-		break;
+		case 24: case 25:
+			_cursor->setSlotIdx(30);
+			break;
 
-	case 26: case 27:
-		_cursor->setSlotIdx(5);
-		break;
+		case 26: case 27:
+			_cursor->setSlotIdx(5);
+			break;
 
-	case 28:
-		_cursor->setSlotIdx(0);
-		break;
+		case 28:
+			_cursor->setSlotIdx(0);
+			break;
 
-	case 29:
-		_cursor->setSlotIdx(2);
-		break;
+		case 29:
+			_cursor->setSlotIdx(2);
+			break;
 
-	case 30:
-		_cursor->setSlotIdx(4);
-		break;
+		case 30:
+			_cursor->setSlotIdx(4);
+			break;
 
-	default:
-		_cursor->setSlotIdx(_cursor->getSlotIdx() + 7);
-		break;
+		default:
+			_cursor->setSlotIdx(_cursor->getSlotIdx() + 7);
+			break;
 	}
 }
 
@@ -639,49 +803,49 @@ void inventory::switchWeapon()
 {
 	switch (_curWeaponIdx)
 	{
-	case 1:
-		if (!_invenSlot[5].isEmpty) //5번 슬롯에 무기를 이미 착용하고 있고, 
-		{
-			//6번 슬롯에 무기가 장착되어있지 않다면 return (바꿀 무기가 없음)
-			if (_invenSlot[6].isEmpty) return;
-			else //5번과 6번 슬롯 모두 무기를 장착하고 있다면, 
+		case 1:
+			if (!_invenSlot[5].isEmpty) //5번 슬롯에 무기를 이미 착용하고 있고, 
 			{
-				switchWeaponIdx();
-				SOUNDMANAGER->play("weaponChange", 0.4f);
+				//6번 슬롯에 무기가 장착되어있지 않다면 return (바꿀 무기가 없음)
+				if (_invenSlot[6].isEmpty) return;
+				else //5번과 6번 슬롯 모두 무기를 장착하고 있다면, 
+				{
+					switchWeaponIdx();
+					SOUNDMANAGER->play("weaponChange", 0.4f);
+				}
 			}
-		}
-		else //5번 슬롯에 장착한 무기가 없고, 
-		{
-			//6번 슬롯에도 장착한 무기가 없다면 return
-			if (_invenSlot[6].isEmpty) return;
-			else //5번에 장착한 무기는 없지만 6번에 장착한 무기가 있다면 변경 
+			else //5번 슬롯에 장착한 무기가 없고, 
 			{
-				switchWeaponIdx();
+				//6번 슬롯에도 장착한 무기가 없다면 return
+				if (_invenSlot[6].isEmpty) return;
+				else //5번에 장착한 무기는 없지만 6번에 장착한 무기가 있다면 변경 
+				{
+					switchWeaponIdx();
+				}
 			}
-		}
-		break;
+			break;
 
-	case 2:
-		if (!_invenSlot[6].isEmpty) //6번 슬롯에 무기를 이미 착용하고 있고, 
-		{
-			//5번 슬롯에 무기가 장착되어있지 않다면 return (바꿀 무기가 없음)
-			if (_invenSlot[5].isEmpty) return;
-			else //5번과 6번 슬롯 모두 무기를 장착하고 있다면, 
+		case 2:
+			if (!_invenSlot[6].isEmpty) //6번 슬롯에 무기를 이미 착용하고 있고, 
 			{
-				switchWeaponIdx();
-				SOUNDMANAGER->play("weaponChange", 0.4f);
+				//5번 슬롯에 무기가 장착되어있지 않다면 return (바꿀 무기가 없음)
+				if (_invenSlot[5].isEmpty) return;
+				else //5번과 6번 슬롯 모두 무기를 장착하고 있다면, 
+				{
+					switchWeaponIdx();
+					SOUNDMANAGER->play("weaponChange", 0.4f);
+				}
 			}
-		}
-		else //6번 슬롯에 장착한 무기가 없고, 
-		{
-			//5번 슬롯에도 장착한 무기가 없다면 return
-			if (_invenSlot[5].isEmpty) return;
-			else //6번에 장착한 무기는 없지만 5번에 장착한 무기가 있다면 변경 
+			else //6번 슬롯에 장착한 무기가 없고, 
 			{
-				switchWeaponIdx();
+				//5번 슬롯에도 장착한 무기가 없다면 return
+				if (_invenSlot[5].isEmpty) return;
+				else //6번에 장착한 무기는 없지만 5번에 장착한 무기가 있다면 변경 
+				{
+					switchWeaponIdx();
+				}
 			}
-		}
-		break;
+			break;
 	}
 }
 
@@ -713,6 +877,21 @@ void inventory::usePotionEquipped()
 			SAFE_DELETE(_vInven[i]);
 			_vInven.erase(_vInven.begin() + i);
 		}
+	}
+}
+
+void inventory::useMerchantItem()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_MERCHANT_MIRROR:
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			break;
 	}
 }
 
@@ -1020,6 +1199,21 @@ void inventory::putItemOnOccupiedSlot()
 
 void inventory::cursorRender(HDC hdc)
 {
+	//커서의 상태에 따라 출력을 달리한다. 
+	switch (_cursor->getState())
+	{
+		case CURSOR_SELECT_IDLE : case CURSOR_SELECT_MOVE:
+			selectCursorRender(hdc);
+			break;
+
+		default:
+			invenCursorRender(hdc);
+			break;
+	}
+}
+
+void inventory::invenCursorRender(HDC hdc)
+{
 	//커서 출력(슬롯이 불규칙하게 퍼져있어서 예외처리) 
 	for (int i = 0; i < MAXSLOT; i++)
 	{
@@ -1028,62 +1222,116 @@ void inventory::cursorRender(HDC hdc)
 
 		switch (_cursor->getSlotIdx())
 		{
-		case 0: case 1: case 2: case 3: case 4:
-			_cursor->getImg()->frameRender(hdc,
-				204 + (columnIdx * 72), 158, _cursor->getIdx(), 0);
-			break;
+			case 0: case 1: case 2: case 3: case 4:
+				_cursor->getImg()->frameRender(hdc,
+					204 + (columnIdx * 72), 158, _cursor->getIdx(), 0);
+				break;
 
-		case 7: case 8: case 9: case 10: case 11:
-		case 14: case 15: case 16: case 17: case 18:
-		case 21: case 22: case 23: case 24: case 25:
-			_cursor->getImg()->frameRender(hdc,
-				204 + (columnIdx * 72), 244 + ((rowIdx - 1) * 72), _cursor->getIdx(), 0);
-			break;
+			case 7: case 8: case 9: case 10: case 11:
+			case 14: case 15: case 16: case 17: case 18:
+			case 21: case 22: case 23: case 24: case 25:
+				_cursor->getImg()->frameRender(hdc,
+					204 + (columnIdx * 72), 244 + ((rowIdx - 1) * 72), _cursor->getIdx(), 0);
+				break;
 
-		case 5:
-			_cursor->getImg()->frameRender(hdc, 734, 154, _cursor->getIdx(), 0);
-			break;
+			case 5:
+				_cursor->getImg()->frameRender(hdc, 734, 154, _cursor->getIdx(), 0);
+				break;
 
-		case 6:
-			_cursor->getImg()->frameRender(hdc, 908, 154, _cursor->getIdx(), 0);
-			break;
+			case 6:
+				_cursor->getImg()->frameRender(hdc, 908, 154, _cursor->getIdx(), 0);
+				break;
 
-		case 12:
-			_cursor->getImg()->frameRender(hdc, 650, 244, _cursor->getIdx(), 0);
-			break;
+			case 12:
+				_cursor->getImg()->frameRender(hdc, 650, 244, _cursor->getIdx(), 0);
+				break;
 
-		case 13:
-			_cursor->getImg()->frameRender(hdc, 722, 244, _cursor->getIdx(), 0);
-			break;
+			case 13:
+				_cursor->getImg()->frameRender(hdc, 722, 244, _cursor->getIdx(), 0);
+				break;
 
-		case 19:
-			_cursor->getImg()->frameRender(hdc, 650, 316, _cursor->getIdx(), 0);
-			break;
+			case 19:
+				_cursor->getImg()->frameRender(hdc, 650, 316, _cursor->getIdx(), 0);
+				break;
 
-		case 20:
-			_cursor->getImg()->frameRender(hdc, 722, 316, _cursor->getIdx(), 0);
-			break;
+			case 20:
+				_cursor->getImg()->frameRender(hdc, 722, 316, _cursor->getIdx(), 0);
+				break;
 
-		case 26:
-			_cursor->getImg()->frameRender(hdc, 650, 388, _cursor->getIdx(), 0);
-			break;
+			case 26:
+				_cursor->getImg()->frameRender(hdc, 650, 388, _cursor->getIdx(), 0);
+				break;
 
-		case 27:
-			_cursor->getImg()->frameRender(hdc, 722, 388, _cursor->getIdx(), 0);
-			break;
+			case 27:
+				_cursor->getImg()->frameRender(hdc, 722, 388, _cursor->getIdx(), 0);
+				break;
 
+			case 28:
+				_cursor->getImg()->frameRender(hdc, 204, 506, _cursor->getIdx(), 0);
+				break;
+
+			case 29:
+				_cursor->getImg()->frameRender(hdc, 356, 484, _cursor->getIdx(), 0);
+				break;
+
+			case 30:
+				_cursor->getImg()->frameRender(hdc, 470, 484, _cursor->getIdx(), 0);
+				break;
+		}
+	}
+}
+
+void inventory::selectCursorRender(HDC hdc)
+{
+	switch (_cursor->getSlotIdx())
+	{
 		case 28:
-			_cursor->getImg()->frameRender(hdc, 204, 506, _cursor->getIdx(), 0);
 			break;
 
 		case 29:
-			_cursor->getImg()->frameRender(hdc, 356, 484, _cursor->getIdx(), 0);
 			break;
 
 		case 30:
-			_cursor->getImg()->frameRender(hdc, 470, 484, _cursor->getIdx(), 0);
 			break;
-		}
+
+		default:
+			break;
+	}
+}
+
+void inventory::pendantCtrlRender(HDC hdc)
+{
+	IMAGEMANAGER->frameRender("cursor_move", hdc, 356, 484, 3, 0);
+	IMAGEMANAGER->render("inventory_selectBubble", hdc, 404, 332);
+
+	//selectIdx에 따라 알맞은 이미지 출력하기 
+	if (_selectMenu->getSelectIdx() == SELECT_YES)
+	{
+		_selectMenu->getImg()->frameRender(hdc, 426, 356, _selectMenu->getIdx(), 0);
+		_cursor->getImg()->frameRender(hdc, 414, 344, _cursor->getIdx(), 0);
+
+		RECT txtRC = RectMake(444, 438, 42, 26);
+		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		HFONT oFont = (HFONT)SelectObject(hdc, font);
+		SetTextColor(hdc, RGB(227, 212, 184));
+		DrawText(hdc, "네", -1, &txtRC, DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		SelectObject(hdc, oFont);
+		DeleteObject(font);
+	}
+	else
+	{
+		_selectMenu->getImg()->frameRender(hdc, 524, 356, _selectMenu->getIdx(), 0);
+		_cursor->getImg()->frameRender(hdc, 512, 344, _cursor->getIdx(), 0);
+
+		RECT txtRC = RectMake(534, 438, 58, 26);
+		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		HFONT oFont = (HFONT)SelectObject(hdc, font);
+		SetTextColor(hdc, RGB(227, 212, 184));
+		DrawText(hdc, "아니요", -1, &txtRC, DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		SelectObject(hdc, oFont);
+		DeleteObject(font);
 	}
 }
 
