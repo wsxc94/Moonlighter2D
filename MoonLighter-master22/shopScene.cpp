@@ -41,7 +41,7 @@ void shopScene::release()
 
 void shopScene::update()
 {
-	if (!CAMERAMANAGER->FadeIsStart() && !_visit) {
+	if (!CAMERAMANAGER->getFadeIsStart() && !_visit) {
 		_visit = true;
 		SOUNDMANAGER->play("¹®´Ý¾Æ");
 	}

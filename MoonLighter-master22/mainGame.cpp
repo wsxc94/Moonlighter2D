@@ -76,8 +76,8 @@ void mainGame::render()
 
 	//프레임을 보고싶으면 주석해제
 	TIMEMANAGER->render(getMemDC());
+	
 	PLAYERDATA->render(getMemDC());
-
 	CAMERAMANAGER->FadeRender(getMemDC());
 
 //=============================================================

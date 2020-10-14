@@ -143,7 +143,7 @@ public:
 	void FadeStart();
 	void FadeUpdate();
 	void FadeRender(HDC hdc);
-	bool& FadeIsStart() { return _fadeInfo.isStart; }
+	bool& getFadeIsStart() { return _fadeInfo.isStart; }
 
 	void ZorderSort();
 	void ZorderTotalRender(HDC hdc);
