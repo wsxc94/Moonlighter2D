@@ -11,8 +11,8 @@ HRESULT townScene::init()
 	_npcManager = new npcManager;
 	_npcManager->init(_vTest);
 
-	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 	PLAYER->init();
+	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 	ITEMMENU->init();
 
 	shopPortal = RectMake(1650, 315 , 80 , 80);
@@ -58,6 +58,7 @@ void townScene::update()
 	}
 
 	PLAYER->update();
+
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
 	CAMERAMANAGER->update(PLAYER->getX(), PLAYER->getY());
 	//====================================================
@@ -161,6 +162,7 @@ void townScene::portalColl()
 	{
 		SOUNDMANAGER->stop("마을브금");
 		SCENEMANAGER->loadScene("상점로딩");
+		SOUNDMANAGER->play("상점입장0");
 	}
 }
 

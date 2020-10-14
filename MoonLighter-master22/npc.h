@@ -49,6 +49,7 @@ private:
 
 	string _illustrator = "일러";
 
+	bool _isBarking;
 	void setshopTargetPos();
 	
 public:
@@ -66,6 +67,7 @@ public:
 	void move();
 	void move(NPC_MAP NPC_SHOP);
 	void action(string talk);
+	void action(); //강아지 전용
 	void collision();
 	void lookPlayer(); // 플레이어를 바라보도록 조정 강아지전용
 

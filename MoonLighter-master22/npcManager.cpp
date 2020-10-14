@@ -64,12 +64,15 @@ void npcManager::release()
 
 void npcManager::update()
 {
-	_witch->update();
-	_girl->update();
-	_blackOctopus->update();
-	_redmond->update();
-	_masa->update();
 
+	for (int i = 0; i < _npcs.size(); i++)
+	{
+		if(_npcs[i]->getKey() != "°­¾ÆÁönpc")
+		_npcs[i]->update();
+
+		_npcs[i]->collision();
+	}
+	
 	_doberman->lookPlayer();
 
 	_blackOctopus->move();
@@ -77,17 +80,12 @@ void npcManager::update()
 	_redmond->move();
 	_masa->move();
 
-	_witch->collision();
-	_girl->collision();
-	_blackOctopus->collision();
-	_redmond->collision();
-	_masa->collision();
-
 	_witch->action("³Ê ¾çÄ¡ ¾ÈÇßÁö? ÀÔ ´Ý¾Æ ³¿»õ³ª");
 	_girl->action("¤¾¤·");
 	_blackOctopus->action("Å»¸ðºö !!!!");
 	_masa->action("Äà¹° °³²Ü¸À ¹äµµµÏ");
 	_redmond->action("¹»ºÁ ¤»");
+	_doberman->action();
 
 	Coll();
 
@@ -95,13 +93,6 @@ void npcManager::update()
 
 void npcManager::render()
 {
-	/*_witch->render();
-	_girl->render();
-	_blackOctopus->render();
-	_masa->render();
-	_redmond->render();
-	_doberman->render();*/
-
 	RECT tmp;
 	for (int i = 0; i < _npcs.size(); i++)
 	{
