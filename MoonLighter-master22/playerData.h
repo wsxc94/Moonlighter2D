@@ -33,6 +33,7 @@ private:
 	float _x, _y;
 
 	bool _isInDungeon;			//플레이어가 던전에 있는지 여부 확인
+	bool _isActivate;			//UI 렌더할건지
 
 private:
 	vector<RESULTENEMY> _vEnemy;		//결과창 에너미
@@ -83,6 +84,7 @@ public:
 	void setPotionEquipped(gameItem item) { _potionEquipped = item; }
 	void setWeaponIdx(int index) { _weaponIdx = index; }
 	void setWeaponEquipped(gameItem item) { _weaponEquipped = item; }
+	void setIsActivate(bool isActivate) { _isActivate = isActivate; }
 
 	//체력 관련 함수 
 	void plusInDungeonHp(int plusHp);

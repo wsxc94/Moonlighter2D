@@ -26,7 +26,7 @@ HRESULT nomalDungeonScene::init()
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
-	SOUNDMANAGER->play("dungeonBGM");
+	SOUNDMANAGER->play("dungeonBGM",0.4f);
 
 
 	//Ä«¸Þ¶ó ÃÊ±âÈ­
@@ -46,15 +46,19 @@ void nomalDungeonScene::release()
 
 void nomalDungeonScene::update()
 {
-	
+	if (INPUT->GetKeyDown(VK_LEFT)) _dState = DS_UPDATE;
+	if (INPUT->GetKeyDown(VK_RIGHT)) _dState = DS_RESULT;
 	this->soundUpdate();
 
 	switch (_dState)
 	{
 	case DS_UPDATE:
+		PLAYERDATA->setIsActivate(true);
+
 		this->dungeonUpdate();
 		break;
 	case DS_RESULT:
+		PLAYERDATA->setIsActivate(false);
 		break;
 	default:
 		break;
@@ -73,21 +77,18 @@ void nomalDungeonScene::update()
 
 void nomalDungeonScene::render()
 {
-
 	PLAYER->render(getMemDC());
 	_currentDungeon->render();
-
-	//°ñ·½ ½ºÅ©·Ñ ·»´õ
-	if (_golemScroll->getAniState() == ANIMATION_PLAY)
+	switch (_dState)
 	{
-		_golemScroll->ZorderStretchRender(2000, WINSIZEX / 2, WINSIZEY - 150, 2.f);
-		RECT txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 70, 300, 40);
-		HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
-			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-		CAMERAMANAGER->ZorderDrawText("°ñ·½   ´øÀü", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
-		txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 50, 300, 40);
-		CAMERAMANAGER->ZorderDrawText(to_string(_dgFloor), WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+	case DS_UPDATE:
+		break;
+	case DS_RESULT:
+		break;
+	default:
+		break;
 	}
+
 
 	if (INPUT->GetKey(VK_TAB))
 	{
@@ -369,4 +370,27 @@ void nomalDungeonScene::countRender(int count, int destX, int destY)
 		distance++;
 
 	}//end of for
+}
+
+void nomalDungeonScene::golemScrollRender()
+{
+	//°ñ·½ ½ºÅ©·Ñ ·»´õ
+	if (_golemScroll->getAniState() == ANIMATION_PLAY)
+	{
+		_golemScroll->ZorderStretchRender(2000, WINSIZEX / 2, WINSIZEY - 150, 2.f);
+		RECT txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 70, 300, 40);
+		HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		CAMERAMANAGER->ZorderDrawText("°ñ·½   ´øÀü", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 50, 300, 40);
+		CAMERAMANAGER->ZorderDrawText(to_string(_dgFloor), WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+	}
+}
+
+void nomalDungeonScene::updateRender()
+{
+}
+
+void nomalDungeonScene::resultRender()
+{
 }

@@ -5,6 +5,7 @@ HRESULT playerData::init()
 {
 	initPlayerStatus();
 	initDungeonHp();
+	_isActivate = true;
 
 	return S_OK;
 }
@@ -19,6 +20,7 @@ void playerData::update()
 
 void playerData::render(HDC hdc)
 {
+	if (!_isActivate) return;
 	//ÁÂÃø UI Ãâ·Â
 	goldRender(hdc);
 	hpRender(hdc);

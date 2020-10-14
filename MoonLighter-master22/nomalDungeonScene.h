@@ -72,6 +72,8 @@ public:
 	void deleteInvenItems();
 	void itemResultRender();
 	void countRender(int count, int destX, int destY);	//아이템 카운트 출력 
-
+	void golemScrollRender();
+	void updateRender();
+	void resultRender();
 };
 
