@@ -223,7 +223,7 @@ void player::animation(int frameY)
 
 void player::playerState()
 {
-	if (!ITEMMENU->getOpenMenu())
+	if (!ITEMMENU->getOpenMenu() && !_displayOn)
 	{
 		switch (_state)
 		{
