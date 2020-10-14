@@ -440,18 +440,26 @@ void redGolem::redGolemCollision()
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_attackBox))
 		{
 			_emPlayerColi = true;
-			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
-			PLAYER->setPlayerState(HIT_IDLE);
-			PLAYER->setHit(true);
+			if (PLAYER->getPlayerState() == PLAYER_SHILED)
+			{
+				PLAYER->playerPush();
+			}
+			else
+			{
+				PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
+			}
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
+				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
 			}
 		}
 	}
 	if (_emPlayerColi)
 	{
-		if (_attack->getAniState() == ANIMATION_END)
+		if (_attack->getCurIndex() == 12)
 		{
 			_emPlayerColi = false;
 		}
