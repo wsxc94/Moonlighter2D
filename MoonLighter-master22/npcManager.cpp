@@ -48,6 +48,7 @@ HRESULT npcManager::init(vector<tagTile>& vec)
 	}
 	
 	npcColl = false;
+
 	return S_OK;
 }
 
@@ -58,16 +59,17 @@ void npcManager::release()
 	SAFE_DELETE(_blackOctopus);
 	SAFE_DELETE(_redmond);
 	SAFE_DELETE(_masa);
+	SAFE_DELETE(_doberman);
 }
 
 void npcManager::update()
 {
-
 	_witch->update();
 	_girl->update();
 	_blackOctopus->update();
 	_redmond->update();
 	_masa->update();
+
 	_doberman->lookPlayer();
 
 	_blackOctopus->move();
@@ -93,12 +95,19 @@ void npcManager::update()
 
 void npcManager::render()
 {
-	_witch->render();
+	/*_witch->render();
 	_girl->render();
 	_blackOctopus->render();
 	_masa->render();
 	_redmond->render();
-	_doberman->render();
+	_doberman->render();*/
+
+	RECT tmp;
+	for (int i = 0; i < _npcs.size(); i++)
+	{
+		if (!IntersectRect(&tmp, &CAMERAMANAGER->getRect(), &_npcs[i]->getRect())) continue;
+		_npcs[i]->render();
+	}
 
 }
 

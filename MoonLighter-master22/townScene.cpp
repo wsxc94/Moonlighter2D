@@ -34,7 +34,7 @@ void townScene::release()
 void townScene::update()
 {
 	if (!SOUNDMANAGER->isPlaySound("마을브금")) {
-		//SOUNDMANAGER->play("마을브금", 0.3f);
+		SOUNDMANAGER->play("마을브금", 0.3f);
 	}
 	else
 	{
@@ -75,7 +75,6 @@ void townScene::render()
 {
 	
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
-
 	
 	for (int i = 0; i < _objManager.size(); i++)
 	{
@@ -87,7 +86,6 @@ void townScene::render()
 			_objManager[i]->getRect().top + (_objManager[i]->getRect().bottom - _objManager[i]->getRect().top)/8,
 			(_objManager[i]->getRect().right - _objManager[i]->getRect().left) / 1.3,
 			(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) / 2);
-
 
 		//CAMERAMANAGER->Rectangle(getMemDC(), temp); //디버그용 -> z오더렉트 
 
@@ -227,9 +225,10 @@ void townScene::ObjectColl()
 
 void townScene::ObjectAnim()
 {
-
+	RECT tmp;
 	for (int i = 0; i < _objManager.size(); i++)
 	{
+		if (!IntersectRect(&tmp, &_objManager[i]->getRect(), &CAMERAMANAGER->getRect())) continue;
 		_objManager[i]->update();
 	}
 }
