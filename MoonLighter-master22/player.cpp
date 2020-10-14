@@ -121,6 +121,8 @@ HRESULT player::init()
 	_arrow = new arrow;
 	_arrow->init();
 
+	_displayOn = false;
+
 	return S_OK;
 }
 
@@ -131,7 +133,6 @@ void player::release()
 
 void player::update()
 {
-	cout << _holeAlpha << endl;
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -282,7 +283,7 @@ void player::animation(int frameY)
 
 void player::playerState()
 {
-	if (!ITEMMENU->getOpenMenu())
+	if (!ITEMMENU->getOpenMenu() && !_displayOn)
 	{
 		switch (_state)
 		{

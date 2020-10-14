@@ -77,6 +77,8 @@ private:
 	bool _isTalk;
 	bool _isHit;
 
+	bool _displayOn;
+
 	int _frameX;
 	int _frameY;
 
@@ -137,6 +139,9 @@ public:
 	void hitPlayer();
 	void playerMove();
 	bool getKeyMove();
+
+	void setDisplayOn(bool on) { _displayOn = on; }
+	bool& getDisplayOn() { return _displayOn; }
 
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }

@@ -34,7 +34,6 @@ HRESULT mainGame::init()
 
 	CAMERAMANAGER->FadeInit(1, FADE_IN);
 
-
 	return S_OK;
 }
 
