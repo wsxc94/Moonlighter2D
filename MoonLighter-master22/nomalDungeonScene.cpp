@@ -38,30 +38,8 @@ HRESULT nomalDungeonScene::init()
 	this->getInvenItem();
 	_resultKind = RESULT_PLAYERDIE;
 
-	// 에너미 테스트
-	RESULTENEMY em;
-	em.attack = new animation;
-	em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
-	em.frameY = 2;
-	PLAYERDATA->pushVEnemy(em);
-	em.attack = new animation;
-	em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
-	em.frameY = 2;
-	PLAYERDATA->pushVEnemy(em);
-	em.attack = new animation;
-	em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
-	em.frameY = 2;
-	PLAYERDATA->pushVEnemy(em);
-	for (int i = 0; i < 20; i++)
-	{
-		em.attack = new animation;
-		em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
-		em.frameY = 2;
-		PLAYERDATA->pushVEnemy(em);
-	}
-
-	_potal = new animation;
-	_potal->init(IMAGEMANAGER->findImage("potalPlayer"), 0, 5, true);
+	//던전에 들어왔다고 해주자
+	PLAYERDATA->setIsInDungeon(true);
 	
 	return S_OK;
 }
@@ -83,6 +61,7 @@ void nomalDungeonScene::update()
 	case DS_UPDATE:
 		PLAYERDATA->setIsActivate(true);
 
+		//죽으면 결과창띄워라
 		if (PLAYER->getPlayerState() == PLAYER_DIE)
 		{
 			_dState = DS_RESULT;
@@ -102,10 +81,7 @@ void nomalDungeonScene::update()
 		if (_killEnemy)
 			_killEnemy->attack->update();
 
-		if (INPUT->GetKeyDown('J'))
-		{
-			SCENEMANAGER->loadScene("타운로딩");
-		}
+
 		break;
 	default:
 		break;
