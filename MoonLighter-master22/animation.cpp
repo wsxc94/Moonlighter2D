@@ -136,6 +136,14 @@ void animation::render(HDC hdc,int destX, int destY)
 	if (_isArray) _img->frameRender(hdc, destX, destY, _aniList[_curIndex].x, _aniList[_curIndex].y);
 }
 
+void animation::centerRender(HDC hdc, int centerX, int centerY)
+{
+	int cx = centerX - _img->getFrameWidth() / 2;
+	int cy = centerY - _img->getFrameHeight() / 2;
+	if (!_isArray)	_img->frameRender(hdc, cx, cy, _aniList[_curIndex].x, _frameY);
+	if (_isArray) _img->frameRender(hdc, cx, cy, _aniList[_curIndex].x, _aniList[_curIndex].y);
+}
+
 void animation::CameraRender(HDC hdc, int destX, int destY)
 {
 	if (!_isArray)	CAMERAMANAGER->FrameRender(hdc, _img, destX, destY, _aniList[_curIndex].x, _frameY);

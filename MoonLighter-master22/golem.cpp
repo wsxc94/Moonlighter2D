@@ -445,6 +445,11 @@ void golem::golemCollision()
 			{
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_attack->getImage(), 0, 7, true);
+				em->frameY = 3;
+				PLAYERDATA->setKillEnemy(em);
 			}
 		}
 	}

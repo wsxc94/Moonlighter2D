@@ -6,6 +6,8 @@ HRESULT playerData::init()
 	initPlayerStatus();
 	initDungeonHp();
 	_isActivate = true;
+	
+	_killEnemy = nullptr;
 
 	return S_OK;
 }

@@ -37,7 +37,7 @@ private:
 
 private:
 	vector<RESULTENEMY> _vEnemy;		//결과창 에너미
-
+	RESULTENEMY* _killEnemy;				//플레이어 죽인에너미
 private:
 	gameItem _potionEquipped;	//현재 장착 중인 포션 아이템 
 	gameItem _weaponEquipped;	//현재 장착 중인 무기 아이템 
@@ -69,6 +69,12 @@ public:
 	vector<RESULTENEMY> getVEnemy() { return _vEnemy; }
 	void pushVEnemy(RESULTENEMY enemy) { _vEnemy.push_back(enemy); }
 	void vEnemyClear() { _vEnemy.clear(); }
+	RESULTENEMY* getKillEnemy() { return _killEnemy; }
+	void setKillEnemy(RESULTENEMY* em) { _killEnemy = em; }
+	bool isKillenemy() {
+		if (_killEnemy) return true;
+		return false;
+	} // 킬에너미가 존재하냐?
 
 	//set함수 
 	void setHp(int hp) { _hp = hp; }

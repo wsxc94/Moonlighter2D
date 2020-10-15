@@ -549,7 +549,7 @@ void DungeonMap::enemyUpdate()
 			//삭제하기 전에 애니메이션을 플레이어데이터에 저장한당
 			RESULTENEMY em;
 			em.attack = new animation;
-			em.attack->init(_vEnemy[i]->getAttackAnimation()->getImage(), 0, _vEnemy[i]->getAttackAnimation()->getAniFrame(), _vEnemy[i]->getAttackAnimation()->getIsLoop(), _vEnemy[i]->getAttackAnimation()->getIsReverse());
+			em.attack->init(_vEnemy[i]->getAttackAnimation()->getImage(), 0, _vEnemy[i]->getAttackAnimation()->getAniFrame(), true, false);
 			em.frameY = _vEnemy[i]->getDownDirectionY();
 			PLAYERDATA->pushVEnemy(em);
 			_vEnemy[i]->release();
@@ -557,7 +557,6 @@ void DungeonMap::enemyUpdate()
 			_vEnemy.erase(_vEnemy.begin() + i);
 		}
 	}
-	cout << PLAYERDATA->getVEnemy().size() << endl;
 }
 
 void DungeonMap::popEnemy(int arr)

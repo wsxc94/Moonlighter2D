@@ -36,7 +36,30 @@ HRESULT nomalDungeonScene::init()
 
 	this->initItemSlot();
 	this->getInvenItem();
+	_resultKind = RESULT_PLAYERDIE;
 
+	// 에너미 테스트
+	RESULTENEMY em;
+	em.attack = new animation;
+	em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
+	em.frameY = 2;
+	PLAYERDATA->pushVEnemy(em);
+	em.attack = new animation;
+	em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
+	em.frameY = 2;
+	PLAYERDATA->pushVEnemy(em);
+	em.attack = new animation;
+	em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
+	em.frameY = 2;
+	PLAYERDATA->pushVEnemy(em);
+	for (int i = 0; i < 20; i++)
+	{
+		em.attack = new animation;
+		em.attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 7, true);
+		em.frameY = 2;
+		PLAYERDATA->pushVEnemy(em);
+	}
+	
 	return S_OK;
 }
 
@@ -64,8 +87,15 @@ void nomalDungeonScene::update()
 		break;
 	}
 
+	//에너미 받아오고 업데이트
 	_vEnemy = PLAYERDATA->getVEnemy();
-	
+	for (int i = 0; i < _vEnemy.size(); i++)
+	{
+		_vEnemy[i].attack->update();
+	}
+	_killEnemy = PLAYERDATA->getKillEnemy();
+	if(_killEnemy)
+	_killEnemy->attack->update();
 	//카메라 업뎃
 	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
@@ -77,34 +107,30 @@ void nomalDungeonScene::update()
 
 void nomalDungeonScene::render()
 {
-	PLAYER->render(getMemDC());
 	_currentDungeon->render();
+	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 	switch (_dState)
 	{
 	case DS_UPDATE:
+		this->golemScrollRender();
+		
+		PLAYER->render(getMemDC());
+		if (INPUT->GetKey(VK_TAB))
+		{
+			this->minimapRender();
+		}
+		ITEMMENU->render(getMemDC());
 		break;
 	case DS_RESULT:
+		IMAGEMANAGER->addImage("dark", WINSIZEX, WINSIZEY)->alphaRender(getMemDC(), 0, 0, 170);
+		IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
+		this->resultRender();
+		
+		this->itemResultRender();
 		break;
-	default:
-		break;
+	
 	}
 
-
-	if (INPUT->GetKey(VK_TAB))
-	{
-		this->minimapRender();
-	}
-
-	for (int i = 0; i < _vEnemy.size(); i++)
-	{
-		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
-		_vEnemy[i].attack->render(getMemDC(), i * (200), (i / 10) * 200);
-	}
-
-	CAMERAMANAGER->ZorderTotalRender(getMemDC());
-	ITEMMENU->render(getMemDC());
-
-	//this->itemResultRender();
 	
 }
 bool nomalDungeonScene::minimapPush(POINT pt)
@@ -313,7 +339,7 @@ void nomalDungeonScene::deleteInvenItems()
 
 void nomalDungeonScene::itemResultRender()
 {
-	IMAGEMANAGER->render("menu_shopInventory", getMemDC(), 100, 86);
+	//IMAGEMANAGER->render("menu_shopInventory", getMemDC(), 100, 86);
 	for (int i = 0; i < 28; i++)
 	{
 		//비어있는 슬롯은 건너뛰기 
@@ -332,18 +358,18 @@ void nomalDungeonScene::itemResultRender()
 			{
 			case 0: case 1: case 2: case 3: case 4:
 				_vItem[j]->getItemImg()->render(getMemDC(),
-					200 + (columnIdx * 72), 172);
+					140 + (columnIdx * 72), 172 + 152 + 6);
 				countRender(_vItem[j]->getCount(),
-					240 + (columnIdx * 72), 208);
+					180 + (columnIdx * 72), 208 + 152 + 6);
 				break;
 
 			case 7: case 8: case 9: case 10: case 11:
 			case 14: case 15: case 16: case 17: case 18:
 			case 21: case 22: case 23: case 24: case 25:
 				_vItem[j]->getItemImg()->render(getMemDC(),
-					200 + (columnIdx * 72), 258 + ((rowIdx - 1) * 72));
+					140 + (columnIdx * 72), 258 + 152 + 6 + ((rowIdx - 1) * 72));
 				countRender(_vItem[j]->getCount(),
-					240 + (columnIdx * 72), 294 + ((rowIdx - 1) * 72));
+					180 + (columnIdx * 72), 294 + 152 + 6 + ((rowIdx - 1) * 72));
 				break;
 
 			}//end of switch
@@ -393,4 +419,45 @@ void nomalDungeonScene::updateRender()
 
 void nomalDungeonScene::resultRender()
 {
+	RECT txtRC = RectMake(1198, 584, 82, 20);
+	HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+	HFONT oFont = (HFONT)SelectObject(getMemDC(), hFont);
+	SetTextColor(getMemDC(), RGB(255, 255, 255));
+	string str = " X " + to_string(_vEnemy.size());
+	DrawText(getMemDC(), str.c_str(), -1, &txtRC, DT_LEFT | DT_VCENTER);
+	txtRC = RectMake(486, 21, 311, 34);
+	str = "Golem Dungeon " + to_string(_dgFloor);
+	DrawText(getMemDC(), str.c_str(), -1, &txtRC, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	
+	switch (_resultKind)
+	{
+	case RESULT_PLAYERDIE:
+	{
+		int cx = 630 - IMAGEMANAGER->findImage("죽음")->getFrameWidth() / 2;
+		int cy = 170 - IMAGEMANAGER->findImage("죽음")->getFrameHeight() / 2;
+		IMAGEMANAGER->findImage("죽음")->frameRender(getMemDC(), cx, cy, 9, 0);
+		_killEnemy->attack->setFrameY(_killEnemy->frameY);
+		_killEnemy->attack->centerRender(getMemDC(), 762, 240);
+	}
+		break;
+	case RESULT_RETURN:
+		break;
+	default:
+		break;
+	}
+
+	int destY = 70 / (_vEnemy.size() / 2 / 9);
+	for (int i = 0; i < _vEnemy.size() / 2; i++)
+	{
+		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
+		_vEnemy[i].attack->centerRender(getMemDC(), 724 + ((i % 9) * 50), 320 + (i / 9 * destY));
+	}
+	for (int i = _vEnemy.size() / 2, j = 0; i < _vEnemy.size(); i++)
+	{
+		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
+		_vEnemy[i].attack->centerRender(getMemDC(), 724 + ((j % 9) * 50), 480 + (j / 9 * destY));
+		j++;
+	}
+
 }

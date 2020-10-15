@@ -10,6 +10,11 @@ enum DUNGEONSCENESTATE
 	DS_UPDATE, DS_RESULT
 };
 
+enum RESULTKIND
+{
+	RESULT_PLAYERDIE,RESULT_RETURN
+};
+
 typedef struct
 {
 	int slotIdx;
@@ -24,6 +29,9 @@ private:
 private:
 	vGameItem _vItem;
 	dungeonSlot _dungeonSlot[28];
+	RESULTKIND _resultKind;
+	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
+	RESULTENEMY* _killEnemy;				//플레이어죽인에너미
 private:
 	DUNGEONSCENESTATE _dState;
 
@@ -33,7 +41,6 @@ private:
 
 	vector<pair<POINT, DungeonMap*>> _vMinimap;		//미니맵
 
-	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
 
 	//스타트던전 두루마리
 	animation* _golemScroll;
