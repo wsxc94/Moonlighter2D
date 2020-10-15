@@ -152,6 +152,7 @@ public:
 	void ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, COLORREF color, UINT format);
 	void ZorderTextOut(string txt, float z, int x, int y, int size, COLORREF color);
 
+
 	void FadeInit(int time, FADEKIND fadeKind);
 	void FadeStart();
 	void FadeUpdate();

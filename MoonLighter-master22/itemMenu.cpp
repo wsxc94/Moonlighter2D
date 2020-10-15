@@ -187,6 +187,12 @@ void itemMenu::DoCloseMenu()
 
 	//인벤토리 창을 닫으므로 커서를 꺼준다.
 	_inventory->getCursor()->setShowCursor(false);
+
+	//인벤토리 창을 닫을 때 혹시 잡고 있던 아이템이 있다면 다시 내려놓기 
+	_inventory->putGrabbingItem();
+
+	//아이템 창을 닫으면서 아이템을 잡지 않도록 변수 설정 
+	_inventory->setCanGrab(false);
 }
 
 void itemMenu::openMenu()

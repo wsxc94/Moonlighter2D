@@ -14,12 +14,18 @@ private:
 
 	int _npcTime;
 	bool _visit; //플레이어 방문여부
-
+	bool _disMenuOn;
 	vector <pair<int, int>> v_itemPos; //아이템위치
 	vector <pair<int, int>> v_itemShadowPos;//아이템그림자위치
 
 	RECT _desk;
 	void ItemPosSet(); // 아이템 위치 세팅
+
+
+	RECT _itemText[4]; // 아이템 드로우 텍스트 렉트
+	HFONT hFont; // 아이템 가격 폰트
+	HFONT oldFont; // 아이템 가격 폰트
+
 
 public:
 	HRESULT init();
@@ -31,6 +37,9 @@ public:
 	void PlayerCol(); // 플레이어 픽셀충돌 함수 
 	void PlayerSell(); // 아이템 파는 함수
 
+	void itemInfoUpdate();
+
 	void npcAI(); // npc update 여기다 넣음
+	void npcInit(int idx);
 };
 

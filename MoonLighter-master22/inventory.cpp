@@ -39,8 +39,6 @@ HRESULT inventory::init()
 	//사운드 관련 변수 
 	_grabSoundPlayed = false;
 
-	_canKeyInput = true; 
-
 	return S_OK;
 }
 
@@ -58,6 +56,8 @@ void inventory::release()
 
 void inventory::update()
 {
+	if (!_canGrab) return; 
+
 	keyInput();
 
 	_cursor->update();
@@ -84,13 +84,7 @@ void inventory::render(HDC hdc)
 	//메뉴가 현재 고정된 상태일 때 출력 
 	if (_cursor->getShowCursor())
 	{
-		//던전에 있을 때 골드 확인해서 상인의 아이템 출력 
-		if (PLAYERDATA->getIsInDungeon())
-		{
-			if (PLAYERDATA->getGold() >= 200) IMAGEMANAGER->render("bag_pendant", hdc, 360, 496);
-			if (PLAYERDATA->getGold() >= 1000) IMAGEMANAGER->render("bag_emblem", hdc, 474, 488);
-		}
-
+		merchantIconRender(hdc);
 		itemRender(hdc);
 		itemNameRender(hdc);
 		statusRender(hdc);
@@ -110,7 +104,7 @@ void inventory::render(HDC hdc)
 				break;
 
 			case INVEN_MERCHANT_EMBLEM:
-				pendantCtrlRender(hdc);
+				emblemCtrlRender(hdc);
 				break;
 		}//end of switch 
 	}
@@ -119,14 +113,14 @@ void inventory::render(HDC hdc)
 	//wsprintf(str, "ivenSize : %d", _vInvenItem.size());
 	//TextOut(hdc, 10, 70, str, strlen(str));
 
-	wsprintf(str, "selectIdx : %d", ITEMMENU->getOpenMenu());
-	TextOut(hdc, 10, 90, str, strlen(str));
+	wsprintf(str, "invenCtrl : %d", _invenCtrl);
+	TextOut(hdc, 10, 130, str, strlen(str));
 
-	//wsprintf(str, "itemGrabbed.posIdx : %d", _itemGrabbed.getInvenPosIdx());
-	//TextOut(hdc, 10, 110, str, strlen(str));
+	wsprintf(str, "canGrab : %d", _canGrab);
+	TextOut(hdc, 10, 150, str, strlen(str));
 
-	//wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
-	//TextOut(hdc, 10, 150, str, strlen(str));
+	wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
+	TextOut(hdc, 10, 170, str, strlen(str));
 
 	//for (int i = 0; i < _vInvenItem.size(); i++)
 	//{
@@ -233,8 +227,8 @@ void inventory::initInven()
 {
 	_isGrabbingItem = false; 
 	_isPuttingItem = false; 
-	_grabSoundPlayed = false; 
-	_canKeyInput = true;
+	_grabSoundPlayed = false;
+	_canGrab = true;
 
 	_cursor->setSlotIdx(0);
 	setInvenCtrl(INVEN_INVENTORY);
@@ -499,26 +493,26 @@ void inventory::setInvenCtrl(INVEN_CTRL state)
 	switch (state)
 	{
 		case INVEN_INVENTORY:
-			_cursor->setCursorState(CURSOR_MOVE);
 			_invenCtrl = state;
+			_cursor->setCursorState(CURSOR_MOVE);
 			break;
 
 		case INVEN_MERCHANT_MIRROR:
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			_selectMenu->setSelectIdx(SELECT_NO);
 			_invenCtrl = state;
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
 			break;
 
 		case INVEN_MERCHANT_PENDANT:
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			_selectMenu->setSelectIdx(SELECT_NO);
 			_invenCtrl = state;
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
 			break;
 
 		case INVEN_MERCHANT_EMBLEM:
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			_selectMenu->setSelectIdx(SELECT_NO);
 			_invenCtrl = state;
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
 			break;
 	}
 }
@@ -545,6 +539,8 @@ void inventory::setMerchantCtrl()
 
 void inventory::invenKeyInput()
 {
+	if (!_canGrab) return; 
+
 	//상하좌우 키 입력 받아서 커서 움직이기 
 	//커서가 움직일 때마다 커서 애니메이션 실행 
 	if (INPUT->GetKeyDown('W'))
@@ -587,8 +583,8 @@ void inventory::invenKeyInput()
 	if (INPUT->GetKeyDown('J'))
 	{
 		_cursor->setCursorState(CURSOR_CLICK);
-		setMerchantCtrl();
 		putItem();
+		setMerchantCtrl();
 	}
 	if (INPUT->GetKeyUp('J'))
 	{
@@ -598,7 +594,6 @@ void inventory::invenKeyInput()
 
 		_isPuttingItem = false;
 		_grabSoundPlayed = false;
-		_canGrab = true; 
 		_cursor->setClickTime(0);
 	}
 }
@@ -626,10 +621,10 @@ void inventory::pendantKeyInput()
 		}
 	}
 
-	//네,아니오 중 선택하기 
+	//네,아니요 중 선택하기 
 	if (INPUT->GetKeyDown('J'))
 	{
-		//아니오 선택 시 인벤토리 컨트롤러로 변경 
+		//아니요 선택 시 인벤토리 컨트롤러로 변경 
 		if (_selectMenu->getSelectIdx() == SELECT_NO) setInvenCtrl(INVEN_INVENTORY);
 		else
 		{
@@ -1249,6 +1244,40 @@ void inventory::putItemOnOccupiedSlot()
 	}//end of for 
 }
 
+void inventory::putGrabbingItem()
+{
+	//잡고 있는 아이템이 있다면 원래 자리로 돌려놓기 
+	if (!_isGrabbingItem) return; 
+	
+	//내가 아이템을 잡은 슬롯의 자리가 비어있다면
+	if (_invenSlot[_itemGrabbed.getInvenPosIdx()].isEmpty)
+	{
+		//잡고있는 아이템 복사해서 벡터에 푸시하고 잡은 아이템은 없애기 
+		gameItem *item = new gameItem;
+		item->init(&_itemGrabbed);
+		_vInven.push_back(item);
+
+		_invenSlot[item->getInvenPosIdx()].isEmpty = false; 
+		_itemGrabbed = _itemEmpty;
+		_isGrabbingItem = false; 
+	}
+	else // 비어있지 않다면 잡고 있는 아이템의 카운트를 슬롯에 더하기 
+	{
+		for (int i = 0; i < _vInven.size(); i++)
+		{
+			//현재 잡고 있는 아이템이 원래 있던 자리의 인덱스 찾기 
+			if (_vInven[i]->getInvenPosIdx() != _itemGrabbed.getInvenPosIdx()) continue;
+
+			_vInven[i]->setCount(_vInven[i]->getCount() + _itemGrabbed.getCount());
+
+			_itemGrabbed = _itemEmpty;
+			_isGrabbingItem = false;
+			return;
+
+		}//end of for 
+	}
+}
+
 void inventory::cursorRender(HDC hdc)
 {
 	//커서의 상태에 따라 출력을 달리한다. 
@@ -1330,6 +1359,16 @@ void inventory::invenCursorRender(HDC hdc)
 				_cursor->getImg()->frameRender(hdc, 470, 484, _cursor->getIdx(), 0);
 				break;
 		}
+	}
+}
+
+void inventory::merchantIconRender(HDC hdc)
+{
+	//던전에 있을 때 아이템 사용금 이상의 골드가 있을 때만 상인의 아이템 출력 
+	if (PLAYERDATA->getIsInDungeon())
+	{
+		if (PLAYERDATA->getGold() >= 200) IMAGEMANAGER->render("bag_pendant", hdc, 360, 496);
+		if (PLAYERDATA->getGold() >= 1000) IMAGEMANAGER->render("bag_emblem", hdc, 474, 488);
 	}
 }
 

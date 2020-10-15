@@ -353,9 +353,13 @@ gameItem displayStand::findItemByIdx(int index)
 	{
 		if (_vShopInven[i]->getInvenPosIdx() != index) continue;
 
-		gameItem *item = new gameItem;
-		item->init(_vShopInven[i]);
-		return *item;
+		if (_vShopInven[i]->getPrice() == 0) return _itemEmpty;
+		else
+		{
+			gameItem *item = new gameItem;
+			item->init(_vShopInven[i]);
+			return *item;
+		}
 	}
 
 	return _itemEmpty;
@@ -386,6 +390,45 @@ gameItem * displayStand::getDisplayItem()
 	}//end of for 
 
 	return _displayItem;
+}
+
+void displayStand::deleteDisplayItem(int index)
+{
+	switch (index)
+	{
+		case 0:
+			deleteItemByIdx(5);
+			_shopSlot[5].isEmpty = true; 
+			break;
+
+		case 1:
+			deleteItemByIdx(6);
+			_shopSlot[6].isEmpty = true;
+
+			break;
+
+		case 2:
+			deleteItemByIdx(19);
+			_shopSlot[19].isEmpty = true;
+			break;
+
+		case 3:
+			deleteItemByIdx(20);
+			_shopSlot[20].isEmpty = true;
+			break; 
+	}
+}
+
+void displayStand::deleteItemByIdx(int index)
+{
+	for (int i = 0; i < _vShopInven.size(); i++)
+	{
+		if (_vShopInven[i]->getInvenPosIdx() != index) continue; 
+
+		SAFE_DELETE(_vShopInven[i]);
+		_vShopInven.erase(_vShopInven.begin() + i);
+		return; 
+	}
 }
 
 void displayStand::setShopCtrl(SHOP_CTRL state)
@@ -1479,7 +1522,7 @@ void displayStand::greenCountRender(int count, int destX, int destY)
 
 		distance++;
 
-		if (i <= count) IMAGEMANAGER->findImage("x_green")->render(getMemDC(),
+		if (i >= count) IMAGEMANAGER->findImage("x_green")->render(getMemDC(),
 			destX - (distance * 12), destY);
 
 	}//end of for 
