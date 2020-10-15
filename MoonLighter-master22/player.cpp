@@ -702,8 +702,6 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
 	IMAGEMANAGER->addFrameImage("플레이어팬던트사용", "Images/플레이어/playerUsePendant31.bmp", 4464, 120, 31, 1);
 
-	
-
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;
 	_aniTownRoll = new ::animation;

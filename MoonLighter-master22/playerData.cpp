@@ -44,10 +44,10 @@ void playerData::initPlayerStatus()
 	_spd = _defaultSpd;
 
 	_hpBarLength = 130;
-	_gold = 800;
+	_gold = 5000;
 	_itemCount = 0;
 
-	_isInDungeon = false;
+	_isInDungeon = true;
 }
 
 void playerData::initDungeonHp()
