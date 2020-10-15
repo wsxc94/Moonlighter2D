@@ -754,7 +754,7 @@ void player::imageInit()
 	_aniSwordTwoHit->aniStop();
 	_aniDiePortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
 	_aniDiePortal->aniStop();
-	_aniUsePendant->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 7);
+	//_aniUsePendant->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 7);
 
 }
 
