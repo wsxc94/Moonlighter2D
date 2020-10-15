@@ -118,6 +118,10 @@ void dungeonLoading::loadImage()
 
 	_loading->loadFrameImage("dungeonStageBar", "Images/던전결과창/dungeonProgress1X3.bmp", 85, 45, 1, 3);
 	_loading->loadImage("resultBack", "Images/던전결과창/ui_dungeonResult4022.bmp", 1158, 656, true, RGB(255, 0, 255));
+	
+	_loading->loadFrameImage("potalUpdate", "Images/던전/potalUpdate7.bmp", 917, 108, 7, 1);
+	_loading->loadFrameImage("potalInit", "Images/던전/potalInit26.bmp", 3406, 108, 26, 1);
+	_loading->loadFrameImage("potalPlayer", "Images/던전/potalPlayer25.bmp", 3275, 108, 25, 1);
 
 }
 

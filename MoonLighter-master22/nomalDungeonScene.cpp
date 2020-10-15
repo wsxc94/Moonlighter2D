@@ -59,6 +59,9 @@ HRESULT nomalDungeonScene::init()
 		em.frameY = 2;
 		PLAYERDATA->pushVEnemy(em);
 	}
+
+	_potal = new animation;
+	_potal->init(IMAGEMANAGER->findImage("potalPlayer"), 0, 5, true);
 	
 	return S_OK;
 }
@@ -71,6 +74,8 @@ void nomalDungeonScene::update()
 {
 	if (INPUT->GetKeyDown(VK_LEFT)) _dState = DS_UPDATE;
 	if (INPUT->GetKeyDown(VK_RIGHT)) _dState = DS_RESULT;
+	_potal->update();//포탈테스트
+	
 	this->soundUpdate();
 
 	switch (_dState)
@@ -78,40 +83,49 @@ void nomalDungeonScene::update()
 	case DS_UPDATE:
 		PLAYERDATA->setIsActivate(true);
 
+		if (PLAYER->getPlayerState() == PLAYER_DIE)
+		{
+			_dState = DS_RESULT;
+			_vEnemy = PLAYERDATA->getVEnemy();
+			_killEnemy = PLAYERDATA->getKillEnemy();
+		}
 		this->dungeonUpdate();
+		PLAYER->update();
+		ITEMMENU->update();
 		break;
 	case DS_RESULT:
 		PLAYERDATA->setIsActivate(false);
+		for (int i = 0; i < _vEnemy.size(); i++)
+		{
+			_vEnemy[i].attack->update();
+		}
+		if (_killEnemy)
+			_killEnemy->attack->update();
+
+		if (INPUT->GetKeyDown('J'))
+		{
+			SCENEMANAGER->loadScene("타운로딩");
+		}
 		break;
 	default:
 		break;
 	}
 
 	//에너미 받아오고 업데이트
-	_vEnemy = PLAYERDATA->getVEnemy();
-	for (int i = 0; i < _vEnemy.size(); i++)
-	{
-		_vEnemy[i].attack->update();
-	}
-	_killEnemy = PLAYERDATA->getKillEnemy();
-	if(_killEnemy)
-	_killEnemy->attack->update();
+	
 	//카메라 업뎃
 	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
-
-
-	PLAYER->update();
-	ITEMMENU->update();
 }
 
 void nomalDungeonScene::render()
 {
 	_currentDungeon->render();
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
+	_potal->ZorderStretchRender(WINSIZEY/2,WINSIZEX/2,WINSIZEY/2,2.f);//포탈테스트
 	switch (_dState)
 	{
-	case DS_UPDATE:
+	case DS_UPDATE: case DS_RETURN:
 		this->golemScrollRender();
 		
 		PLAYER->render(getMemDC());

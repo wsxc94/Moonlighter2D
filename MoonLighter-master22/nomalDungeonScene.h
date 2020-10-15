@@ -7,7 +7,7 @@
 
 enum DUNGEONSCENESTATE
 {
-	DS_UPDATE, DS_RESULT
+	DS_UPDATE, DS_RESULT, DS_RETURN
 };
 
 enum RESULTKIND
@@ -58,6 +58,7 @@ private:
 	//´øÀü Ãþ¼ö
 	int _dgFloor;
 
+	animation* _potal;
 public:
 	nomalDungeonScene() { };
 	~nomalDungeonScene() { };
