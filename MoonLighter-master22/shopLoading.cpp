@@ -8,7 +8,6 @@ HRESULT shopLoading::init()
 
 	this->loadingImage();
 	this->loadingSound();
-
 	return S_OK;
 }
 

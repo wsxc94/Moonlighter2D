@@ -6,7 +6,6 @@ HRESULT player::init()
 	
 	this->imageInit();
 
-
 	_player.x = 200;
 	_player.y = 200;
 
@@ -135,8 +134,7 @@ void player::render(HDC hdc)
 			_aniSwordTwo->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_SHILED:
-			//_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
-			_aniDiePortal->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);			
 			break;
 		case PLAYER_TALK:
 			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
@@ -148,7 +146,7 @@ void player::render(HDC hdc)
 			_aniDie->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_DIE_PORTAL:
-			_aniDiePortal->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDiePortal->ZoderRender(_player.y, pt.x - 128, pt.y - 140);
 			break;
 		case PLAYER_SWIM:
 			_aniSwim->ZoderRender(_player.y, pt.x - 20, pt.y - 15);
@@ -236,6 +234,10 @@ void player::playerState()
 		
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
+				if (_place == TOWN_DUNGEON)
+				{
+					SOUNDMANAGER->play("구르기", 0.3f);
+				}
 				_lastRollX = _player.x;
 				_lastRollY = _player.y;
 				_holeAlpha = 255;
@@ -255,6 +257,10 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_RUN:
+			if (!SOUNDMANAGER->isPlaySound("플레이어걷기"))
+			{
+				SOUNDMANAGER->play("플레이어걷기", 0.3f);
+			}
 			if (_isHit)
 			{
 				if (this->getKeyMove()) _state = HIT_RUN;
@@ -263,6 +269,10 @@ void player::playerState()
 			this->playerMove();
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
+				if (_place == TOWN_DUNGEON)
+				{
+					SOUNDMANAGER->play("구르기", 0.3f);
+				}
 				_lastRollX = _player.x;
 				_lastRollY = _player.y;
 				_holeAlpha = 255;
@@ -281,7 +291,6 @@ void player::playerState()
 			_player.dashCount++;
 			if(_player.dashCount % 5 == 0)
 			EFFECTMANAGER->addParticle("대시이펙트", _player.y, _player.x, _player.y,true,90);
-
 			_rollCount++;
 			switch (_player.direction)
 			{
@@ -583,7 +592,7 @@ void player::playerMove()
 
 void player::playerAttack()
 {
-	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON && !_isShoot)
+	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
 
 		switch (_player.weapon)
@@ -594,13 +603,24 @@ void player::playerAttack()
 
 		case SHORT_SOWRD:
 			_state = PLAYER_ATTACK_SWORD;
+			if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
+			{
+				SOUNDMANAGER->play("검휘두르기", 0.3f);
+			}
 			_aniSword->aniRestart();
 			break;
 
 		case BOW:
-			_state = PLAYER_ATTACK_BOW;
-			_aniBow->aniRestart();
-			_isShoot = true;
+			if (!_isShoot)
+			{
+				_state = PLAYER_ATTACK_BOW;
+				if (!SOUNDMANAGER->isPlaySound("화살발사"))
+				{
+					SOUNDMANAGER->play("화살발사", 0.3f);
+				}
+				_aniBow->aniRestart();
+				_isShoot = true;
+			}
 			break;
 		}
 	}
@@ -616,7 +636,6 @@ void player::playerSkill()
 			break;
 		case SHORT_SOWRD:
 			_state = PLAYER_SHILED;
-			_aniDiePortal->aniRestart();
 			break;
 		case BOW:
 			break;
@@ -663,7 +682,7 @@ void player::imageInit()
 
 	IMAGEMANAGER->addFrameImage("죽음", "Images/플레이어/player_die10X1.bmp", 1200, 120, 10, 1);
 	IMAGEMANAGER->addFrameImage("구멍빠짐", "Images/플레이어/hole_fall3X1.bmp", 360, 120, 3, 1);
-	IMAGEMANAGER->addFrameImage("죽음포탈", "Images/플레이어/teleportOut58x1.bmp", 7424, 128, 58, 1);
+	IMAGEMANAGER->addFrameImage("죽음포탈", "Images/플레이어/teleportOut58x1.bmp", 14848, 256, 58, 1);
 
 	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack9X4.bmp", 1080, 480, 9, 4);
 	IMAGEMANAGER->addFrameImage("활스킬", "Images/플레이어/bow_skill2X4.bmp", 240, 480, 2, 4);
@@ -679,7 +698,9 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("던전달리기HIT", "Images/플레이어/player_run_dungeon_Hit8X4.bmp", 960, 480, 8, 4);
 	IMAGEMANAGER->addFrameImage("숏소드HIT", "Images/플레이어/short_attack_Hit6X4.bmp", 720, 480, 6, 4);
 	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
+
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
+	
 
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;

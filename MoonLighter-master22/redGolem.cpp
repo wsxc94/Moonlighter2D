@@ -435,11 +435,13 @@ void redGolem::dropItem()
 void redGolem::redGolemCollision()
 {
 	RECT temp;
+
 	if (!_emPlayerColi && PLAYER->getPlayerState() != PLAYER_ROLL)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_attackBox))
 		{
 			_emPlayerColi = true;
+			
 			if (PLAYER->getPlayerState() == PLAYER_SHILED)
 			{
 				PLAYER->playerPush();
@@ -459,7 +461,7 @@ void redGolem::redGolemCollision()
 	}
 	if (_emPlayerColi)
 	{
-		if (_attack->getCurIndex() == 12)
+		if (_attack->getCurIndex() == 0)
 		{
 			_emPlayerColi = false;
 		}

@@ -839,11 +839,15 @@ void DungeonMap::checkCollisionSpa()
 	int b = GetBValue(color);
 	if (!(r == 255 && g == 0 && b == 255))
 	{
-		cout << "aa" << endl;
+		
 		PLAYER->setPlayerState(PLAYER_SWIM);
 		if (PLAYERDATA->getInDungeonHp() < PLAYERDATA->getHp())
 		{
 			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() + 1);
+			if (!SOUNDMANAGER->isPlaySound("온천"))
+			{
+				SOUNDMANAGER->play("온천", 1.0f);
+			}
 
 			if (PLAYERDATA->getInDungeonHp() > PLAYERDATA->getHp())
 			{
@@ -868,6 +872,10 @@ void DungeonMap::checkColiArrow()
 		{
 			if (IntersectRect(&temp, &_vTile[i].rc, &PLAYER->getArrow()->getRect()))
 			{
+				if (!SOUNDMANAGER->isPlaySound("화살맞음") && PLAYER->getShoot())
+				{
+					SOUNDMANAGER->play("화살맞음", 0.5f);
+				}
 				PLAYER->setShoot(false);
 			}
 		}

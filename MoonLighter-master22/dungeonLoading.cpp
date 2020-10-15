@@ -116,6 +116,10 @@ void dungeonLoading::loadImage()
 	_loading->loadFrameImage("보스문뚜껑(양옆)", "Images/던전/bossDoorTopW17.bmp", 54, 192,1,2);
 	_loading->loadFrameImage("보스문뚜껑(위아래)", "Images/던전/bossDoorTopH17.bmp", 96, 54,1,1);
 
+	//플레이어 이팩트
+	_loading->loadFrameImage("화살이펙트", "Images/플레이어/bowEffect.bmp", 240, 40, 3, 1);
+	_loading->loadFrameImage("공격이펙트", "Images/플레이어/swordEffect 3X1.bmp", 240, 40, 3, 1);
+
 }
 
 void dungeonLoading::loadSound()
