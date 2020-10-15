@@ -642,7 +642,6 @@ void inventory::pendantKeyInput()
 			//6. 플레이어 상태를 팬던트사용으로 변경해줌
 
 			_canGrab = false; 
-			PLAYER->setPlayerState(PLAYER_USEPENDANT);
 			ITEMMENU->setGoToTownPendant(true);
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
@@ -693,7 +692,6 @@ void inventory::emblemKeyInput()
 			//6. 플레이어 상태를 팬던트사용으로 변경해줌
 
 			_canGrab = false;
-			PLAYER->setPlayerState(PLAYER_USEPENDANT);
 			ITEMMENU->SetGoToTownEmblem(true);
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(1000);
@@ -1391,16 +1389,16 @@ void inventory::pendantCtrlRender(HDC hdc)
 
 void inventory::emblemCtrlRender(HDC hdc)
 {
-	IMAGEMANAGER->frameRender("cursor_move", hdc, 356, 484, 3, 0);
-	IMAGEMANAGER->render("inventory_selectBubble", hdc, 404, 332);
+	IMAGEMANAGER->frameRender("cursor_move", hdc, 356 + 114, 484, 3, 0);
+	IMAGEMANAGER->render("inventory_selectBubble", hdc, 404 + 114, 332);
 
 	//selectIdx에 따라 알맞은 이미지 출력하기 
 	if (_selectMenu->getSelectIdx() == SELECT_YES)
 	{
-		_selectMenu->getImg()->frameRender(hdc, 426, 356, _selectMenu->getIdx(), 0);
-		_cursor->getImg()->frameRender(hdc, 414, 344, _cursor->getIdx(), 0);
+		_selectMenu->getImg()->frameRender(hdc, 426 + 114, 356, _selectMenu->getIdx(), 0);
+		_cursor->getImg()->frameRender(hdc, 414 + 114, 344, _cursor->getIdx(), 0);
 
-		RECT txtRC = RectMake(444, 438, 42, 26);
+		RECT txtRC = RectMake(444 + 114, 438, 42, 26);
 		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		HFONT oFont = (HFONT)SelectObject(hdc, font);
@@ -1411,10 +1409,10 @@ void inventory::emblemCtrlRender(HDC hdc)
 	}
 	else
 	{
-		_selectMenu->getImg()->frameRender(hdc, 524, 356, _selectMenu->getIdx(), 0);
-		_cursor->getImg()->frameRender(hdc, 512, 344, _cursor->getIdx(), 0);
+		_selectMenu->getImg()->frameRender(hdc, 524 + 114, 356, _selectMenu->getIdx(), 0);
+		_cursor->getImg()->frameRender(hdc, 512 + 114, 344, _cursor->getIdx(), 0);
 
-		RECT txtRC = RectMake(534, 438, 58, 26);
+		RECT txtRC = RectMake(534 + 114, 438, 58, 26);
 		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		HFONT oFont = (HFONT)SelectObject(hdc, font);

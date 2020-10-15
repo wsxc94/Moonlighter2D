@@ -46,7 +46,7 @@ HRESULT nomalDungeonScene::init()
 	_potal.ani->init(IMAGEMANAGER->findImage("potalInit"), 0, 5);
 
 	_resultAnimation = new animation;
-	_resultAnimation->init(nullptr, 0, 5);
+	_resultAnimation->init(IMAGEMANAGER->findImage("Á×À½"), 0, 5);
 	_resultAnimation->aniStop();
 	
 	return S_OK;
@@ -475,7 +475,6 @@ void nomalDungeonScene::resultRender()
 		{
 		case RETURN_PENDANT:
 		{
-			_potal->stretchRender(getMemDC(), 640, 170, 2.f);
 			int cx = 762 - IMAGEMANAGER->findImage("bag_pendant")->getWidth() / 2;
 			int cy = 240 - IMAGEMANAGER->findImage("bag_pendant")->getHeight() / 2;
 			IMAGEMANAGER->findImage("bag_pendant")->render(getMemDC(), cx, cy);
