@@ -143,7 +143,7 @@ void npc::update()
 
 void npc::update(NPC_MAP NPC_SHOP)
 {
-	switch (_state)
+	/*switch (_state)
 	{
 	case NPC_MOVE:
 		cout << "NPC_MOVE" << endl;
@@ -162,7 +162,7 @@ void npc::update(NPC_MAP NPC_SHOP)
 		break;
 	default:
 		break;
-	}
+	}*/
 
 	if (!_isSpawn)
 	{
@@ -331,6 +331,8 @@ void npc::move(NPC_MAP NPC_SHOP)
 
 	if (_state == NPC_MOVE || _state == NPC_ITEM_PICK)
 	{
+		_speed = 1.0f;
+
 		_angle = getAngle(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
 			shop_target[shop_targetIdx][shop_currentTargetIdx].y);
 
@@ -346,13 +348,11 @@ void npc::move(NPC_MAP NPC_SHOP)
 	{
 
 
-		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() - 1 && !_delay) {
+		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() && !_delay) {
 			_delay = true;
 
 			if (shop_currentTargetIdx == 2) {
 
-				//_stop = true;
-				//_speed = 0;
 				if (shop_targetIdx == 0 || shop_targetIdx == 2) {
 					_aniNpc->setFrameY(2);
 				}
@@ -364,7 +364,14 @@ void npc::move(NPC_MAP NPC_SHOP)
 			}
 			else if (shop_target[shop_targetIdx][shop_currentTargetIdx].y == 680)
 			{
-				_state = NPC_STOP;
+				_state = NPC_WAIT;
+
+			}
+			else if (shop_target[shop_targetIdx].size()-1 == shop_currentTargetIdx)
+			{
+				cout << "집으로꺼저" << endl;
+				_state = NPC_GO_HOME;
+				//SOUNDMANAGER->play();
 			}
 
 			else {
@@ -502,7 +509,7 @@ void npc::npcSpawn()
 	SOUNDMANAGER->play(str, 0.5f);
 }
 
-void npc::priceCheck()
+void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 {
 
 	for (int i = 0; i < 4; i++) {

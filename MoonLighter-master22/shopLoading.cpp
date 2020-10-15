@@ -59,4 +59,5 @@ void shopLoading::loadingSound()
 	_loading->loadSound("ΩŒ¥Ÿ", "Sound/shopSound/ΩŒ¥Ÿ.wav");
 	_loading->loadSound("∫ÒΩŒ¥Ÿ", "Sound/shopSound/∫ÒΩŒ¥Ÿ.wav");
 	_loading->loadSound("æˆ√ª∫ÒΩŒ¥Ÿ", "Sound/shopSound/æˆ√ª∫ÒΩŒ¥Ÿ.wav");
+	_loading->loadSound("æ∆¿Ã≈€∆»∏≤", "Sound/shopSound/æ∆¿Ã≈€∆»∏≤.wav");
 }

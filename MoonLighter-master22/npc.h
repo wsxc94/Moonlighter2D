@@ -38,11 +38,12 @@ private:
 
 	tagPosF _target[4];
 
-	vector<vector<tagPosF>> shop_target;
+	vector<vector<tagPosF>> shop_target; // 타겟 좌표 배열
+
 	int _targetIdx;
 
-	int shop_targetIdx;
-	int shop_currentTargetIdx;
+	int shop_targetIdx; // 좌판 번호 타겟 인덱스
+	int shop_currentTargetIdx; // 현재 좌표 위치정보 인덱스
 
 	RECT _rc;
 	RECT _talkRect;
@@ -107,10 +108,13 @@ public:
 	void setActive(bool ac) { _isActive = ac; } // npc 생존여부 세팅
 
 	int& getCurrentTargetIdx() { return shop_currentTargetIdx; } // 현재 가야할 좌표 인덱스
+	void setCurrentTargetIdxPlus() { shop_currentTargetIdx++; }
 	void priceCheck(); // 상점 아이템 가격에 따른 세팅
 	void PriceCheckAnim(); // 이모티콘 애니메이션
 	void ItemGet(); // 아이템 정보 가져오기
 
+	NPC_ACTION& getState() { return _state; } // npc 현재 스테이트 반환
+	void setState(NPC_ACTION st) { _state = st; } // npc 상태 업데이트
 	npc() {}
 	~npc() {}
 };
