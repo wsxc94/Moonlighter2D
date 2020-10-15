@@ -681,6 +681,7 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("숏소드HIT", "Images/플레이어/short_attack_Hit6X4.bmp", 720, 480, 6, 4);
 	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
+	IMAGEMANAGER->addFrameImage("플레이어팬던트사용", "Images/플레이어/playerUsePendant31.bmp", 4464, 120, 31, 1);
 
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;
@@ -700,6 +701,7 @@ void player::imageInit()
 	_aniSwordHit = new ::animation;
 	_aniSwordTwoHit = new ::animation;
 	_aniDiePortal = new ::animation;
+	_aniUsePendant = new ::animation;
 
 	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
 	_aniTownRun->init(IMAGEMANAGER->findImage("달리기"), 0, 5, true);
@@ -731,6 +733,7 @@ void player::imageInit()
 	_aniSwordTwoHit->aniStop();
 	_aniDiePortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
 	_aniDiePortal->aniStop();
+	_aniUsePendant->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 7);
 
 }
 
