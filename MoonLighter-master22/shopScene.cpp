@@ -122,22 +122,54 @@ void shopScene::render()
 			
 			wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getPrice());
 
-			int tmp;
-			if (strlen(str) % 2 == 1)
-				tmp = strlen(str) / 2 + 1;
-			else
-				tmp = strlen(str);
+			int tmp = strlen(str);
 
-			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc富浅急个"), 780,
+			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc富浅急个"), 750,
 				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2,
-				v_itemPos[i].second, 400, 40);
+				v_itemPos[i].second - 10, 15 *tmp,
+				IMAGEMANAGER->findImage("npc富浅急哭率")->getHeight());
 
-			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急哭率"), 781,
-				(v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2)
-				- (IMAGEMANAGER->findImage("npc富浅急个")->getWidth() * tmp) / 2 - IMAGEMANAGER->findImage("npc富浅急哭率")->getWidth(),
-				v_itemPos[i].second - 12);
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急哭率"), 751,
+				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2 - 7*tmp - IMAGEMANAGER->findImage("npc富浅急哭率")->getWidth(),
+				v_itemPos[i].second - 22);
+
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急坷弗率"), 751,
+				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2 + 7 * tmp,
+				v_itemPos[i].second - 22);
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急部府"), 751,
+				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth()/3,
+				v_itemPos[i].second+1);
 		  
-			CAMERAMANAGER->ZorderTextOut(str, 800, v_itemPos[i].first, v_itemPos[i].second - 10, strlen(str), RGB(0, 200, 0));
+			int _x;
+			int _price;
+
+			if(_displayStand->getDisplayItem()[i].getCount() != 0)
+			_price = _displayStand->getDisplayItem()[i].getPrice() * _displayStand->getDisplayItem()[i].getCount();
+
+			if (_price >= 1000000)
+			{
+				_x = v_itemPos[i].first - _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 4;
+			}else if (_price >= 100000) {
+				_x = v_itemPos[i].first - _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 8;
+			}else if (_price >= 10000) {
+				_x = v_itemPos[i].first - _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 20;
+			}
+			else if (_price >= 1000) {
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 10;
+			}
+			else if (_price >= 100)
+			{
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 6;
+			}
+			else if ((_price >= 10)){
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 4 + 2;
+			}
+			else {
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 3 + 2;
+			}
+				CAMERAMANAGER->ZorderTextOut(str, 752,
+					_x
+					, v_itemPos[i].second - 20, strlen(str), RGB(0, 200, 0));
 
 			/*CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急个"),
 				780, v_itemPos[i].first, v_itemPos[i].second);*/
@@ -229,6 +261,7 @@ void shopScene::PlayerSell()
 				if (INPUT->GetKeyDown('L')) {
 					_npc->getVector()[i]->setState(NPC_MOVE);
 					_npc->getVector()[i]->setCurrentTargetIdxPlus();
+					PLAYERDATA->setGold(PLAYERDATA->getGold() + _displayStand->getDisplayItem()[i].getPrice() *_displayStand->getDisplayItem()[i].getCount());
 					SOUNDMANAGER->play("酒捞袍迫覆");
 				}
 			}

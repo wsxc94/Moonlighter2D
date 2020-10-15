@@ -601,7 +601,6 @@ void npc::ItemGet()
 	_state = NPC_ITEM_PICK;
 	_peekItemImg = new image;
 	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
-
 	// 여기서 좌판 아이템 정보 삭제 해야함.
 	_displayStand->deleteDisplayItem(shop_targetIdx);
 }
