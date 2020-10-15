@@ -228,7 +228,6 @@ void npc::render()
 
 void npc::render(NPC_MAP NPC_SHOP)
 {
-
 	if (_state == NPC_STOP || _state == NPC_WAIT || _state == NPC_CHECK_PRICE)
 	{
 		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
@@ -465,7 +464,6 @@ void npc::collision()
 
 void npc::lookPlayer() // 플레이어를 바라보게 npc애니메이션을 바꾸는 함수
 {
-
 	if (_isBarking)
 	{
 		_aniNpc->update();
@@ -550,8 +548,6 @@ void npc::PriceCheckAnim()
 		shop_currentTargetIdx++;
 		//_state = NPC_MOVE;
 	}
-
-
 }
 
 void npc::ItemGet()
@@ -561,6 +557,6 @@ void npc::ItemGet()
 	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
 
 	// 여기서 좌판 아이템 정보 삭제 해야함.
-
+	_displayStand->deleteDisplayItem(shop_targetIdx);
 }
 

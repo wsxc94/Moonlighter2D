@@ -74,8 +74,7 @@ private:
 	bool _isGrabbingItem;					//현재 아이템을 잡고있는지 확인하는 변수 
 	bool _isPuttingItem;					//현재 아이템을 놓고있는지 확인하는 변수 
 	bool _grabSoundPlayed;					//잡는 사운드가 플레이되었는지 확인하는 변수(중복 출력 금지)
-	bool _canKeyInput;						//키입력 방지 함수 
-	bool _canGrab;
+	bool _canGrab;							//잡기 방지 변수 
 
 public:
 	HRESULT init();
@@ -95,6 +94,7 @@ public:
 
 	//set함수 
 	void setWeaponIdx(int index) { _curWeaponIdx = index; }	//장착하는 무기의 인덱스 값을 설정하는 함수 
+	void setCanGrab(bool value) { _canGrab = value; }
 
 	//인벤토리메뉴 이동 관련 함수 
 	POINT getInvenPos() { return _invenPos; }				//인벤토리 위치값 get함수
@@ -138,6 +138,7 @@ public:
 	void putItem();								//전체 아이템 놓기 함수 
 	void putItemOnEmptySlot();					//빈 슬롯에 잡고있는 아이템 놓기 
 	void putItemOnOccupiedSlot();				//이미 채워진 슬롯에 잡고있는 아이템 놓기 
+	void putGrabbingItem();						//잡고있는 아이템이 있다면 원래 자리로 돌려놓기 
 
 	//렌더 함수 
 	void cursorRender(HDC hdc);					//커서 출력 함수

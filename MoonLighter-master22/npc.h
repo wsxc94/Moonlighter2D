@@ -1,5 +1,6 @@
 #pragma once
 #include "gameNode.h"
+#include "itemManager.h"
 #define MAX_NPC 4
 
 class displayStand;
@@ -67,6 +68,7 @@ private:
 	RECT _textRect;
 
 	displayStand* _displayStand; // 상점 좌판 정보
+	gameItem _itemEmpty;		//비어있는 아이템 
 
 	string _illustrator = "일러";
 

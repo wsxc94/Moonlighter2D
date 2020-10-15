@@ -110,6 +110,8 @@ public:
 	void deleteInvenItems();			//인벤토리에 있는 아이템 전부 삭제 
 	gameItem findItemByIdx(int index);	//해당 인벤토리 인덱스에 있는 아이템 찾기 
 	gameItem *getDisplayItem();			//가판대의 물건 반환 
+	void deleteDisplayItem(int index);	//가판대의 인덱스를 넘겨받아 해당 인덱스에 해당하는 아이템 삭제 
+	void deleteItemByIdx(int index);	//인덱스를 받아 해당 인덱스 위치에 있는 아이템 삭제 
 
 	//키 입력 함수 
 	void setShopCtrl(SHOP_CTRL state);	//상점 컨트롤러 세팅 함수 
