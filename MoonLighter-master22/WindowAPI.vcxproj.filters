@@ -91,6 +91,9 @@
     <Filter Include="GameFramework\선택메뉴">
       <UniqueIdentifier>{a9abd5f5-fc03-45e3-a78c-5dafb4d28180}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainGame\potionShop">
+      <UniqueIdentifier>{61cbcd31-afd3-4b2c-abf9-5e38e1847d76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winMain.cpp">
@@ -264,6 +267,9 @@
     <ClCompile Include="selectMenu.cpp">
       <Filter>GameFramework\선택메뉴</Filter>
     </ClCompile>
+    <ClCompile Include="potionShop.cpp">
+      <Filter>MainGame\potionShop</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -427,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="selectMenu.h">
       <Filter>GameFramework\선택메뉴</Filter>
+    </ClInclude>
+    <ClInclude Include="potionShop.h">
+      <Filter>MainGame\potionShop</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

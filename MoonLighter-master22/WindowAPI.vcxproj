@@ -183,6 +183,7 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="playerData.h" />
+    <ClInclude Include="potionShop.h" />
     <ClInclude Include="progressBar.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="resource.h" />
@@ -242,6 +243,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="playerData.cpp" />
     <ClCompile Include="potGolem.cpp" />
+    <ClCompile Include="potionShop.cpp" />
     <ClCompile Include="progressBar.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="redGolem.cpp" />

@@ -67,6 +67,7 @@ public:
 
 	//get함수 
 	inventory *getInventory() { return _inventory; }				//인벤토리 클래스 가져오기 
+	bool getInvenOn() { return _invenOn; }
 	int getMaxItemSlot() { return _inventory->getMaxItemSlot(); }	//소지 가능한 최대 아이템 개수 반환
 	bool getCanKeyInput() { return _canKeyInput; }					//아이템 메뉴 키 입력 받기변수 가져오기 
 	bool getGoToTownPendant() { return _goToTown_Pentant; }
