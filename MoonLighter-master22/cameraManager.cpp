@@ -353,7 +353,7 @@ void cameraManager::ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, 
 
 void cameraManager::ZorderTextOut(string txt, float z, int x, int y, int size, COLORREF color)
 {
-	tagZoderRender* _zo = new tagZoderRender(IMG_TEXTOUT, nullptr, z, getRelativeX(x), getRelativeY(y));
+	tagZoderRender* _zo = new tagZoderRender(IMG_TXTOUT, nullptr, z, getRelativeX(x), getRelativeY(y));
 	_zo->txt = txt;
 	_zo->txtColor = color;
 	_vZoderRender.push_back(_zo);
@@ -461,7 +461,7 @@ void cameraManager::ZorderTotalRender(HDC hdc)
 			SetTextColor(hdc, RGB(255, 255, 255));
 		}
 			break;
-		case IMG_TEXTOUT:
+		case IMG_TXTOUT:
 		{
 			HFONT font = _vZoderRender[i]->font;
 			HFONT oFont = (HFONT)SelectObject(hdc, font);

@@ -724,12 +724,6 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
 
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
-<<<<<<< HEAD
-=======
-	IMAGEMANAGER->addFrameImage("플레이어팬던트사용", "Images/플레이어/playerUsePendant31 .bmp", 4464, 120, 31, 1);
-
-	
->>>>>>> player
 
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;

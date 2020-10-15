@@ -743,45 +743,6 @@ void bossSkeleton::hitToPlayer()
 	{
 		switch (_stState)
 		{
-			_hammerAtkBox.isHit = true;
-			PLAYERDATA->minusInDungeonHp(_emAtkHammer);
-		}
-		if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
-		break;
-	case bossSkeleton::ST_SKILL_SWORD:
-	{
-		if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
-		{
-			_swordAtkBox.isHit = true;
-			PLAYERDATA->minusInDungeonHp(_emAtkSword);
-		}
-		//플레이어 렉트범위 만큼의 픽셀을 검사해 지정한 색이 아니면 충돌처리
-		int pWid = (PLAYER->getRect().left + PLAYER->getRect().right) / 2;
-		int pHei = (PLAYER->getRect().top + PLAYER->getRect().bottom) / 2;
-
-	
-
-		if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
-	}
-		break;
-	case bossSkeleton::ST_SKILL_HAMMER:
-		if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false && _attackHammer->getCurIndex() < 9)
-		{
-			_hammerAtkBox.isHit = true;
-			PLAYERDATA->minusInDungeonHp(_emAtkHammer);
-		}
-		if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
-		break;
-	case bossSkeleton::ST_WAVE:
-		RECT _waveRC;
-		float pDist;
-		float cx = (PLAYER->getRect().left + PLAYER->getRect().right) / 2;
-		float cy = (PLAYER->getRect().top + PLAYER->getRect().bottom) / 2;
-		switch (_emDirection)
-		{
-		case EM_LEFT:
-			_waveRC = RectMakeCenter(_x - 166, _y + 30, 180, 180);
-			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
 		case bossSkeleton::ST_ATTACK_SWORD:
 			if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
 			{
