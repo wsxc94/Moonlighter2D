@@ -126,7 +126,7 @@ public:
 	//아이템 잡기 및 놓기 함수 
 	void grabItem();					//전체 아이템 잡기 함수 
 	void grabOneItem();					//아이템 한 개 잡기 함수 
-	void grabAllItem();					//아이템 전체 잡기 함수 
+	void grabAllItem();					//전체 아이템 잡기 함수 
 	void grabOneMoreItem();				//잡고 있는 아이템과 같은 아이템을 슬롯에서 한 개 더 잡는 함수 
 	void putItem();						//전체 아이템 놓기 함수 
 	void putItemOnEmptySlot();			//빈 곳에 아이템 놓기 함수 
@@ -145,11 +145,11 @@ public:
 	void itemRender();				//아이템 이미지 출력 
 	void itemGrabbedRender();		//현재 잡고 있는 아이템 이미지 출력 
 	void itemNameRender();			//현재 커서가 가리키는 아이템 이름 출력 
-	void displayCountRender();		//가판대에 있는 각 아이템의 숫자 출력 
+	void displayCountRender();		//가판대에 있는 각 아이템의 개수 출력 
 	void unitPriceRender();			//아이템 한 개당 가격 출력 
 	void totalPriceRender();		//아이템 가격 x 개수를 계산한 총 가격 출력 
-	void countRender(int count, int destX, int destY, COLOR_TYPE colorIdx);	//아이템 카운트 출력 
-	void greenCountRender(int count, int destX, int destY);					//아이템 카운트 출력(연두색)
+	void countRender(int count, int destX, int destY, COLOR_TYPE colorIdx);	//아이템 개수 출력 
+	void greenCountRender(int count, int destX, int destY);					//아이템 개수 출력(연두색)
 	void priceCountRender(int count, int destX, int destY);					//아이템 가격 출력 
 
 };

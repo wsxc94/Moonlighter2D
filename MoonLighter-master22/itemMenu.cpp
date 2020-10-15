@@ -47,6 +47,9 @@ HRESULT itemMenu::init()
 	_goToTown_Pentant = false; 
 	_goToTown_Emblem = false;
 
+	//CAMERAMANAGER->FadeInit(80, FADE_OUT);
+	//CAMERAMANAGER->FadeStart();
+
 	return S_OK;
 }
 
@@ -112,23 +115,12 @@ void itemMenu::render(HDC hdc)
 	}
 
 	//char str[128];
+	//wsprintf(str, "invenOn : %d", ITEMMENU->getInvenOn());
+	//TextOut(hdc, 10, 190, str, strlen(str));
+
+	//char str[128];
 	//wsprintf(str, "ctrlState : %d", _ctrlState);
 	//TextOut(hdc, 10, 70, str, strlen(str));
-
-	//wsprintf(str, "calendarOn : %d", _calendarOn);
-	//TextOut(getMemDC(), 10, 90, str, strlen(str));
-
-	//wsprintf(str, "noteOn : %d", _noteBookOn);
-	//TextOut(getMemDC(), 10, 110, str, strlen(str));
-
-	//wsprintf(str, "wishlistOn : %d", _wishListOn);
-	//TextOut(getMemDC(), 10, 130, str, strlen(str));
-
-	//wsprintf(str, "invenOn : %d", _invenOn);
-	//TextOut(hdc, 10, 150, str, strlen(str));
-
-	//wsprintf(str, "tagIdx : %d", _tagIdx);
-	//TextOut(getMemDC(), 10, 170, str, strlen(str));
 }
 
 void itemMenu::setCurItemCount()
@@ -167,7 +159,6 @@ void itemMenu::toggleMenu()
 		{
 			//컨트롤러 상태 초기화(인벤토리) 및 인벤토리 변수 초기화  
 			setCtrlState(CTRL_INVEN);
-			_inventory->initInven();
 
 			_tagIdx = CTRL_INVEN;
 			_menuOn = true;
@@ -206,6 +197,7 @@ void itemMenu::openMenu()
 		_inventory->setInvenPosY(INVENPOSY);
 		_openMenu = false;
 		_inventory->getCursor()->setShowCursor(true);	//인벤토리 창을 열었으므로 커서를 켜준다.
+		_inventory->initInven();
 	}
 }
 

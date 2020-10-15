@@ -74,7 +74,7 @@ private:
 	bool _isGrabbingItem;					//현재 아이템을 잡고있는지 확인하는 변수 
 	bool _isPuttingItem;					//현재 아이템을 놓고있는지 확인하는 변수 
 	bool _grabSoundPlayed;					//잡는 사운드가 플레이되었는지 확인하는 변수(중복 출력 금지)
-	bool _canGrab;							//잡기 방지 변수 
+	bool _canGrab;							//메뉴창을 닫을 대 잡기버그 방지 변수 
 
 public:
 	HRESULT init();
@@ -128,7 +128,6 @@ public:
 	void switchWeapon();					//무기 바꾸기(무기를 바꿀 수 있는 상황인지 확인해서 변경) 
 	void switchWeaponIdx();					//현재 무기 인덱스값 바꾸기 
 	void usePotionEquipped();				//현재 장착 중인 포션 사용하기 
-	void useMerchantItem();					//상인 아이템 사용하기(상인의 거울, 펜던트, 엠블렘) 
 
 	//아이템 잡기 함수 
 	void grabItem();							//전체 아이템 잡기 함수 

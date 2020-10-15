@@ -38,7 +38,8 @@ void townScene::release()
 void townScene::update()
 {
 	//PLAYER->setPlace(SHOP);
-	if (!SOUNDMANAGER->isPlaySound("마을브금")) {
+	if (!SOUNDMANAGER->isPlaySound("마을브금")) 
+	{
 		SOUNDMANAGER->play("마을브금", 0.3f);
 	}
 	else

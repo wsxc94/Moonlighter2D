@@ -32,7 +32,7 @@ HRESULT nomalDungeonScene::init()
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
-	SOUNDMANAGER->play("dungeonBGM",0.4f);
+	SOUNDMANAGER->play("dungeonBGM",0.3f);
 
 
 	//카메라 초기화
@@ -326,19 +326,41 @@ void nomalDungeonScene::soundUpdate()
 	{
 	case DG_NOMAL:
 		if (!SOUNDMANAGER->isPlaySound("dungeonBGM"))
-			SOUNDMANAGER->play("dungeonBGM", 0.4f);
+		{
+			SOUNDMANAGER->play("dungeonBGM", 0.3f);
+		}
+		else
+		{
+			if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("dungeonBGM", 0.08f);
+			else SOUNDMANAGER->setVolumn("dungeonBGM", 0.3f);
+		}
 		SOUNDMANAGER->stop("spaRoomBGM");
 		SOUNDMANAGER->stop("bossRoomBGM");
+
 		break;
 	case DG_SEMIBOSS:
 		if (!SOUNDMANAGER->isPlaySound("bossRoomBGM"))
-			SOUNDMANAGER->play("bossRoomBGM", 0.4f);
+		{
+			SOUNDMANAGER->play("bossRoomBGM", 0.3f);
+		}
+		else
+		{
+			if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("bossRoomBGM", 0.08f);
+			else SOUNDMANAGER->setVolumn("bossRoomBGM", 0.3f);
+		}
 		SOUNDMANAGER->stop("spaRoomBGM");
 		SOUNDMANAGER->stop("dungeonBGM");
 		break;
 	case DG_SPA:
 		if (!SOUNDMANAGER->isPlaySound("spaRoomBGM"))
-			SOUNDMANAGER->play("spaRoomBGM", 0.4f);
+		{
+			SOUNDMANAGER->play("spaRoomBGM", 0.3f);
+		}
+		else
+		{
+			if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("spaRoomBGM", 0.08f);
+			else SOUNDMANAGER->setVolumn("spaRoomBGM", 0.3f);
+		}
 		SOUNDMANAGER->stop("dungeonBGM");
 		SOUNDMANAGER->stop("bossRoomBGM");
 		break;
