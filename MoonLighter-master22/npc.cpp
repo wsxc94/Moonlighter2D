@@ -250,8 +250,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 		}
 	}
 	else if (_state == NPC_MOVE || _state == NPC_ITEM_PICK) {
-		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
-		//	IMAGEMANAGER->findImage(_key)->getFrameX(), IMAGEMANAGER->findImage(_key)->getFrameY());
+		
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 
@@ -259,7 +258,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 
 			CAMERAMANAGER->ZorderRender(_peekItemImg,
 				_pos.y,
-				_pos.x + _peekItemImg->getWidth(),
+				_pos.x + _peekItemImg->getWidth()/2,
 				_pos.y + _peekItemImg->getHeight() / 4);
 		}
 	}

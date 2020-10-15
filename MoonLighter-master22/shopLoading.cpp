@@ -64,6 +64,11 @@ void shopLoading::loadingImage()
 	_loading->loadFrameImage("npc말풍선왼쪽", "Images/상점/bubble_left.bmp", 6, 24, 1, 1);
 	_loading->loadFrameImage("npc말풍선오른쪽", "Images/상점/bubble_right.bmp", 6, 24, 1, 1);
 
+	_loading->loadFrameImage("상점배치", "Images/상점/ui_onDP.bmp", 310, 50, 3, 1);
+	_loading->loadFrameImage("책상금고", "Images/상점/cash_register.bmp", 704, 64, 11, 1);
+	_loading->loadFrameImage("판매버튼", "Images/상점/jButton.bmp", 40, 40, 1, 1);
+	//_loading->loadFrameImage("상점배치", "Images/상점/ui_onDP.bmp", 310, 50, 3, 1);
+
 
 }
 

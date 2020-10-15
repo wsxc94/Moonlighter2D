@@ -19,6 +19,7 @@ private:
 	vector <pair<int, int>> v_itemShadowPos;//아이템그림자위치
 
 	RECT _desk;
+	RECT _stand;
 	void ItemPosSet(); // 아이템 위치 세팅
 
 
@@ -26,6 +27,8 @@ private:
 	HFONT hFont; // 아이템 가격 폰트
 	HFONT oldFont; // 아이템 가격 폰트
 
+	animation* _cashRegister; // 책상 위 금고
+	animation* _button; // 좌판 배치 버튼
 
 public:
 	HRESULT init();
