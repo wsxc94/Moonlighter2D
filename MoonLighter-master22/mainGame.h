@@ -14,7 +14,6 @@
 #include "shopLoading.h"
 #include "shopScene.h"
 #include "gotoDungeon.h"
-#include "displayStand.h"
 
 class mainGame : public gameNode
 {

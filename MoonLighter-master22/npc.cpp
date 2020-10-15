@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "npc.h"
+#include "displayStand.h"
 
-void npc::setshopTargetPos()
+void npc::setshopTargetPos() // 상점에서 npc쪽 좌표 set
 {
-	//2번이 타겟이다.
+	// tmp 의 2번이 해당 좌판 타겟.
+
 	vector<tagPosF> tmp;
 	// 0번 좌판
 	tmp.push_back(tagPosF(600, 750));
@@ -17,7 +19,8 @@ void npc::setshopTargetPos()
 	tmp.push_back(tagPosF(660, 830));
 
 	shop_target.push_back(tmp);
-	// 1번 좌판 670 780 , 610 ,740 ,570 670
+
+	// 1번 좌판 
 	tmp.clear();
 	tmp.push_back(tagPosF(670, 780));
 	tmp.push_back(tagPosF(610, 740));
@@ -36,6 +39,7 @@ void npc::setshopTargetPos()
 	tmp.push_back(tagPosF(460, 790));
 	tmp.push_back(tagPosF(660, 680));
 	tmp.push_back(tagPosF(660, 830));
+
 	shop_target.push_back(tmp);
 	//3번 좌판
 	tmp.clear();
@@ -46,11 +50,10 @@ void npc::setshopTargetPos()
 	tmp.push_back(tagPosF(660, 830));
 	shop_target.push_back(tmp);
 
-	shop_targetIdx = RANDOM->range(0, 3);
-
 	shop_currentTargetIdx = 0;
+
 	_stop = false;
-}
+} // 상점용 
 
 HRESULT npc::init(tagPosF pos, string key)
 {
@@ -68,13 +71,14 @@ HRESULT npc::init(tagPosF pos, string key)
 	_name = key + " : ";
 
 	_speed = 1.0f;
-	
+
 	_target[0] = tagPosF(pos.x + 80, pos.y + 80);
 	_target[1] = tagPosF(pos.x - 80, pos.y + 80);
 	_target[2] = tagPosF(pos.x + 80, pos.y - 80);
 	_target[3] = tagPosF(pos.x - 80, pos.y - 0);
 
 	_stop = false;
+	_state = NPC_MOVE;
 
 	_aniNpc = new animation;
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
@@ -84,13 +88,13 @@ HRESULT npc::init(tagPosF pos, string key)
 	return S_OK;
 }
 
-HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP)
+HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displayStand* dis)
 {
 	_idx = 0;
 	_count = 0;
 	_time = 0;
 	_angle = 0;
-	
+
 	_Istalk = false;
 	_boxidx = 0;
 	_boxCnt = 0;
@@ -101,11 +105,22 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP)
 
 	_speed = 1.0f;
 	_delay = false;
+	_isActive = false;
+	_isSpawn = false;
 
 	setshopTargetPos();
 
+	shop_targetIdx = idx;
+
+	_displayStand = dis;
+
+	_state = NPC_STOP;
+
 	_aniNpc = new animation;
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
+
+	_aniPriceCheck = new animation;
+	_aniPriceCheck->init(IMAGEMANAGER->findImage("가격좋음"), 0, 12);
 
 	return S_OK;
 }
@@ -120,78 +135,130 @@ void npc::update()
 
 	RECT tmp;
 	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc))
-	boxAnim();
+		boxAnim();
 	else
-	_boxidx = 0;
+		_boxidx = 0;
 
 }
 
 void npc::update(NPC_MAP NPC_SHOP)
 {
-	anim();
+	/*switch (_state)
+	{
+	case NPC_MOVE:
+		cout << "NPC_MOVE" << endl;
+		break;
+	case NPC_STOP:
+		cout << "NPC_STOP" << endl;
+		break;
+	case NPC_CHECK_PRICE:
+		cout << "NPC_CHECK_PRICE" << endl;
+		break;
+	case NPC_WAIT:
+		cout << "NPC_WAIT" << endl;
+		break;
+	case NPC_GO_HOME:
+		cout << "NPC_GO_HOME" << endl;
+		break;
+	default:
+		break;
+	}*/
+
+	if (!_isSpawn)
+	{
+		_time++;
+		if (_time % 240 == 0) {
+			npcSpawn();
+			_isSpawn = true;
+			_isActive = true;
+			_state = NPC_MOVE;
+		}
+	}
+	else {
+
+		anim();
+		move(NPC_SHOP);
+	}
 }
 
 void npc::render()
 {
 	RECT tmp;
-	
-		if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc) && !_Istalk)
-		{
-			CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("npc대화"), 2000, _pos.x + 30, _pos.y - 50, _boxidx, 0);
-		}
-		
-		if (_stop)
-		{
-		
-			_aniNpc->aniStop();
-			_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
-		}
-		else {
-			
-			if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
-			_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
-		}
 
-		if (_Istalk)
-		{
-			char str[256];
+	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc) && !_Istalk)
+	{
+		CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("npc대화"), 2000, _pos.x + 30, _pos.y - 50, _boxidx, 0);
+	}
 
-			CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("npc말풍선"), _pos.x, _pos.y - 200);
-			CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key + _illustrator), _pos.x + 10, _pos.y - 220, 1, 1);
+	if (_stop)
+	{
 
-			hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
-				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-			oldFont = (HFONT)SelectObject(getMemDC(), hFont);
-			DeleteObject(oldFont);
+		_aniNpc->aniStop();
+		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+	}
+	else {
 
-			SetTextColor(getMemDC(), RGB(67, 42, 10));
-			wsprintf(str, _name.c_str(), strlen(str));
-			DrawText(getMemDC(), str, -1, &_nameRect, DT_LEFT | DT_WORDBREAK);
-			
-			SetTextColor(getMemDC(), RGB(125, 112, 92));
-			wsprintf(str, _talk.c_str(), strlen(str));
-			DrawText(getMemDC(), str, -1, &_textRect, DT_LEFT | DT_WORDBREAK);
+		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
+		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+	}
 
-		}
-		//CAMERAMANAGER->FrameRect(getMemDC(), _rc, RGB(255, 0, 0));
+	if (_Istalk)
+	{
+		char str[256];
+
+		CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("npc말풍선"), _pos.x, _pos.y - 200);
+		CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key + _illustrator), _pos.x + 10, _pos.y - 220, 1, 1);
+
+		hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		oldFont = (HFONT)SelectObject(getMemDC(), hFont);
+		DeleteObject(oldFont);
+
+		SetTextColor(getMemDC(), RGB(67, 42, 10));
+		wsprintf(str, _name.c_str(), strlen(str));
+		DrawText(getMemDC(), str, -1, &_nameRect, DT_LEFT | DT_WORDBREAK);
+
+		SetTextColor(getMemDC(), RGB(125, 112, 92));
+		wsprintf(str, _talk.c_str(), strlen(str));
+		DrawText(getMemDC(), str, -1, &_textRect, DT_LEFT | DT_WORDBREAK);
+
+	}
+	//CAMERAMANAGER->FrameRect(getMemDC(), _rc, RGB(255, 0, 0));
 }
 
 void npc::render(NPC_MAP NPC_SHOP)
 {
 
-	if (_stop)
+	if (_state == NPC_STOP || _state == NPC_WAIT || _state == NPC_CHECK_PRICE)
 	{
 		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
 		//	0, IMAGEMANAGER->findImage(_key)->getFrameY());
 		// 영훈이형 z오더를 했더니 IMAGEMANAGER->getFrameX() 이게안되서 제가 애니메이션으로 바꿨습니다.....죄송합니다ㅠㅠ
 		_aniNpc->aniStop();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+
+		if (_state == NPC_CHECK_PRICE)
+		{
+			_aniPriceCheck->aniPlay();
+			_aniPriceCheck->ZoderRender(
+				_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2,
+				_pos.x + IMAGEMANAGER->findImage(_key)->getFrameWidth() / 4,
+				_pos.y - IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2);
+		}
 	}
-	else {
+	else if (_state == NPC_MOVE || _state == NPC_ITEM_PICK) {
 		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
 		//	IMAGEMANAGER->findImage(_key)->getFrameX(), IMAGEMANAGER->findImage(_key)->getFrameY());
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+
+		if (_state == NPC_ITEM_PICK) {
+
+			CAMERAMANAGER->ZorderRender(_peekItemImg,
+				_pos.y,
+				_pos.x + _peekItemImg->getWidth(),
+				_pos.y + _peekItemImg->getHeight() / 4);
+		}
 	}
 }
 
@@ -199,7 +266,7 @@ void npc::anim()
 {
 
 	_aniNpc->update();
-	if (!_stop)
+	if ((_state == NPC_MOVE || _state == NPC_ITEM_PICK) && !_stop)
 	{
 		if (_key != "에리스" && _key != "강아지npc") {
 			if (RadianToDegree(_angle) >= 225 && RadianToDegree(_angle) <= 360) _aniNpc->setFrameY(0);
@@ -262,28 +329,30 @@ void npc::move(NPC_MAP NPC_SHOP)
 {
 	_time++;
 
-	if (!_stop)
+	if (_state == NPC_MOVE || _state == NPC_ITEM_PICK)
 	{
-		_angle = getAngle(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x, 
+		_speed = 1.0f;
+
+		_angle = getAngle(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
 			shop_target[shop_targetIdx][shop_currentTargetIdx].y);
 
 		_pos.x += cosf(_angle) * _speed;
 		_pos.y += -sinf(_angle) * _speed / 2;
 	}
-	
+	if (_state == NPC_CHECK_PRICE) {
+		PriceCheckAnim();
+	}
+
 	if (getDistance(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
 		shop_target[shop_targetIdx][shop_currentTargetIdx].y) < 1)
 	{
-		
-		
-		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() - 1 && !_delay) {
+
+
+		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() && !_delay) {
 			_delay = true;
 
-			if (shop_currentTargetIdx != 2)
-				shop_currentTargetIdx++;
-			else {
-				_stop = true;
-				_speed = 0;
+			if (shop_currentTargetIdx == 2) {
+
 				if (shop_targetIdx == 0 || shop_targetIdx == 2) {
 					_aniNpc->setFrameY(2);
 				}
@@ -291,20 +360,34 @@ void npc::move(NPC_MAP NPC_SHOP)
 				{
 					_aniNpc->setFrameY(3);
 				}
+				priceCheck();
+			}
+			else if (shop_target[shop_targetIdx][shop_currentTargetIdx].y == 680)
+			{
+				_state = NPC_WAIT;
 
+			}
+			else if (shop_target[shop_targetIdx].size()-1 == shop_currentTargetIdx)
+			{
+				cout << "집으로꺼저" << endl;
+				_state = NPC_GO_HOME;
+				//SOUNDMANAGER->play();
+			}
+
+			else {
+				shop_currentTargetIdx++;
 			}
 
 		}
+
+
 
 	}
 	else {
 		_delay = false;
 	}
-	
-	/*if (!_stop) {
-		_pos.x += cosf(_angle) * _speed;
-		_pos.y += -sinf(_angle) * _speed / 2;
-	}*/
+
+
 
 }
 
@@ -321,7 +404,7 @@ void npc::action(string talk)
 	RECT tmp;
 	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc) && INPUT->GetKeyDown('J'))
 	{
-		
+
 		if (_Istalk)
 		{
 			_Istalk = false;
@@ -380,7 +463,7 @@ void npc::collision()
 
 }
 
-void npc::lookPlayer()
+void npc::lookPlayer() // 플레이어를 바라보게 npc애니메이션을 바꾸는 함수
 {
 
 	if (_isBarking)
@@ -395,11 +478,11 @@ void npc::lookPlayer()
 	if ((_pos.y < PLAYER->getY() && _pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() > PLAYER->getY()) &&
 		_pos.x > PLAYER->getX())
 	{
-		if(_key == "강아지npc")
-		_aniNpc->setFrameY(2);
-		else 
-		_aniNpc->setFrameY(3);
-		
+		if (_key == "강아지npc")
+			_aniNpc->setFrameY(2);
+		else
+			_aniNpc->setFrameY(3);
+
 	}
 	else if ((_pos.y < PLAYER->getY() && _pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() > PLAYER->getY()) &&
 		_pos.x < PLAYER->getX())
@@ -418,3 +501,66 @@ void npc::lookPlayer()
 	}
 
 }
+
+void npc::npcSpawn()
+{
+	int rnd = RANDOM->range(0, 1);
+	string str = "상점입장" + to_string(rnd);
+	SOUNDMANAGER->play(str, 0.5f);
+}
+
+void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
+{
+
+	for (int i = 0; i < 4; i++) {
+		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() < _displayStand->getDisplayItem()[shop_targetIdx].getPriceRange()[i])
+		{
+			switch (i) // 이거의 값에 따라 애니메이션 프레임 y 값을 정해줘야함., 사운드가 달라지게 해야함.
+			{
+			case 0: //많이 싸다
+
+				break;
+			case 1: //싸다
+
+				break;
+			case 2: // 비싸다
+
+				break;
+			case 3: // 존나비싸다
+
+				break;
+			default:
+				break;
+			}
+			break;
+		}
+	}
+	_state = NPC_CHECK_PRICE;
+}
+
+void npc::PriceCheckAnim()
+{
+	_aniPriceCheck->update();
+
+	if (_aniPriceCheck->getAniState() == ANIMATION_END) {
+		SOUNDMANAGER->play("싸다");
+		ItemGet();
+		_stop = false;
+		_speed = 1.0f;
+		shop_currentTargetIdx++;
+		//_state = NPC_MOVE;
+	}
+
+
+}
+
+void npc::ItemGet()
+{
+	_state = NPC_ITEM_PICK;
+	_peekItemImg = new image;
+	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
+
+	// 여기서 좌판 아이템 정보 삭제 해야함.
+
+}
+
