@@ -7,6 +7,7 @@ class displayStand;
 
 enum NPC_ACTION
 {
+	NPC_START,
 	NPC_MOVE,
 	NPC_STOP,
 	NPC_CHECK_PRICE,
@@ -123,6 +124,7 @@ public:
 
 	NPC_ACTION& getState() { return _state; } // npc 현재 스테이트 반환
 	void setState(NPC_ACTION st) { _state = st; } // npc 상태 업데이트
+	string& getThinkInfo() { return thinkInfo; } // 싼지 안싼지 상태에 대한 문자열 반환
 	npc() {}
 	~npc() {}
 };

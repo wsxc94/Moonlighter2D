@@ -21,6 +21,12 @@ private:
 	RECT _desk;
 	void ItemPosSet(); // 아이템 위치 세팅
 
+
+	RECT _itemText[4]; // 아이템 드로우 텍스트 렉트
+	HFONT hFont; // 아이템 가격 폰트
+	HFONT oldFont; // 아이템 가격 폰트
+
+
 public:
 	HRESULT init();
 	void release();
@@ -34,5 +40,6 @@ public:
 	void itemInfoUpdate();
 
 	void npcAI(); // npc update 여기다 넣음
+	void npcInit(int idx);
 };
 

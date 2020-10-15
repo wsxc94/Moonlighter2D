@@ -319,6 +319,14 @@ void cameraManager::ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, 
 	_vZoderRender.push_back(_zo);
 }
 
+void cameraManager::ZorderTextOut(string txt, float z, int x, int y, int size, COLORREF color)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_TEXTOUT, nullptr, z, getRelativeX(x), getRelativeY(y));
+	_zo->txt = txt;
+	_zo->txtColor = color;
+	_vZoderRender.push_back(_zo);
+}
+
 void cameraManager::FadeInit(int time, FADEKIND fadeKind)
 {
 	IMAGEMANAGER->addImage("fadeImg", WINSIZEX, WINSIZEY);
@@ -405,13 +413,26 @@ void cameraManager::ZorderTotalRender(HDC hdc)
 			_vZoderRender[i]->img->stretchFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->scale);
 			break;
 		case IMG_TXT:
+		{
 			HFONT font = _vZoderRender[i]->font;
 			HFONT oFont = (HFONT)SelectObject(hdc, font);
 			SetTextColor(hdc, _vZoderRender[i]->txtColor);
 			DrawText(hdc, _vZoderRender[i]->txt.c_str(), -1, &_vZoderRender[i]->txtRC, _vZoderRender[i]->format);
 			SelectObject(hdc, oFont);
 			DeleteObject(font);
-			SetTextColor(hdc,RGB(255, 255, 255));
+			SetTextColor(hdc, RGB(255, 255, 255));
+		}
+			break;
+		case IMG_TEXTOUT:
+		{
+			HFONT font = _vZoderRender[i]->font;
+			HFONT oFont = (HFONT)SelectObject(hdc, font);
+			SetTextColor(hdc, _vZoderRender[i]->txtColor);
+			TextOut(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->txt.c_str(), _vZoderRender[i]->txt.size());
+			SelectObject(hdc, oFont);
+			DeleteObject(font);
+			SetTextColor(hdc, RGB(255, 255, 255));
+		}
 			break;
 		}
 	}

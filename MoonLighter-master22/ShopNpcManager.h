@@ -37,9 +37,11 @@ public:
 	void release();
 	void update();
 	void render();
-	void getInit(int idx);
+	void getInit(int idx , int rnd);
+	void UseNpcCheck();
 
 	vector<npc*>& getVector() { return v_npcs; }
+	vector<pair<string, bool>>& getNpcNamePair() { return _npcName; }
 
 };
 

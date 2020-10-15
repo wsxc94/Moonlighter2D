@@ -57,8 +57,14 @@ void shopLoading::loadingImage()
 	_loading->loadFrameImage("싸다", "Images/npc/싸다.bmp", 416, 52, 8, 1);
 	_loading->loadFrameImage("비싸다", "Images/npc/비싸다.bmp", 468, 52, 9, 1);
 	_loading->loadFrameImage("엄청비싸다", "Images/npc/엄청비싸다.bmp", 624, 52, 12, 1);
-
 	_loading->loadFrameImage("기다리는중", "Images/npc/npc_waiting.bmp", 104, 52, 2, 1);
+
+	_loading->loadFrameImage("npc말풍선몸", "Images/상점/bubble_body.bmp", 24, 24, 1, 1);
+	_loading->loadFrameImage("npc말풍선꼬리", "Images/상점/bubble_bottom.bmp", 10, 6, 1, 1);
+	_loading->loadFrameImage("npc말풍선왼쪽", "Images/상점/bubble_left.bmp", 6, 24, 1, 1);
+	_loading->loadFrameImage("npc말풍선오른쪽", "Images/상점/bubble_right.bmp", 6, 24, 1, 1);
+
+
 }
 
 void shopLoading::loadingSound()

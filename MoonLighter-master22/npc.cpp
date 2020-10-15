@@ -114,7 +114,7 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 
 	_displayStand = dis;
 
-	_state = NPC_STOP;
+	_state = NPC_START;
 
 	_aniNpc = new animation;
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
@@ -146,7 +146,9 @@ void npc::update()
 
 void npc::update(NPC_MAP NPC_SHOP)
 {
-	/*switch (_state)
+
+	/*cout << _key << endl;
+	switch (_state)
 	{
 	case NPC_MOVE:
 		cout << "NPC_MOVE" << endl;
@@ -390,7 +392,7 @@ void npc::DistanceCheck()
 			}
 			else if (shop_target[shop_targetIdx].size() - 1 == shop_currentTargetIdx)
 			{
-
+			
 				_state = NPC_GO_HOME;
 				_isActive = false;
 				//SOUNDMANAGER->play();
@@ -531,9 +533,9 @@ void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 {
 
 	for (int i = 0; i < 4; i++) {
-		std::cout << _displayStand->getDisplayItem()[shop_targetIdx].getPrice() << " " << _displayStand->getDisplayItem()[shop_targetIdx].getPriceRange()[i] << endl;
 
-		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() < _displayStand->getDisplayItem()[shop_targetIdx].getPriceRange()[i])
+		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() / _displayStand->getDisplayItem()[shop_targetIdx].getCount()
+			< _displayStand->getDisplayItem()[shop_targetIdx].getPriceRange()[i])
 		{
 			switch (i) // 이거의 값에 따라 애니메이션 프레임 y 값을 정해줘야함., 사운드가 달라지게 해야함.
 			{
