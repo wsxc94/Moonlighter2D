@@ -16,6 +16,10 @@ void shopScene::ItemPosSet()
 	v_itemShadowPos.push_back(make_pair(486, 738));
 	v_itemShadowPos.push_back(make_pair(534, 738));
 
+
+	for(int i = 0 ; i < v_itemPos.size(); i++)
+	_itemText[i] = RectMake(v_itemPos[i].first, v_itemPos[i].second , 50, 50);
+
 }
 
 HRESULT shopScene::init()
@@ -44,6 +48,7 @@ HRESULT shopScene::init()
 	CAMERAMANAGER->FadeStart();
 
 	ItemPosSet();
+	_disMenuOn = false;
 
 	_visit = false;
 	return S_OK;
@@ -81,6 +86,7 @@ void shopScene::update()
 	PortaltoTown();
 	npcAI();
 	PlayerSell();
+	itemInfoUpdate();
 }
 
 void shopScene::render()
@@ -88,7 +94,6 @@ void shopScene::render()
 
 	IMAGEMANAGER->findImage("상점픽셀")->render(IMAGEMANAGER->findImage("temp")->getMemDC(), 304, 132);
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("상점맵"), 304, 132);
-	//CAMERAMANAGER->Render(getMemDC() , IMAGEMANAGER->findImage("상점픽셀"), 304, 132);
 
 	_npc->render();
 
@@ -105,21 +110,33 @@ void shopScene::render()
 	char str[256];
 	for (int i = 0; i < ITEMDESKCOUNT; i++)
 	{
-		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY) continue;
+		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY) {
 
-		CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
-			680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
-			, v_itemPos[i].first, v_itemPos[i].second);
+			CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
+				680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
+				, v_itemPos[i].first, v_itemPos[i].second);
 
-		CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("아이템그림자")
-			, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
-			, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
+			CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("아이템그림자")
+				, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
+				, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
+			
+			wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getPrice());
+
+			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc말풍선몸"),780  , v_itemPos[i].first , v_itemPos[i].second , strlen(str)/2);
+
+			/*CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc말풍선몸"),
+				780, v_itemPos[i].first, v_itemPos[i].second);*/
+			
+			CAMERAMANAGER->ZorderTextOut(str, 800, v_itemPos[i].first, v_itemPos[i].second, strlen(str), RGB(0, 200, 0));
+
+			
+		}
 
 		if (_npc->getVector()[i]->getActive())
 			_npc->getVector()[i]->render(NPC_SHOP);
 
-		wsprintf(str, "X: %d", _displayStand->getDisplayItem()[i].getCount());
-		TextOut(getMemDC(), 5, 150 * (i), str, strlen(str));
+		/*wsprintf(str, "X: %d", _displayStand->getDisplayItem()[i].getCount());
+		TextOut(getMemDC(), 5, 150 * (i), str, strlen(str));*/
 
 
 	}
@@ -136,13 +153,7 @@ void shopScene::render()
 	PLAYER->render(getMemDC());
 	ITEMMENU->render(getMemDC());
 	_displayStand->render();
-	CAMERAMANAGER->Rectangle(getMemDC(), _desk);
-	//IMAGEMANAGER->findImage("상점맵")->render(getMemDC(), 304, 132);
 
-	//CAMERAMANAGER->Rectangle(getMemDC(), GoTownPortal);
-	//Rectangle(getMemDC(), GoTownPortal);
-
-	//CAMERAMANAGER->Rectangle(getMemDC(), PLAYER->getShadowRect());
 }
 
 void shopScene::PortaltoTown()
@@ -212,12 +223,71 @@ void shopScene::PlayerSell()
 	//IMAGEMANAGER->findImage("상점책상")
 }
 
+void shopScene::itemInfoUpdate()
+{
+	if (!_disMenuOn && PLAYER->getDisplayOn())
+	{
+		_disMenuOn = true;
+	}
+	else if (_disMenuOn && !PLAYER->getDisplayOn()){
+
+		  _disMenuOn = false;
+
+		  for (int i = 0; i < _npc->getVector().size(); i++)
+		  {
+
+			  if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY && _displayStand->getDisplayItem()[i].getPrice() != 0) {
+				  if (_npc->getVector()[i]->getActive()) continue;
+				  
+				  npcInit(i);
+			  }
+		  }
+
+	}
+	for (int i = 0; i < _npc->getVector().size(); i++)
+	{
+		
+
+		/*if ((_npc->getVector()[i]->getState() == NPC_GO_HOME || 
+			_npc->getVector()[i]->getState() == NPC_START)   ||
+			_npc->getVector()[i]->getThinkInfo() =="싸다" ||
+			_npc->getVector()[i]->getThinkInfo() == "엄청싸다") continue;*/
+		//if (_npc->getVector()[i]->getState() != NPC_GO_HOME && _npc->getVector()[i]->getState() != NPC_START) continue;
+		if (!_npc->getVector()[i]->getActive() && 
+			_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY &&
+			_displayStand->getDisplayItem()[i].getPrice() != 0 &&
+			_npc->getVector()[i]->getThinkInfo() != "비싸다" &&
+			_npc->getVector()[i]->getThinkInfo() != "엄청비싸다") {
+			npcInit(i);
+		}
+	}
+}
+
 void shopScene::npcAI()
 {
 
 	for (int i = 0; i < _npc->getVector().size(); i++)
 	{
-		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY || PLAYER->getDisplayOn()) continue;
-		_npc->getVector()[i]->update(NPC_SHOP);
+		if (_disMenuOn) continue;
+		if (_npc->getVector()[i]->getActive()) {
+			_npc->getVector()[i]->update(NPC_SHOP);
+		}
 	}
+}
+
+void shopScene::npcInit(int idx)
+{
+	/*int rnd = 0;
+	while (true)
+	{
+		rnd = RANDOM->range(0, 3);
+		if (_npc->getNpcNamePair()[rnd].second == false) {
+			break;
+		}
+	}*/
+
+	_npc->getInit(idx, idx);
+	_npc->getVector()[idx]->setActive(true);
+	_npc->getVector()[idx]->setState(NPC_START);
+
 }

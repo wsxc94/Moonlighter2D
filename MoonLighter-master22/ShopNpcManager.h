@@ -20,16 +20,28 @@ private:
 	displayStand* _displayStand;
 
 	int _npcTime;
-	vector<string> _npcName = {
-		"마사" , "토모" , "레드먼드" ,"모리"
+	vector<pair<string, bool>> _npcName = {
+		make_pair("마사" , false),
+		make_pair("토모" , false),
+		make_pair("레드먼드" , false),
+		make_pair("모리" , false)
 	};
+	/*vector<string> _npcName = {
+		"마사",
+		"토모",
+		"레드먼드",
+		"모리"
+	};*/
 public:
 	HRESULT init(displayStand* dis);
 	void release();
 	void update();
 	void render();
+	void getInit(int idx , int rnd);
+	void UseNpcCheck();
 
 	vector<npc*>& getVector() { return v_npcs; }
+	vector<pair<string, bool>>& getNpcNamePair() { return _npcName; }
 
 };
 
