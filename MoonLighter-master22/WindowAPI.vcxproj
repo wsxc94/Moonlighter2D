@@ -192,7 +192,6 @@
     <ClInclude Include="ShopNpcManager.h" />
     <ClInclude Include="shopScene.h" />
     <ClInclude Include="singletonBase.h" />
-    <ClInclude Include="skill.h" />
     <ClInclude Include="soundManager.h" />
     <ClInclude Include="startScene.h" />
     <ClInclude Include="stdafx.h" />
@@ -250,7 +249,6 @@
     <ClCompile Include="shopLoading.cpp" />
     <ClCompile Include="ShopNpcManager.cpp" />
     <ClCompile Include="shopScene.cpp" />
-    <ClCompile Include="skill.cpp" />
     <ClCompile Include="skullHammer.cpp" />
     <ClCompile Include="soundManager.cpp" />
     <ClCompile Include="startScene.cpp" />

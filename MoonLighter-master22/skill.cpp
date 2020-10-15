@@ -41,9 +41,9 @@ void skill::animation()
 	switch (_state)
 	{
 	case SHILED:
-
 		break;
 	case BOW_CHARGE:
+
 		break;
 	}
 }
@@ -52,16 +52,24 @@ void skill::skillset()
 {
 	if (INPUT->GetKey('K'))
 	{
-		switch (PLAYER->getWeaponState())
+		if (PLAYER->getWeaponState() != BOW)
 		{
-			case EMPTY:
-				break;
-			case SHORT_SOWRD:
-				_state = SHILED;
-				break;
-			case BOW:
-				_state = BOW_CHARGE;
-				break;
+			switch (PLAYER->getWeaponState())
+			{
+				case EMPTY:
+					break;
+				case SHORT_SOWRD:
+					_state = SHILED;
+					break;
+				case BOW:
+					_state = BOW_CHARGE;
+					break;
+			}
+		}
+		else
+		{
+
 		}
 	}
+
 }

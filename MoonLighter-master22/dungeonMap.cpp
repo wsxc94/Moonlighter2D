@@ -675,7 +675,7 @@ void DungeonMap::checkColiHole()
 		{
 			if (_vTile[i].tState == TS_HOLE)
 			{
-				if (PLAYER->getPlayerState() == PLAYER_RUN)
+				if (PLAYER->getPlayerState() == PLAYER_RUN || PLAYER->getPlayerState() == HIT_RUN)
 				{
 					int wid = temp.right - temp.left;
 					int hei = temp.bottom - temp.top;
@@ -858,11 +858,6 @@ void DungeonMap::checkCollisionSpa()
 		if (PLAYERDATA->getInDungeonHp() < PLAYERDATA->getHp())
 		{
 			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() + 1);
-			if (!SOUNDMANAGER->isPlaySound("온천"))
-			{
-				SOUNDMANAGER->play("온천", 1.0f);
-			}
-
 			if (PLAYERDATA->getInDungeonHp() > PLAYERDATA->getHp())
 			{
 				PLAYERDATA->setInDungeonHp(PLAYERDATA->getHp());
@@ -872,6 +867,17 @@ void DungeonMap::checkCollisionSpa()
 	else if (r == 255 && g == 0 && b == 255 && PLAYER->getPlayerState() == PLAYER_SWIM)
 	{
 		PLAYER->setPlayerState(PLAYER_IDLE);
+	}
+	if (PLAYER->getPlayerState() == PLAYER_SWIM)
+	{
+		if (!SOUNDMANAGER->isPlaySound("온천"))
+		{
+			SOUNDMANAGER->play("온천", 0.3f);
+		}
+	}
+	else
+	{
+		SOUNDMANAGER->stop("온천");
 	}
 	
 }

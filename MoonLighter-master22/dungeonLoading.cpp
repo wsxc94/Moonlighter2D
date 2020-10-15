@@ -130,8 +130,8 @@ void dungeonLoading::loadImage()
 	_loading->loadImage("messegeBox_potal", "Images/던전/messegeBox_potal.bmp", 183, 50, true, RGB(255,0,255));
 
 
-	_loading->loadFrameImage("화살이펙트", "Images/플레이어/bowEffect.bmp", 240, 40, 3, 1);
-	_loading->loadFrameImage("공격이펙트", "Images/플레이어/swordEffect 3X1.bmp", 240, 40, 3, 1);
+	_loading->loadFrameImage("화살이펙트", "Images/플레이어/bowEffect 3X4.bmp", 768, 1024, 3, 4);
+	_loading->loadFrameImage("공격이펙트", "Images/플레이어/swordEffect 3X4.bmp", 768, 1024, 3, 4);
 
 }
 

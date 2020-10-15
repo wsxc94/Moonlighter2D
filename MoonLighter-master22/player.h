@@ -14,7 +14,7 @@ enum PLAYER_STATE
 	PLAYER_RUN,
 	PLAYER_ROLL,
 	PLAYER_ATTACK_SWORD, PLAYER_ATTACK_SWORD_SECOND, PLAYER_ATTACK_BOW,
-	PLAYER_SHILED,
+	PLAYER_SHILED, BOW_CHARGE,
 	PLAYER_TALK,
 	PLAYER_DIE,
 	PLAYER_DIE_PORTAL,
@@ -80,6 +80,7 @@ private:
 	bool _isTalk;
 	bool _isHit;
 	bool _isDie;
+	bool _isSkill;		//보우 스킬이냐?
 
 	bool _displayOn;
 
@@ -100,6 +101,9 @@ private:
 
 	int _playerHp;
 	int _hitAlpha;
+
+	int _skillCount;		//차지카운트
+	int _skillIndex;
 
 	float _rollJumpPower;
 	float _rollGravity;

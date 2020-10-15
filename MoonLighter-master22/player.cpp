@@ -40,10 +40,15 @@ HRESULT player::init()
 	_isHit = false;	//맞았냐
 	_isDie = false; //죽었냐
 
+	_isSkill = false;
+
 	_rollCount = 0;
 	_rollIndex = 0;
 	_rollJumpPower = 0;
 	_rollGravity = 0;
+
+	_skillCount = 0;
+	_skillIndex = 0;
 
 	_attackCount = 0;
 	_attackIndex = 0;;
@@ -142,6 +147,9 @@ void player::render(HDC hdc)
 		case PLAYER_ATTACK_BOW:
 			_aniBow->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
+		case BOW_CHARGE:
+			_bowCharge->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			break;
 		case PLAYER_DIE:
 			_aniDie->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
@@ -197,6 +205,10 @@ void player::animation(int frameY)
 	_aniRunHit->update();
 	_aniSwordHit->update();
 	_aniSwordTwoHit->update();
+	if (_isSkill)
+	{
+		_bowCharge->update();
+	}
 
 	_aniTownIdle->setFrameY(_player.direction);
 	_aniTownRun->setFrameY(_player.direction);
@@ -217,6 +229,7 @@ void player::animation(int frameY)
 	_aniSwordHit->setFrameY(_player.direction);
 	_aniSwordTwoHit->setFrameY(_player.direction);
 
+	_bowCharge->setFrameY(_player.direction);
 }
 
 void player::playerState()
@@ -249,12 +262,6 @@ void player::playerState()
 			this->playerAttack();
 			this->playerSkill();
 
-			
-			if (PLAYERDATA->getInDungeonHp() <= 0)
-			{
-				PLAYERDATA->setInDungeonHp(0);
-				PLAYER->setPlayerState(PLAYER_DIE);
-			}
 			break;
 		case PLAYER_RUN:
 			if (!SOUNDMANAGER->isPlaySound("플레이어걷기"))
@@ -358,6 +365,14 @@ void player::playerState()
 				_state = PLAYER_IDLE;
 			}
 			break;
+		case BOW_CHARGE:
+			if (INPUT->GetKeyUp('K'))
+			{
+				_isShoot = true;
+				_state = PLAYER_IDLE;
+				_skillCount = 0;
+			}
+			break;
 		case PLAYER_ATTACK_BOW:
 			if (_aniBow->getAniState() == ANIMATION_END)
 			{
@@ -393,6 +408,8 @@ void player::playerState()
 			break;
 		case PLAYER_SWIM:
 			this->playerMove();
+			
+
 			break;
 		case HIT_IDLE:
 			if (this->getKeyMove()) _state = HIT_RUN;
@@ -630,6 +647,7 @@ void player::playerSkill()
 {
 	if (INPUT->GetKey('K'))
 	{
+		_skillCount++;
 		switch (_player.weapon)
 		{
 		case EMPTY:
@@ -638,9 +656,15 @@ void player::playerSkill()
 			_state = PLAYER_SHILED;
 			break;
 		case BOW:
+			_state = BOW_CHARGE;		
 			break;
 		}
 	}
+	if (_skillCount > 50)
+	{
+		_isSkill = true;
+	}
+	cout << _skillCount << endl;
 }
 
 void player::playerPush()
@@ -700,6 +724,12 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
 
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
+<<<<<<< HEAD
+=======
+	IMAGEMANAGER->addFrameImage("플레이어팬던트사용", "Images/플레이어/playerUsePendant31 .bmp", 4464, 120, 31, 1);
+
+	
+>>>>>>> player
 
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;
@@ -711,6 +741,7 @@ void player::imageInit()
 	_aniSword = new ::animation;
 	_aniSwordTwo = new ::animation;
 	_aniShiled = new ::animation;
+	_bowCharge = new ::animation;
 	_aniBow = new ::animation;
 	_aniDie = new ::animation;
 	_aniSwim = new ::animation;
@@ -736,7 +767,8 @@ void player::imageInit()
 	_aniSwordTwo->aniStop();
 
 	_aniShiled->init(IMAGEMANAGER->findImage("방패"), 0, 1);
-
+	_bowCharge->init(IMAGEMANAGER->findImage("활스킬"), 0, 3, true);
+	_bowCharge->aniStop();
 	_aniBow->init(IMAGEMANAGER->findImage("활날리기"), 0, 5);
 	_aniBow->aniStop();
 	_aniDie->init(IMAGEMANAGER->findImage("죽음"), 0, 7);
@@ -750,7 +782,5 @@ void player::imageInit()
 	_aniSwordTwoHit->aniStop();
 	_aniDiePortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
 	_aniDiePortal->aniStop();
-
-
 }
 

@@ -739,18 +739,9 @@ void bossSkeleton::hitToPlayer()
 {
 	RECT temp;
 
-	switch (_stState)
+	if (PLAYER->getPlayerState() != PLAYER_ROLL)
 	{
-	case bossSkeleton::ST_ATTACK_SWORD:
-		if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
-		{
-			_swordAtkBox.isHit = true;
-			PLAYERDATA->minusInDungeonHp(_emAtkSword);
-		}
-		if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
-		break;
-	case bossSkeleton::ST_ATTACK_HAMMER:
-		if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false)
+		switch (_stState)
 		{
 			_hammerAtkBox.isHit = true;
 			PLAYERDATA->minusInDungeonHp(_emAtkHammer);
@@ -791,57 +782,116 @@ void bossSkeleton::hitToPlayer()
 		case EM_LEFT:
 			_waveRC = RectMakeCenter(_x - 166, _y + 30, 180, 180);
 			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+		case bossSkeleton::ST_ATTACK_SWORD:
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
 			{
-				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
-				if (getDistance(_x - 166, _y + 30, cx, cy) < 180 + pDist)
-				{
-					PLAYERDATA->minusInDungeonHp(_emAtkWave);
-					_isWaveHit = true;
-				}
+				_swordAtkBox.isHit = true;
+				PLAYERDATA->minusInDungeonHp(_emAtkSword);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
 			}
+			if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
 			break;
-		case EM_RIGHT:
-			_waveRC = RectMakeCenter(_x + 166, _y + 30, 180, 180);
-			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+		case bossSkeleton::ST_ATTACK_HAMMER:
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false)
 			{
-				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
-				if (getDistance(_x + 166, _y + 30, cx, cy) < 180 + pDist)
-				{
-					PLAYERDATA->minusInDungeonHp(_emAtkWave);
-					_isWaveHit = true;
-				}
+				_hammerAtkBox.isHit = true;
+				PLAYERDATA->minusInDungeonHp(_emAtkHammer);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
 			}
+			if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
 			break;
-		case EM_TOP:
-			_waveRC = RectMakeCenter(_x - 8, _y - 149, 180, 180);
-			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+		case bossSkeleton::ST_SKILL_SWORD:
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
 			{
-				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
-				if (getDistance(_x - 8, _y - 149, cx, cy) < 180 + pDist)
-				{
-					PLAYERDATA->minusInDungeonHp(_emAtkWave);
-					_isWaveHit = true;
-				}
+				_swordAtkBox.isHit = true;
+				PLAYERDATA->minusInDungeonHp(_emAtkSword);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
 			}
+			if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
 			break;
-		case EM_BOTTOM:
-			_waveRC = RectMakeCenter(_x + 13, _y + 140, 180, 180);
-			if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+		case bossSkeleton::ST_SKILL_HAMMER:
+			if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false && _attackHammer->getCurIndex() < 9)
 			{
-				pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
-				if (getDistance(_x + 13, _y + 140, cx, cy) < 180 + pDist)
+				_hammerAtkBox.isHit = true;
+				PLAYERDATA->minusInDungeonHp(_emAtkHammer);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
+			}
+			if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
+			break;
+		case bossSkeleton::ST_WAVE:
+			RECT _waveRC;
+			float pDist;
+			float cx = (PLAYER->getRect().left + PLAYER->getRect().right) / 2;
+			float cy = (PLAYER->getRect().top + PLAYER->getRect().bottom) / 2;
+			switch (_emDirection)
+			{
+			case EM_LEFT:
+				_waveRC = RectMakeCenter(_x - 166, _y + 30, 180, 180);
+				if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
 				{
-					PLAYERDATA->minusInDungeonHp(_emAtkWave);
-					_isWaveHit = true;
+					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+					if (getDistance(_x - 166, _y + 30, cx, cy) < 180 + pDist)
+					{
+						PLAYERDATA->minusInDungeonHp(_emAtkWave);
+						PLAYER->setPlayerState(HIT_IDLE);
+						PLAYER->setHit(true);
+						_isWaveHit = true;
+					}
 				}
+				break;
+			case EM_RIGHT:
+				_waveRC = RectMakeCenter(_x + 166, _y + 30, 180, 180);
+				if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+				{
+					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+					if (getDistance(_x + 166, _y + 30, cx, cy) < 180 + pDist)
+					{
+						PLAYERDATA->minusInDungeonHp(_emAtkWave);
+						PLAYER->setPlayerState(HIT_IDLE);
+						PLAYER->setHit(true);
+						_isWaveHit = true;
+					}
+				}
+				break;
+			case EM_TOP:
+				_waveRC = RectMakeCenter(_x - 8, _y - 149, 180, 180);
+				if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+				{
+					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+					if (getDistance(_x - 8, _y - 149, cx, cy) < 180 + pDist)
+					{
+						PLAYERDATA->minusInDungeonHp(_emAtkWave);
+						PLAYER->setPlayerState(HIT_IDLE);
+						PLAYER->setHit(true);
+						_isWaveHit = true;
+					}
+				}
+				break;
+			case EM_BOTTOM:
+				_waveRC = RectMakeCenter(_x + 13, _y + 140, 180, 180);
+				if (IntersectRect(&temp, &PLAYER->getRect(), &_waveRC) && _isWaveHit == false && _hammerWave1->getAniState() == ANIMATION_PLAY)
+				{
+					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
+					if (getDistance(_x + 13, _y + 140, cx, cy) < 180 + pDist)
+					{
+						PLAYERDATA->minusInDungeonHp(_emAtkWave);
+						PLAYER->setPlayerState(HIT_IDLE);
+						PLAYER->setHit(true);
+						_isWaveHit = true;
+					}
+				}
+				break;
+			}
+			if (_hammerWave1->getAniState() == ANIMATION_END)
+			{
+				_isWaveHit = false;
 			}
 			break;
 		}
-		if (_hammerWave1->getAniState() == ANIMATION_END)
-		{
-			_isWaveHit = false;
-		}
-	break;
 	}
 
 	if (PLAYERDATA->getInDungeonHp() <= 0)
