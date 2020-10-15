@@ -44,6 +44,7 @@ HRESULT shopScene::init()
 	CAMERAMANAGER->FadeStart();
 
 	ItemPosSet();
+	_disMenuOn = false;
 
 	_visit = false;
 	return S_OK;
@@ -81,6 +82,7 @@ void shopScene::update()
 	PortaltoTown();
 	npcAI();
 	PlayerSell();
+	itemInfoUpdate();
 }
 
 void shopScene::render()
@@ -105,15 +107,16 @@ void shopScene::render()
 	char str[256];
 	for (int i = 0; i < ITEMDESKCOUNT; i++)
 	{
-		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY) continue;
+		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY) {
 
-		CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
-			680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
-			, v_itemPos[i].first, v_itemPos[i].second);
+			CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
+				680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
+				, v_itemPos[i].first, v_itemPos[i].second);
 
-		CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("아이템그림자")
-			, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
-			, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
+			CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("아이템그림자")
+				, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
+				, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
+		}
 
 		if (_npc->getVector()[i]->getActive())
 			_npc->getVector()[i]->render(NPC_SHOP);
@@ -136,7 +139,7 @@ void shopScene::render()
 	PLAYER->render(getMemDC());
 	ITEMMENU->render(getMemDC());
 	_displayStand->render();
-	CAMERAMANAGER->Rectangle(getMemDC(), _desk);
+	//CAMERAMANAGER->Rectangle(getMemDC(), _desk);
 	//IMAGEMANAGER->findImage("상점맵")->render(getMemDC(), 304, 132);
 
 	//CAMERAMANAGER->Rectangle(getMemDC(), GoTownPortal);
@@ -212,12 +215,39 @@ void shopScene::PlayerSell()
 	//IMAGEMANAGER->findImage("상점책상")
 }
 
+void shopScene::itemInfoUpdate()
+{
+	if (!_disMenuOn && PLAYER->getDisplayOn())
+	{
+		cout << "디스플레이 킴" << endl;
+		_disMenuOn = true;
+	}
+	else if (_disMenuOn && !PLAYER->getDisplayOn()){
+		
+			cout << "디스플레이 종료" << endl;
+		  _disMenuOn = false;
+
+		  for (int i = 0; i < _npc->getVector().size(); i++)
+		  {
+			  if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY && _displayStand->getDisplayItem()[i].getPrice() != 0) {
+				  if (_npc->getVector()[i]->getActive()) continue;
+				  _npc->getInit(i);
+				  _npc->getVector()[i]->setActive(true);
+				  _npc->getVector()[i]->setState(NPC_GO_HOME);
+			  }
+		  }
+		
+	}
+}
+
 void shopScene::npcAI()
 {
 
 	for (int i = 0; i < _npc->getVector().size(); i++)
 	{
-		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY || PLAYER->getDisplayOn()) continue;
-		_npc->getVector()[i]->update(NPC_SHOP);
+		if (_disMenuOn) continue;
+		if (_npc->getVector()[i]->getActive()) {
+			_npc->getVector()[i]->update(NPC_SHOP);
+		}
 	}
 }

@@ -12,10 +12,13 @@ HRESULT ShopNpcManager::init(displayStand* dis)
 	_npcTime = 0;
 	_displayStand = dis;
 
+	random_shuffle(_npcName.begin(), _npcName.end());
+
 	for (int i = 0; i < MAX_NPC; i++)
 	{
 		v_npcs[i] = new npc;
-		v_npcs[i]->init(_pos, _npcName[i], NPC_SHOP, i, _displayStand);
+		v_npcs[i]->init(_pos, _npcName[i].first, NPC_SHOP, i, _displayStand);
+		_npcName[i].second = false;
 	}
 	return S_OK;
 }
@@ -43,5 +46,10 @@ void ShopNpcManager::update()
 void ShopNpcManager::render()
 {
 
+}
+
+void ShopNpcManager::getInit(int idx)
+{
+	v_npcs[idx]->init(_pos, _npcName[idx].first, NPC_SHOP, idx, _displayStand);
 }
 

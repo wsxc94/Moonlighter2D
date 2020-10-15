@@ -14,7 +14,7 @@ private:
 
 	int _npcTime;
 	bool _visit; //플레이어 방문여부
-
+	bool _disMenuOn;
 	vector <pair<int, int>> v_itemPos; //아이템위치
 	vector <pair<int, int>> v_itemShadowPos;//아이템그림자위치
 
@@ -30,6 +30,8 @@ public:
 	void PortaltoTown(); // 마을행 포탈
 	void PlayerCol(); // 플레이어 픽셀충돌 함수 
 	void PlayerSell(); // 아이템 파는 함수
+
+	void itemInfoUpdate();
 
 	void npcAI(); // npc update 여기다 넣음
 };

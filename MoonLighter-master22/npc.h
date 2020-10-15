@@ -25,10 +25,13 @@ private:
 	animation* _aniNpc; // npc 애니메이션 변수
 	animation* _aniPriceCheck; // 이모티콘 애니메이션 변수
 	image* _peekItemImg; // 현재 잡고 있는 아이템 이미지
+	string thinkInfo; // 엄청싸다 싸다 비싸다 엄청비싸다
 private:
 	int _count;
 	int _idx;
 	int _time;
+
+	int _spawnTime;
 	float _speed;
 	float _angle;
 
@@ -93,6 +96,8 @@ public:
 	void boxAnim(); // 대화박스 애니메이션
 	void move(); // 마을 npc 움직임
 	void move(NPC_MAP NPC_SHOP); // 상점에서의 npc 움직임
+
+	void DistanceCheck();
 	void action(string talk); //NPC 멘트 및 말풍선 업데이트
 	void action(); //강아지 전용
 	void collision(); // NPC 충돌렉트 설정
@@ -114,6 +119,7 @@ public:
 	void priceCheck(); // 상점 아이템 가격에 따른 세팅
 	void PriceCheckAnim(); // 이모티콘 애니메이션
 	void ItemGet(); // 아이템 정보 가져오기
+	void ItemActive();
 
 	NPC_ACTION& getState() { return _state; } // npc 현재 스테이트 반환
 	void setState(NPC_ACTION st) { _state = st; } // npc 상태 업데이트

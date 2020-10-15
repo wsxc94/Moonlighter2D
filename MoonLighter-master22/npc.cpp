@@ -94,7 +94,7 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 	_count = 0;
 	_time = 0;
 	_angle = 0;
-
+	_spawnTime = RANDOM->range(200, 500);
 	_Istalk = false;
 	_boxidx = 0;
 	_boxCnt = 0;
@@ -119,8 +119,10 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 	_aniNpc = new animation;
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
 
-	_aniPriceCheck = new animation;
-	_aniPriceCheck->init(IMAGEMANAGER->findImage("가격좋음"), 0, 12);
+	thinkInfo.clear();
+
+	//_aniPriceCheck = new animation;
+	//_aniPriceCheck->init(IMAGEMANAGER->findImage("가격좋음"), 0, 12);
 
 	return S_OK;
 }
@@ -131,6 +133,7 @@ void npc::release()
 
 void npc::update()
 {
+	
 	anim();
 
 	RECT tmp;
@@ -167,7 +170,7 @@ void npc::update(NPC_MAP NPC_SHOP)
 	if (!_isSpawn)
 	{
 		_time++;
-		if (_time % 240 == 0) {
+		if (_time % _spawnTime == 0) {
 			npcSpawn();
 			_isSpawn = true;
 			_isActive = true;
@@ -236,13 +239,12 @@ void npc::render(NPC_MAP NPC_SHOP)
 		_aniNpc->aniStop();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 
-		if (_state == NPC_CHECK_PRICE)
+		if (_state == NPC_CHECK_PRICE || NPC_WAIT)
 		{
-			_aniPriceCheck->aniPlay();
 			_aniPriceCheck->ZoderRender(
 				_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2,
-				_pos.x + IMAGEMANAGER->findImage(_key)->getFrameWidth() / 4,
-				_pos.y - IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2);
+				_pos.x + IMAGEMANAGER->findImage(_key)->getFrameWidth() / 2,
+				_pos.y - IMAGEMANAGER->findImage(_key)->getFrameHeight()/2);
 		}
 	}
 	else if (_state == NPC_MOVE || _state == NPC_ITEM_PICK) {
@@ -338,8 +340,21 @@ void npc::move(NPC_MAP NPC_SHOP)
 		_pos.x += cosf(_angle) * _speed;
 		_pos.y += -sinf(_angle) * _speed / 2;
 	}
-	if (_state == NPC_CHECK_PRICE) {
+	if (_state == NPC_CHECK_PRICE || _state == NPC_WAIT) {
 		PriceCheckAnim();
+	}
+
+	DistanceCheck();
+
+}
+
+void npc::DistanceCheck()
+{
+	if (shop_target[shop_targetIdx][shop_currentTargetIdx].y == 680)
+	{
+		if (thinkInfo != "싸다" && thinkInfo != "엄청싸다") {
+			shop_currentTargetIdx++;
+		}
 	}
 
 	if (getDistance(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
@@ -363,13 +378,21 @@ void npc::move(NPC_MAP NPC_SHOP)
 			}
 			else if (shop_target[shop_targetIdx][shop_currentTargetIdx].y == 680)
 			{
-				_state = NPC_WAIT;
+				if (thinkInfo == "싸다" || thinkInfo == "엄청싸다") {
+					_state = NPC_WAIT;
+					_aniPriceCheck = new animation;
+					_aniPriceCheck->init(IMAGEMANAGER->findImage("기다리는중"), 0, 10, true, false);
+				}
+				else {
+					shop_currentTargetIdx++;
+				}
 
 			}
-			else if (shop_target[shop_targetIdx].size()-1 == shop_currentTargetIdx)
+			else if (shop_target[shop_targetIdx].size() - 1 == shop_currentTargetIdx)
 			{
-				cout << "집으로꺼저" << endl;
+
 				_state = NPC_GO_HOME;
+				_isActive = false;
 				//SOUNDMANAGER->play();
 			}
 
@@ -385,9 +408,6 @@ void npc::move(NPC_MAP NPC_SHOP)
 	else {
 		_delay = false;
 	}
-
-
-
 }
 
 void npc::action(string talk)
@@ -511,28 +531,43 @@ void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 {
 
 	for (int i = 0; i < 4; i++) {
+		std::cout << _displayStand->getDisplayItem()[shop_targetIdx].getPrice() << " " << _displayStand->getDisplayItem()[shop_targetIdx].getPriceRange()[i] << endl;
+
 		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() < _displayStand->getDisplayItem()[shop_targetIdx].getPriceRange()[i])
 		{
 			switch (i) // 이거의 값에 따라 애니메이션 프레임 y 값을 정해줘야함., 사운드가 달라지게 해야함.
 			{
 			case 0: //많이 싸다
-
+				_aniPriceCheck = new animation;
+				_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청싸다"), 0, 15);
+				thinkInfo = "엄청싸다";
 				break;
 			case 1: //싸다
-
+				_aniPriceCheck = new animation;
+				_aniPriceCheck->init(IMAGEMANAGER->findImage("싸다"), 0, 15);
+				thinkInfo = "싸다";
 				break;
 			case 2: // 비싸다
-
+				_aniPriceCheck = new animation;
+				_aniPriceCheck->init(IMAGEMANAGER->findImage("비싸다"), 0, 15);
+				thinkInfo = "비싸다";
 				break;
-			case 3: // 존나비싸다
-
-				break;
-			default:
+			case 3: default: // 존나비싸다
+				_aniPriceCheck = new animation;
+				_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청비싸다"), 0, 15);
+				thinkInfo = "엄청비싸다";
 				break;
 			}
 			break;
 		}
 	}
+
+	if (thinkInfo == "") {
+		_aniPriceCheck = new animation;
+		_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청비싸다"), 0, 15);
+		thinkInfo = "엄청비싸다";
+	}
+
 	_state = NPC_CHECK_PRICE;
 }
 
@@ -540,13 +575,22 @@ void npc::PriceCheckAnim()
 {
 	_aniPriceCheck->update();
 
-	if (_aniPriceCheck->getAniState() == ANIMATION_END) {
-		SOUNDMANAGER->play("싸다");
-		ItemGet();
-		_stop = false;
-		_speed = 1.0f;
-		shop_currentTargetIdx++;
-		//_state = NPC_MOVE;
+	if (_state == NPC_CHECK_PRICE) {
+		if (_aniPriceCheck->getAniState() == ANIMATION_END) {
+			SOUNDMANAGER->play(thinkInfo);
+
+			if (thinkInfo == "싸다" || thinkInfo == "엄청싸다") {
+				ItemGet();
+			}
+			else {
+				_state = NPC_MOVE;
+			}
+
+			_stop = false;
+			_speed = 1.0f;
+			shop_currentTargetIdx++;
+			//_state = NPC_MOVE;
+		}
 	}
 }
 
@@ -558,5 +602,13 @@ void npc::ItemGet()
 
 	// 여기서 좌판 아이템 정보 삭제 해야함.
 	_displayStand->deleteDisplayItem(shop_targetIdx);
+}
+
+void npc::ItemActive()
+{
+	if (_displayStand->getDisplayItem()[shop_targetIdx].getType() != ITEM_EMPTY && !_isActive)
+	{
+		_isActive = true;
+	}
 }
 
