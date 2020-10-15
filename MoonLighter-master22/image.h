@@ -94,9 +94,9 @@ public:
 	void alphaRender(HDC hdc, int destX, int destY, int sourX, int sourY, int sourWidth, int sourHeight, BYTE alpha);
 	//스트레치 렌더
 	void stretchRender(HDC hdc, int centerX, int centerY, float size);
-	void stretchRender(HDC hdc, int centerX, int centerY, float scaleX , float scaleY );
+	void stretchRender(HDC hdc, int centerX, int centerY, int scaleX , int scaleY );
 	void stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFrameX, int currentFrameY, float size);
-	void stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFrameX, int currentFrameY, float scaleX , float scaleY );
+	void stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFrameX, int currentFrameY, int scaleX , int scaleY );
 	//프레임렌더
 	void frameRender(HDC hdc, int destX, int destY);
 	void frameRender(HDC hdc, int destX, int destY, int currentFrameX, int currentFrameY);

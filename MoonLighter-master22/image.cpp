@@ -556,14 +556,14 @@ void image::stretchRender(HDC hdc, int centerX, int centerY, float size)
 	}
 }
 
-void image::stretchRender(HDC hdc, int centerX, int centerY, float scaleX, float scaleY)
+void image::stretchRender(HDC hdc, int centerX, int centerY, int scaleX, int scaleY)
 {
 	//스트레치이미지 처음 사용하냐?
 		//이미지 스케일링을 사용할 수 있도록 초기화 해라
 	if (!_stretchImage) this->initForStretch();
 
-	_stretchImage->width = _imageInfo->width * scaleX;
-	_stretchImage->height = _imageInfo->height * scaleY;
+	_stretchImage->width = scaleX;
+	_stretchImage->height = scaleY;
 
 	if (_isTrans) //배경색 없앨꺼냐?
 	{
@@ -641,16 +641,16 @@ void image::stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFra
 	}
 }
 
-void image::stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFrameX, int currentFrameY, float scaleX, float scaleY)
+void image::stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFrameX, int currentFrameY, int scaleX, int scaleY)
 {
 	//스트레치이미지 처음 사용하냐?
 	//이미지 스케일링을 사용할 수 있도록 초기화 해라
 	if (!_stretchImage) this->initForStretch();
 
-	_stretchImage->width = _imageInfo->width * scaleX;
-	_stretchImage->height = _imageInfo->height * scaleY;
-	_stretchImage->frameWidth = _stretchImage->width / (_imageInfo->maxFrameX + 1);
-	_stretchImage->frameHeight = _stretchImage->height / (_imageInfo->maxFrameY + 1);
+	_stretchImage->frameWidth = scaleX;
+	_stretchImage->frameHeight = scaleY;
+	_stretchImage->width = scaleX * _imageInfo->maxFrameX;
+	_stretchImage->height = scaleY * _imageInfo->maxFrameY;
 
 	if (_isTrans) //배경색 없앨꺼냐?
 	{

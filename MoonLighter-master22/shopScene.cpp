@@ -130,7 +130,7 @@ void shopScene::render()
 
 			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc富浅急个"), 780,
 				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2,
-				v_itemPos[i].second, tmp, 1);
+				v_itemPos[i].second, 400, 40);
 
 			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急哭率"), 781,
 				(v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2)
