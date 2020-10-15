@@ -64,11 +64,7 @@ HRESULT gasMan::init(int x, int y)
 
 void gasMan::release()
 {
-	SAFE_DELETE(_move);
-	SAFE_DELETE(_moveHit);
-	SAFE_DELETE(_attack);
-	SAFE_DELETE(_attackHit);
-	SAFE_DELETE(_die);
+
 }
 
 void gasMan::update()

@@ -44,7 +44,8 @@ HRESULT itemMenu::init()
 	_closeTagMenu = false;
 	_movingLeft = false;
 	_movingRight = false;
-	_goToTown = false; 
+	_goToTown_Pentant = false; 
+	_goToTown_Emblem = false;
 
 	return S_OK;
 }

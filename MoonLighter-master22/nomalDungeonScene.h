@@ -15,6 +15,11 @@ enum RESULTKIND
 	RESULT_PLAYERDIE,RESULT_RETURN
 };
 
+enum RETURNKIND
+{
+	RETURN_PENDANT, RETURN_EMBLEM
+};
+
 typedef struct
 {
 	int slotIdx;
@@ -22,17 +27,25 @@ typedef struct
 
 }dungeonSlot;
 
+struct tagPotal
+{
+	RECT rc;
+	animation* ani;
+};
+
 class nomalDungeonScene : public gameNode
 {
 private:
 	typedef vector<gameItem*> vGameItem;
 private:
 	vGameItem _vItem;
-	dungeonSlot _dungeonSlot[28];
-	RESULTKIND _resultKind;
+	dungeonSlot _dungeonSlot[28];	
+	RESULTKIND _resultKind;					//결과창 뜨는 원인 죽었냐?  돌아가냐??
+	RETURNKIND _returnKind;					//돌아가는방식 팬던트냐? 엠블렘이냐?
 	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
 	RESULTENEMY* _killEnemy;				//플레이어죽인에너미
-	animation* _potal;						//돌아갔을때 포탈
+	tagPotal _potal;						//엠블렘 선택시 생성될 포탈
+	animation* _resultAnimation;			//가운데 동그라미 애니메이션
 private:
 	DUNGEONSCENESTATE _dState;
 

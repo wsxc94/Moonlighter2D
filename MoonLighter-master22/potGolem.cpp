@@ -73,10 +73,7 @@ HRESULT potGolem::init(int x, int y)
 
 void potGolem::release()
 {
-	SAFE_DELETE(_attack);
-	SAFE_DELETE(_attackHit);
-	SAFE_DELETE(_die);
-	SAFE_DELETE_ARRAY(_bullet);
+	
 }
 
 void potGolem::update()

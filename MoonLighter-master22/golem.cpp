@@ -65,11 +65,7 @@ HRESULT golem::init(int x, int y)
 
 void golem::release()
 {
-	SAFE_DELETE(_move);
-	SAFE_DELETE(_attack);
-	SAFE_DELETE(_moveHit);
-	SAFE_DELETE(_attackHit);
-	SAFE_DELETE(_die);
+	
 }
 
 void golem::update()

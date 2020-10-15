@@ -110,6 +110,7 @@ void inventory::render(HDC hdc)
 				break;
 
 			case INVEN_MERCHANT_EMBLEM:
+				pendantCtrlRender(hdc);
 				break;
 		}//end of switch 
 	}
@@ -482,6 +483,7 @@ void inventory::keyInput()
 			break;
 
 		case INVEN_MERCHANT_EMBLEM:
+			emblemKeyInput();
 			break;
 	}
 
@@ -535,8 +537,8 @@ void inventory::setMerchantCtrl()
 			break;
 
 		case 30:
-			//if (PLAYERDATA->getIsInDungeon() && PLAYERDATA->getGold() >= 1000)
-			//	setInvenCtrl(INVEN_MERCHANT_EMBLEM);
+			if (PLAYERDATA->getIsInDungeon() && PLAYERDATA->getGold() >= 1000)
+				setInvenCtrl(INVEN_MERCHANT_EMBLEM);
 			break;
 	}
 }
@@ -641,9 +643,60 @@ void inventory::pendantKeyInput()
 
 			_canGrab = false; 
 			PLAYER->setPlayerState(PLAYER_USEPENDANT);
-			ITEMMENU->setGoToTown(true);
+			ITEMMENU->setGoToTownPendant(true);
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
+			_selectMenu->setMenuState(SELECT_NO);
+		}
+	}
+
+	//뒤로가기 
+	if (INPUT->GetKeyDown('L'))
+	{
+		setInvenCtrl(INVEN_INVENTORY);
+		_selectMenu->setMenuState(SELECT_NO);
+	}
+}
+
+void inventory::emblemKeyInput()
+{
+	//좌우 키 입력 시 selectIdx값 변경하기(네,아니오)
+	if (INPUT->GetKeyDown('A') || INPUT->GetKeyDown('D'))
+	{
+		if (_selectMenu->getSelectIdx() == SELECT_NO)
+		{
+			_selectMenu->setSelectIdx(SELECT_YES);
+			_selectMenu->setMenuState(SELECT_YES);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		}
+		else
+		{
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_selectMenu->setMenuState(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		}
+	}
+
+	//네,아니오 중 선택하기 
+	if (INPUT->GetKeyDown('J'))
+	{
+		//아니오 선택 시 인벤토리 컨트롤러로 변경 
+		if (_selectMenu->getSelectIdx() == SELECT_NO) setInvenCtrl(INVEN_INVENTORY);
+		else
+		{
+			//네 선택 시 마을로 돌아가기 
+			//1. gototown변수 true로 설정 
+			//2. 아이템메뉴 종료하기(메뉴 닫기)
+			//3. 사용비 골드에서 차감하기(200원)
+			//4. 인벤토리 컨트롤러 초기화 
+			//5. 선택메뉴의 상태 초기화(NO)
+			//6. 플레이어 상태를 팬던트사용으로 변경해줌
+
+			_canGrab = false;
+			PLAYER->setPlayerState(PLAYER_USEPENDANT);
+			ITEMMENU->SetGoToTownEmblem(true);
+			ITEMMENU->DoCloseMenu();
+			PLAYERDATA->subGold(1000);
 			_selectMenu->setMenuState(SELECT_NO);
 		}
 	}
@@ -1301,6 +1354,42 @@ void inventory::selectCursorRender(HDC hdc)
 }
 
 void inventory::pendantCtrlRender(HDC hdc)
+{
+	IMAGEMANAGER->frameRender("cursor_move", hdc, 356, 484, 3, 0);
+	IMAGEMANAGER->render("inventory_selectBubble", hdc, 404, 332);
+
+	//selectIdx에 따라 알맞은 이미지 출력하기 
+	if (_selectMenu->getSelectIdx() == SELECT_YES)
+	{
+		_selectMenu->getImg()->frameRender(hdc, 426, 356, _selectMenu->getIdx(), 0);
+		_cursor->getImg()->frameRender(hdc, 414, 344, _cursor->getIdx(), 0);
+
+		RECT txtRC = RectMake(444, 438, 42, 26);
+		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		HFONT oFont = (HFONT)SelectObject(hdc, font);
+		SetTextColor(hdc, RGB(227, 212, 184));
+		DrawText(hdc, "네", -1, &txtRC, DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		SelectObject(hdc, oFont);
+		DeleteObject(font);
+	}
+	else
+	{
+		_selectMenu->getImg()->frameRender(hdc, 524, 356, _selectMenu->getIdx(), 0);
+		_cursor->getImg()->frameRender(hdc, 512, 344, _cursor->getIdx(), 0);
+
+		RECT txtRC = RectMake(534, 438, 58, 26);
+		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		HFONT oFont = (HFONT)SelectObject(hdc, font);
+		SetTextColor(hdc, RGB(227, 212, 184));
+		DrawText(hdc, "아니요", -1, &txtRC, DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		SelectObject(hdc, oFont);
+		DeleteObject(font);
+	}
+}
+
+void inventory::emblemCtrlRender(HDC hdc)
 {
 	IMAGEMANAGER->frameRender("cursor_move", hdc, 356, 484, 3, 0);
 	IMAGEMANAGER->render("inventory_selectBubble", hdc, 404, 332);

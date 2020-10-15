@@ -102,6 +102,7 @@ HRESULT bossSkeleton::init(int x, int y)
 
 void bossSkeleton::release()
 {
+	
 }
 
 void bossSkeleton::update()

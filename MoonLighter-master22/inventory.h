@@ -120,6 +120,7 @@ public:
 	void invenKeyInput();					//인벤토리 컨트롤러 상태의 키 입력 
 	void mirrorKeyInput();					//상인의 거울 컨트롤러 상태의 키 입력 
 	void pendantKeyInput();					//상인의 펜던트 컨트롤러 상태의 키 입력 
+	void emblemKeyInput();					//상인의 엠블렘 컨트롤러 상태의 키 임력
 	void leftKeyDown();						//왼쪽 키 입력 시 커서의 위치값 변경 
 	void rightKeyDown();					//오른쪽 키 입력 시 커서의 위치값 변경 
 	void upKeyDown();						//위쪽 키 입력 시 커서의 위치값 변경 
@@ -143,6 +144,7 @@ public:
 	void invenCursorRender(HDC hdc);			//인벤토리 메뉴의 커서 출력 
 	void selectCursorRender(HDC hdc);			//선택 메뉴(네,아니오)의 커서 출력 
 	void pendantCtrlRender(HDC hdc);			//펜던트 컨트롤러 상태에 필요한 이미지 출력 
+	void emblemCtrlRender(HDC hdc);				//엠블렘 컨트롤러 상태에 필요한 이미지 출력
 	void statusRender(HDC hdc);					//플레이어 스테이터스 출력 함수 
 	void weaponIconRender(HDC hdc);				//무기 장착 관련 아이콘 출력 함수 
 	void itemRender(HDC hdc);					//아이템 이미지 출력 함수 

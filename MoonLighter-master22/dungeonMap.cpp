@@ -38,6 +38,7 @@ void DungeonMap::release()
 
 }
 
+
 void DungeonMap::update()
 {
 	this->dgDoorUpdate();

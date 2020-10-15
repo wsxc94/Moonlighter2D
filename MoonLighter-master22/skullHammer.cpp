@@ -64,10 +64,7 @@ HRESULT skullHammer::init(int x, int y)
 
 void skullHammer::release()
 {
-	SAFE_DELETE(_move);
-	SAFE_DELETE(_attack);
-	SAFE_DELETE(_moveHit);
-	SAFE_DELETE(_attackHit);
+	
 }
 
 void skullHammer::update()

@@ -28,8 +28,6 @@ void playerData::render(HDC hdc)
 	hpRender(hdc);
 
 
-	cout << _hp << "   " << _inDungeonHp << "   " << _defaultHp << endl;
-
 	//우측 UI 출력 
 	equipInfoRender(hdc);
 }
@@ -47,7 +45,7 @@ void playerData::initPlayerStatus()
 	_spd = _defaultSpd;
 
 	_hpBarLength = 130;
-	_gold = 800;
+	_gold = 10000;
 	_itemCount = 0;
 
 	_isInDungeon = false;

@@ -42,14 +42,19 @@ HRESULT nomalDungeonScene::init()
 	PLAYERDATA->setIsInDungeon(true);
 
 	//포탈애니메이션 초기화
-	_potal = new animation;
-	_potal->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5, true);
+	_potal.ani = new animation;
+	_potal.ani->init(IMAGEMANAGER->findImage("potalInit"), 0, 5);
+
+	_resultAnimation = new animation;
+	_resultAnimation->init(nullptr, 0, 5);
+	_resultAnimation->aniStop();
 	
 	return S_OK;
 }
 
 void nomalDungeonScene::release()
 {
+	
 }
 
 void nomalDungeonScene::update()
@@ -62,32 +67,39 @@ void nomalDungeonScene::update()
 	{
 	case DS_UPDATE:
 		PLAYERDATA->setIsActivate(true);
-
 		//죽으면 결과창띄워라
 		if (PLAYER->getPlayerState() == PLAYER_DIE)
 		{
+			_resultAnimation->changeImg(IMAGEMANAGER->findImage("죽음"));
 			_dState = DS_RESULT;
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_PLAYERDIE;
+			_returnKind = RETURN_PENDANT;
 		}
-		//플레이어 팬던트 이동애니메이션 끝나면 결과창띄워라
-		else if (PLAYER->getPlayerState() == PLAYER_USEPENDANT)
+		// 팬던트 사용했냐?? 사용했으면 에니메이션 띄우고 결과창 띄워라
+		else if (ITEMMENU->getGoToTownPendant())
 		{
-			if (PLAYER->getAniPlayerUsePandant()->getAniState() == ANIMATION_END)
-			{
-				_dState = DS_RESULT;
-				_vEnemy = PLAYERDATA->getVEnemy();
-				_killEnemy = PLAYERDATA->getKillEnemy();
-				_resultKind = RESULT_RETURN;
-			}
+			_dState = DS_RESULT;
+			_vEnemy = PLAYERDATA->getVEnemy();
+			_killEnemy = PLAYERDATA->getKillEnemy();
+			_resultKind = RESULT_RETURN;
+			_returnKind = RETURN_PENDANT;
+		}
+		//엠블렘 사용했냐?? 사용했으면 에니메이션 띄우고 결과창띄워라
+		else if (ITEMMENU->getGoToTownEmblem())
+		{
+			_dState = DS_RESULT;
+			_vEnemy = PLAYERDATA->getVEnemy();
+			_killEnemy = PLAYERDATA->getKillEnemy();
+			_resultKind = RESULT_RETURN;
+			_returnKind = RETURN_EMBLEM;
 		}
 		this->dungeonUpdate();
 		PLAYER->update();
 		ITEMMENU->update();
 		break;
 	case DS_RESULT:
-		_potal->update();
 		//ui창 끄기
 		PLAYERDATA->setIsActivate(false);
 		for (int i = 0; i < _vEnemy.size(); i++)
@@ -96,7 +108,17 @@ void nomalDungeonScene::update()
 		}
 		if (_killEnemy)
 			_killEnemy->attack->update();
+		if (INPUT->GetKeyDown('J'))
+		{
+			SCENEMANAGER->loadScene("타운로딩");
+			SOUNDMANAGER->stop("dungeonBGM");
+			SOUNDMANAGER->stop("spaRoomBGM");
+			SOUNDMANAGER->stop("bossRoomBGM");
+			PLAYERDATA->vEnemyClear();
+			PLAYERDATA->initDungeonHp();
+			this->release();
 
+		}
 
 		break;
 	default:
@@ -132,15 +154,7 @@ void nomalDungeonScene::render()
 		this->resultRender();
 		this->itemResultRender();
 
-		if (INPUT->GetKeyDown('J'))
-		{
-			SCENEMANAGER->loadScene("타운로딩");
-			SOUNDMANAGER->stop("dungeonBGM");
-			SOUNDMANAGER->stop("spaRoomBGM");
-			SOUNDMANAGER->stop("bossRoomBGM");
-			PLAYERDATA->vEnemyClear();
-			PLAYERDATA->initDungeonHp();
-		}
+		
 		break;
 	
 	}
@@ -457,10 +471,22 @@ void nomalDungeonScene::resultRender()
 		break;
 	case RESULT_RETURN:
 	{
-		_potal->stretchRender(getMemDC(),640,170,2.f);
-		int cx = 762 - IMAGEMANAGER->findImage("bag_pendant")->getWidth() / 2;
-		int cy = 240 - IMAGEMANAGER->findImage("bag_pendant")->getHeight() / 2;
-		IMAGEMANAGER->findImage("bag_pendant")->render(getMemDC(), cx, cy);
+		switch (_returnKind)
+		{
+		case RETURN_PENDANT:
+		{
+			_potal->stretchRender(getMemDC(), 640, 170, 2.f);
+			int cx = 762 - IMAGEMANAGER->findImage("bag_pendant")->getWidth() / 2;
+			int cy = 240 - IMAGEMANAGER->findImage("bag_pendant")->getHeight() / 2;
+			IMAGEMANAGER->findImage("bag_pendant")->render(getMemDC(), cx, cy);
+		}
+			break;
+		case RETURN_EMBLEM:
+			break;
+		default:
+			break;
+		}
+		
 	}
 		break;
 	default:

@@ -56,7 +56,8 @@ private:
 	bool _movingLeft;		//메뉴가 왼쪽으로 움직이는지 확인하는 변수 
 	bool _movingRight;		//메뉴가 오른쪽으로 움직이는지 확인하는 변수 
 
-	bool _goToTown;			//상인의 펜던트 사용여부 확인(마을로 돌아가기)
+	bool _goToTown_Pentant;			//상인의 펜던트 사용여부 확인(마을로 돌아가기)
+	bool _goToTown_Emblem;
 
 public:
 	HRESULT init();
@@ -68,7 +69,8 @@ public:
 	inventory *getInventory() { return _inventory; }				//인벤토리 클래스 가져오기 
 	int getMaxItemSlot() { return _inventory->getMaxItemSlot(); }	//소지 가능한 최대 아이템 개수 반환
 	bool getCanKeyInput() { return _canKeyInput; }					//아이템 메뉴 키 입력 받기변수 가져오기 
-	bool getGoToTown() { return _goToTown; }
+	bool getGoToTownPendant() { return _goToTown_Pentant; }
+	bool getGoToTownEmblem() { return _goToTown_Emblem; }
 	
 	//set함수 
 	void setCurItemCount();			//소지하고 있는 아이템 개수를 데이터에 업데이트 
@@ -76,7 +78,8 @@ public:
 	void setWeaponIdx();			//현재 장착 상태인 무기 인덱스를 데이터에 업데이트
 	void setWeaponEquipped();		//현재 장착 중인 무기 아이템을 데이터에 업데이트 
 	void setCanKeyInput(bool value) { _canKeyInput = value; }	//아이템 메뉴 키 입력받기 변수 설정
-	void setGoToTown(bool value) { _goToTown = value; }
+	void setGoToTownPendant(bool value) { _goToTown_Pentant = value; }
+	void SetGoToTownEmblem(bool value) { _goToTown_Emblem = value; }
 
 	void toggleMenu();						//메뉴창 껐다 켰다하기 
 	void DoCloseMenu();						//메뉴창을 닫기를 실행하는 함수(외부에서 접근해서 끄기 가능)

@@ -66,11 +66,8 @@ HRESULT redGolem::init(int x, int y)
 
 void redGolem::release()
 {
-	SAFE_DELETE(_move);
-	SAFE_DELETE(_attack);
-	SAFE_DELETE(_moveHit);
-	SAFE_DELETE(_attackHit);
-	SAFE_DELETE(_die);
+	
+
 }
 
 void redGolem::update()

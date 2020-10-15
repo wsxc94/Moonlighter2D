@@ -126,6 +126,8 @@ void dungeonLoading::loadImage()
 	_loading->loadFrameImage("potalUpdate", "Images/던전/potalUpdate7.bmp", 917, 108, 7, 1);
 	_loading->loadFrameImage("potalInit", "Images/던전/potalInit26.bmp", 3406, 108, 26, 1);
 	_loading->loadFrameImage("potalPlayer", "Images/던전/potalPlayer25.bmp", 3275, 108, 25, 1);
+	_loading->loadFrameImage("플레이어팬던트사용", "Images/플레이어/playerUsePendant31.bmp", 4464, 120, 31, 1);
+
 
 	_loading->loadFrameImage("화살이펙트", "Images/플레이어/bowEffect.bmp", 240, 40, 3, 1);
 	_loading->loadFrameImage("공격이펙트", "Images/플레이어/swordEffect 3X1.bmp", 240, 40, 3, 1);
