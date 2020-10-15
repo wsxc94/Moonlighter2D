@@ -664,7 +664,6 @@ void player::playerSkill()
 	{
 		_isSkill = true;
 	}
-	cout << _skillCount << endl;
 }
 
 void player::playerPush()

@@ -122,12 +122,26 @@ void shopScene::render()
 			
 			wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getPrice());
 
-			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc富浅急个"),780  , v_itemPos[i].first , v_itemPos[i].second , strlen(str)/2);
+			int tmp;
+			if (strlen(str) % 2 == 1)
+				tmp = strlen(str) / 2 + 1;
+			else
+				tmp = strlen(str);
+
+			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc富浅急个"), 780,
+				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2,
+				v_itemPos[i].second, tmp, 1);
+
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急哭率"), 781,
+				(v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2)
+				- (IMAGEMANAGER->findImage("npc富浅急个")->getWidth() * tmp) / 2 - IMAGEMANAGER->findImage("npc富浅急哭率")->getWidth(),
+				v_itemPos[i].second - 12);
+		  
+			CAMERAMANAGER->ZorderTextOut(str, 800, v_itemPos[i].first, v_itemPos[i].second - 10, strlen(str), RGB(0, 200, 0));
 
 			/*CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc富浅急个"),
 				780, v_itemPos[i].first, v_itemPos[i].second);*/
 			
-			CAMERAMANAGER->ZorderTextOut(str, 800, v_itemPos[i].first, v_itemPos[i].second, strlen(str), RGB(0, 200, 0));
 
 			
 		}
