@@ -435,11 +435,13 @@ void redGolem::dropItem()
 void redGolem::redGolemCollision()
 {
 	RECT temp;
+
 	if (!_emPlayerColi && PLAYER->getPlayerState() != PLAYER_ROLL)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_attackBox))
 		{
 			_emPlayerColi = true;
+			
 			if (PLAYER->getPlayerState() == PLAYER_SHILED)
 			{
 				PLAYER->playerPush();
@@ -452,6 +454,11 @@ void redGolem::redGolemCollision()
 			}
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_attack->getImage(), 0, 7, true);
+				em->frameY = 3;
+				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
 			}
@@ -459,10 +466,20 @@ void redGolem::redGolemCollision()
 	}
 	if (_emPlayerColi)
 	{
-		if (_attack->getCurIndex() == 12)
+		if (_attack->getCurIndex() == 0)
 		{
 			_emPlayerColi = false;
 		}
 	}
 
+}
+
+animation * redGolem::getAttackAnimation()
+{
+	return _attack;
+}
+
+int redGolem::getDownDirectionY()
+{
+	return 3;
 }

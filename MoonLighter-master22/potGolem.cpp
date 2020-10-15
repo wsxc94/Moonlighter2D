@@ -504,6 +504,11 @@ void potGolem::potGolemCollision()
 			}
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_attack->getImage(), 0, 7, true);
+				em->frameY = 0;
+				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
 			}
@@ -511,4 +516,14 @@ void potGolem::potGolemCollision()
 		}
 	}
 
+}
+
+animation * potGolem::getAttackAnimation()
+{
+	return _attack;
+}
+
+int potGolem::getDownDirectionY()
+{
+	return 0;
 }

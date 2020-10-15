@@ -26,7 +26,7 @@ HRESULT nomalDungeonScene::init()
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
-	SOUNDMANAGER->play("bossRoomBGM");
+	SOUNDMANAGER->play("dungeonBGM",0.4f);
 
 
 	//Ä«¸Þ¶ó ÃÊ±âÈ­
@@ -36,7 +36,33 @@ HRESULT nomalDungeonScene::init()
 
 	this->initItemSlot();
 	this->getInvenItem();
+	_resultKind = RESULT_PLAYERDIE;
 
+	// ¿¡³Ê¹Ì Å×½ºÆ®
+	RESULTENEMY em;
+	em.attack = new animation;
+	em.attack->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°Ý"), 0, 7, true);
+	em.frameY = 2;
+	PLAYERDATA->pushVEnemy(em);
+	em.attack = new animation;
+	em.attack->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°Ý"), 0, 7, true);
+	em.frameY = 2;
+	PLAYERDATA->pushVEnemy(em);
+	em.attack = new animation;
+	em.attack->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°Ý"), 0, 7, true);
+	em.frameY = 2;
+	PLAYERDATA->pushVEnemy(em);
+	for (int i = 0; i < 20; i++)
+	{
+		em.attack = new animation;
+		em.attack->init(IMAGEMANAGER->findImage("ÇØ°ñ°ø°Ý"), 0, 7, true);
+		em.frameY = 2;
+		PLAYERDATA->pushVEnemy(em);
+	}
+
+	_potal = new animation;
+	_potal->init(IMAGEMANAGER->findImage("potalPlayer"), 0, 5, true);
+	
 	return S_OK;
 }
 
@@ -46,94 +72,79 @@ void nomalDungeonScene::release()
 
 void nomalDungeonScene::update()
 {
+	if (INPUT->GetKeyDown(VK_LEFT)) _dState = DS_UPDATE;
+	if (INPUT->GetKeyDown(VK_RIGHT)) _dState = DS_RESULT;
+	_potal->update();//Æ÷Å»Å×½ºÆ®
 	
-	//this->soundUpdate();
+	this->soundUpdate();
 
-
-	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN 
-		&& _currentDungeon->getDungeonKind() != DG_SEMIBOSS)
+	switch (_dState)
 	{
-		//ÇÃ·¹ÀÌ¾î ÀÌµ¿
-		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
+	case DS_UPDATE:
+		PLAYERDATA->setIsActivate(true);
+
+		if (PLAYER->getPlayerState() == PLAYER_DIE)
 		{
-		case 1:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(1085 + 17);
-			PLAYER->setY(350 + 17);
-			break;
-		case 2:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(140 + 17);
-			PLAYER->setY(350 + 17);
-			break;
-		case 3:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(595 + 17);
-			PLAYER->setY(595 + 17);
-			break;
-		case 4:
-			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(595 + 17);
-			PLAYER->setY(105 + 17);
-			break;
+			_dState = DS_RESULT;
+			_vEnemy = PLAYERDATA->getVEnemy();
+			_killEnemy = PLAYERDATA->getKillEnemy();
 		}
-		//´øÀü ÀÌµ¿
-		
-		
+		this->dungeonUpdate();
+		PLAYER->update();
+		ITEMMENU->update();
+		break;
+	case DS_RESULT:
+		PLAYERDATA->setIsActivate(false);
+		for (int i = 0; i < _vEnemy.size(); i++)
+		{
+			_vEnemy[i].attack->update();
+		}
+		if (_killEnemy)
+			_killEnemy->attack->update();
+
+		if (INPUT->GetKeyDown('J'))
+		{
+			SCENEMANAGER->loadScene("Å¸¿î·Îµù");
+		}
+		break;
+	default:
+		break;
 	}
-	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
-	{
-		this->setNewFloor();
-	}
 
-
-	//°ñ·½½ºÅ©·Ñ ¾÷µ«
-	_golemScroll->update();
-	//¹Ì´Ï¸Ê ¾È°£ºÎºÐ Ãß°¡ÇØÁÜ (°ÇµéÇÊ¿ä¾øÀ½)
-	if (this->minimapPush(_currentDungeon->getDungeonXY()))
-	{
-		_vMinimap.push_back(make_pair(_currentDungeon->getDungeonXY(), _currentDungeon));
-	}
-
-
-	//´øÀü ¾÷µ«
-	_currentDungeon->update();
+	//¿¡³Ê¹Ì ¹Þ¾Æ¿À°í ¾÷µ¥ÀÌÆ®
+	
 	//Ä«¸Þ¶ó ¾÷µ«
 	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
-
-
-	PLAYER->update();
-	ITEMMENU->update();
 }
 
 void nomalDungeonScene::render()
 {
-
-	PLAYER->render(getMemDC());
 	_currentDungeon->render();
-
-	//°ñ·½ ½ºÅ©·Ñ ·»´õ
-	if (_golemScroll->getAniState() == ANIMATION_PLAY)
-	{
-		_golemScroll->ZorderStretchRender(2000, WINSIZEX / 2, WINSIZEY - 150, 2.f);
-		RECT txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 70, 300, 40);
-		HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
-			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-		CAMERAMANAGER->ZorderDrawText("°ñ·½   ´øÀü", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
-		txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 50, 300, 40);
-		CAMERAMANAGER->ZorderDrawText(to_string(_dgFloor), WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
-	}
-
-	if (INPUT->GetKey(VK_TAB))
-	{
-		this->minimapRender();
-	}
-
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
-	ITEMMENU->render(getMemDC());
+	_potal->ZorderStretchRender(WINSIZEY/2,WINSIZEX/2,WINSIZEY/2,2.f);//Æ÷Å»Å×½ºÆ®
+	switch (_dState)
+	{
+	case DS_UPDATE: case DS_RETURN:
+		this->golemScrollRender();
+		
+		PLAYER->render(getMemDC());
+		if (INPUT->GetKey(VK_TAB))
+		{
+			this->minimapRender();
+		}
+		ITEMMENU->render(getMemDC());
+		break;
+	case DS_RESULT:
+		IMAGEMANAGER->addImage("dark", WINSIZEX, WINSIZEY)->alphaRender(getMemDC(), 0, 0, 170);
+		IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
+		this->resultRender();
+		
+		this->itemResultRender();
+		break;
+	
+	}
 
-	//this->itemResultRender();
 	
 }
 bool nomalDungeonScene::minimapPush(POINT pt)
@@ -205,6 +216,85 @@ void nomalDungeonScene::setNewFloor()
 
 void nomalDungeonScene::soundUpdate()
 {
+	switch (_currentDungeon->getDungeonKind())
+	{
+	case DG_NOMAL:
+		if (!SOUNDMANAGER->isPlaySound("dungeonBGM"))
+			SOUNDMANAGER->play("dungeonBGM", 0.4f);
+		SOUNDMANAGER->pause("spaRoomBGM");
+		SOUNDMANAGER->pause("bossRoomBGM");
+		break;
+	case DG_SEMIBOSS:
+		if (!SOUNDMANAGER->isPlaySound("bossRoomBGM"))
+			SOUNDMANAGER->play("bossRoomBGM", 0.4f);
+		SOUNDMANAGER->pause("spaRoomBGM");
+		SOUNDMANAGER->pause("dungeonBGM");
+		break;
+	case DG_SPA:
+		if (!SOUNDMANAGER->isPlaySound("spaRoomBGM"))
+			SOUNDMANAGER->play("spaRoomBGM", 0.4f);
+		SOUNDMANAGER->pause("dungeonBGM");
+		SOUNDMANAGER->pause("bossRoomBGM");
+		break;
+	default:
+		break;
+	}
+}
+
+void nomalDungeonScene::dungeonUpdate()
+{
+	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN
+		&& _currentDungeon->getDungeonKind() != DG_SEMIBOSS)
+	{
+		//ÇÃ·¹ÀÌ¾î ÀÌµ¿
+		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
+		{
+		case 1:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(1085 + 17);
+			PLAYER->setY(350 + 17);
+			break;
+		case 2:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(140 + 17);
+			PLAYER->setY(350 + 17);
+			break;
+		case 3:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(595 + 17);
+			PLAYER->setY(595 + 17);
+			break;
+		case 4:
+			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
+			PLAYER->setX(595 + 17);
+			PLAYER->setY(105 + 17);
+			break;
+		}
+		//´øÀü ÀÌµ¿
+
+
+	}
+	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
+	{
+		this->setNewFloor();
+	}
+
+
+	//°ñ·½½ºÅ©·Ñ ¾÷µ«
+	_golemScroll->update();
+	//¹Ì´Ï¸Ê ¾È°£ºÎºÐ Ãß°¡ÇØÁÜ (°ÇµéÇÊ¿ä¾øÀ½)
+	if (this->minimapPush(_currentDungeon->getDungeonXY()))
+	{
+		_vMinimap.push_back(make_pair(_currentDungeon->getDungeonXY(), _currentDungeon));
+	}
+
+
+	//´øÀü ¾÷µ«
+	_currentDungeon->update();
+}
+
+void nomalDungeonScene::resultUpdate()
+{
 
 }
 
@@ -263,7 +353,7 @@ void nomalDungeonScene::deleteInvenItems()
 
 void nomalDungeonScene::itemResultRender()
 {
-	IMAGEMANAGER->render("menu_shopInventory", getMemDC(), 100, 86);
+	//IMAGEMANAGER->render("menu_shopInventory", getMemDC(), 100, 86);
 	for (int i = 0; i < 28; i++)
 	{
 		//ºñ¾îÀÖ´Â ½½·ÔÀº °Ç³Ê¶Ù±â 
@@ -282,18 +372,18 @@ void nomalDungeonScene::itemResultRender()
 			{
 			case 0: case 1: case 2: case 3: case 4:
 				_vItem[j]->getItemImg()->render(getMemDC(),
-					200 + (columnIdx * 72), 172);
+					140 + (columnIdx * 72), 172 + 152 + 6);
 				countRender(_vItem[j]->getCount(),
-					240 + (columnIdx * 72), 208);
+					180 + (columnIdx * 72), 208 + 152 + 6);
 				break;
 
 			case 7: case 8: case 9: case 10: case 11:
 			case 14: case 15: case 16: case 17: case 18:
 			case 21: case 22: case 23: case 24: case 25:
 				_vItem[j]->getItemImg()->render(getMemDC(),
-					200 + (columnIdx * 72), 258 + ((rowIdx - 1) * 72));
+					140 + (columnIdx * 72), 258 + 152 + 6 + ((rowIdx - 1) * 72));
 				countRender(_vItem[j]->getCount(),
-					240 + (columnIdx * 72), 294 + ((rowIdx - 1) * 72));
+					180 + (columnIdx * 72), 294 + 152 + 6 + ((rowIdx - 1) * 72));
 				break;
 
 			}//end of switch
@@ -320,4 +410,68 @@ void nomalDungeonScene::countRender(int count, int destX, int destY)
 		distance++;
 
 	}//end of for
+}
+
+void nomalDungeonScene::golemScrollRender()
+{
+	//°ñ·½ ½ºÅ©·Ñ ·»´õ
+	if (_golemScroll->getAniState() == ANIMATION_PLAY)
+	{
+		_golemScroll->ZorderStretchRender(2000, WINSIZEX / 2, WINSIZEY - 150, 2.f);
+		RECT txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 70, 300, 40);
+		HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		CAMERAMANAGER->ZorderDrawText("°ñ·½   ´øÀü", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 50, 300, 40);
+		CAMERAMANAGER->ZorderDrawText(to_string(_dgFloor), WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+	}
+}
+
+void nomalDungeonScene::updateRender()
+{
+}
+
+void nomalDungeonScene::resultRender()
+{
+	RECT txtRC = RectMake(1198, 584, 82, 20);
+	HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+	HFONT oFont = (HFONT)SelectObject(getMemDC(), hFont);
+	SetTextColor(getMemDC(), RGB(255, 255, 255));
+	string str = " X " + to_string(_vEnemy.size());
+	DrawText(getMemDC(), str.c_str(), -1, &txtRC, DT_LEFT | DT_VCENTER);
+	txtRC = RectMake(486, 21, 311, 34);
+	str = "Golem Dungeon " + to_string(_dgFloor);
+	DrawText(getMemDC(), str.c_str(), -1, &txtRC, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	
+	switch (_resultKind)
+	{
+	case RESULT_PLAYERDIE:
+	{
+		int cx = 630 - IMAGEMANAGER->findImage("Á×À½")->getFrameWidth() / 2;
+		int cy = 170 - IMAGEMANAGER->findImage("Á×À½")->getFrameHeight() / 2;
+		IMAGEMANAGER->findImage("Á×À½")->frameRender(getMemDC(), cx, cy, 9, 0);
+		_killEnemy->attack->setFrameY(_killEnemy->frameY);
+		_killEnemy->attack->centerRender(getMemDC(), 762, 240);
+	}
+		break;
+	case RESULT_RETURN:
+		break;
+	default:
+		break;
+	}
+
+	int destY = 70 / (_vEnemy.size() / 2 / 9);
+	for (int i = 0; i < _vEnemy.size() / 2; i++)
+	{
+		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
+		_vEnemy[i].attack->centerRender(getMemDC(), 724 + ((i % 9) * 50), 320 + (i / 9 * destY));
+	}
+	for (int i = _vEnemy.size() / 2, j = 0; i < _vEnemy.size(); i++)
+	{
+		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
+		_vEnemy[i].attack->centerRender(getMemDC(), 724 + ((j % 9) * 50), 480 + (j / 9 * destY));
+		j++;
+	}
+
 }

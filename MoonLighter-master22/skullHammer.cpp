@@ -457,11 +457,13 @@ void skullHammer::hitSoundPlay()
 void skullHammer::skullHammerCollision()
 {
 	RECT temp;
+
 	if (!_emPlayerColi  && PLAYER->getPlayerState() != PLAYER_ROLL)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_attackBox))
 		{
 			_emPlayerColi = true;
+		
 			if (PLAYER->getPlayerState() == PLAYER_SHILED)
 			{
 				PLAYER->playerPush();
@@ -474,6 +476,11 @@ void skullHammer::skullHammerCollision()
 			}
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_attack->getImage(), 0, 7, true);
+				em->frameY = 2;
+				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
 			}
@@ -487,4 +494,14 @@ void skullHammer::skullHammerCollision()
 			_emPlayerColi = false;
 		}
 	}
+}
+
+animation * skullHammer::getAttackAnimation()
+{
+	return _attack;
+}
+
+int skullHammer::getDownDirectionY()
+{
+	return 2;
 }

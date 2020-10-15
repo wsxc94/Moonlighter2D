@@ -42,6 +42,7 @@ public:
 	void update();
 	// ÀÌ¹ÌÁö ·»´õ½ÃÅ³ ÁÂÇ¥ left, top ÁÂÇ¥ÀÓ
 	void render(HDC hdc, int destX, int destY);
+	void centerRender(HDC hdc, int centerX, int centerY);
 	void CameraRender(HDC hdc, int destX, int destY);
 	void ZoderRender(int z, int destX, int destY);
 	void ZoderAlphaRender(int z, int destX, int destY, BYTE alpha);
@@ -60,10 +61,13 @@ public:
 	int getCurIndex() { return _curIndex; }
 	void setCurIndex(int idx) { _curIndex = idx; }
 	int getFrameY() { return _frameY; }
+	void setFrameY(int y) { _frameY = y; }
 	image* getImage() { return _img; }
 	void changeImg(image* img) { _img = img; }
 	RECT& getRect() { return _rc; }
-	void setFrameY(int y) { _frameY = y; }
 	string getKey() { return _key; }
+	int getAniFrame() { return _aniFrame; }
+	bool getIsLoop() { return _isLoop; }
+	bool getIsReverse() { return _isReverse; }
 };
 

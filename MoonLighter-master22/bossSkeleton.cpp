@@ -815,3 +815,13 @@ void bossSkeleton::hitSoundPlay()
 	}
 }
 
+animation * bossSkeleton::getAttackAnimation()
+{
+	return _attackHammer;
+}
+
+int bossSkeleton::getDownDirectionY()
+{
+	return 3;
+}
+

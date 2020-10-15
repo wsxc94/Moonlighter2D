@@ -23,7 +23,8 @@ enum PLAYER_STATE
 	HIT_IDLE,
 	HIT_RUN,
 	HIT_SWORD,
-	HIT_SWORD_TWO
+	HIT_SWORD_TWO,
+	PLAYER_USEPENDANT
 };
 
 enum WEAPONSTATE
@@ -127,6 +128,7 @@ private:
 	animation* _aniSwordTwoHit;
 
 	animation* _aniDiePortal;
+	animation* _aniUsePendant;
 
 public:
 	HRESULT init();

@@ -7,7 +7,12 @@
 
 enum DUNGEONSCENESTATE
 {
-	DS_UPDATE, DS_RESULT
+	DS_UPDATE, DS_RESULT, DS_RETURN
+};
+
+enum RESULTKIND
+{
+	RESULT_PLAYERDIE,RESULT_RETURN
 };
 
 typedef struct
@@ -24,6 +29,9 @@ private:
 private:
 	vGameItem _vItem;
 	dungeonSlot _dungeonSlot[28];
+	RESULTKIND _resultKind;
+	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
+	RESULTENEMY* _killEnemy;				//플레이어죽인에너미
 private:
 	DUNGEONSCENESTATE _dState;
 
@@ -31,7 +39,8 @@ private:
 
 	DungeonMap* _currentDungeon;				//현재 플레이어가 있는 던전
 
-	vector<pair<POINT, DungeonMap*>> _vMinimap;
+	vector<pair<POINT, DungeonMap*>> _vMinimap;		//미니맵
+
 
 	//스타트던전 두루마리
 	animation* _golemScroll;
@@ -49,6 +58,7 @@ private:
 	//던전 층수
 	int _dgFloor;
 
+	animation* _potal;
 public:
 	nomalDungeonScene() { };
 	~nomalDungeonScene() { };
@@ -61,6 +71,8 @@ public:
 	void minimapRender();			//미니맵을 렌더하자
 	void setNewFloor();				//다음층 초기화하는것
 	void soundUpdate();				//배경음 업뎃
+	void dungeonUpdate();			//일반적인 업데이트
+	void resultUpdate();			//결과창 업데이트
 
 public:
 	void initItemSlot();
@@ -68,6 +80,8 @@ public:
 	void deleteInvenItems();
 	void itemResultRender();
 	void countRender(int count, int destX, int destY);	//아이템 카운트 출력 
-
+	void golemScrollRender();
+	void updateRender();
+	void resultRender();
 };
 

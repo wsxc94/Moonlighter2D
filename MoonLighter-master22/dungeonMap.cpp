@@ -546,6 +546,12 @@ void DungeonMap::enemyUpdate()
 		}
 		if (_vEnemy[i]->getIsActivate() == false)
 		{
+			//삭제하기 전에 애니메이션을 플레이어데이터에 저장한당
+			RESULTENEMY em;
+			em.attack = new animation;
+			em.attack->init(_vEnemy[i]->getAttackAnimation()->getImage(), 0, _vEnemy[i]->getAttackAnimation()->getAniFrame(), true, false);
+			em.frameY = _vEnemy[i]->getDownDirectionY();
+			PLAYERDATA->pushVEnemy(em);
 			_vEnemy[i]->release();
 			SAFE_DELETE(_vEnemy[i]);
 			_vEnemy.erase(_vEnemy.begin() + i);
@@ -839,11 +845,15 @@ void DungeonMap::checkCollisionSpa()
 	int b = GetBValue(color);
 	if (!(r == 255 && g == 0 && b == 255))
 	{
-		cout << "aa" << endl;
+		
 		PLAYER->setPlayerState(PLAYER_SWIM);
 		if (PLAYERDATA->getInDungeonHp() < PLAYERDATA->getHp())
 		{
 			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() + 1);
+			if (!SOUNDMANAGER->isPlaySound("온천"))
+			{
+				SOUNDMANAGER->play("온천", 1.0f);
+			}
 
 			if (PLAYERDATA->getInDungeonHp() > PLAYERDATA->getHp())
 			{
@@ -868,6 +878,10 @@ void DungeonMap::checkColiArrow()
 		{
 			if (IntersectRect(&temp, &_vTile[i].rc, &PLAYER->getArrow()->getRect()))
 			{
+				if (!SOUNDMANAGER->isPlaySound("화살맞음") && PLAYER->getShoot())
+				{
+					SOUNDMANAGER->play("화살맞음", 0.5f);
+				}
 				PLAYER->setShoot(false);
 			}
 		}

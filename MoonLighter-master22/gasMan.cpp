@@ -493,10 +493,12 @@ void gasMan::hitSoundPlay()
 void gasMan::gasManCollision()
 {
 	RECT temp;
+
 	for (int i = 0; i < _vArrow.size(); i++)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_vArrow[i].rc) && PLAYER->getPlayerState() != PLAYER_ROLL)
 		{
+			
 			if (PLAYER->getPlayerState() == PLAYER_SHILED )
 			{
 				PLAYER->playerPush();
@@ -509,10 +511,25 @@ void gasMan::gasManCollision()
 			}
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_attack->getImage(), 0, 7, true);
+				em->frameY = 3;
+				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
 			}
 			_vArrow.erase(_vArrow.begin() + i);
 		}
 	}
+}
+
+animation * gasMan::getAttackAnimation()
+{
+	return _attack;
+}
+
+int gasMan::getDownDirectionY()
+{
+	return 3;
 }

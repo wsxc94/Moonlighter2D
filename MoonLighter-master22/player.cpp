@@ -6,7 +6,6 @@ HRESULT player::init()
 	
 	this->imageInit();
 
-
 	_player.x = 200;
 	_player.y = 200;
 
@@ -66,8 +65,6 @@ void player::release()
 
 void player::update()
 {
-	
-	
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -76,8 +73,7 @@ void player::update()
 	_player.rc = RectMakeCenter(_player.x, _player.y - 12, 45, 60);
 	_arrow->update();
 	this->keyInput();
-	this->updateWeaponState();
-	
+	this->updateWeaponState();	
 }
 
 void player::render(HDC hdc)
@@ -138,7 +134,7 @@ void player::render(HDC hdc)
 			_aniSwordTwo->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_SHILED:
-			_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);			
 			break;
 		case PLAYER_TALK:
 			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
@@ -150,7 +146,7 @@ void player::render(HDC hdc)
 			_aniDie->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
 			break;
 		case PLAYER_DIE_PORTAL:
-			_aniDiePortal->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDiePortal->ZoderRender(_player.y, pt.x - 128, pt.y - 140);
 			break;
 		case PLAYER_SWIM:
 			_aniSwim->ZoderRender(_player.y, pt.x - 20, pt.y - 15);
@@ -238,6 +234,10 @@ void player::playerState()
 		
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
+				if (_place == TOWN_DUNGEON)
+				{
+					SOUNDMANAGER->play("구르기", 0.3f);
+				}
 				_lastRollX = _player.x;
 				_lastRollY = _player.y;
 				_holeAlpha = 255;
@@ -257,6 +257,10 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_RUN:
+			if (!SOUNDMANAGER->isPlaySound("플레이어걷기"))
+			{
+				SOUNDMANAGER->play("플레이어걷기", 0.3f);
+			}
 			if (_isHit)
 			{
 				if (this->getKeyMove()) _state = HIT_RUN;
@@ -265,6 +269,10 @@ void player::playerState()
 			this->playerMove();
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
+				if (_place == TOWN_DUNGEON)
+				{
+					SOUNDMANAGER->play("구르기", 0.3f);
+				}
 				_lastRollX = _player.x;
 				_lastRollY = _player.y;
 				_holeAlpha = 255;
@@ -283,7 +291,6 @@ void player::playerState()
 			_player.dashCount++;
 			if(_player.dashCount % 5 == 0)
 			EFFECTMANAGER->addParticle("대시이펙트", _player.y, _player.x, _player.y,true,90);
-
 			_rollCount++;
 			switch (_player.direction)
 			{
@@ -585,7 +592,7 @@ void player::playerMove()
 
 void player::playerAttack()
 {
-	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON && !_isShoot)
+	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
 
 		switch (_player.weapon)
@@ -596,13 +603,24 @@ void player::playerAttack()
 
 		case SHORT_SOWRD:
 			_state = PLAYER_ATTACK_SWORD;
+			if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
+			{
+				SOUNDMANAGER->play("검휘두르기", 0.3f);
+			}
 			_aniSword->aniRestart();
 			break;
 
 		case BOW:
-			_state = PLAYER_ATTACK_BOW;
-			_aniBow->aniRestart();
-			_isShoot = true;
+			if (!_isShoot)
+			{
+				_state = PLAYER_ATTACK_BOW;
+				if (!SOUNDMANAGER->isPlaySound("화살발사"))
+				{
+					SOUNDMANAGER->play("화살발사", 0.3f);
+				}
+				_aniBow->aniRestart();
+				_isShoot = true;
+			}
 			break;
 		}
 	}
@@ -680,7 +698,11 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("던전달리기HIT", "Images/플레이어/player_run_dungeon_Hit8X4.bmp", 960, 480, 8, 4);
 	IMAGEMANAGER->addFrameImage("숏소드HIT", "Images/플레이어/short_attack_Hit6X4.bmp", 720, 480, 6, 4);
 	IMAGEMANAGER->addFrameImage("숏소드2연격HIT", "Images/플레이어/short_attack_two_Hit5X4.bmp", 600, 480, 5, 4);
+
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
+	IMAGEMANAGER->addFrameImage("플레이어팬던트사용", "Images/플레이어/playerUsePendant31.bmp", 4464, 120, 31, 1);
+
+	
 
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;
@@ -700,6 +722,7 @@ void player::imageInit()
 	_aniSwordHit = new ::animation;
 	_aniSwordTwoHit = new ::animation;
 	_aniDiePortal = new ::animation;
+	_aniUsePendant = new ::animation;
 
 	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
 	_aniTownRun->init(IMAGEMANAGER->findImage("달리기"), 0, 5, true);
@@ -731,6 +754,7 @@ void player::imageInit()
 	_aniSwordTwoHit->aniStop();
 	_aniDiePortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
 	_aniDiePortal->aniStop();
+	_aniUsePendant->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 7);
 
 }
 
