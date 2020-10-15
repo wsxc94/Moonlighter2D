@@ -166,9 +166,6 @@ void itemMenu::toggleMenu()
 			_openMenu = true;
 			_openTagMenu = true;
 
-			CAMERAMANAGER->FadeInit(80, FADE_OUT);
-			CAMERAMANAGER->FadeStart();
-
 			SOUNDMANAGER->play("openInven", 0.4f);
 		}
 	}
