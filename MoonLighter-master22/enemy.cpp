@@ -233,11 +233,11 @@ void enemy::collision()
 
 	if (IntersectRect(&temp, &PLAYER->getPlayerAttackTwoBox().rc, &_emRC))
 	{
-		EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2,
-			(_emRC.right + _emRC.left) / 2,
-			(_emRC.bottom + _emRC.top) / 2, 0,10);
 		if (PLAYER->getPlayerAttackTwoBox().isHit == false && _emState != EM_DIE)
 		{
+			EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2,
+				(_emRC.right + _emRC.left) / 2,
+				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
 			_emHp -= 25;
 			_isHit = true;
 			this->setProgressBar();
@@ -250,7 +250,7 @@ void enemy::collision()
 	{
 		EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2,
 			(_emRC.right + _emRC.left) / 2,
-			(_emRC.bottom + _emRC.top) / 2, 0, 10);
+			(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
 		PLAYER->setShoot(false);
 		_emHp -= 20;
 		_isHit = true;

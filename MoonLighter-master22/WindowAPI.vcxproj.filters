@@ -243,9 +243,6 @@
     <ClCompile Include="ShopNpcManager.cpp">
       <Filter>MainGame\NPC</Filter>
     </ClCompile>
-    <ClCompile Include="skill.cpp">
-      <Filter>MainGame\플레이어</Filter>
-    </ClCompile>
     <ClCompile Include="displayStand.cpp">
       <Filter>MainGame\ShopScene</Filter>
     </ClCompile>
@@ -409,9 +406,6 @@
     </ClInclude>
     <ClInclude Include="ShopNpcManager.h">
       <Filter>MainGame\NPC</Filter>
-    </ClInclude>
-    <ClInclude Include="skill.h">
-      <Filter>MainGame\플레이어</Filter>
     </ClInclude>
     <ClInclude Include="displayStand.h">
       <Filter>MainGame\ShopScene</Filter>
