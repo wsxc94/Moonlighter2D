@@ -65,6 +65,12 @@ void player::release()
 
 void player::update()
 {
+	if (INPUT->GetKeyDown('B'))
+	{
+		_aniUsePendant->aniRestart();
+		_state = PLAYER_USEPENDANT;
+	}
+	if (INPUT->GetKeyDown('N')) _state = PLAYER_IDLE;
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -80,7 +86,7 @@ void player::render(HDC hdc)
 {
 	POINT pt = CAMERAMANAGER->getRelativeMouse(PointMake(CAMERAMANAGER->getDistanceX(), CAMERAMANAGER->getDistanceY()));
 
-	if (_state != PLAYER_SWIM) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, pt.x - 35, pt.y - 10, 100);
+	if (_state != PLAYER_SWIM && _state != PLAYER_USEPENDANT && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, pt.x - 35, pt.y - 10, 100);
 	if (_isShoot)
 	{
 		_arrow->render(hdc);
@@ -163,6 +169,9 @@ void player::render(HDC hdc)
 		case HIT_SWORD_TWO:
 			_aniSwordTwoHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
 			break;
+		case PLAYER_USEPENDANT:
+			_aniUsePendant->ZoderAlphaRender(_player.y, pt.x - 72, pt.y - 68, _hitAlpha);
+			break;
 		}
 		break;
 
@@ -217,6 +226,7 @@ void player::animation(int frameY)
 	_aniSwordHit->setFrameY(_player.direction);
 	_aniSwordTwoHit->setFrameY(_player.direction);
 
+	if (_state == PLAYER_USEPENDANT) _aniUsePendant->update();
 }
 
 void player::playerState()

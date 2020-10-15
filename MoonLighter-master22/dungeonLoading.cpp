@@ -9,6 +9,8 @@ HRESULT dungeonLoading::init()
 	this->loadImage();
 	this->loadSound();
 
+	PLAYERDATA->setIsActivate(false);
+
 	return S_OK;
 }
 
@@ -27,6 +29,7 @@ void dungeonLoading::update()
 	if (_loading->loadingDone())
 	{
 		SCENEMANAGER->loadScene("노말던전");
+		PLAYERDATA->setIsActivate(true);
 	}
 }
 

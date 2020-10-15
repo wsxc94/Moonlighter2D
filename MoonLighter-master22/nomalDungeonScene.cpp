@@ -40,6 +40,10 @@ HRESULT nomalDungeonScene::init()
 
 	//던전에 들어왔다고 해주자
 	PLAYERDATA->setIsInDungeon(true);
+
+	//포탈애니메이션 초기화
+	_potal = new animation;
+	_potal->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5, true);
 	
 	return S_OK;
 }
@@ -52,8 +56,6 @@ void nomalDungeonScene::update()
 {
 	if (INPUT->GetKeyDown(VK_LEFT)) _dState = DS_UPDATE;
 	if (INPUT->GetKeyDown(VK_RIGHT)) _dState = DS_RESULT;
-	_potal->update();//포탈테스트
-	
 	this->soundUpdate();
 
 	switch (_dState)
@@ -67,12 +69,26 @@ void nomalDungeonScene::update()
 			_dState = DS_RESULT;
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
+			_resultKind = RESULT_PLAYERDIE;
+		}
+		//플레이어 팬던트 이동애니메이션 끝나면 결과창띄워라
+		else if (PLAYER->getPlayerState() == PLAYER_USEPENDANT)
+		{
+			if (PLAYER->getAniPlayerUsePandant()->getAniState() == ANIMATION_END)
+			{
+				_dState = DS_RESULT;
+				_vEnemy = PLAYERDATA->getVEnemy();
+				_killEnemy = PLAYERDATA->getKillEnemy();
+				_resultKind = RESULT_RETURN;
+			}
 		}
 		this->dungeonUpdate();
 		PLAYER->update();
 		ITEMMENU->update();
 		break;
 	case DS_RESULT:
+		_potal->update();
+		//ui창 끄기
 		PLAYERDATA->setIsActivate(false);
 		for (int i = 0; i < _vEnemy.size(); i++)
 		{
@@ -98,7 +114,6 @@ void nomalDungeonScene::render()
 {
 	_currentDungeon->render();
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
-	_potal->ZorderStretchRender(WINSIZEY/2,WINSIZEX/2,WINSIZEY/2,2.f);//포탈테스트
 	switch (_dState)
 	{
 	case DS_UPDATE: case DS_RETURN:
@@ -115,8 +130,17 @@ void nomalDungeonScene::render()
 		IMAGEMANAGER->addImage("dark", WINSIZEX, WINSIZEY)->alphaRender(getMemDC(), 0, 0, 170);
 		IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
 		this->resultRender();
-		
 		this->itemResultRender();
+
+		if (INPUT->GetKeyDown('J'))
+		{
+			SCENEMANAGER->loadScene("타운로딩");
+			SOUNDMANAGER->stop("dungeonBGM");
+			SOUNDMANAGER->stop("spaRoomBGM");
+			SOUNDMANAGER->stop("bossRoomBGM");
+			PLAYERDATA->vEnemyClear();
+			PLAYERDATA->initDungeonHp();
+		}
 		break;
 	
 	}
@@ -197,20 +221,20 @@ void nomalDungeonScene::soundUpdate()
 	case DG_NOMAL:
 		if (!SOUNDMANAGER->isPlaySound("dungeonBGM"))
 			SOUNDMANAGER->play("dungeonBGM", 0.4f);
-		SOUNDMANAGER->pause("spaRoomBGM");
-		SOUNDMANAGER->pause("bossRoomBGM");
+		SOUNDMANAGER->stop("spaRoomBGM");
+		SOUNDMANAGER->stop("bossRoomBGM");
 		break;
 	case DG_SEMIBOSS:
 		if (!SOUNDMANAGER->isPlaySound("bossRoomBGM"))
 			SOUNDMANAGER->play("bossRoomBGM", 0.4f);
-		SOUNDMANAGER->pause("spaRoomBGM");
-		SOUNDMANAGER->pause("dungeonBGM");
+		SOUNDMANAGER->stop("spaRoomBGM");
+		SOUNDMANAGER->stop("dungeonBGM");
 		break;
 	case DG_SPA:
 		if (!SOUNDMANAGER->isPlaySound("spaRoomBGM"))
 			SOUNDMANAGER->play("spaRoomBGM", 0.4f);
-		SOUNDMANAGER->pause("dungeonBGM");
-		SOUNDMANAGER->pause("bossRoomBGM");
+		SOUNDMANAGER->stop("dungeonBGM");
+		SOUNDMANAGER->stop("bossRoomBGM");
 		break;
 	default:
 		break;
@@ -428,25 +452,33 @@ void nomalDungeonScene::resultRender()
 		int cy = 170 - IMAGEMANAGER->findImage("죽음")->getFrameHeight() / 2;
 		IMAGEMANAGER->findImage("죽음")->frameRender(getMemDC(), cx, cy, 9, 0);
 		_killEnemy->attack->setFrameY(_killEnemy->frameY);
-		_killEnemy->attack->centerRender(getMemDC(), 762, 240);
+		_killEnemy->attack->stretchRender(getMemDC(), 762, 240, _killEnemy->scale);
 	}
 		break;
 	case RESULT_RETURN:
+	{
+		_potal->stretchRender(getMemDC(),640,170,2.f);
+		int cx = 762 - IMAGEMANAGER->findImage("bag_pendant")->getWidth() / 2;
+		int cy = 240 - IMAGEMANAGER->findImage("bag_pendant")->getHeight() / 2;
+		IMAGEMANAGER->findImage("bag_pendant")->render(getMemDC(), cx, cy);
+	}
 		break;
 	default:
 		break;
 	}
 
-	int destY = 70 / (_vEnemy.size() / 2 / 9);
+	int destY;
+	if (_vEnemy.size()/2/9 > 0)  destY = 70 / (_vEnemy.size() / 2 / 9);
+	else destY = 70;
 	for (int i = 0; i < _vEnemy.size() / 2; i++)
 	{
 		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
-		_vEnemy[i].attack->centerRender(getMemDC(), 724 + ((i % 9) * 50), 320 + (i / 9 * destY));
+		_vEnemy[i].attack->stretchRender(getMemDC(), 724 + ((i % 9) * 50), 320 + (i / 9 * destY), _vEnemy[i].scale);
 	}
 	for (int i = _vEnemy.size() / 2, j = 0; i < _vEnemy.size(); i++)
 	{
 		_vEnemy[i].attack->setFrameY(_vEnemy[i].frameY);
-		_vEnemy[i].attack->centerRender(getMemDC(), 724 + ((j % 9) * 50), 480 + (j / 9 * destY));
+		_vEnemy[i].attack->stretchRender(getMemDC(), 724 + ((j % 9) * 50), 480 + (j / 9 * destY) , _vEnemy[i].scale);
 		j++;
 	}
 

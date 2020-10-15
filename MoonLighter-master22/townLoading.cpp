@@ -9,6 +9,8 @@ HRESULT townLoading::init()
 	this->loadingImage();
 	this->loadingSound();
 
+	PLAYERDATA->setIsActivate(false);
+
 	return S_OK;
 }
 
@@ -27,6 +29,7 @@ void townLoading::update()
 	if (_loading->loadingDone())
 	{
 		SCENEMANAGER->loadScene("타운화면");
+		PLAYERDATA->setIsActivate(true);
 	}
 }
 

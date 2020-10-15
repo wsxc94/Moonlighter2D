@@ -195,5 +195,8 @@ public:
 
 	void setPlace(PLACE place) { _place = place; }
 	void setHit(bool isHit) { _isHit = isHit; }
+
+	::animation* getAniPlayerUsePandant() { return _aniUsePendant; }
+	void aniUsePandantPlay() { _aniUsePendant->aniRestart(); }
 };
 

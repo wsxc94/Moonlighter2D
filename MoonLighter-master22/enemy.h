@@ -134,6 +134,7 @@ public:
 	virtual void setIsItemDrop(bool drop) { _isItemDrop = drop; }
 	virtual animation* getAttackAnimation() { return nullptr; };
 	virtual int getDownDirectionY() { return 0; };
+	virtual float getEnemyScale() { return 1.f; }
 };
 
 class redGolem : public enemy
@@ -466,4 +467,5 @@ public:
 	void hitSoundPlay();
 	virtual animation* getAttackAnimation();
 	virtual int getDownDirectionY();
+	virtual float getEnemyScale() { return 3.f; }
 };

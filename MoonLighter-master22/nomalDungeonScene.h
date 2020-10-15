@@ -32,6 +32,7 @@ private:
 	RESULTKIND _resultKind;
 	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
 	RESULTENEMY* _killEnemy;				//플레이어죽인에너미
+	animation* _potal;						//돌아갔을때 포탈
 private:
 	DUNGEONSCENESTATE _dState;
 
@@ -57,8 +58,6 @@ private:
 
 	//던전 층수
 	int _dgFloor;
-
-	animation* _potal;
 public:
 	nomalDungeonScene() { };
 	~nomalDungeonScene() { };

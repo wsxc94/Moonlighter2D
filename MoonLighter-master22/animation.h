@@ -43,6 +43,7 @@ public:
 	// ÀÌ¹ÌÁö ·»´õ½ÃÅ³ ÁÂÇ¥ left, top ÁÂÇ¥ÀÓ
 	void render(HDC hdc, int destX, int destY);
 	void centerRender(HDC hdc, int centerX, int centerY);
+	void stretchRender(HDC hdc, int centerX, int centerY,float scale);
 	void CameraRender(HDC hdc, int destX, int destY);
 	void ZoderRender(int z, int destX, int destY);
 	void ZoderAlphaRender(int z, int destX, int destY, BYTE alpha);

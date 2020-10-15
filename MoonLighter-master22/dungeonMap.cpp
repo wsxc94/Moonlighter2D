@@ -551,6 +551,7 @@ void DungeonMap::enemyUpdate()
 			em.attack = new animation;
 			em.attack->init(_vEnemy[i]->getAttackAnimation()->getImage(), 0, _vEnemy[i]->getAttackAnimation()->getAniFrame(), true, false);
 			em.frameY = _vEnemy[i]->getDownDirectionY();
+			em.scale = _vEnemy[i]->getEnemyScale();
 			PLAYERDATA->pushVEnemy(em);
 			_vEnemy[i]->release();
 			SAFE_DELETE(_vEnemy[i]);

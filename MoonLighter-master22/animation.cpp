@@ -144,6 +144,12 @@ void animation::centerRender(HDC hdc, int centerX, int centerY)
 	if (_isArray) _img->frameRender(hdc, cx, cy, _aniList[_curIndex].x, _aniList[_curIndex].y);
 }
 
+void animation::stretchRender(HDC hdc, int centerX, int centerY, float scale)
+{
+	if (!_isArray)	_img->stretchFrameRender(hdc, centerX, centerY, _aniList[_curIndex].x, _frameY,scale);
+	if (_isArray) _img->stretchFrameRender(hdc, centerX, centerY, _aniList[_curIndex].x, _aniList[_curIndex].y,scale);
+}
+
 void animation::CameraRender(HDC hdc, int destX, int destY)
 {
 	if (!_isArray)	CAMERAMANAGER->FrameRender(hdc, _img, destX, destY, _aniList[_curIndex].x, _frameY);

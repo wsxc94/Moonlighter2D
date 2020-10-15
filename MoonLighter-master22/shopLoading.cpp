@@ -8,6 +8,8 @@ HRESULT shopLoading::init()
 
 	this->loadingImage();
 	this->loadingSound();
+
+	PLAYERDATA->setIsActivate(false);
 	return S_OK;
 }
 
@@ -26,6 +28,7 @@ void shopLoading::update()
 	if (_loading->loadingDone())
 	{
 		SCENEMANAGER->loadScene("상점화면");
+		PLAYERDATA->setIsActivate(true);
 	}
 }
 

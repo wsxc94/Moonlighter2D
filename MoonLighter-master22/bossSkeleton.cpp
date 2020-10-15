@@ -817,6 +817,7 @@ void bossSkeleton::hitSoundPlay()
 
 animation * bossSkeleton::getAttackAnimation()
 {
+	_attackHammer->changeImg(IMAGEMANAGER->findImage("skeletonAttackHammer"));
 	return _attackHammer;
 }
 

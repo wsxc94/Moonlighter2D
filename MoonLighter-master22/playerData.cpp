@@ -27,6 +27,9 @@ void playerData::render(HDC hdc)
 	goldRender(hdc);
 	hpRender(hdc);
 
+
+	cout << _hp << "   " << _inDungeonHp << "   " << _defaultHp << endl;
+
 	//우측 UI 출력 
 	equipInfoRender(hdc);
 }

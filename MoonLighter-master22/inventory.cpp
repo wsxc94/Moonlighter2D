@@ -637,9 +637,10 @@ void inventory::pendantKeyInput()
 			//3. 사용비 골드에서 차감하기(200원)
 			//4. 인벤토리 컨트롤러 초기화 
 			//5. 선택메뉴의 상태 초기화(NO)
+			//6. 플레이어 상태를 팬던트사용으로 변경해줌
 
 			_canGrab = false; 
-
+			PLAYER->setPlayerState(PLAYER_USEPENDANT);
 			ITEMMENU->setGoToTown(true);
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);

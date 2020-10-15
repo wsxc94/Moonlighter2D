@@ -9,6 +9,7 @@ typedef struct tagResultEnemyAnimation
 {
 	animation* attack;
 	int frameY;
+	float scale;
 }RESULTENEMY;
 
 class playerData : public singletonBase <playerData>
@@ -66,6 +67,7 @@ public:
 	float getX() { return _x; }
 	float getY() { return _y; }
 	bool getIsInDungeon() { return _isInDungeon; }
+	bool getIsActivate() { return _isActivate; }
 	vector<RESULTENEMY> getVEnemy() { return _vEnemy; }
 	void pushVEnemy(RESULTENEMY enemy) { _vEnemy.push_back(enemy); }
 	void vEnemyClear() { _vEnemy.clear(); }
