@@ -51,9 +51,15 @@ void shopLoading::loadingImage()
 	_loading->loadFrameImage("상점책상", "Images/상점/상점책상.bmp", 192, 66, 1, 1);
 	_loading->loadFrameImage("상점침대", "Images/상점/상점침대.bmp", 102, 76, 1, 1);
 	_loading->loadFrameImage("아이템그림자", "Images/상점/item_shadow.bmp", 24, 12, 1, 1);
+	_loading->loadFrameImage("가격좋음", "Images/npc/visitor_face.bmp", 512, 64, 8, 1);
 }
 
 void shopLoading::loadingSound()
 {
-	
+
+	_loading->loadSound("엄청싸다", "Sound/shopSound/엄청싸다.wav");
+	_loading->loadSound("싸다", "Sound/shopSound/싸다.wav");
+	_loading->loadSound("비싸다", "Sound/shopSound/비싸다.wav");
+	_loading->loadSound("엄청비싸다", "Sound/shopSound/엄청비싸다.wav");
+	_loading->loadSound("아이템팔림", "Sound/shopSound/아이템팔림.wav");
 }

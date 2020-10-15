@@ -80,7 +80,7 @@ void player::render(HDC hdc)
 {
 	POINT pt = CAMERAMANAGER->getRelativeMouse(PointMake(CAMERAMANAGER->getDistanceX(), CAMERAMANAGER->getDistanceY()));
 
-	if (_state != PLAYER_SWIM && _state != PLAYER_USEPENDANT && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, pt.x - 35, pt.y - 10, 100);
+	if (_state != PLAYER_SWIM && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, pt.x - 35, pt.y - 10, 100);
 	if (_isShoot)
 	{
 		_arrow->render(hdc);
@@ -701,8 +701,6 @@ void player::imageInit()
 
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
 
-	
-
 	_aniTownIdle = new ::animation;
 	_aniTownRun = new ::animation;
 	_aniTownRoll = new ::animation;
@@ -752,6 +750,7 @@ void player::imageInit()
 	_aniSwordTwoHit->aniStop();
 	_aniDiePortal->init(IMAGEMANAGER->findImage("죽음포탈"), 0, 7);
 	_aniDiePortal->aniStop();
+
 
 }
 
