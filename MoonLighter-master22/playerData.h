@@ -92,9 +92,10 @@ public:
 	void setWeaponEquipped(gameItem item) { _weaponEquipped = item; }
 	void setIsActivate(bool isActivate) { _isActivate = isActivate; }
 
-	//체력 관련 함수 
-	void plusInDungeonHp(int plusHp);
-	void minusInDungeonHp(int minusHp);
+	void plusInDungeonHp(int plusHp);	//매개변수 값만큼 던전체력 더하기 
+	void minusInDungeonHp(int minusHp);	//매개변수 값만큼 던전체력 빼기 
+	void addGold(int addValue) { _gold += addValue; }	//매개변수 값만큼 골드 더하기 
+	void subGold(int subValue) { _gold -= subValue; if (_gold < 0) _gold = 0; }	//매개변수 값만큼 골드 빼기 
 
 	//인터페이스 렌더함수 
 	void goldRender(HDC hdc);					//현재 소지하고 있는 골드 출력 

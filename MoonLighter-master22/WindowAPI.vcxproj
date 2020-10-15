@@ -187,6 +187,7 @@
     <ClInclude Include="random.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="sceneManager.h" />
+    <ClInclude Include="selectMenu.h" />
     <ClInclude Include="shopLoading.h" />
     <ClInclude Include="ShopNpcManager.h" />
     <ClInclude Include="shopScene.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="random.cpp" />
     <ClCompile Include="redGolem.cpp" />
     <ClCompile Include="sceneManager.cpp" />
+    <ClCompile Include="selectMenu.cpp" />
     <ClCompile Include="shopLoading.cpp" />
     <ClCompile Include="ShopNpcManager.cpp" />
     <ClCompile Include="shopScene.cpp" />

@@ -171,6 +171,7 @@ void displayStand::toggleMenu()
 			_menuOn = true;
 			_openMenu = true;
 			PLAYER->setDisplayOn(true);
+
 			//인벤토리 슬롯값 초기화 
 			initInvenSlot();
 
@@ -286,17 +287,17 @@ void displayStand::initInvenSlot()
 		switch (i)
 		{
 			//진열 아이템 슬롯
-		case 5: case 6: case 19: case 20:
-			break;
+			case 5: case 6: case 19: case 20:
+				break;
 
 			//진열 아이템 가격 슬롯 
-		case 12: case 13: case 26: case 27:
-			break;
+			case 12: case 13: case 26: case 27:
+				break;
 
 			//인벤토리 슬롯 
-		default:
-			_shopSlot[i].isEmpty = true;
-			break;
+			default:
+				_shopSlot[i].isEmpty = true;
+				break;
 		}
 	}//end of for 
 }
@@ -417,10 +418,10 @@ void displayStand::keyInput()
 
 	switch (_cursor->getSlotIdx())
 	{
-	case 12: case 13: case 26: case 27:
-		if (_shopCtrl == CTRL_INVENTORY) _cursor->setCursorState(CURSOR_PRICE_OFF);
-		else _cursor->setCursorState(CURSOR_PRICE_ON);
-		break;
+		case 12: case 13: case 26: case 27:
+			if (_shopCtrl == CTRL_INVENTORY) _cursor->setCursorState(CURSOR_PRICE_OFF);
+			else _cursor->setCursorState(CURSOR_PRICE_ON);
+			break;
 	}//end of switch 
 }
 
@@ -457,41 +458,41 @@ void displayStand::invenKeyInput()
 	switch (_cursor->getSlotIdx())
 	{
 		//커서의 위치가 가격조정판에 있을 때 j키 입력시 가격 입력 컨트롤러로 변경 
-	case 12: case 13: case 26: case 27:
-		if (INPUT->GetKeyDown('J'))
-		{
-			setShopCtrl(CTRL_PRICE);
-		}
-		break;
-
-		//그외 모든 상황에서는 아이템 잡기 및 놓기 실행
-	default:
-		if (INPUT->GetKey('J'))
-		{
-			_cursor->setClickTime(_cursor->getClickTime() + 1);
-
-			//꾹 누르고 있으면 한꺼번에 잡기 실행 
-			if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
+		case 12: case 13: case 26: case 27:
+			if (INPUT->GetKeyDown('J'))
 			{
-				grabItem();
+				setShopCtrl(CTRL_PRICE);
 			}
-		}
-		if (INPUT->GetKeyDown('J'))
-		{
-			_cursor->setCursorState(CURSOR_CLICK);
-			putItem();
-		}
-		if (INPUT->GetKeyUp('J'))
-		{
-			//한꺼번에 잡기를 실행할 정도로 길게 누르지 않고 손을 뗄 경우
-			//1개씩 아이템을 잡을 수 있도록 함수 실행 
-			if (!_isPuttingItem) grabItem();
+			break;
 
-			_isPuttingItem = false;
-			_grabSoundPlayed = false;
-			_cursor->setClickTime(0);
-		}
-		break;
+			//그외 모든 상황에서는 아이템 잡기 및 놓기 실행
+		default:
+			if (INPUT->GetKey('J'))
+			{
+				_cursor->setClickTime(_cursor->getClickTime() + 1);
+
+				//꾹 누르고 있으면 한꺼번에 잡기 실행 
+				if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
+				{
+					grabItem();
+				}
+			}
+			if (INPUT->GetKeyDown('J'))
+			{
+				_cursor->setCursorState(CURSOR_CLICK);
+				putItem();
+			}
+			if (INPUT->GetKeyUp('J'))
+			{
+				//한꺼번에 잡기를 실행할 정도로 길게 누르지 않고 손을 뗄 경우
+				//1개씩 아이템을 잡을 수 있도록 함수 실행 
+				if (!_isPuttingItem) grabItem();
+
+				_isPuttingItem = false;
+				_grabSoundPlayed = false;
+				_cursor->setClickTime(0);
+			}
+			break;
 
 	}//end of switch 
 }

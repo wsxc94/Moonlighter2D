@@ -13,6 +13,10 @@
 #define PI_4 (PI / 4) //45도
 #define PI_8 (PI / 8) //22.5도
 
+//자주 사용하는 값 정리 
+#define SELECT_YES	1
+#define SELECT_NO	0
+
 namespace MY_UTIL
 {
 	//두점 사이의 거리

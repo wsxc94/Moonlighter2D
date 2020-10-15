@@ -88,6 +88,9 @@
     <Filter Include="GameFramework\커서">
       <UniqueIdentifier>{8b535256-36b7-45e9-9a9e-5400ee18268d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameFramework\선택메뉴">
+      <UniqueIdentifier>{a9abd5f5-fc03-45e3-a78c-5dafb4d28180}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winMain.cpp">
@@ -258,6 +261,9 @@
     <ClCompile Include="damageFont.cpp">
       <Filter>GameFramework\매니져</Filter>
     </ClCompile>
+    <ClCompile Include="selectMenu.cpp">
+      <Filter>GameFramework\선택메뉴</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -418,6 +424,9 @@
     </ClInclude>
     <ClInclude Include="damageFont.h">
       <Filter>GameFramework\매니져</Filter>
+    </ClInclude>
+    <ClInclude Include="selectMenu.h">
+      <Filter>GameFramework\선택메뉴</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
