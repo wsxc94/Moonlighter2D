@@ -84,13 +84,7 @@ void inventory::render(HDC hdc)
 	//메뉴가 현재 고정된 상태일 때 출력 
 	if (_cursor->getShowCursor())
 	{
-		//던전에 있을 때 골드 확인해서 상인의 아이템 출력 
-		if (PLAYERDATA->getIsInDungeon())
-		{
-			if (PLAYERDATA->getGold() >= 200) IMAGEMANAGER->render("bag_pendant", hdc, 360, 496);
-			if (PLAYERDATA->getGold() >= 1000) IMAGEMANAGER->render("bag_emblem", hdc, 474, 488);
-		}
-
+		merchantIconRender(hdc);
 		itemRender(hdc);
 		itemNameRender(hdc);
 		statusRender(hdc);
@@ -119,14 +113,14 @@ void inventory::render(HDC hdc)
 	//wsprintf(str, "ivenSize : %d", _vInvenItem.size());
 	//TextOut(hdc, 10, 70, str, strlen(str));
 
-	wsprintf(str, "selectIdx : %d", ITEMMENU->getOpenMenu());
-	TextOut(hdc, 10, 90, str, strlen(str));
+	wsprintf(str, "invenCtrl : %d", _invenCtrl);
+	TextOut(hdc, 10, 130, str, strlen(str));
 
-	//wsprintf(str, "itemGrabbed.posIdx : %d", _itemGrabbed.getInvenPosIdx());
-	//TextOut(hdc, 10, 110, str, strlen(str));
+	wsprintf(str, "canGrab : %d", _canGrab);
+	TextOut(hdc, 10, 150, str, strlen(str));
 
-	//wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
-	//TextOut(hdc, 10, 150, str, strlen(str));
+	wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
+	TextOut(hdc, 10, 170, str, strlen(str));
 
 	//for (int i = 0; i < _vInvenItem.size(); i++)
 	//{
@@ -499,26 +493,26 @@ void inventory::setInvenCtrl(INVEN_CTRL state)
 	switch (state)
 	{
 		case INVEN_INVENTORY:
-			_cursor->setCursorState(CURSOR_MOVE);
 			_invenCtrl = state;
+			_cursor->setCursorState(CURSOR_MOVE);
 			break;
 
 		case INVEN_MERCHANT_MIRROR:
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			_selectMenu->setSelectIdx(SELECT_NO);
 			_invenCtrl = state;
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
 			break;
 
 		case INVEN_MERCHANT_PENDANT:
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			_selectMenu->setSelectIdx(SELECT_NO);
 			_invenCtrl = state;
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
 			break;
 
 		case INVEN_MERCHANT_EMBLEM:
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			_selectMenu->setSelectIdx(SELECT_NO);
 			_invenCtrl = state;
+			_selectMenu->setSelectIdx(SELECT_NO);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
 			break;
 	}
 }
@@ -589,8 +583,8 @@ void inventory::invenKeyInput()
 	if (INPUT->GetKeyDown('J'))
 	{
 		_cursor->setCursorState(CURSOR_CLICK);
-		setMerchantCtrl();
 		putItem();
+		setMerchantCtrl();
 	}
 	if (INPUT->GetKeyUp('J'))
 	{
@@ -627,10 +621,10 @@ void inventory::pendantKeyInput()
 		}
 	}
 
-	//네,아니오 중 선택하기 
+	//네,아니요 중 선택하기 
 	if (INPUT->GetKeyDown('J'))
 	{
-		//아니오 선택 시 인벤토리 컨트롤러로 변경 
+		//아니요 선택 시 인벤토리 컨트롤러로 변경 
 		if (_selectMenu->getSelectIdx() == SELECT_NO) setInvenCtrl(INVEN_INVENTORY);
 		else
 		{
@@ -1365,6 +1359,16 @@ void inventory::invenCursorRender(HDC hdc)
 				_cursor->getImg()->frameRender(hdc, 470, 484, _cursor->getIdx(), 0);
 				break;
 		}
+	}
+}
+
+void inventory::merchantIconRender(HDC hdc)
+{
+	//던전에 있을 때 아이템 사용금 이상의 골드가 있을 때만 상인의 아이템 출력 
+	if (PLAYERDATA->getIsInDungeon())
+	{
+		if (PLAYERDATA->getGold() >= 200) IMAGEMANAGER->render("bag_pendant", hdc, 360, 496);
+		if (PLAYERDATA->getGold() >= 1000) IMAGEMANAGER->render("bag_emblem", hdc, 474, 488);
 	}
 }
 

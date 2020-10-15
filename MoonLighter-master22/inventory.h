@@ -143,6 +143,7 @@ public:
 	//렌더 함수 
 	void cursorRender(HDC hdc);					//커서 출력 함수
 	void invenCursorRender(HDC hdc);			//인벤토리 메뉴의 커서 출력 
+	void merchantIconRender(HDC hdc);			//상인아이템의 아이콘 이미지 출력 
 	void selectCursorRender(HDC hdc);			//선택 메뉴(네,아니오)의 커서 출력 
 	void pendantCtrlRender(HDC hdc);			//펜던트 컨트롤러 상태에 필요한 이미지 출력 
 	void emblemCtrlRender(HDC hdc);				//엠블렘 컨트롤러 상태에 필요한 이미지 출력
