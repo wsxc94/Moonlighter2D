@@ -3,6 +3,7 @@
 #include "itemManager.h"
 
 class animation;
+class DungeonMap;
 
 //결과창에서 보여줄 에너미 공격애니메이션
 typedef struct tagResultEnemyAnimation
@@ -36,6 +37,9 @@ private:
 	bool _isInDungeon;			//플레이어가 던전에 있는지 여부 확인
 	bool _isActivate;			//UI 렌더할건지
 
+	DungeonMap* _mapData;		//엠블렘으로 집을오면 던전맵데이터를 저장한다
+	int _dgFloor;				//몇층이었는지
+	bool _isEmblemReturn;		//엠블렘리턴인지 확인
 private:
 	vector<RESULTENEMY> _vEnemy;		//결과창 에너미
 	RESULTENEMY* _killEnemy;				//플레이어 죽인에너미
@@ -78,6 +82,10 @@ public:
 		return false;
 	} // 킬에너미가 존재하냐?
 
+	DungeonMap* getMapData() { return _mapData; }
+	bool getIsEmblemReturn() { return _isEmblemReturn; }
+	int getDungeonFloor() { return _dgFloor; }
+
 	//set함수 
 	void setHp(int hp) { _hp = hp; }
 	void setAtk(int atk) { _atk = atk; }
@@ -98,6 +106,9 @@ public:
 	void minusInDungeonHp(int minusHp);	//매개변수 값만큼 던전체력 빼기 
 	void addGold(int addValue) { _gold += addValue; }	//매개변수 값만큼 골드 더하기 
 	void subGold(int subValue) { _gold -= subValue; if (_gold < 0) _gold = 0; }	//매개변수 값만큼 골드 빼기 
+	void saveDungeonMap(DungeonMap* data) { _mapData = data; }
+	void setIsEmblemReturn(bool value) { _isEmblemReturn = value; }
+	void setDungeonFloor(int floor) { _dgFloor = floor; }
 
 	//인터페이스 렌더함수 
 	void goldRender(HDC hdc);					//현재 소지하고 있는 골드 출력 

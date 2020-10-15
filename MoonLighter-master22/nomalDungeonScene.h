@@ -27,11 +27,7 @@ typedef struct
 
 }dungeonSlot;
 
-struct tagPotal
-{
-	RECT rc;
-	animation* ani;
-};
+
 
 class nomalDungeonScene : public gameNode
 {
@@ -44,8 +40,9 @@ private:
 	RETURNKIND _returnKind;					//돌아가는방식 팬던트냐? 엠블렘이냐?
 	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
 	RESULTENEMY* _killEnemy;				//플레이어죽인에너미
-	tagPotal _potal;						//엠블렘 선택시 생성될 포탈
-	animation* _resultAnimation;			//가운데 동그라미 애니메이션
+	tagPotal*	_potal;						//현재 던전에 포탈이있는지 확인용
+	animation* _aniBefore;					//결과창 출력전에 애니메이션
+	animation* _aniCenter;					//결과창 가운데에있는 애니메이션 ( 포탈 )
 private:
 	DUNGEONSCENESTATE _dState;
 
@@ -76,6 +73,7 @@ public:
 	~nomalDungeonScene() { };
 
 	HRESULT init();
+	HRESULT initFromSave();
 	void release();
 	void update();
 	void render();
@@ -95,5 +93,6 @@ public:
 	void golemScrollRender();
 	void updateRender();
 	void resultRender();
+	void emblemUpdate();				//엠블렘 선택했을때 업데이트
 };
 

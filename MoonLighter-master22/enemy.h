@@ -404,8 +404,9 @@ public:
 		animation* ani;
 		float x, y;				// 센터점
 		float angle;			//날아가는 각도
+		int atk;
 		bool isFire;			// 발사했냐?
-		bool isBreak;			//부서지는 애니메이션 재생용
+		bool isBreak;			//부서지는 애니메이션 재생용 && 충돌기능도
 	};
 	SKELETONSTATE _stState;
 	SKELETONPHASE _bossPhase;

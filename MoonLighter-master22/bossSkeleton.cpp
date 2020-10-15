@@ -15,6 +15,8 @@ HRESULT bossSkeleton::init(int x, int y)
 	_hammerWave1->init(IMAGEMANAGER->findImage("hammerWave1"), 0, 7);
 	_scroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
 
+	IMAGEMANAGER->addImage("pixelCollision_skeleton", WINSIZEX, WINSIZEY);
+
 	vector<POINT> vp;
 
 	_attackSword->aniStop();
@@ -70,6 +72,7 @@ HRESULT bossSkeleton::init(int x, int y)
 	_blade->angle = 0;
 	_blade->isFire = false;
 	_blade->isBreak = false;
+	_blade->atk = 10;
 
 
 	// 사운드 관련 함수 초기화
@@ -182,6 +185,8 @@ void bossSkeleton::render()
 	
 	CAMERAMANAGER->ZorderDrawText("Dual Weapon Skeleton", WINSIZEY / 2, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
 
+	//IMAGEMANAGER->addImage("pixelCollision_skeleton", WINSIZEX, WINSIZEY);
+	//_blade->ani->ZorderRotateAlphaRender(getMemDC(), 2000, _blade->x, _blade->y, _blade->angle, 150);
 	
 	_hpBar->cameraRender(WINSIZEX / 2, WINSIZEY - 50);
 }
@@ -268,7 +273,10 @@ void bossSkeleton::animationRender()
 
 	}
 	//블레이드 렌더
-	if (_blade->ani->getAniState() != ANIMATION_END) _blade->ani->ZorderRotateAlphaRender(getMemDC(), 2000, _blade->x, _blade->y, _blade->angle, 150);
+	if (_blade->ani->getAniState() != ANIMATION_END)
+	{
+		_blade->ani->ZorderRotateRender(getMemDC(), 2000, _blade->x, _blade->y, _blade->angle);
+	}
 
 	int wid = IMAGEMANAGER->findImage("skeletonMove")->getFrameWidth() / 2 * 3;
 	int hei = IMAGEMANAGER->findImage("skeletonMove")->getFrameHeight() / 2 * 3;
@@ -585,6 +593,36 @@ void bossSkeleton::attackUpdate()
 	default:
 		break;
 	}
+
+	//블레이드 픽셀충돌
+	if (_blade->isFire && !_blade->isBreak)
+	{
+		IMAGEMANAGER->findImage("skeletonBlade")->rotateFrameRender(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), _blade->x, _blade->y, _blade->angle, _blade->ani->getCurIndex(), 0);
+		IMAGEMANAGER->findImage("pixelCollision_skeleton")->render(getMemDC(), 0, 0);
+		COLORREF co = GetPixel(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), PLAYER->getX(), PLAYER->getY());
+		int r = GetRValue(co);
+		int g = GetGValue(co);
+		int b = GetBValue(co);
+		if (r != 0 && g != 0 && b != 0)
+		{
+			_blade->ani->aniPlay();
+			_blade->isBreak = true;
+			PLAYERDATA->minusInDungeonHp(_blade->atk);
+		}
+		BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
+	}
+
+	if (PLAYERDATA->getInDungeonHp() <= 0)
+	{
+		RESULTENEMY* em = new RESULTENEMY;
+		em->attack = new animation;
+		em->attack->init(_attackHammer->getImage(), 0, 7, true);
+		em->frameY = 3;
+		em->scale = 3.f;
+		PLAYERDATA->setKillEnemy(em);
+		PLAYERDATA->setInDungeonHp(0);
+		PLAYER->setPlayerState(PLAYER_DIE);
+	}
 }
 
 void bossSkeleton::soundUpdate()
@@ -720,12 +758,20 @@ void bossSkeleton::hitToPlayer()
 		if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
 		break;
 	case bossSkeleton::ST_SKILL_SWORD:
+	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
 		{
 			_swordAtkBox.isHit = true;
 			PLAYERDATA->minusInDungeonHp(_emAtkSword);
 		}
+		//플레이어 렉트범위 만큼의 픽셀을 검사해 지정한 색이 아니면 충돌처리
+		int pWid = (PLAYER->getRect().left + PLAYER->getRect().right) / 2;
+		int pHei = (PLAYER->getRect().top + PLAYER->getRect().bottom) / 2;
+
+	
+
 		if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
+	}
 		break;
 	case bossSkeleton::ST_SKILL_HAMMER:
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false && _attackHammer->getCurIndex() < 9)
@@ -798,6 +844,16 @@ void bossSkeleton::hitToPlayer()
 	break;
 	}
 
+	if (PLAYERDATA->getInDungeonHp() <= 0)
+	{
+		RESULTENEMY* em = new RESULTENEMY;
+		em->attack = new animation;
+		em->attack->init(_attackHammer->getImage(), 0, 7, true);
+		em->frameY = 3;
+		em->scale = 3.f;
+		PLAYERDATA->setKillEnemy(em);
+	}
+	
 }
 
 void bossSkeleton::hitSoundPlay()

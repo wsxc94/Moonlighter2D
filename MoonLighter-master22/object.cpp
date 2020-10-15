@@ -48,7 +48,7 @@ HRESULT dgDoor::init(int x, int y, string key, string topkey, int frameY)
 	_imgTopKey = topkey;
 	_rc = RectMake(x, y, IMAGEMANAGER->findImage(key)->getFrameWidth(), IMAGEMANAGER->findImage(key)->getFrameHeight());
 	_close = new animation;
-	_close->init(IMAGEMANAGER->findImage(key), frameY, 20);
+	_close->init(IMAGEMANAGER->findImage(key), frameY, 7);
 	_close->aniStop();
 	_open = new animation;
 	vector<POINT> _temp;
@@ -56,7 +56,7 @@ HRESULT dgDoor::init(int x, int y, string key, string topkey, int frameY)
 	{
 		_temp.push_back(PointMake(i, frameY));
 	}
-	_open->initArray(_temp, IMAGEMANAGER->findImage(key), 20);
+	_open->initArray(_temp, IMAGEMANAGER->findImage(key), 7);
 
 	_isOpen = false;
 	_isClose = false;

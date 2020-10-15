@@ -264,6 +264,9 @@
     <ClCompile Include="selectMenu.cpp">
       <Filter>GameFramework\선택메뉴</Filter>
     </ClCompile>
+    <ClCompile Include="fastGetPixel.cpp">
+      <Filter>GameFramework\유틸</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -427,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="selectMenu.h">
       <Filter>GameFramework\선택메뉴</Filter>
+    </ClInclude>
+    <ClInclude Include="fastGetPixel.h">
+      <Filter>GameFramework\유틸</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

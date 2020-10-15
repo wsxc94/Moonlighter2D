@@ -14,6 +14,7 @@ HRESULT animation::init(image * img,int frameY, int aniFrame, bool isLoop, bool 
 	_maxFrameY = _img->getMaxFrameY();
 	_frameY = frameY;
 	_isArray = false;
+	_aniList.clear();
 	for (int i = 0; i <= _maxFrameX; i++)
 	{
 		POINT temp = { i,frameY };
@@ -46,7 +47,7 @@ HRESULT animation::init(image * img, int frameY, int aniFrame, RECT rc, string k
 	_isArray = false;
 	_rc = rc;
 	_key = key;
-
+	_aniList.clear();
 	for (int i = 0; i <= _maxFrameX; i++)
 	{
 		POINT temp = { i,frameY };

@@ -8,6 +8,7 @@ HRESULT playerData::init()
 	_isActivate = true;
 	
 	_killEnemy = nullptr;
+	_isEmblemReturn = false;
 
 	return S_OK;
 }

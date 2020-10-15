@@ -4,6 +4,13 @@
 
 HRESULT nomalDungeonScene::init()
 {
+	if (PLAYERDATA->getIsEmblemReturn())
+	{
+		this->initFromSave();
+		return S_OK;
+	}
+
+
 	//던전 업데이트 종류
 	_dState = DS_UPDATE;
 	//던전층수
@@ -18,7 +25,6 @@ HRESULT nomalDungeonScene::init()
 	_golemScroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
 
 	//플레이어 테스트
-	_player = RectMakeCenter(WINSIZEX / 2, WINSIZEY / 2, 40, 40);
 	PLAYERDATA->setIsInDungeon(true);
 	//에너미 테스트
 
@@ -38,17 +44,38 @@ HRESULT nomalDungeonScene::init()
 	this->getInvenItem();
 	_resultKind = RESULT_PLAYERDIE;
 
-	//던전에 들어왔다고 해주자
-	PLAYERDATA->setIsInDungeon(true);
-
 	//포탈애니메이션 초기화
-	_potal.ani = new animation;
-	_potal.ani->init(IMAGEMANAGER->findImage("potalInit"), 0, 5);
+	_potal = nullptr;
 
-	_resultAnimation = new animation;
-	_resultAnimation->init(IMAGEMANAGER->findImage("죽음"), 0, 5);
-	_resultAnimation->aniStop();
+	_aniBefore = new animation;
+
+	_aniCenter = new animation;
+
 	
+	return S_OK;
+}
+
+HRESULT nomalDungeonScene::initFromSave()
+{
+	_currentDungeon = PLAYERDATA->getMapData();
+	_dgFloor = PLAYERDATA->getDungeonFloor();
+
+	_golemScroll = new animation;
+	_golemScroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
+	PLAYERDATA->setIsInDungeon(true);
+	PLAYER->setX(WINSIZEX / 2);
+	PLAYER->setY(WINSIZEY / 2);
+	SOUNDMANAGER->play("dungeonBGM", 0.4f);
+	CAMERAMANAGER->init(WINSIZEX / 2, WINSIZEY / 2, WINSIZEX, WINSIZEY, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
+	CAMERAMANAGER->FadeInit(80, FADE_IN);
+	CAMERAMANAGER->FadeStart();
+	this->initItemSlot();
+	this->getInvenItem();
+	_resultKind = RESULT_PLAYERDIE;
+	_dState = DS_UPDATE;
+	_potal = nullptr;
+	_aniBefore = new animation;
+	_aniCenter = new animation;
 	return S_OK;
 }
 
@@ -70,7 +97,8 @@ void nomalDungeonScene::update()
 		//죽으면 결과창띄워라
 		if (PLAYER->getPlayerState() == PLAYER_DIE)
 		{
-			_resultAnimation->changeImg(IMAGEMANAGER->findImage("죽음"));
+			_aniBefore->init(IMAGEMANAGER->findImage("죽음"), 0, 5);
+			_aniCenter->init(IMAGEMANAGER->findImage("죽음"), 0, 5);
 			_dState = DS_RESULT;
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
@@ -80,20 +108,18 @@ void nomalDungeonScene::update()
 		// 팬던트 사용했냐?? 사용했으면 에니메이션 띄우고 결과창 띄워라
 		else if (ITEMMENU->getGoToTownPendant())
 		{
+			_aniBefore->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 5);
+			_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5,true);
 			_dState = DS_RESULT;
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_RETURN;
 			_returnKind = RETURN_PENDANT;
 		}
-		//엠블렘 사용했냐?? 사용했으면 에니메이션 띄우고 결과창띄워라
+		//엠블렘 사용했냐?? 사용했으면 포탈을 만들어라
 		else if (ITEMMENU->getGoToTownEmblem())
 		{
-			_dState = DS_RESULT;
-			_vEnemy = PLAYERDATA->getVEnemy();
-			_killEnemy = PLAYERDATA->getKillEnemy();
-			_resultKind = RESULT_RETURN;
-			_returnKind = RETURN_EMBLEM;
+			this->emblemUpdate();
 		}
 		this->dungeonUpdate();
 		PLAYER->update();
@@ -102,20 +128,35 @@ void nomalDungeonScene::update()
 	case DS_RESULT:
 		//ui창 끄기
 		PLAYERDATA->setIsActivate(false);
+		_aniBefore->update();
+		if (_aniBefore->getAniState() == ANIMATION_END)
+		_aniCenter->update();
+		if (_resultKind == RESULT_PLAYERDIE && _aniCenter->getCurIndex() >= _aniCenter->getImage()->getMaxFrameX())
+			_aniCenter->aniPause();
 		for (int i = 0; i < _vEnemy.size(); i++)
 		{
 			_vEnemy[i].attack->update();
 		}
 		if (_killEnemy)
 			_killEnemy->attack->update();
-		if (INPUT->GetKeyDown('J'))
+		if (INPUT->GetKeyDown('J') && _aniBefore->getAniState() == ANIMATION_END)
 		{
 			SCENEMANAGER->loadScene("타운로딩");
 			SOUNDMANAGER->stop("dungeonBGM");
 			SOUNDMANAGER->stop("spaRoomBGM");
 			SOUNDMANAGER->stop("bossRoomBGM");
 			PLAYERDATA->vEnemyClear();
-			PLAYERDATA->initDungeonHp();
+			
+			if (_returnKind == RETURN_EMBLEM)
+			{
+				PLAYERDATA->saveDungeonMap(_currentDungeon);
+				PLAYERDATA->setIsEmblemReturn(true);
+				PLAYERDATA->setDungeonFloor(_dgFloor);
+			}
+			else
+			{
+				PLAYERDATA->setIsEmblemReturn(false);
+			}
 			this->release();
 
 		}
@@ -125,8 +166,6 @@ void nomalDungeonScene::update()
 		break;
 	}
 
-	//에너미 받아오고 업데이트
-	
 	//카메라 업뎃
 	CAMERAMANAGER->update(PLAYER->getX(),PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
@@ -140,7 +179,6 @@ void nomalDungeonScene::render()
 	{
 	case DS_UPDATE: case DS_RETURN:
 		this->golemScrollRender();
-		
 		PLAYER->render(getMemDC());
 		if (INPUT->GetKey(VK_TAB))
 		{
@@ -149,17 +187,33 @@ void nomalDungeonScene::render()
 		ITEMMENU->render(getMemDC());
 		break;
 	case DS_RESULT:
-		IMAGEMANAGER->addImage("dark", WINSIZEX, WINSIZEY)->alphaRender(getMemDC(), 0, 0, 170);
-		IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
-		this->resultRender();
-		this->itemResultRender();
-
-		
+		switch (_resultKind)
+		{
+		case RESULT_PLAYERDIE:
+			_aniBefore->centerRender(getMemDC(), PLAYER->getX(), PLAYER->getY() - 8);
+			break;
+		case RESULT_RETURN:
+			switch (_returnKind)
+			{
+			case RETURN_PENDANT:
+				_aniBefore->centerRender(getMemDC(), PLAYER->getX() - 12, PLAYER->getY() - 8);
+				break;
+			case RETURN_EMBLEM:
+				_aniBefore->stretchRender(getMemDC(), _potal->x, _potal->y,2.f);
+				break;
+			}
+			break;
+		}
+		if (_aniBefore->getAniState() == ANIMATION_END)
+		{
+			IMAGEMANAGER->addImage("dark", WINSIZEX, WINSIZEY)->alphaRender(getMemDC(), 0, 0, 170);
+			IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
+			this->resultRender();
+			this->itemResultRender();
+		}
 		break;
 	
 	}
-
-	
 }
 bool nomalDungeonScene::minimapPush(POINT pt)
 {
@@ -301,7 +355,6 @@ void nomalDungeonScene::dungeonUpdate()
 	{
 		_vMinimap.push_back(make_pair(_currentDungeon->getDungeonXY(), _currentDungeon));
 	}
-
 
 	//던전 업뎃
 	_currentDungeon->update();
@@ -462,9 +515,7 @@ void nomalDungeonScene::resultRender()
 	{
 	case RESULT_PLAYERDIE:
 	{
-		int cx = 630 - IMAGEMANAGER->findImage("죽음")->getFrameWidth() / 2;
-		int cy = 170 - IMAGEMANAGER->findImage("죽음")->getFrameHeight() / 2;
-		IMAGEMANAGER->findImage("죽음")->frameRender(getMemDC(), cx, cy, 9, 0);
+		_aniCenter->centerRender(getMemDC(), 630, 170);
 		_killEnemy->attack->setFrameY(_killEnemy->frameY);
 		_killEnemy->attack->stretchRender(getMemDC(), 762, 240, _killEnemy->scale);
 	}
@@ -475,20 +526,23 @@ void nomalDungeonScene::resultRender()
 		{
 		case RETURN_PENDANT:
 		{
+			_aniCenter->stretchRender(getMemDC(), 640, 170, 2.f);
 			int cx = 762 - IMAGEMANAGER->findImage("bag_pendant")->getWidth() / 2;
 			int cy = 240 - IMAGEMANAGER->findImage("bag_pendant")->getHeight() / 2;
 			IMAGEMANAGER->findImage("bag_pendant")->render(getMemDC(), cx, cy);
 		}
 			break;
 		case RETURN_EMBLEM:
-			break;
-		default:
+		{
+			_aniCenter->stretchRender(getMemDC(), 640, 170, 2.f);
+			int cx = 762 - IMAGEMANAGER->findImage("bag_emblem")->getWidth() / 2;
+			int cy = 240 - IMAGEMANAGER->findImage("bag_emblem")->getHeight() / 2;
+			IMAGEMANAGER->findImage("bag_emblem")->render(getMemDC(), cx, cy);
+		}
 			break;
 		}
 		
 	}
-		break;
-	default:
 		break;
 	}
 
@@ -507,4 +561,35 @@ void nomalDungeonScene::resultRender()
 		j++;
 	}
 
+}
+
+void nomalDungeonScene::emblemUpdate()
+{
+	//던전에 포탈이 없으면 하나 만들어주자
+	if (!_potal && !_currentDungeon->getPotal())
+	{
+		_currentDungeon->initPotal();
+		_potal = _currentDungeon->getPotal();
+	}
+
+	_potal = _currentDungeon->getPotal();
+	//포탈이 없으면 리턴
+	if (!_potal) return;
+
+
+
+	//범위안에있고 j키를 누르면 결과창띄워라
+	if (_potal->isRange)
+	{
+		if (INPUT->GetKeyDown('J'))
+		{
+			_aniBefore->init(IMAGEMANAGER->findImage("potalPlayer"), 0, 5);
+			_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5, true);
+			_dState = DS_RESULT;
+			_vEnemy = PLAYERDATA->getVEnemy();
+			_killEnemy = PLAYERDATA->getKillEnemy();
+			_resultKind = RESULT_RETURN;
+			_returnKind = RETURN_EMBLEM;
+		}
+	}
 }
