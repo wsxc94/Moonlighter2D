@@ -73,6 +73,7 @@ void shopScene::update()
 	_displayStand->update();
 
 	ITEMMENU->update();
+	PLAYER->setPlace(SHOP);
 	PLAYER->update();
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
 	CAMERAMANAGER->update(PLAYER->getX(), PLAYER->getY());

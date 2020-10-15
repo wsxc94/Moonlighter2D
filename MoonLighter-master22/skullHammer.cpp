@@ -457,11 +457,13 @@ void skullHammer::hitSoundPlay()
 void skullHammer::skullHammerCollision()
 {
 	RECT temp;
+
 	if (!_emPlayerColi  && PLAYER->getPlayerState() != PLAYER_ROLL)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_attackBox))
 		{
 			_emPlayerColi = true;
+		
 			if (PLAYER->getPlayerState() == PLAYER_SHILED)
 			{
 				PLAYER->playerPush();

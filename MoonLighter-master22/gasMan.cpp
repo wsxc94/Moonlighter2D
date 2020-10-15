@@ -493,10 +493,12 @@ void gasMan::hitSoundPlay()
 void gasMan::gasManCollision()
 {
 	RECT temp;
+
 	for (int i = 0; i < _vArrow.size(); i++)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_vArrow[i].rc) && PLAYER->getPlayerState() != PLAYER_ROLL)
 		{
+			
 			if (PLAYER->getPlayerState() == PLAYER_SHILED )
 			{
 				PLAYER->playerPush();

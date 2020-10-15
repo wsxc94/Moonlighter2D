@@ -116,12 +116,18 @@ void dungeonLoading::loadImage()
 	_loading->loadFrameImage("보스문뚜껑(양옆)", "Images/던전/bossDoorTopW17.bmp", 54, 192,1,2);
 	_loading->loadFrameImage("보스문뚜껑(위아래)", "Images/던전/bossDoorTopH17.bmp", 96, 54,1,1);
 
+<<<<<<< HEAD
 	_loading->loadFrameImage("dungeonStageBar", "Images/던전결과창/dungeonProgress1X3.bmp", 85, 45, 1, 3);
 	_loading->loadImage("resultBack", "Images/던전결과창/ui_dungeonResult4022.bmp", 1158, 656, true, RGB(255, 0, 255));
 	
 	_loading->loadFrameImage("potalUpdate", "Images/던전/potalUpdate7.bmp", 917, 108, 7, 1);
 	_loading->loadFrameImage("potalInit", "Images/던전/potalInit26.bmp", 3406, 108, 26, 1);
 	_loading->loadFrameImage("potalPlayer", "Images/던전/potalPlayer25.bmp", 3275, 108, 25, 1);
+=======
+	//플레이어 이팩트
+	_loading->loadFrameImage("화살이펙트", "Images/플레이어/bowEffect.bmp", 240, 40, 3, 1);
+	_loading->loadFrameImage("공격이펙트", "Images/플레이어/swordEffect 3X1.bmp", 240, 40, 3, 1);
+>>>>>>> origin/player
 
 }
 

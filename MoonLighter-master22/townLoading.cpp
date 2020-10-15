@@ -295,6 +295,16 @@ void townLoading::loadingSound()
 	_loading->loadSound("상점입장1", "Sound/shopSound/shopDoorOpen1.wav");
 	_loading->loadSound("문닫아", "Sound/shopSound/문닫힘.wav");
 
+	_loading->loadSound("화살발사", "Sound/playerSound/bow.wav");			//적용
+	_loading->loadSound("화살맞음", "Sound/playerSound/bow_Attack.wav");	//적용
+	_loading->loadSound("화살스킬", "Sound/playerSound/bow_Charge.wav");	
+	_loading->loadSound("구르기", "Sound/playerSound/roll.wav");			//적용
+	_loading->loadSound("검휘두르기", "Sound/playerSound/Sword.wav");		//애매
+	_loading->loadSound("플레이어걷기", "Sound/playerSound/walk.wav");		//적용
+	_loading->loadSound("침대", "Sound/playerSound/침대.wav");
+	_loading->loadSound("온천", "Sound/playerSound/회복_샘.wav");			//적용
+
+	
 	//마을 사운드
 	_loading->loadSound("개소리" , "Sound/townSound/개소리.wav");
 
