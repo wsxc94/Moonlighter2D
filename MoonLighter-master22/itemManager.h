@@ -144,12 +144,6 @@ public:
 	void minusOneCount() { _item.count--; }				//아이템 개수 -1
 	void setItemPos(POINT pt) { _item.itemPos = pt; }
 	void setItemMoveState(ITEMMOVESTATE state) { _item.moveState = state; }
-	void setEmpty(int pri){
-		cout << _item.price << endl;
-		_item.price = pri;
-		cout << _item.price << endl;
-		memset(&_item, 0, sizeof(_item));
-	}
 };
 
 class itemManager

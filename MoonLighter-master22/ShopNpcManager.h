@@ -3,6 +3,9 @@
 #include "npc.h"
 
 class displayStand;
+
+// 상점용 npc 매니저
+
 class ShopNpcManager : public gameNode
 {
 private:

@@ -54,7 +54,7 @@ void shopLoading::loadingImage()
 
 void shopLoading::loadingSound()
 {
-	
+
 	_loading->loadSound("¾öÃ»½Î´Ù", "Sound/shopSound/¾öÃ»½Î´Ù.wav");
 	_loading->loadSound("½Î´Ù", "Sound/shopSound/½Î´Ù.wav");
 	_loading->loadSound("ºñ½Î´Ù", "Sound/shopSound/ºñ½Î´Ù.wav");

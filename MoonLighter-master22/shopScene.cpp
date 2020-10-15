@@ -83,43 +83,43 @@ void shopScene::update()
 
 void shopScene::render()
 {
-	
+
 	IMAGEMANAGER->findImage("상점픽셀")->render(IMAGEMANAGER->findImage("temp")->getMemDC(), 304, 132);
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("상점맵"), 304, 132);
 	//CAMERAMANAGER->Render(getMemDC() , IMAGEMANAGER->findImage("상점픽셀"), 304, 132);
-	
+
 	_npc->render();
-	
+
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점길목"), 458 + IMAGEMANAGER->findImage("상점길목")->getFrameHeight(), 654, 458);
 
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점문"), 870 + IMAGEMANAGER->findImage("상점문")->getFrameHeight(), 638, 870);
 
-	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점침대"), 302 + IMAGEMANAGER->findImage("상점침대")->getFrameHeight()/4, 752, 302);
+	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점침대"), 302 + IMAGEMANAGER->findImage("상점침대")->getFrameHeight() / 4, 752, 302);
 
-	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점좌판"), 674 + IMAGEMANAGER->findImage("상점좌판")->getFrameHeight()/4, 472, 674);
+	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점좌판"), 674 + IMAGEMANAGER->findImage("상점좌판")->getFrameHeight() / 4, 472, 674);
 
-	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점책상"), 670 + IMAGEMANAGER->findImage("상점책상")->getFrameHeight()/4, 646, 670);
-	
+	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점책상"), 670 + IMAGEMANAGER->findImage("상점책상")->getFrameHeight() / 4, 646, 670);
+
 	char str[256];
 	for (int i = 0; i < ITEMDESKCOUNT; i++)
 	{
-		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY) continue; 
-		
+		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY) continue;
+
 		CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
 			680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
 			, v_itemPos[i].first, v_itemPos[i].second);
-		
+
 		CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("아이템그림자")
 			, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
 			, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
 
-		if(_npc->getVector()[i]->getActive())
+		if (_npc->getVector()[i]->getActive())
 			_npc->getVector()[i]->render(NPC_SHOP);
 
 		wsprintf(str, "X: %d", _displayStand->getDisplayItem()[i].getCount());
 		TextOut(getMemDC(), 5, 150 * (i), str, strlen(str));
-		
-		
+
+
 	}
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
@@ -145,7 +145,7 @@ void shopScene::render()
 void shopScene::PortaltoTown()
 {
 	RECT tmp;
-	if (IntersectRect(&tmp , &PLAYER->getShadowRect() , &GoTownPortal))
+	if (IntersectRect(&tmp, &PLAYER->getShadowRect(), &GoTownPortal))
 	{
 		SOUNDMANAGER->stop("상점브금");
 		SCENEMANAGER->loadScene("타운화면");
@@ -163,13 +163,13 @@ void shopScene::PlayerCol()
 	}
 
 	if (GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),
-		(PLAYER->getShadowRect().left + PLAYER->getShadowRect().right) /2 , PLAYER->getShadowRect().top) == RGB(255, 0, 0) ||
+		(PLAYER->getShadowRect().left + PLAYER->getShadowRect().right) / 2, PLAYER->getShadowRect().top) == RGB(255, 0, 0) ||
 		GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),
 		(PLAYER->getShadowRect().left + PLAYER->getShadowRect().right) / 2, PLAYER->getShadowRect().bottom) == RGB(255, 0, 0) ||
 		GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),
-		PLAYER->getShadowRect().left, (PLAYER->getShadowRect().bottom + PLAYER->getShadowRect().top) /2) == RGB(255, 0, 0) ||
+			PLAYER->getShadowRect().left, (PLAYER->getShadowRect().bottom + PLAYER->getShadowRect().top) / 2) == RGB(255, 0, 0) ||
 		GetPixel(IMAGEMANAGER->findImage("temp")->getMemDC(),
-		PLAYER->getShadowRect().right, (PLAYER->getShadowRect().bottom + PLAYER->getShadowRect().top) / 2) == RGB(255, 0, 0)) {
+			PLAYER->getShadowRect().right, (PLAYER->getShadowRect().bottom + PLAYER->getShadowRect().top) / 2) == RGB(255, 0, 0)) {
 
 		if (PLAYER->getLeft()) {
 			PLAYER->setX(PLAYER->getX() + 4);

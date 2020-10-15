@@ -60,6 +60,7 @@ void mainGame::update()
 	//이펙트 매니저 업데이트
 	EFFECTMANAGER->update();
 
+
 	CAMERAMANAGER->FadeUpdate();
 }
 
