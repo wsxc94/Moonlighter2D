@@ -100,6 +100,7 @@ public:
 	void initPotal();
 	void potalUpdate();
 	void potalRender();
+	void releasePotal();
 
 	//현재 몇층인지 알려줌
 	void setCurrentFloor(int floor) { _floor = floor; }

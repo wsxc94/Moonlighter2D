@@ -44,13 +44,13 @@ HRESULT nomalDungeonScene::init()
 	this->getInvenItem();
 	_resultKind = RESULT_PLAYERDIE;
 
+
 	//포탈애니메이션 초기화
 	_potal = nullptr;
 
 	_aniBefore = new animation;
 
 	_aniCenter = new animation;
-
 	
 	return S_OK;
 }
@@ -72,10 +72,21 @@ HRESULT nomalDungeonScene::initFromSave()
 	this->initItemSlot();
 	this->getInvenItem();
 	_resultKind = RESULT_PLAYERDIE;
-	_dState = DS_UPDATE;
+	_dState = DS_RETURN;
 	_potal = nullptr;
 	_aniBefore = new animation;
 	_aniCenter = new animation;
+	_return.ani = new animation;
+	_return.ani->init(IMAGEMANAGER->findImage("potalInit"), 0, 7,false,true);
+	_return.isActivate = true;		//뱉고 없어지냐?
+	_return.isRange = false;		//이걸 플레이어 뱉었는지 확인
+	_return.isUpdate = false;		//이걸 처음 이닛확인용으로 사용
+	_return.x = _currentDungeon->getPotal()->x;
+	_return.y = _currentDungeon->getPotal()->y;
+	_currentDungeon->releasePotal();
+	_playerClone = new animation;
+	_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 4);
+	_playerClone->aniStop();
 	return S_OK;
 }
 
@@ -103,7 +114,6 @@ void nomalDungeonScene::update()
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_PLAYERDIE;
-			_returnKind = RETURN_PENDANT;
 		}
 		// 팬던트 사용했냐?? 사용했으면 에니메이션 띄우고 결과창 띄워라
 		else if (ITEMMENU->getGoToTownPendant())
@@ -113,8 +123,7 @@ void nomalDungeonScene::update()
 			_dState = DS_RESULT;
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
-			_resultKind = RESULT_RETURN;
-			_returnKind = RETURN_PENDANT;
+			_resultKind = RESULT_PENDANT;
 		}
 		//엠블렘 사용했냐?? 사용했으면 포탈을 만들어라
 		else if (ITEMMENU->getGoToTownEmblem())
@@ -147,7 +156,7 @@ void nomalDungeonScene::update()
 			SOUNDMANAGER->stop("bossRoomBGM");
 			PLAYERDATA->vEnemyClear();
 			
-			if (_returnKind == RETURN_EMBLEM)
+			if (_resultKind == RESULT_EMBLEM)
 			{
 				PLAYERDATA->saveDungeonMap(_currentDungeon);
 				PLAYERDATA->setIsEmblemReturn(true);
@@ -159,6 +168,32 @@ void nomalDungeonScene::update()
 			}
 			this->release();
 
+		}
+
+		break;
+	case DS_RETURN:
+		_golemScroll->update();
+		_return.ani->update();
+		_playerClone->update();
+		if (_return.ani->getCurIndex() == _return.ani->getImage()->getMaxFrameX())
+		{
+			PLAYER->setX(_return.x);
+			PLAYER->setY(_return.y - 1);
+			PLAYER->setPlayerDirection(0);
+			PLAYER->setPlayerState(PLAYER_IDLE);
+			_playerClone->aniRestart();
+		}
+		if (_return.ani->getCurIndex() > _return.ani->getImage()->getMaxFrameX() && _playerClone->getAniState() != ANIMATION_END)
+		{
+			PLAYER->setY(PLAYER->getY() + 4);
+		}
+		if (_return.ani->getAniState() == ANIMATION_END)
+		{
+			_return.isActivate = false;
+			_dState = DS_UPDATE;
+			ITEMMENU->SetGoToTownEmblem(false);
+			ITEMMENU->setGoToTownPendant(false);
+			PLAYERDATA->setIsEmblemReturn(false);
 		}
 
 		break;
@@ -177,7 +212,7 @@ void nomalDungeonScene::render()
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 	switch (_dState)
 	{
-	case DS_UPDATE: case DS_RETURN:
+	case DS_UPDATE:
 		this->golemScrollRender();
 		PLAYER->render(getMemDC());
 		if (INPUT->GetKey(VK_TAB))
@@ -192,16 +227,11 @@ void nomalDungeonScene::render()
 		case RESULT_PLAYERDIE:
 			_aniBefore->centerRender(getMemDC(), PLAYER->getX(), PLAYER->getY() - 8);
 			break;
-		case RESULT_RETURN:
-			switch (_returnKind)
-			{
-			case RETURN_PENDANT:
-				_aniBefore->centerRender(getMemDC(), PLAYER->getX() - 12, PLAYER->getY() - 8);
-				break;
-			case RETURN_EMBLEM:
-				_aniBefore->stretchRender(getMemDC(), _potal->x, _potal->y,2.f);
-				break;
-			}
+		case RESULT_PENDANT:
+			_aniBefore->centerRender(getMemDC(), PLAYER->getX() - 12, PLAYER->getY() - 8);
+			break;
+		case RESULT_EMBLEM:
+			_aniBefore->stretchRender(getMemDC(), _potal->x, _potal->y,2.f);
 			break;
 		}
 		if (_aniBefore->getAniState() == ANIMATION_END)
@@ -211,6 +241,14 @@ void nomalDungeonScene::render()
 			this->resultRender();
 			this->itemResultRender();
 		}
+		break;
+	case DS_RETURN:
+		this->golemScrollRender();
+		if (_playerClone->getCurIndex() == _playerClone->getImage()->getMaxFrameX())
+			PLAYER->render(getMemDC());
+		else if(_playerClone->getAniState() == ANIMATION_PLAY)
+			_playerClone->ZoderRender(PLAYER->getY(), PLAYER->getX() - 60, PLAYER->getY() - 68);
+		_return.ani->ZorderStretchRender(_return.y, _return.x, _return.y, 2.f);
 		break;
 	
 	}
@@ -519,31 +557,23 @@ void nomalDungeonScene::resultRender()
 		_killEnemy->attack->setFrameY(_killEnemy->frameY);
 		_killEnemy->attack->stretchRender(getMemDC(), 762, 240, _killEnemy->scale);
 	}
-		break;
-	case RESULT_RETURN:
+	break;
+	case RESULT_PENDANT:
 	{
-		switch (_returnKind)
-		{
-		case RETURN_PENDANT:
-		{
-			_aniCenter->stretchRender(getMemDC(), 640, 170, 2.f);
-			int cx = 762 - IMAGEMANAGER->findImage("bag_pendant")->getWidth() / 2;
-			int cy = 240 - IMAGEMANAGER->findImage("bag_pendant")->getHeight() / 2;
-			IMAGEMANAGER->findImage("bag_pendant")->render(getMemDC(), cx, cy);
-		}
-			break;
-		case RETURN_EMBLEM:
-		{
-			_aniCenter->stretchRender(getMemDC(), 640, 170, 2.f);
-			int cx = 762 - IMAGEMANAGER->findImage("bag_emblem")->getWidth() / 2;
-			int cy = 240 - IMAGEMANAGER->findImage("bag_emblem")->getHeight() / 2;
-			IMAGEMANAGER->findImage("bag_emblem")->render(getMemDC(), cx, cy);
-		}
-			break;
-		}
-		
+		_aniCenter->stretchRender(getMemDC(), 640, 170, 2.f);
+		int cx = 762 - IMAGEMANAGER->findImage("bag_pendant")->getWidth() / 2;
+		int cy = 240 - IMAGEMANAGER->findImage("bag_pendant")->getHeight() / 2;
+		IMAGEMANAGER->findImage("bag_pendant")->render(getMemDC(), cx, cy);
 	}
-		break;
+	break;
+	case RESULT_EMBLEM:
+	{
+		_aniCenter->stretchRender(getMemDC(), 640, 170, 2.f);
+		int cx = 762 - IMAGEMANAGER->findImage("bag_emblem")->getWidth() / 2;
+		int cy = 240 - IMAGEMANAGER->findImage("bag_emblem")->getHeight() / 2;
+		IMAGEMANAGER->findImage("bag_emblem")->render(getMemDC(), cx, cy);
+	}
+	break;
 	}
 
 	int destY;
@@ -588,8 +618,7 @@ void nomalDungeonScene::emblemUpdate()
 			_dState = DS_RESULT;
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
-			_resultKind = RESULT_RETURN;
-			_returnKind = RETURN_EMBLEM;
+			_resultKind = RESULT_EMBLEM;
 		}
 	}
 }

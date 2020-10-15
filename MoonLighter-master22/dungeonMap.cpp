@@ -31,11 +31,7 @@ HRESULT DungeonMap::init()
 {
 	this->setStartDungeon();
 
-	enemy* _em = new bossSkeleton;
-	_em->init(WINSIZEX / 2, WINSIZEY / 2);
-	_em->initTileSize(28, 15);
-	_em->setWallTile(_vTile);
-	_vEnemy.push_back(_em);
+	
 	return S_OK;
 }
 
@@ -947,10 +943,17 @@ void DungeonMap::potalRender()
 			RECT txtRC = RectMake(_potal->x + 80, _potal->y - 90, 110, 50);
 			HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
 				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-			IMAGEMANAGER->findImage("messegeBox_potal")->render(getMemDC(), _potal->x + 30, _potal->y - 90);
+			//IMAGEMANAGER->findImage("messegeBox_potal")->render(getMemDC(), _potal->x + 30, _potal->y - 90);
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("messegeBox_potal"), 1999, _potal->x + 30, _potal->y - 90);
 			CAMERAMANAGER->ZorderDrawText("To Town", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		}
 	}
+}
+
+void DungeonMap::releasePotal()
+{
+	SAFE_DELETE(_potal->ani);
+	SAFE_DELETE(_potal);
 }
 
 DungeonMap * DungeonMap::findMap(POINT pos)

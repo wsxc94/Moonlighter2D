@@ -193,6 +193,10 @@ public:
 
 	void setPlace(PLACE place) { _place = place; }
 	void setHit(bool isHit) { _isHit = isHit; }
+	void setPlayerDirection(int i) { _player.direction = i; }
+	::animation* getPlayerDGRoll() { return _aniDgRoll; }
+	void playDgRoll() { _aniDgRoll->aniRestart(); }
+
 
 };
 

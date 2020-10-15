@@ -20,7 +20,12 @@ enum ZORDERIMGKIND
 {
 	IMG_NOMAL, IMG_NOMAL_SOUR, IMG_FRAME, IMG_ALPHA, IMG_ALPHA_SOUR, IMG_ALPHA_FRAME,
 	IMG_ROTATE_RENDER, IMG_ROTATE_FRAME, IMG_ROTATE_ALPHA, IMG_ROTATE_ALPHAFRAME,
-	IMG_STRETCH_RENDER,IMG_STRETCH_FRAME, IMG_TXT
+	IMG_STRETCH_RENDER,IMG_STRETCH_FRAME, IMG_TXT, IMG_TXTOUT
+};
+
+enum STRETCHRENDERKIND
+{
+	STRETCH_WHOLE, STRETCH_EACH
 };
 
 enum FADEKIND
@@ -39,6 +44,7 @@ struct tagFadeInfo
 struct tagZoderRender
 {
 	ZORDERIMGKIND kind;	// 렌더방법
+	STRETCHRENDERKIND stretchKind;
 	image* img;
 	float x, y;			// 렌더되는 xy 좌표
 	float z;				// 정렬기준
@@ -47,6 +53,8 @@ struct tagZoderRender
 	int sourWid, sourHei;
 	float angle;			// 회전각
 	float scale;			// 확대비율
+	float scaleX;
+	float scaleY;
 	BYTE alpha;			// 알파값
 	string txt;			// 텍스트
 	HFONT font;			//글자폰트
@@ -116,7 +124,9 @@ public:
 	void Render(HDC hdc, image* ig, int destX, int destY, int sourX, int sourY, int sourWid, int sourHei);
 	void FrameRender(HDC hdc, image* ig, int destX, int destY, int frameX = 0, int frameY = 0);
 	void StretchRender(HDC hdc, image* ig, int destX, int destY, float size);
+	void StretchRender(HDC hdc, image* ig, int destX, int destY, float scaleX, float scaleY);
 	void StretchFrameRender(HDC hdc, image* ig, int destX, int destY, int frameX, int frameY, float size);
+	void StretchFrameRender(HDC hdc, image* ig, int destX, int destY, int frameX, int frameY, float scaleX, float scaleY);
 	void AlphaRender(HDC hdc, image* ig, int destX, int destY, BYTE alpha);
 	void AlphaRender(HDC hdc, image* ig, int destX, int destY, int sourX, int sourY, int sourWid, int sourHei, BYTE alpha);
 	void AlphaFrameRender(HDC hdc, image* ig, int destX, int destY, int frameX, int frameY, BYTE alpha);
@@ -136,8 +146,11 @@ public:
 	void ZorderRotateAlphaRender(image* img, float z, int centerX, int centerY, float angle, BYTE alpha);
 	void ZorderRotateAlphaFrameRender(image* img, float z, int centerX, int centerY, float angle, int frameX, int frameY, BYTE alpha);
 	void ZorderStretchRender(image* img, float z, int centerX, int centerY, float scale);
+	void ZorderStretchRender(image* img, float z, int centerX, int centerY, float scaleX, float scaleY);
 	void ZorderStretchFrameRender(image* img, float z, int centerX, int centerY, int frameX, int frameY, float scale);
+	void ZorderStretchFrameRender(image* img, float z, int centerX, int centerY, int frameX, int frameY, float scaleX, float scaleY);
 	void ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, COLORREF color, UINT format);
+	void ZorderTextOut(string txt, float z, int x, int y, int size, COLORREF color);
 
 	void FadeInit(int time, FADEKIND fadeKind);
 	void FadeStart();

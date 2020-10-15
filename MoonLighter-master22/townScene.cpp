@@ -26,6 +26,7 @@ HRESULT townScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
+	this->initPotal();
 	return S_OK;
 }
 
@@ -60,7 +61,10 @@ void townScene::update()
 		SCENEMANAGER->loadScene("던전가는길");
 	}
 
+	if(_playerClone->getAniState() == ANIMATION_END)
 	PLAYER->update();
+
+	this->updatePotal();
 
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
 	CAMERAMANAGER->update(PLAYER->getX(), PLAYER->getY());
@@ -79,6 +83,7 @@ void townScene::render()
 {
 	
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
+	IMAGEMANAGER->findImage("죽음")->stretchFrameRender(getMemDC(), 200, 200, 0, 0, 2.f, 1.f);
 	
 	for (int i = 0; i < _objManager.size(); i++)
 	{
@@ -135,10 +140,15 @@ void townScene::render()
 	}
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
-
 	_npcManager->render();
-	PLAYER->render(getMemDC());
+
+	if (_playerClone->getAniState() == ANIMATION_END)
+		PLAYER->render(getMemDC());
+	else
+		_playerClone->ZoderRender(PLAYER->getY(), PLAYER->getX() - 60, PLAYER->getY() - 60);
 	ITEMMENU->render(getMemDC());
+
+	this->renderPotal();
 
 	//CAMERAMANAGER->Rectangle(getMemDC(), shopPortal);
 	//CAMERAMANAGER->Rectangle(getMemDC(), gotoDungeonPortal);
@@ -247,6 +257,87 @@ void townScene::ObjectSetAnim()
 			anim = new animation;
 			anim->init(IMAGEMANAGER->findImage(_vTest[i].key), 0, 7, _vTest[i].rc, _vTest[i].key, true, false);
 			_objManager.push_back(anim);
+		}
+	}
+}
+
+HRESULT townScene::initPotal()
+{
+	if (ITEMMENU->getGoToTownEmblem())
+	{
+		_potal.ani = new animation;
+		_potal.ani->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 7,true);
+		_potal.ani->aniPause();
+		_potal.x = 200;
+		_potal.y = 200;
+		_potal.isActivate = true;
+		_potal.isRange = false;
+		_potal.isUpdate = false;
+		PLAYER->setX(200);
+		PLAYER->setY(195);
+		_aniPotalInit = new animation;
+		_aniPotalInit->init(IMAGEMANAGER->findImage("potalInit"), 0, 7, false, true);
+		_playerClone = new animation;
+		_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 5);
+	}
+	else if (ITEMMENU->getGoToTownPendant())
+	{
+
+	}
+	else
+	{
+		_playerClone = new animation;
+		_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 5);
+		_playerClone->aniStop();
+		_potal.isActivate = false;
+		
+	}
+
+	return S_OK;
+}
+
+void townScene::updatePotal()
+{
+	if (_potal.isActivate == false) return;
+	_aniPotalInit->update();
+	if (_aniPotalInit->getCurIndex() == _aniPotalInit->getImage()->getMaxFrameX() && _playerClone->getAniState() != ANIMATION_END)
+	{
+		_playerClone->update();
+		PLAYER->setY(PLAYER->getY() + 4);
+		_aniPotalInit->aniPause();
+		_potal.ani->aniPlay();
+	}
+
+	if (getDistance(PLAYER->getX(), PLAYER->getY(), _potal.x, _potal.y) < 30 && _potal.isUpdate)
+	{
+		_potal.isRange = true;
+	}
+	else _potal.isRange = false;
+
+
+	if (_potal.isRange)
+	{
+		if (INPUT->GetKeyDown('J'))
+		{
+			
+		}
+	}
+}
+
+void townScene::renderPotal()
+{
+
+	if (_potal.isActivate)
+	{
+		_potal.ani->ZorderStretchRender(_potal.y, _potal.x, _potal.y, 2.f);
+		if (_potal.isRange)
+		{
+			RECT txtRC = RectMake(_potal.x + 80, _potal.y - 90, 110, 50);
+			HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+			//IMAGEMANAGER.findImage("messegeBox_potal").render(getMemDC(), _potal.x + 30, _potal.y - 90);
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("messegeBox_potal"), 1999, _potal.x + 30, _potal.y - 90);
+			CAMERAMANAGER->ZorderDrawText("To Town", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		}
 	}
 }

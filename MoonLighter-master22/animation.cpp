@@ -65,6 +65,28 @@ HRESULT animation::init(image * img, int frameY, int aniFrame, RECT rc, string k
 	return S_OK;
 }
 
+HRESULT animation::initReverse(image * img, int frameY, int aniFrame, bool isLoop, bool isReverse)
+{
+	_img = img;
+	_isLoop = isLoop;
+	_isReverse = isReverse;
+	_aniFrame = aniFrame;
+	_aniState = ANIMATION_PLAY;
+	_curIndex = 0;
+	_aniCount = 0;
+	_maxFrameX = _img->getMaxFrameX();
+	_maxFrameY = _img->getMaxFrameY();
+	_frameY = frameY;
+	_isArray = false;
+	_aniList.clear();
+	for (int i = _maxFrameX; i >= 0; i--)
+	{
+		POINT temp = { i,frameY };
+		_aniList.push_back(temp);
+	}
+	return S_OK;
+}
+
 HRESULT animation::initArray(vector<POINT> aniList,image* img,int aniFrame, bool isLoop, bool isReverse)
 {
 	_img = img;

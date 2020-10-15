@@ -35,6 +35,7 @@ public:
 	// 인자 ( 이미지 , 프레임 y축, 프레임 주기, 루프시킬거냐?, 리버스 시킬거냐?)
 	HRESULT init(image* img,int frameY,int aniFrame, bool isLoop = false, bool isReverse = false);
 	HRESULT init(image* img,int frameY,int aniFrame,RECT rc , string key, bool isLoop = false, bool isReverse = false);
+	HRESULT initReverse(image* img, int frameY, int aniFrame, bool isLoop = false, bool isReverse = false);
 	//특정 프레임을 돌리고 싶을때 ex) 0,3,5 이런식
 	// 인자 ( 프레임 돌릴 배열, 이미지, 프레임 주기, 루프시킬?, 리버스시킬?)
 	HRESULT initArray(vector<POINT> aniList,image* img,int aniFrame, bool isLoop = false, bool isReverse = false);
