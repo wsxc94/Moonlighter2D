@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "npc.h"
+#include "displayStand.h"
 
 void npc::setshopTargetPos()
 {
@@ -46,8 +47,6 @@ void npc::setshopTargetPos()
 	tmp.push_back(tagPosF(660, 830));
 	shop_target.push_back(tmp);
 
-	shop_targetIdx = RANDOM->range(0, 3);
-
 	shop_currentTargetIdx = 0;
 	_stop = false;
 }
@@ -75,6 +74,7 @@ HRESULT npc::init(tagPosF pos, string key)
 	_target[3] = tagPosF(pos.x - 80, pos.y - 0);
 
 	_stop = false;
+	_state = NPC_MOVE;
 
 	_aniNpc = new animation;
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
@@ -84,7 +84,7 @@ HRESULT npc::init(tagPosF pos, string key)
 	return S_OK;
 }
 
-HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP)
+HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP , int idx , displayStand* dis)
 {
 	_idx = 0;
 	_count = 0;
@@ -101,11 +101,22 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP)
 
 	_speed = 1.0f;
 	_delay = false;
+	_isActive = false;
+	_isSpawn = false;
 
 	setshopTargetPos();
 
+	shop_targetIdx = idx;
+
+	_displayStand = dis;
+
+	_state = NPC_STOP;
+
 	_aniNpc = new animation;
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
+
+	_aniPriceCheck = new animation;
+	_aniPriceCheck->init(IMAGEMANAGER->findImage("가격좋음"), 0, 12);
 
 	return S_OK;
 }
@@ -128,7 +139,41 @@ void npc::update()
 
 void npc::update(NPC_MAP NPC_SHOP)
 {
-	anim();
+	switch (_state)
+	{
+	case NPC_MOVE:
+		cout << "NPC_MOVE" << endl;
+		break;
+	case NPC_STOP:
+		cout << "NPC_STOP" << endl;
+		break;
+	case NPC_CHECK_PRICE:
+		cout << "NPC_CHECK_PRICE" << endl;
+		break;
+	case NPC_WAIT:
+		cout << "NPC_WAIT" << endl;
+		break;
+	case NPC_GO_HOME:
+		cout << "NPC_GO_HOME" << endl;
+		break;
+	default:
+		break;
+	}
+
+	if (!_isSpawn)
+	{
+	_time++;
+	if (_time % 240 == 0) {
+		npcSpawn();
+		_isSpawn = true;
+		_isActive = true;
+		_state = NPC_MOVE;
+	}
+	} else{
+
+		anim();
+		move(NPC_SHOP);
+	}
 }
 
 void npc::render()
@@ -179,19 +224,36 @@ void npc::render()
 void npc::render(NPC_MAP NPC_SHOP)
 {
 
-	if (_stop)
+	if (_state == NPC_STOP || _state == NPC_WAIT || _state == NPC_CHECK_PRICE)
 	{
 		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
 		//	0, IMAGEMANAGER->findImage(_key)->getFrameY());
 		// 영훈이형 z오더를 했더니 IMAGEMANAGER->getFrameX() 이게안되서 제가 애니메이션으로 바꿨습니다.....죄송합니다ㅠㅠ
 		_aniNpc->aniStop();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+
+		if (_state == NPC_CHECK_PRICE)
+		{
+			_aniPriceCheck->aniPlay();
+			_aniPriceCheck->ZoderRender(
+				_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2,
+				_pos.x + IMAGEMANAGER->findImage(_key)->getFrameWidth() / 4,
+				_pos.y - IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2);
+		}
 	}
-	else {
+	else if (_state == NPC_MOVE || _state == NPC_ITEM_PICK) {
 		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
 		//	IMAGEMANAGER->findImage(_key)->getFrameX(), IMAGEMANAGER->findImage(_key)->getFrameY());
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+
+		if (_state == NPC_ITEM_PICK) {
+
+			CAMERAMANAGER->ZorderRender(_peekItemImg,
+				_pos.y,
+				_pos.x + _peekItemImg->getWidth(),
+				_pos.y + _peekItemImg->getHeight() / 4);
+		}
 	}
 }
 
@@ -199,7 +261,7 @@ void npc::anim()
 {
 
 	_aniNpc->update();
-	if (!_stop)
+	if ((_state == NPC_MOVE || _state == NPC_ITEM_PICK) && !_stop)
 	{
 		if (_key != "에리스" && _key != "강아지npc") {
 			if (RadianToDegree(_angle) >= 225 && RadianToDegree(_angle) <= 360) _aniNpc->setFrameY(0);
@@ -262,13 +324,16 @@ void npc::move(NPC_MAP NPC_SHOP)
 {
 	_time++;
 
-	if (!_stop)
+	if (_state == NPC_MOVE || _state == NPC_ITEM_PICK)
 	{
 		_angle = getAngle(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x, 
 			shop_target[shop_targetIdx][shop_currentTargetIdx].y);
 
 		_pos.x += cosf(_angle) * _speed;
 		_pos.y += -sinf(_angle) * _speed / 2;
+	}
+	if (_state == NPC_CHECK_PRICE) {
+		PriceCheckAnim();
 	}
 	
 	if (getDistance(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
@@ -279,11 +344,10 @@ void npc::move(NPC_MAP NPC_SHOP)
 		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() - 1 && !_delay) {
 			_delay = true;
 
-			if (shop_currentTargetIdx != 2)
-				shop_currentTargetIdx++;
-			else {
-				_stop = true;
-				_speed = 0;
+			if (shop_currentTargetIdx == 2){
+				
+				//_stop = true;
+				//_speed = 0;
 				if (shop_targetIdx == 0 || shop_targetIdx == 2) {
 					_aniNpc->setFrameY(2);
 				}
@@ -291,20 +355,27 @@ void npc::move(NPC_MAP NPC_SHOP)
 				{
 					_aniNpc->setFrameY(3);
 				}
+				priceCheck();
+			}
+			else if (shop_target[shop_targetIdx][shop_currentTargetIdx].y == 680)
+			{
+				_state = NPC_STOP;
+			}
 
+			else {
+				shop_currentTargetIdx++;
 			}
 
 		}
+
+		
 
 	}
 	else {
 		_delay = false;
 	}
 	
-	/*if (!_stop) {
-		_pos.x += cosf(_angle) * _speed;
-		_pos.y += -sinf(_angle) * _speed / 2;
-	}*/
+	
 
 }
 
@@ -418,3 +489,66 @@ void npc::lookPlayer()
 	}
 
 }
+
+void npc::npcSpawn()
+{
+	int rnd = RANDOM->range(0, 1);
+	string str = "상점입장" + to_string(rnd);
+	SOUNDMANAGER->play(str, 0.5f);
+}
+
+void npc::priceCheck()
+{
+
+	for (int i = 0; i < 4; i++) {
+		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() < _displayStand->getDisplayItem()[shop_targetIdx].getPriceRange()[i])
+		{
+			switch (i) // 이거의 값에 따라 애니메이션 프레임 y 값을 정해줘야함., 사운드가 달라지게 해야함.
+			{
+			case 0: //많이 싸다
+				
+				break;
+			case 1: //싸다
+
+				break;
+			case 2: // 비싸다
+
+				break;
+			case 3: // 존나비싸다
+
+				break;
+			default:
+				break;
+			}
+			break;
+		}
+	}
+	_state = NPC_CHECK_PRICE;
+}
+
+void npc::PriceCheckAnim()
+{
+	_aniPriceCheck->update();
+
+	if (_aniPriceCheck->getAniState() == ANIMATION_END) {
+			SOUNDMANAGER->play("싸다");
+			ItemGet();
+			_stop = false;
+			_speed = 1.0f;
+			shop_currentTargetIdx++;
+			//_state = NPC_MOVE;
+	}
+	
+	
+}
+
+void npc::ItemGet()
+{
+	_state = NPC_ITEM_PICK;
+	_peekItemImg = new image;
+	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
+
+	// 여기서 좌판 아이템 정보 삭제 해야함.
+
+}
+

@@ -1,6 +1,18 @@
 #pragma once
 #include "gameNode.h"
 #define MAX_NPC 4
+
+class displayStand;
+enum NPC_ACTION
+{
+	NPC_MOVE,
+	NPC_STOP,
+	NPC_CHECK_PRICE,
+	NPC_WAIT,
+	NPC_GO_HOME,
+	NPC_ITEM_PICK
+};
+
 enum NPC_MAP
 {
 	NPC_SHOP
@@ -9,6 +21,8 @@ class npc : public gameNode
 {
 private:
 	animation* _aniNpc;
+	animation* _aniPriceCheck;
+	image* _peekItemImg;
 private:
 	int _count;
 	int _idx;
@@ -35,6 +49,9 @@ private:
 	bool _Istalk;
 	bool _delay;
 
+	bool _isActive;
+	bool _isSpawn;
+
 	int _boxidx;
 	int _boxCnt;
 
@@ -47,14 +64,19 @@ private:
 	RECT _nameRect;
 	RECT _textRect;
 
+	displayStand* _displayStand;
+
 	string _illustrator = "일러";
+
+	NPC_ACTION _state;
 
 	bool _isBarking;
 	void setshopTargetPos();
 	
 public:
 	HRESULT init(tagPosF pos , string key);
-	HRESULT init(tagPosF pos , string key , NPC_MAP NPC_SHOP);
+	HRESULT init(tagPosF pos , string key , NPC_MAP NPC_SHOP , int idx , displayStand* dis);
+
 	void release();
 	void update();
 	void update(NPC_MAP NPC_SHOP);
@@ -70,6 +92,7 @@ public:
 	void action(); //강아지 전용
 	void collision();
 	void lookPlayer(); // 플레이어를 바라보도록 조정 강아지전용
+	void npcSpawn();
 
 	tagPosF& getPos() { return _pos; }
 	RECT& getRect() { return _rc; }
@@ -78,7 +101,13 @@ public:
 	void setPosX(float x) { _pos.x = x; }
 	void setPosY(float y) { _pos.x = y; }
 
-	
+	bool& getActive() { return _isActive; }
+	void setActive(bool ac) { _isActive = ac; }
+
+	int& getCurrentTargetIdx() { return shop_currentTargetIdx; }
+	void priceCheck();
+	void PriceCheckAnim();
+	void ItemGet();
 
 	npc(){}
 	~npc() {}

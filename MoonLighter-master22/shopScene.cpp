@@ -21,13 +21,12 @@ void shopScene::ItemPosSet()
 HRESULT shopScene::init()
 {
 	//클래스 초기화
-	
-
-	_npc = new ShopNpcManager;
-	_npc->init();
 
 	_displayStand = new displayStand;
 	_displayStand->init();
+
+	_npc = new ShopNpcManager;
+	_npc->init(_displayStand);
 
 	PLAYER->init();
 	PLAYER->setX(700);
@@ -79,6 +78,7 @@ void shopScene::update()
 
 	PlayerCol();
 	PortaltoTown();
+	npcAI();
 }
 
 void shopScene::render()
@@ -100,6 +100,7 @@ void shopScene::render()
 
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점책상"), 670 + IMAGEMANAGER->findImage("상점책상")->getFrameHeight()/4, 646, 670);
 	
+	char str[256];
 	for (int i = 0; i < ITEMDESKCOUNT; i++)
 	{
 		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY) continue; 
@@ -111,17 +112,24 @@ void shopScene::render()
 		CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("아이템그림자")
 			, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
 			, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
+
+		if(_npc->getVector()[i]->getActive())
+			_npc->getVector()[i]->render(NPC_SHOP);
+
+		wsprintf(str, "X: %d", _displayStand->getDisplayItem()[i].getCount());
+		TextOut(getMemDC(), 5, 150 * (i), str, strlen(str));
+		
+		
 	}
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 
-	char str[256];
-	POINT tmp = CAMERAMANAGER->getRelativeMouse(_ptMouse);
+	/*POINT tmp = CAMERAMANAGER->getRelativeMouse(_ptMouse);
 
 	wsprintf(str, "X: %d", tmp.x);
 	TextOut(getMemDC(), 5, 150, str, strlen(str));
 	wsprintf(str, "Y: %d", tmp.y);
-	TextOut(getMemDC(), 5, 170, str, strlen(str));
+	TextOut(getMemDC(), 5, 170, str, strlen(str));*/
 
 	PLAYER->render(getMemDC());
 	ITEMMENU->render(getMemDC());
@@ -175,5 +183,19 @@ void shopScene::PlayerCol()
 		if (PLAYER->getDown()) {
 			PLAYER->setY(PLAYER->getY() - 4);
 		}
+	}
+}
+
+void shopScene::npcAI()
+{
+	// 구현해야할 것
+	// 좌판 아이템이 비었을 경우 그냥 문밖으로 되돌아가게 한다.
+
+	for (int i = 0; i < _npc->getVector().size(); i++)
+	{
+		if (_displayStand->getDisplayItem()[i].getType() == ITEM_EMPTY || PLAYER->getDisplayOn()) continue;
+		//_npc->getVector()[i]->setActive(true);
+		_npc->getVector()[i]->update(NPC_SHOP);
+		//_npc->getVector()[i]->move(NPC_SHOP);
 	}
 }

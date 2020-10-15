@@ -8,7 +8,7 @@ class shopScene : public gameNode
 {
 private:
 	ShopNpcManager* _npc;
-	displayStand *_displayStand;
+	displayStand* _displayStand;
 
 	RECT GoTownPortal;
 
@@ -17,6 +17,7 @@ private:
 
 	vector <pair<int, int>> v_itemPos;
 	vector <pair<int, int>> v_itemShadowPos;
+
 	void ItemPosSet();
 
 public:
@@ -27,5 +28,7 @@ public:
 
 	void PortaltoTown(); // ¸¶À»Çà Æ÷Å»
 	void PlayerCol();
+
+	void npcAI();
 };
 
