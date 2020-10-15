@@ -5,7 +5,7 @@ HRESULT selectMenu::init()
 {
 	//선택메뉴 초기화 
 	_selectMenu.animTimer = 0;
-	_selectMenu.frameUnit = 6;
+	_selectMenu.frameUnit = 8;
 	_selectMenu.idx = 0;
 	_selectMenu.selectIdx = 0;
 	_selectMenu.img = IMAGEMANAGER->findImage("select_no");

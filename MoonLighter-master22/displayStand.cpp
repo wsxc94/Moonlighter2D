@@ -398,18 +398,23 @@ void displayStand::deleteDisplayItem(int index)
 	{
 		case 0:
 			deleteItemByIdx(5);
+			_shopSlot[5].isEmpty = true; 
 			break;
 
 		case 1:
 			deleteItemByIdx(6);
+			_shopSlot[6].isEmpty = true;
+
 			break;
 
 		case 2:
 			deleteItemByIdx(19);
+			_shopSlot[19].isEmpty = true;
 			break;
 
 		case 3:
 			deleteItemByIdx(20);
+			_shopSlot[20].isEmpty = true;
 			break; 
 	}
 }
@@ -1517,7 +1522,7 @@ void displayStand::greenCountRender(int count, int destX, int destY)
 
 		distance++;
 
-		if (i <= count) IMAGEMANAGER->findImage("x_green")->render(getMemDC(),
+		if (i >= count) IMAGEMANAGER->findImage("x_green")->render(getMemDC(),
 			destX - (distance * 12), destY);
 
 	}//end of for 
