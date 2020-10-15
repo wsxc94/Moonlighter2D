@@ -325,7 +325,7 @@ void cameraManager::ZorderStretchFrameRender(image * img, float z, int centerX, 
 	_zo->frameX = frameX;
 	_zo->frameY = frameY;
 	_zo->scale = scale;
-	_zo->stretchKind = STRETCH_EACH;
+	_zo->stretchKind = STRETCH_WHOLE;
 	_vZoderRender.push_back(_zo);
 }
 
