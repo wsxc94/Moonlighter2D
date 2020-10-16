@@ -76,8 +76,14 @@ void shopScene::update()
 		SOUNDMANAGER->play("문닫아");
 	}
 
-	if (!SOUNDMANAGER->isPlaySound("상점브금")) {
+	if (!SOUNDMANAGER->isPlaySound("상점브금")) 
+	{
 		SOUNDMANAGER->play("상점브금", 0.3f);
+	}
+	else
+	{
+		if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("상점브금", 0.08f);
+		else SOUNDMANAGER->setVolumn("상점브금", 0.3f);
 	}
 
 	_npc->update();

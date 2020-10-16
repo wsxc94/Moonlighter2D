@@ -61,6 +61,7 @@ private:
 	viShopInven _viShopInven;
 
 private:
+	fadeManager *_fadeManager;			//페이드 매니져 
 	cursor *_cursor;					//메뉴 이동 커서 
 	shopSlot _shopSlot[MAXSHOPSLOT];	//슬롯 구조체 
 	priceCursor _priceCursor;			//가격책정 시 이동 커서 

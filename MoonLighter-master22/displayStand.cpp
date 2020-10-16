@@ -4,6 +4,9 @@
 HRESULT displayStand::init()
 {
 	//클래스 초기화 
+	_fadeManager = new fadeManager;
+	_fadeManager->init();
+
 	_cursor = new cursor;
 	_cursor->init();
 
@@ -55,6 +58,8 @@ void displayStand::release()
 
 void displayStand::update()
 {
+	_fadeManager->update();
+
 	//아이템 메뉴가 열려있지 않을 때만 키값 받기 
 	if (!ITEMMENU->getOpenMenu())
 	{
@@ -82,23 +87,7 @@ void displayStand::update()
 
 void displayStand::render()
 {
-	char str[100];
-
-	wsprintf(str, "itemMenuCanKeyInput : %d", ITEMMENU->getCanKeyInput());
-	TextOut(getMemDC(), 10, 90, str, strlen(str));
-
-	/*wsprintf(str, "invenSize : %d", _vShopInven.size());
-	TextOut(getMemDC(), 10, 90, str, strlen(str));*/
-
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	if (_displayItem[i].getType() == ITEM_EMPTY) continue;
-
-	//	/*wsprintf(str, "displayItem[%d] : %d", i, _displayItem[i].getType());
-	//	TextOut(getMemDC(), 10, 130 + (i * 25), str, strlen(str));*/
-
-	//	_displayItem[i].getItemImg()->render(getMemDC(), 10, 130 + (i * 25));
-	//}
+	_fadeManager->render(getMemDC());
 
 	if (_menuOn)
 	{
@@ -120,6 +109,24 @@ void displayStand::render()
 			if (_shopCtrl == CTRL_PRICE) priceCursorRender();
 		}
 	}
+
+	//char str[100];
+
+	//wsprintf(str, "itemMenuCanKeyInput : %d", ITEMMENU->getCanKeyInput());
+	//TextOut(getMemDC(), 10, 90, str, strlen(str));
+
+	/*wsprintf(str, "invenSize : %d", _vShopInven.size());
+	TextOut(getMemDC(), 10, 90, str, strlen(str));*/
+
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	if (_displayItem[i].getType() == ITEM_EMPTY) continue;
+
+	//	/*wsprintf(str, "displayItem[%d] : %d", i, _displayItem[i].getType());
+	//	TextOut(getMemDC(), 10, 130 + (i * 25), str, strlen(str));*/
+
+	//	_displayItem[i].getItemImg()->render(getMemDC(), 10, 130 + (i * 25));
+	//}
 }
 
 void displayStand::openDisplayStand()
@@ -139,6 +146,7 @@ void displayStand::openDisplayStand()
 
 	//아이템메뉴의 키입력을 받지 않는다.(메뉴의 키값이 서로 충돌하기 때문)
 	ITEMMENU->setCanKeyInput(false);
+	_fadeManager->fadeInit(16, FADE_OUT, 205);
 	SOUNDMANAGER->play("openInven", 0.4f);
 }
 
@@ -158,6 +166,8 @@ void displayStand::closeDisplayStand()
 
 		//인벤토리의 아이템 슬롯과 동기화시키기
 		ITEMMENU->getInventory()->syncWithShopInven(_vShopInven);
+
+		_fadeManager->fadeInit(16, FADE_IN);
 	}
 }
 

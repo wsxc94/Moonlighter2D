@@ -161,6 +161,7 @@
     <ClInclude Include="dungeonLoading.h" />
     <ClInclude Include="dungeonMap.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="fadeManager.h" />
     <ClInclude Include="gameNode.h" />
     <ClInclude Include="gotoDungeon.h" />
     <ClInclude Include="image.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="dungeonLoading.cpp" />
     <ClCompile Include="dungeonMap.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="fadeManager.cpp" />
     <ClCompile Include="gameNode.cpp" />
     <ClCompile Include="gasMan.cpp" />
     <ClCompile Include="golem.cpp" />
