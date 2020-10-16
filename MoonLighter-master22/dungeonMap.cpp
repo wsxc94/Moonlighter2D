@@ -951,7 +951,7 @@ void DungeonMap::potalRender()
 				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 			//IMAGEMANAGER->findImage("messegeBox_potal")->render(getMemDC(), _potal->x + 30, _potal->y - 90);
 			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("messegeBox_potal"), 1999, _potal->x + 30, _potal->y - 90);
-			CAMERAMANAGER->ZorderDrawText("To Town", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+			CAMERAMANAGER->ZorderDrawText("텔레포트", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		}
 	}
 }

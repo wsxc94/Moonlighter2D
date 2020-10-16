@@ -267,6 +267,9 @@
     <ClCompile Include="potionShop.cpp">
       <Filter>MainGame\potionShop</Filter>
     </ClCompile>
+    <ClCompile Include="bossLoading.cpp">
+      <Filter>MainGame\dungeon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -430,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="potionShop.h">
       <Filter>MainGame\potionShop</Filter>
+    </ClInclude>
+    <ClInclude Include="bossLoading.h">
+      <Filter>MainGame\dungeon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

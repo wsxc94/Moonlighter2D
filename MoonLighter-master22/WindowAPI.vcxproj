@@ -151,6 +151,7 @@
     <ClInclude Include="animation.h" />
     <ClInclude Include="arrow.h" />
     <ClInclude Include="bossDungeonScene.h" />
+    <ClInclude Include="bossLoading.h" />
     <ClInclude Include="calendar.h" />
     <ClInclude Include="cameraManager.h" />
     <ClInclude Include="commonMacroFunction.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="arrow.cpp" />
     <ClCompile Include="bossDungeonScene.cpp" />
+    <ClCompile Include="bossLoading.cpp" />
     <ClCompile Include="bossSkeleton.cpp" />
     <ClCompile Include="calendar.cpp" />
     <ClCompile Include="cameraManager.cpp" />

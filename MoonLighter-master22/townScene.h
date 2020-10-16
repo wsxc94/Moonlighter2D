@@ -9,7 +9,6 @@ private:
 	tagPotal _potal;			//충돌처리하고 던전으로 날릴 애니
 	animation* _playerClone;	//던던 돌아왔을때 구르기 / 죽어서왔을때 주르륵...
 	bool _isReturn;		//던전에서 돌아오는거냐?  맞으면 플레이어 클론애니로 굴려버려
-
 private:
 	//타일 가로세로길이
 	int _tileX;

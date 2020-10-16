@@ -26,6 +26,7 @@ HRESULT townScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
+
 	this->initPotal();
 	return S_OK;
 }
@@ -52,6 +53,10 @@ void townScene::update()
 	if (INPUT->GetKeyDown('G')) {
 		SOUNDMANAGER->stop("마을브금");
 		SCENEMANAGER->loadScene("던전로딩");
+	}
+	if (INPUT->GetKeyDown('H')) {
+		SOUNDMANAGER->stop("마을브금");
+		SCENEMANAGER->loadScene("보스로딩");
 	}
 	if (INPUT->GetKeyDown('P')) {
 		SOUNDMANAGER->stop("마을브금");
@@ -82,7 +87,6 @@ void townScene::update()
 
 void townScene::render()
 {
-	
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
 	IMAGEMANAGER->findImage("죽음")->stretchFrameRender(getMemDC(), 200, 200, 0, 0, 2.f, 1.f);
 	

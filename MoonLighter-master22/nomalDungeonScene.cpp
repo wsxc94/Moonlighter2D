@@ -404,7 +404,10 @@ void nomalDungeonScene::dungeonUpdate()
 	}
 	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
-		this->setNewFloor();
+		if (_dgFloor == 1)
+			this->setNewFloor();
+		else if (_dgFloor == 2)
+			SCENEMANAGER->loadScene("보스던전");
 	}
 
 

@@ -28,6 +28,7 @@ HRESULT mainGame::init()
 	SCENEMANAGER->addScene("상점화면", new shopScene);
 	SCENEMANAGER->addScene("던전가는길", new gotoDungeon);
 	SCENEMANAGER->addScene("상점가판대", new displayStand);
+	SCENEMANAGER->addScene("보스로딩", new bossLoading);
 
 	PLAYER->init();
 	SCENEMANAGER->loadScene("타운로딩");

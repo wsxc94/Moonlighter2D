@@ -640,7 +640,7 @@ void inventory::pendantKeyInput()
 			//5. 선택메뉴의 상태 초기화(NO)
 			//6. 플레이어 상태를 팬던트사용으로 변경해줌
 
-			ITEMMENU->SetGoToTownEmblem(true);
+			ITEMMENU->setGoToTownPendant(true);
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
 			_selectMenu->setMenuState(SELECT_NO);
