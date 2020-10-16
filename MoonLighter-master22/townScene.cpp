@@ -77,6 +77,7 @@ void townScene::update()
 	portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	ObjectAnim();
 	ObjectColl();
+	MapColl();
 
 }
 
@@ -209,7 +210,7 @@ void townScene::ObjectColl()
 					(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) - _objManager[i]->getImage()->getFrameHeight()*0.3);
 			}
 
-			if(IntersectRect(&tmp, &PLAYER->getShadowRect(), &temp)) {
+			if (IntersectRect(&tmp, &PLAYER->getShadowRect(), &temp)) {
 				int wid = tmp.right - tmp.left;
 				int hei = tmp.bottom - tmp.top;
 
@@ -235,7 +236,7 @@ void townScene::ObjectColl()
 						PLAYER->setX(PLAYER->getX() - wid);
 					}
 				}
-		}
+			}
 	}
 }
 
@@ -259,6 +260,50 @@ void townScene::ObjectSetAnim()
 			anim->init(IMAGEMANAGER->findImage(_vTest[i].key), 0, 7, _vTest[i].rc, _vTest[i].key, true, false);
 			_objManager.push_back(anim);
 		}
+	}
+}
+
+void townScene::MapColl()
+{
+
+	if (30 > CAMERAMANAGER->getRelativeX(PLAYER->getX()))
+	{
+		PLAYER->setX(PLAYER->getX() + PLAYER->getJumpPower() + 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setX(PLAYER->getX() + PLAYER->getSpeed());
+		
+		
+	}
+	if (WINSIZEX-30 < CAMERAMANAGER->getRelativeX(PLAYER->getX()))
+	{
+		PLAYER->setX(PLAYER->getX() - PLAYER->getJumpPower() - 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setX(PLAYER->getX() - PLAYER->getSpeed());
+		
+	}
+	if (30 > CAMERAMANAGER->getRelativeY(PLAYER->getY()))
+	{
+		PLAYER->setY(PLAYER->getY() + PLAYER->getJumpPower() + 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setY(PLAYER->getY() + PLAYER->getSpeed());
+	}
+	if (WINSIZEY-30 < CAMERAMANAGER->getRelativeY(PLAYER->getY()))
+	{
+		PLAYER->setY(PLAYER->getY() - PLAYER->getJumpPower() - 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setY(PLAYER->getY() - PLAYER->getSpeed());
 	}
 }
 

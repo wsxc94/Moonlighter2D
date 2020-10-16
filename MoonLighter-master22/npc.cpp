@@ -244,7 +244,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 		if (_state == NPC_CHECK_PRICE || NPC_WAIT)
 		{
 			_aniPriceCheck->ZoderRender(
-				_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2,
+				_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight(),
 				_pos.x + IMAGEMANAGER->findImage(_key)->getFrameWidth() / 2,
 				_pos.y - IMAGEMANAGER->findImage(_key)->getFrameHeight()/2);
 		}
