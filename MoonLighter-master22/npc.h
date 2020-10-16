@@ -26,6 +26,8 @@ private:
 	animation* _aniNpc; // npc 애니메이션 변수
 	animation* _aniPriceCheck; // 이모티콘 애니메이션 변수
 	image* _peekItemImg; // 현재 잡고 있는 아이템 이미지
+	int _peekItemGold;
+	int _peekItemCnt;
 	string thinkInfo; // 엄청싸다 싸다 비싸다 엄청비싸다
 private:
 	int _count;
@@ -121,6 +123,9 @@ public:
 	void PriceCheckAnim(); // 이모티콘 애니메이션
 	void ItemGet(); // 아이템 정보 가져오기
 	void ItemActive();
+
+	int& getPeekItemGold() { return _peekItemGold; }
+	int& getPeekItemCnt() { return _peekItemCnt; }
 
 	NPC_ACTION& getState() { return _state; } // npc 현재 스테이트 반환
 	void setState(NPC_ACTION st) { _state = st; } // npc 상태 업데이트

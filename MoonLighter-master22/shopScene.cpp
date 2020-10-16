@@ -78,12 +78,12 @@ void shopScene::update()
 
 	if (!SOUNDMANAGER->isPlaySound("상점브금")) 
 	{
-		SOUNDMANAGER->play("상점브금", 0.3f);
+		SOUNDMANAGER->play("상점브금", 0.2f);
 	}
 	else
 	{
 		if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("상점브금", 0.08f);
-		else SOUNDMANAGER->setVolumn("상점브금", 0.3f);
+		else SOUNDMANAGER->setVolumn("상점브금", 0.2f);
 	}
 
 	_npc->update();
@@ -139,7 +139,7 @@ void shopScene::render()
 					, PLAYER->getRect().top - IMAGEMANAGER->findImage("판매버튼")->getHeight());
 			}
 		}
-		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY) {
+		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY && _displayStand->getDisplayItem()[i].getPrice() != 0) {
 
 			CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
 				680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
@@ -149,7 +149,8 @@ void shopScene::render()
 				, 700 + IMAGEMANAGER->findImage("아이템그림자")->getHeight()
 				, v_itemShadowPos[i].first, v_itemShadowPos[i].second, 60);
 			
-			wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getPrice());
+			int _price = _displayStand->getDisplayItem()[i].getPrice() * _displayStand->getDisplayItem()[i].getCount();
+			wsprintf(str, "%d", _price);
 
 			int tmp = strlen(str);
 
@@ -170,11 +171,8 @@ void shopScene::render()
 				v_itemPos[i].second+1);
 		  
 			int _x;
-			int _price;
-
-			if(_displayStand->getDisplayItem()[i].getCount() != 0)
-			_price = _displayStand->getDisplayItem()[i].getPrice() * _displayStand->getDisplayItem()[i].getCount();
-
+			
+			
 			if (_price >= 1000000)
 			{
 				_x = v_itemPos[i].first - _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 4;
@@ -199,6 +197,18 @@ void shopScene::render()
 				CAMERAMANAGER->ZorderTextOut(str, 752,
 					_x
 					, v_itemPos[i].second - 20, strlen(str), RGB(0, 200, 0));
+
+				wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getCount());
+				if (_displayStand->getDisplayItem()[i].getCount() >= 10) {
+					_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2;
+				}
+				else {
+					_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2 + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 6;
+						
+				}
+				CAMERAMANAGER->ZorderTextOut(str, 753,
+					_x,
+					v_itemPos[i].second + _displayStand->getDisplayItem()[i].getItemImg()->getHeight(), strlen(str), RGB(255, 255, 255));
 
 			/*CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc말풍선몸"),
 				780, v_itemPos[i].first, v_itemPos[i].second);*/
@@ -309,7 +319,7 @@ void shopScene::PlayerSell()
 					_cashRegister->aniPlay();
 					_npc->getVector()[i]->setState(NPC_MOVE);
 					_npc->getVector()[i]->setCurrentTargetIdxPlus();
-					PLAYERDATA->setGold(PLAYERDATA->getGold() + _displayStand->getDisplayItem()[i].getPrice() *_displayStand->getDisplayItem()[i].getCount());
+					PLAYERDATA->addGold(_npc->getVector()[i]->getPeekItemCnt() * _npc->getVector()[i]->getPeekItemGold());
 					SOUNDMANAGER->play("아이템팔림");
 				}
 			}
@@ -349,6 +359,7 @@ void shopScene::itemInfoUpdate()
 			_npc->getVector()[i]->getThinkInfo() =="싸다" ||
 			_npc->getVector()[i]->getThinkInfo() == "엄청싸다") continue;*/
 		//if (_npc->getVector()[i]->getState() != NPC_GO_HOME && _npc->getVector()[i]->getState() != NPC_START) continue;
+
 		if (!_npc->getVector()[i]->getActive() && 
 			_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY &&
 			_displayStand->getDisplayItem()[i].getPrice() != 0 &&
@@ -374,14 +385,14 @@ void shopScene::npcAI()
 void shopScene::npcInit(int idx)
 {
 	/*int rnd = 0;
-	while (true)
-	{
+
+	for (int i = 0; i < 4; i++) {
 		rnd = RANDOM->range(0, 3);
 		if (_npc->getNpcNamePair()[rnd].second == false) {
 			break;
 		}
 	}*/
-
+	
 	_npc->getInit(idx, idx);
 	_npc->getVector()[idx]->setActive(true);
 	_npc->getVector()[idx]->setState(NPC_START);

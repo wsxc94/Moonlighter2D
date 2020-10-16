@@ -90,6 +90,8 @@ HRESULT npc::init(tagPosF pos, string key)
 
 HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displayStand* dis)
 {
+	_peekItemGold = 0;
+	_peekItemCnt = 0;
 	_idx = 0;
 	_count = 0;
 	_time = 0;
@@ -109,6 +111,7 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 	_isSpawn = false;
 
 	setshopTargetPos();
+
 
 	shop_targetIdx = idx;
 
@@ -600,6 +603,9 @@ void npc::ItemGet()
 	_state = NPC_ITEM_PICK;
 	_peekItemImg = new image;
 	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
+	_peekItemCnt = _displayStand->getDisplayItem()[shop_targetIdx].getCount();
+	_peekItemGold = _displayStand->getDisplayItem()[shop_targetIdx].getPrice();
+
 	// 여기서 좌판 아이템 정보 삭제 해야함.
 	_displayStand->deleteDisplayItem(shop_targetIdx);
 }

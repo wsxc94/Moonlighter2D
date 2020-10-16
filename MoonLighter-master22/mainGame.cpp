@@ -61,6 +61,8 @@ void mainGame::update()
 	EFFECTMANAGER->update();
 
 	CAMERAMANAGER->FadeUpdate();
+
+	PLAYERDATA->update();
 }
 
 //=============================================================

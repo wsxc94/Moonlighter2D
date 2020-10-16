@@ -63,7 +63,7 @@ void ShopNpcManager::UseNpcCheck()
 	for (int i = 0; i < v_npcs.size(); i++)
 	{
 
-		if (v_npcs[i]->getState() == NPC_GO_HOME || v_npcs[i]->getState() == NPC_START) {
+		if (!v_npcs[i]->getActive()) {
 			_npcName[i].second = false;
 		}
 		else {
