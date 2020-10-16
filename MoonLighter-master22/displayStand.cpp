@@ -38,6 +38,7 @@ HRESULT displayStand::init()
 	_closeMenu = false;
 
 	//아이템 잡기 관련 변수 
+	_canGrab = true;
 	_isGrabbingItem = false;
 	_isPuttingItem = false;
 	_grabSoundPlayed = false;
@@ -58,30 +59,33 @@ void displayStand::update()
 	if (!ITEMMENU->getOpenMenu())
 	{
 		//메뉴 열고 닫기 함수 
-		toggleMenu();
+		//toggleMenu();
 		openMenu();
 		closeMenu();
 
 		if (_menuOn)
 		{
+			//메뉴 닫기 함수 
+			closeDisplayStand();
+
 			//키 입력 함수 
 			keyInput();
 
+			//현재 디스플레이중인 아이템 업데이트 
 			getDisplayItem();
 
 			//커서 애니메이션 함수 
 			_cursor->update();
 		}
 	}
-
 }
 
 void displayStand::render()
 {
 	char str[100];
 
-	//wsprintf(str, "invenSize : %d", _vShopInven.size());
-	//TextOut(getMemDC(), 10, 90, str, strlen(str));
+	wsprintf(str, "itemMenuCanKeyInput : %d", ITEMMENU->getCanKeyInput());
+	TextOut(getMemDC(), 10, 90, str, strlen(str));
 
 	/*wsprintf(str, "invenSize : %d", _vShopInven.size());
 	TextOut(getMemDC(), 10, 90, str, strlen(str));*/
@@ -135,6 +139,7 @@ void displayStand::openDisplayStand()
 
 	//아이템메뉴의 키입력을 받지 않는다.(메뉴의 키값이 서로 충돌하기 때문)
 	ITEMMENU->setCanKeyInput(false);
+	SOUNDMANAGER->play("openInven", 0.4f);
 }
 
 void displayStand::closeDisplayStand()
@@ -147,6 +152,12 @@ void displayStand::closeDisplayStand()
 		_closeMenu = true;
 		_cursor->setShowCursor(false);
 		PLAYER->setDisplayOn(false);
+
+		//잡고있던 아이템이 있다면 제자리에 내려놓기
+		putGrabbingItem();
+
+		//인벤토리의 아이템 슬롯과 동기화시키기
+		ITEMMENU->getInventory()->syncWithShopInven(_vShopInven);
 	}
 }
 
@@ -205,6 +216,8 @@ void displayStand::openMenu()
 	{
 		_openMenu = false;
 		_cursor->setShowCursor(true);
+		_cursor->setCursorState(CURSOR_MOVE);
+		initShopInven();
 	}
 }
 
@@ -251,6 +264,20 @@ void displayStand::menuMoveDown(POINT * pos, const int destPos)
 	pos->y += _menuMoveSpeed;
 
 	if (pos->y > destPos) pos->y = destPos;
+}
+
+void displayStand::initShopInven()
+{
+	_isGrabbingItem = false;
+	_isPuttingItem = false;
+	_grabSoundPlayed = false;
+
+	initInvenSlot();
+	initInvenItem();
+
+	_cursor->setSlotIdx(0);
+	setShopCtrl(CTRL_INVENTORY);
+	putGrabbingItem();
 }
 
 void displayStand::initShopSlot()
@@ -531,6 +558,7 @@ void displayStand::invenKeyInput()
 				//1개씩 아이템을 잡을 수 있도록 함수 실행 
 				if (!_isPuttingItem) grabItem();
 
+				_canGrab = true;
 				_isPuttingItem = false;
 				_grabSoundPlayed = false;
 				_cursor->setClickTime(0);
@@ -749,6 +777,8 @@ void displayStand::downKeyDown()
 
 void displayStand::grabItem()
 {
+	if (!_canGrab) return; 
+
 	//현재 잡고 있는 아이템이 있거나 빈슬롯일 경우 함수 종료 
 	if (_shopSlot[_cursor->getSlotIdx()].isEmpty && !_isGrabbingItem)
 	{
@@ -1010,6 +1040,40 @@ void displayStand::putItemOnOccupiedSlot()
 			}
 		}
 	}//end of for 
+}
+
+void displayStand::putGrabbingItem()
+{
+	//잡고 있는 아이템이 있다면 원래 자리로 돌려놓기 
+	if (!_isGrabbingItem) return;
+
+	//내가 아이템을 잡은 슬롯의 자리가 비어있다면
+	if (_shopSlot[_itemGrabbed.getInvenPosIdx()].isEmpty)
+	{
+		//잡고있는 아이템 복사해서 벡터에 푸시하고 잡은 아이템은 없애기 
+		gameItem *item = new gameItem;
+		item->init(&_itemGrabbed);
+		_vShopInven.push_back(item);
+
+		_shopSlot[item->getInvenPosIdx()].isEmpty = false;
+		_itemGrabbed = _itemEmpty;
+		_isGrabbingItem = false;
+	}
+	else // 비어있지 않다면 잡고 있는 아이템의 카운트를 슬롯에 더하기 
+	{
+		for (int i = 0; i < _vShopInven.size(); i++)
+		{
+			//현재 잡고 있는 아이템이 원래 있던 자리의 인덱스 찾기 
+			if (_vShopInven[i]->getInvenPosIdx() != _itemGrabbed.getInvenPosIdx()) continue;
+
+			_vShopInven[i]->setCount(_vShopInven[i]->getCount() + _itemGrabbed.getCount());
+
+			_itemGrabbed = _itemEmpty;
+			_isGrabbingItem = false;
+			return;
+
+		}//end of for 
+	}
 }
 
 void displayStand::setPriceUp()

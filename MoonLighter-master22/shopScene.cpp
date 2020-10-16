@@ -222,7 +222,6 @@ void shopScene::render()
 	PLAYER->render(getMemDC());
 	ITEMMENU->render(getMemDC());
 	_displayStand->render();
-
 }
 
 void shopScene::PortaltoTown()
@@ -287,13 +286,14 @@ void shopScene::PlayerSell()
 		_button->aniPlay();
 		if (INPUT->GetKeyDown('J'))
 		{
-		
+			_displayStand->openDisplayStand();
+			_displayStand->setCanGrab(false);
 		}
 	}
-	else {
+	else 
+	{
 		_button->setCurIndex(0);
 	}
-
 
 	for (int i = 0; i < _npc->getVector().size(); i++) {
 		if (_npc->getVector()[i]->getState() == NPC_WAIT) {

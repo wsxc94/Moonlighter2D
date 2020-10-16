@@ -5,7 +5,7 @@ HRESULT cursor::init()
 {
 	//커서 초기화 
 	_cursor.img = IMAGEMANAGER->findImage("cursor_move");
-	_cursor.state = CURSOR_IDLE;
+	_cursor.state = CURSOR_MOVE;
 	_cursor.idx = 2;
 	_cursor.slotIdx = 0;
 	_cursor.clickTime = 0;
