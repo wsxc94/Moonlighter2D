@@ -1,20 +1,21 @@
 #pragma once
 #include "gameNode.h"
+#include "boss.h"
+#include "bossGolemKing.h"
+
+enum BOSSSCENESTATE
+{
+	BS_INIT,BS_UPDATE
+};
+
+
 class bossDungeonScene : public gameNode
 {
 private:
-	animation* _aniBossUp;
-	animation* _aniBossDead1;
-	animation* _aniBossDead2;
-	animation* _aniBossFistShoot;
-	animation* _aniBossHandShootStart;
-	animation* _aniBossHandShootEnd;
+	BOSSSCENESTATE _bsState;
+private:
+	bossGolemKing* _golemKing;
 
-	vector<animation*> _vAni;
-	int _idx;
-
-	float _bossX;
-	float _bossY;
 public:
 
 	HRESULT init();

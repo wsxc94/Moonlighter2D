@@ -5,8 +5,8 @@
 class townScene : public gameNode
 {
 private:
+	potal* _potal;
 	animation* _aniPotalInit;		//던전 시작 / 종료애니
-	tagPotal _potal;			//충돌처리하고 던전으로 날릴 애니
 	animation* _playerClone;	//던던 돌아왔을때 구르기 / 죽어서왔을때 주르륵...
 	bool _isReturn;		//던전에서 돌아오는거냐?  맞으면 플레이어 클론애니로 굴려버려
 private:

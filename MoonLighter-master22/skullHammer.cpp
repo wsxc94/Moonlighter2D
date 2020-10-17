@@ -330,8 +330,9 @@ bool skullHammer::attackAniStop()
 
 void skullHammer::attackBox()
 {
-	if (_attack->getCurIndex() > 3 && _isAttackSoundPlay == false)
+	if (_attack->getCurIndex() == 3 && _isAttackSoundPlay == false)
 	{
+		cout << "aa" << endl;
 		SOUNDMANAGER->play("skullAttackSword", 0.5f);
 		_isAttackSoundPlay = true;
 	}

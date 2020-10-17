@@ -56,7 +56,16 @@ void bossLoading::loadImage()
 	_loading->loadImage("bossRock1", "Images/보스/Boss_Rock1.bmp", 100, 108, true, RGB(255, 0, 255));
 	_loading->loadImage("bossRock2", "Images/보스/Boss_Rock2.bmp", 100, 108, true, RGB(255, 0, 255));
 	_loading->loadImage("bossRock3", "Images/보스/Boss_Rock3.bmp", 100, 108, true, RGB(255, 0, 255));
+	//_loading->loadImage("bossFist", "Images/보스/fist .bmp", 104, 373, true, RGB(255, 0, 255));
+	_loading->loadFrameImage("bossFist", "Images/보스/fist2 .bmp", 623, 373, 6, 1);
+	_loading->loadFrameImage("bossHand", "Images/보스/hand.bmp", 1140, 60, 19, 1);
 
+
+	//던전로딩에있지만 테스트로 하는것
+	_loading->loadFrameImage("golemScroll", "Images/던전/골렘던전스크롤11.bmp", 2277, 60, 11, 1);
+	_loading->loadImage("semiBossHpBarFront(red)", "Images/몬스터/semiBossHpFront(red).bmp", 927, 17, true, RGB(255, 0, 255));
+	_loading->loadImage("semiBossHpBarFront(white)", "Images/몬스터/semiBossHpFront(white).bmp", 927, 17, true, RGB(255, 0, 255));
+	_loading->loadImage("semiBossHpBarBack", "Images/몬스터/semiBossHpBack.bmp", 947, 23, true, RGB(255, 0, 255));
 }
 
 void bossLoading::loadSound()

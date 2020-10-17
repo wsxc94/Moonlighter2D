@@ -46,6 +46,7 @@ using namespace MY_UTIL;
 #include "player.h"
 #include "itemMenu.h"
 #include "effectManager.h"
+#include "damageFont.h"
 
 
 //=============================================================
@@ -63,6 +64,7 @@ using namespace MY_UTIL;
 #define PLAYER player::getSingleton()
 #define ITEMMENU itemMenu::getSingleton()
 #define EFFECTMANAGER effectManager::getSingleton()
+#define DAMAGEFONT damageFont::getSingleton()
 
 //=============================================================
 //	## 디파인문 ## (윈도우창 초기화)

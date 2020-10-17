@@ -40,6 +40,7 @@ private:
 	DungeonMap* _mapData;		//엠블렘으로 집을오면 던전맵데이터를 저장한다
 	int _dgFloor;				//몇층이었는지
 	bool _isEmblemReturn;		//엠블렘리턴인지 확인
+	bool _isPendantReturn;		//팬던트리턴 / 죽음인지 확인
 private:
 	vector<RESULTENEMY> _vEnemy;		//결과창 에너미
 	RESULTENEMY* _killEnemy;				//플레이어 죽인에너미
@@ -84,6 +85,7 @@ public:
 
 	DungeonMap* getMapData() { return _mapData; }
 	bool getIsEmblemReturn() { return _isEmblemReturn; }
+	bool getIsPendantReturn() { return _isPendantReturn; }
 	int getDungeonFloor() { return _dgFloor; }
 
 	//set함수 
@@ -108,6 +110,7 @@ public:
 	void subGold(int subValue) { _gold -= subValue; if (_gold < 0) _gold = 0; }	//매개변수 값만큼 골드 빼기 
 	void saveDungeonMap(DungeonMap* data) { _mapData = data; }
 	void setIsEmblemReturn(bool value) { _isEmblemReturn = value; }
+	void setIsPendantReturn(bool value) { _isPendantReturn = value; }
 	void setDungeonFloor(int floor) { _dgFloor = floor; }
 
 	//인터페이스 렌더함수 

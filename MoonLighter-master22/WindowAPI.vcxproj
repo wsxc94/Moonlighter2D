@@ -150,7 +150,9 @@
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="arrow.h" />
+    <ClInclude Include="boss.h" />
     <ClInclude Include="bossDungeonScene.h" />
+    <ClInclude Include="bossGolemKing.h" />
     <ClInclude Include="bossLoading.h" />
     <ClInclude Include="calendar.h" />
     <ClInclude Include="cameraManager.h" />
@@ -184,6 +186,7 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="playerData.h" />
+    <ClInclude Include="potal.h" />
     <ClInclude Include="potionShop.h" />
     <ClInclude Include="progressBar.h" />
     <ClInclude Include="random.h" />
@@ -207,7 +210,9 @@
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="arrow.cpp" />
+    <ClCompile Include="boss.cpp" />
     <ClCompile Include="bossDungeonScene.cpp" />
+    <ClCompile Include="bossGolemKing.cpp" />
     <ClCompile Include="bossLoading.cpp" />
     <ClCompile Include="bossSkeleton.cpp" />
     <ClCompile Include="calendar.cpp" />
@@ -243,6 +248,7 @@
     <ClCompile Include="object.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="playerData.cpp" />
+    <ClCompile Include="potal.cpp" />
     <ClCompile Include="potGolem.cpp" />
     <ClCompile Include="potionShop.cpp" />
     <ClCompile Include="progressBar.cpp" />

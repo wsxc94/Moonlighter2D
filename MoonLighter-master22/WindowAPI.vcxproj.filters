@@ -94,6 +94,18 @@
     <Filter Include="MainGame\potionShop">
       <UniqueIdentifier>{61cbcd31-afd3-4b2c-abf9-5e38e1847d76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MainGame\dungeon\potal">
+      <UniqueIdentifier>{e1a8a251-85c4-4d59-a89d-c34cee9ec2d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\dungeon\bossRoom">
+      <UniqueIdentifier>{ffd42d8f-3298-4979-8b31-a8ecd32d6b2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\dungeon\nomalRoom">
+      <UniqueIdentifier>{863bd5cb-f4b0-47b5-bee1-957297bd5592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainGame\dungeon\bossRoom\boss">
+      <UniqueIdentifier>{16552375-0ae6-4699-aa17-6ec9e22738b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winMain.cpp">
@@ -165,9 +177,6 @@
     <ClCompile Include="townScene.cpp">
       <Filter>MainGame\townScene</Filter>
     </ClCompile>
-    <ClCompile Include="nomalDungeonScene.cpp">
-      <Filter>MainGame\dungeon</Filter>
-    </ClCompile>
     <ClCompile Include="mapSaveLoad.cpp">
       <Filter>MainGame\mapSaveLoad</Filter>
     </ClCompile>
@@ -194,15 +203,6 @@
     </ClCompile>
     <ClCompile Include="wishList.cpp">
       <Filter>GameFramework\아이템\wishList</Filter>
-    </ClCompile>
-    <ClCompile Include="bossDungeonScene.cpp">
-      <Filter>MainGame\dungeon</Filter>
-    </ClCompile>
-    <ClCompile Include="dungeonLoading.cpp">
-      <Filter>MainGame\dungeon</Filter>
-    </ClCompile>
-    <ClCompile Include="dungeonMap.cpp">
-      <Filter>MainGame\dungeon</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
       <Filter>MainGame\플레이어</Filter>
@@ -267,8 +267,29 @@
     <ClCompile Include="potionShop.cpp">
       <Filter>MainGame\potionShop</Filter>
     </ClCompile>
+    <ClCompile Include="potal.cpp">
+      <Filter>MainGame\dungeon\potal</Filter>
+    </ClCompile>
+    <ClCompile Include="bossDungeonScene.cpp">
+      <Filter>MainGame\dungeon\bossRoom</Filter>
+    </ClCompile>
     <ClCompile Include="bossLoading.cpp">
-      <Filter>MainGame\dungeon</Filter>
+      <Filter>MainGame\dungeon\bossRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="dungeonLoading.cpp">
+      <Filter>MainGame\dungeon\nomalRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="dungeonMap.cpp">
+      <Filter>MainGame\dungeon\nomalRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="nomalDungeonScene.cpp">
+      <Filter>MainGame\dungeon\nomalRoom</Filter>
+    </ClCompile>
+    <ClCompile Include="boss.cpp">
+      <Filter>MainGame\dungeon\bossRoom\boss</Filter>
+    </ClCompile>
+    <ClCompile Include="bossGolemKing.cpp">
+      <Filter>MainGame\dungeon\bossRoom\boss</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -350,9 +371,6 @@
     <ClInclude Include="townScene.h">
       <Filter>MainGame\townScene</Filter>
     </ClInclude>
-    <ClInclude Include="nomalDungeonScene.h">
-      <Filter>MainGame\dungeon</Filter>
-    </ClInclude>
     <ClInclude Include="mapSaveLoad.h">
       <Filter>MainGame\mapSaveLoad</Filter>
     </ClInclude>
@@ -379,15 +397,6 @@
     </ClInclude>
     <ClInclude Include="wishList.h">
       <Filter>GameFramework\아이템\wishList</Filter>
-    </ClInclude>
-    <ClInclude Include="bossDungeonScene.h">
-      <Filter>MainGame\dungeon</Filter>
-    </ClInclude>
-    <ClInclude Include="dungeonLoading.h">
-      <Filter>MainGame\dungeon</Filter>
-    </ClInclude>
-    <ClInclude Include="dungeonMap.h">
-      <Filter>MainGame\dungeon</Filter>
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>MainGame\플레이어</Filter>
@@ -434,8 +443,29 @@
     <ClInclude Include="potionShop.h">
       <Filter>MainGame\potionShop</Filter>
     </ClInclude>
+    <ClInclude Include="potal.h">
+      <Filter>MainGame\dungeon\potal</Filter>
+    </ClInclude>
+    <ClInclude Include="bossDungeonScene.h">
+      <Filter>MainGame\dungeon\bossRoom</Filter>
+    </ClInclude>
     <ClInclude Include="bossLoading.h">
-      <Filter>MainGame\dungeon</Filter>
+      <Filter>MainGame\dungeon\bossRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="dungeonLoading.h">
+      <Filter>MainGame\dungeon\nomalRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="dungeonMap.h">
+      <Filter>MainGame\dungeon\nomalRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="nomalDungeonScene.h">
+      <Filter>MainGame\dungeon\nomalRoom</Filter>
+    </ClInclude>
+    <ClInclude Include="boss.h">
+      <Filter>MainGame\dungeon\bossRoom\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="bossGolemKing.h">
+      <Filter>MainGame\dungeon\bossRoom\boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
