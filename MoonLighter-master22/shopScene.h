@@ -30,6 +30,11 @@ private:
 	animation* _cashRegister; // 책상 위 금고
 	animation* _button; // 좌판 배치 버튼
 
+
+	vector < pair<float, float>> v_itemMoveSpeed; // 아이템 움직임 속도, 가속도 벡터
+	
+	bool b[4] = { false, }; // 아이템 움직임 true false 
+
 public:
 	HRESULT init();
 	void release();
@@ -43,6 +48,8 @@ public:
 	void itemInfoUpdate();
 
 	void npcAI(); // npc update 여기다 넣음
-	void npcInit(int idx);
+	void npcInit(int idx); //npc 초기화함수
+
+	void itemMove(); // 좌판에 설치된 아이템 움직임 함수
 };
 

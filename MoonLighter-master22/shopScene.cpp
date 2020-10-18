@@ -58,6 +58,12 @@ HRESULT shopScene::init()
 	_button = new animation;
 	_button->init(IMAGEMANAGER->findImage("»óÁ¡¹èÄ¡"), 0, 7);
 
+	
+
+	for (int i = 0; i < ITEMDESKCOUNT; i++)
+	{
+		v_itemMoveSpeed.push_back(make_pair(6.5f, 0.08f));
+	}
 	return S_OK;
 }
 
@@ -100,6 +106,7 @@ void shopScene::update()
 	npcAI();
 	PlayerSell();
 	itemInfoUpdate();
+	itemMove();
 
 	_cashRegister->update();
 	_button->update();
@@ -110,9 +117,8 @@ void shopScene::render()
 	RECT tmp;
 
 	IMAGEMANAGER->findImage("»óÁ¡ÇÈ¼¿")->render(IMAGEMANAGER->findImage("temp")->getMemDC(), 304, 132);
-	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("»óÁ¡¸Ê"), 304, 132);
 
-	_npc->render();
+	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("»óÁ¡¸Ê"), 304, 132);
 
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("»óÁ¡±æ¸ñ"), 458 + IMAGEMANAGER->findImage("»óÁ¡±æ¸ñ")->getFrameHeight(), 654, 458);
 
@@ -143,7 +149,7 @@ void shopScene::render()
 
 			CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
 				680 + _displayStand->getDisplayItem()[i].getItemImg()->getHeight() / 2
-				, v_itemPos[i].first, v_itemPos[i].second);
+				, v_itemPos[i].first, v_itemPos[i].second + v_itemMoveSpeed[i].first);
 
 			CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("¾ÆÀÌÅÛ±×¸²ÀÚ")
 				, 700 + IMAGEMANAGER->findImage("¾ÆÀÌÅÛ±×¸²ÀÚ")->getHeight()
@@ -154,21 +160,23 @@ void shopScene::render()
 
 			int tmp = strlen(str);
 
-			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc¸»Ç³¼±¸ö"), 750,
+			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc¸»Ç³¼±¸ö"),
+				750,
 				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2,
-				v_itemPos[i].second - 10, 15 *tmp,
+				v_itemPos[i].second - 10 + v_itemMoveSpeed[i].first,
+				15 *tmp ,
 				IMAGEMANAGER->findImage("npc¸»Ç³¼±¿ÞÂÊ")->getHeight());
 
 			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc¸»Ç³¼±¿ÞÂÊ"), 751,
 				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2 - 7*tmp - IMAGEMANAGER->findImage("npc¸»Ç³¼±¿ÞÂÊ")->getWidth(),
-				v_itemPos[i].second - 22);
+				v_itemPos[i].second - 22 + v_itemMoveSpeed[i].first);
 
 			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc¸»Ç³¼±¿À¸¥ÂÊ"), 751,
 				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2 + 7 * tmp,
-				v_itemPos[i].second - 22);
+				v_itemPos[i].second - 22 + v_itemMoveSpeed[i].first);
 			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc¸»Ç³¼±²¿¸®"), 751,
 				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth()/3,
-				v_itemPos[i].second+1);
+				v_itemPos[i].second+1 + v_itemMoveSpeed[i].first);
 		  
 			int _x;
 			
@@ -196,7 +204,8 @@ void shopScene::render()
 			}
 				CAMERAMANAGER->ZorderTextOut(str, 752,
 					_x
-					, v_itemPos[i].second - 20, strlen(str), RGB(0, 200, 0));
+					, v_itemPos[i].second - 20 + v_itemMoveSpeed[i].first
+					, strlen(str), RGB(0, 200, 0));
 
 				wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getCount());
 				if (_displayStand->getDisplayItem()[i].getCount() >= 10) {
@@ -212,9 +221,7 @@ void shopScene::render()
 
 			/*CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc¸»Ç³¼±¸ö"),
 				780, v_itemPos[i].first, v_itemPos[i].second);*/
-			
-
-			
+					
 		}
 
 		if (_npc->getVector()[i]->getActive())
@@ -397,4 +404,29 @@ void shopScene::npcInit(int idx)
 	_npc->getVector()[idx]->setActive(true);
 	_npc->getVector()[idx]->setState(NPC_START);
 
+}
+
+void shopScene::itemMove()
+{
+
+	for (int i = 0; i < v_itemMoveSpeed.size(); i++) {
+
+		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY && _displayStand->getDisplayItem()[i].getPrice() != 0) {
+			if (v_itemMoveSpeed[i].first >= 0.0f && !b[i])
+			{
+				v_itemMoveSpeed[i].first -= v_itemMoveSpeed[i].second;
+				if (v_itemMoveSpeed[i].first <= 1.0f) {
+					b[i] = true;
+				}
+			}
+
+			if (v_itemMoveSpeed[i].first <= 6.5f && b[i])
+			{
+				v_itemMoveSpeed[i].first += v_itemMoveSpeed[i].second;
+				if (v_itemMoveSpeed[i].first >= 6.5f) {
+					b[i] = false;
+				}
+			}
+		}
+	}
 }
