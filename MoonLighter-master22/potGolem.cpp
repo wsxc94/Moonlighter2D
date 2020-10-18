@@ -505,6 +505,7 @@ void potGolem::potGolemCollision()
 				em->attack = new animation;
 				em->attack->init(_attack->getImage(), 0, 7, true);
 				em->frameY = 0;
+				em->scale = 1.f;
 				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);

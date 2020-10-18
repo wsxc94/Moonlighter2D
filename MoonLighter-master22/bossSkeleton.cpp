@@ -511,7 +511,11 @@ void bossSkeleton::attackUpdate()
 	case bossSkeleton::ST_ATTACK_HAMMER:
 		_attackHammer->update();
 		// 망치가 땅을 찍었을때 충격파 애니메이션 시작
-		if (_attackHammer->getCurIndex() == 6 && _hammerWave1->getAniState() == ANIMATION_END) _hammerWave1->aniRestart();
+		if (_attackHammer->getCurIndex() == 6 && _hammerWave1->getAniState() == ANIMATION_END)
+		{
+			_hammerWave1->aniRestart();
+			CAMERAMANAGER->setShake(10, 10, 1);
+		}
 		if (_attackHammer->getAniState() == ANIMATION_END)
 		{
 			_isAttackPlay = false;				//사운드 재생 초기화
@@ -545,6 +549,7 @@ void bossSkeleton::attackUpdate()
 			_hammerWave1->aniRestart();
 			_stState = ST_WAVE;
 			_isAttackPlay = false;
+			CAMERAMANAGER->setShake(10, 10, 1);
 		}
 		break;
 	case bossSkeleton::ST_WAVE:
@@ -571,6 +576,7 @@ void bossSkeleton::attackUpdate()
 					_attackHammer->aniPause();
 					_hammerWave1->aniRestart();
 					_waveCount++;
+					CAMERAMANAGER->setShake(10, 10, 1);
 				}
 
 			}
@@ -651,7 +657,6 @@ void bossSkeleton::soundUpdate()
 		}
 		break;
 	case bossSkeleton::ST_SKILL_HAMMER:
-		cout << _attackHammer->getCurIndex() << endl;
 		if (_attackHammer->getCurIndex() == 11 && _isAttackPlay == false)
 		{
 			_isAttackPlay = true;

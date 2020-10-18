@@ -341,6 +341,7 @@ void redGolem::attackBox()
 	{
 		SOUNDMANAGER->play("golemAttack");
 		_isAttackSoundPlay = true;
+		CAMERAMANAGER->setShake(10, 10, 5);
 	}
 }
 
@@ -455,6 +456,7 @@ void redGolem::redGolemCollision()
 				em->attack = new animation;
 				em->attack->init(_attack->getImage(), 0, 7, true);
 				em->frameY = 3;
+				em->scale = 1.f;
 				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);

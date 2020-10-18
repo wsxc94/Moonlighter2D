@@ -25,7 +25,6 @@ void damageFont::update()
 		}
 		else i++;
 	}
-	cout << _vFont.size() << endl;
 }
 
 void damageFont::render(HDC hdc)

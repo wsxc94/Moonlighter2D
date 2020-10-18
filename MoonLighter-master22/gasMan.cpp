@@ -511,6 +511,7 @@ void gasMan::gasManCollision()
 				em->attack = new animation;
 				em->attack->init(_attack->getImage(), 0, 7, true);
 				em->frameY = 3;
+				em->scale = 1.f;
 				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);

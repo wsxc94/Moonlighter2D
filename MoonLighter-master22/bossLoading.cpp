@@ -52,10 +52,10 @@ void bossLoading::loadImage()
 	_loading->loadFrameImage("bossIdle", "Images/보스/idleBoss .bmp", 350, 175, 2, 1);
 
 	//보스오브젝트
-	_loading->loadImage("bossRock0", "Images/보스/Boss_Rock0.bmp", 100, 108, true, RGB(255, 0, 255));
-	_loading->loadImage("bossRock1", "Images/보스/Boss_Rock1.bmp", 100, 108, true, RGB(255, 0, 255));
-	_loading->loadImage("bossRock2", "Images/보스/Boss_Rock2.bmp", 100, 108, true, RGB(255, 0, 255));
-	_loading->loadImage("bossRock3", "Images/보스/Boss_Rock3.bmp", 100, 108, true, RGB(255, 0, 255));
+	_loading->loadImage("bossRock0", "Images/보스/Boss_Rock0 .bmp", 100, 108, true, RGB(255, 0, 255));
+	_loading->loadImage("bossRock1", "Images/보스/Boss_Rock1 .bmp", 100, 108, true, RGB(255, 0, 255));
+	_loading->loadImage("bossRock2", "Images/보스/Boss_Rock2 .bmp", 100, 108, true, RGB(255, 0, 255));
+	_loading->loadImage("bossRock3", "Images/보스/Boss_Rock3 .bmp", 100, 108, true, RGB(255, 0, 255));
 	//_loading->loadImage("bossFist", "Images/보스/fist .bmp", 104, 373, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("bossFist", "Images/보스/fist2 .bmp", 623, 373, 6, 1);
 	_loading->loadFrameImage("bossHand", "Images/보스/hand.bmp", 1140, 60, 19, 1);

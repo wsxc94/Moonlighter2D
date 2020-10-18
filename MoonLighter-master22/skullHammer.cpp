@@ -332,7 +332,6 @@ void skullHammer::attackBox()
 {
 	if (_attack->getCurIndex() == 3 && _isAttackSoundPlay == false)
 	{
-		cout << "aa" << endl;
 		SOUNDMANAGER->play("skullAttackSword", 0.5f);
 		_isAttackSoundPlay = true;
 	}
@@ -478,6 +477,7 @@ void skullHammer::skullHammerCollision()
 				em->attack = new animation;
 				em->attack->init(_attack->getImage(), 0, 7, true);
 				em->frameY = 2;
+				em->scale = 1.f;
 				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
