@@ -124,9 +124,6 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 
 	thinkInfo.clear();
 
-	//_aniPriceCheck = new animation;
-	//_aniPriceCheck->init(IMAGEMANAGER->findImage("가격좋음"), 0, 12);
-
 	return S_OK;
 }
 
@@ -137,7 +134,7 @@ void npc::release()
 void npc::update()
 {
 	
-	anim();
+	anim(); // 각도에 따라 애니메이션을 변경하는 함수
 
 	RECT tmp;
 	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc))
@@ -150,33 +147,11 @@ void npc::update()
 void npc::update(NPC_MAP NPC_SHOP)
 {
 
-	/*cout << _key << endl;
-	switch (_state)
-	{
-	case NPC_MOVE:
-		cout << "NPC_MOVE" << endl;
-		break;
-	case NPC_STOP:
-		cout << "NPC_STOP" << endl;
-		break;
-	case NPC_CHECK_PRICE:
-		cout << "NPC_CHECK_PRICE" << endl;
-		break;
-	case NPC_WAIT:
-		cout << "NPC_WAIT" << endl;
-		break;
-	case NPC_GO_HOME:
-		cout << "NPC_GO_HOME" << endl;
-		break;
-	default:
-		break;
-	}*/
-
 	if (!_isSpawn)
 	{
 		_time++;
 		if (_time % _spawnTime == 0) {
-			npcSpawn();
+			npcSpawn(); // npc가 스폰될때 문여는 소리를 랜덤으로 해주는 함수
 			_isSpawn = true;
 			_isActive = true;
 			_state = NPC_MOVE;
@@ -184,8 +159,8 @@ void npc::update(NPC_MAP NPC_SHOP)
 	}
 	else {
 
-		anim();
-		move(NPC_SHOP);
+		anim(); // npc각도에 따라 애니메이션을 바꿔주는 함수
+		move(NPC_SHOP); // npc 이동 함수
 	}
 }
 
@@ -210,27 +185,8 @@ void npc::render()
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 	}
 
-	if (_Istalk)
-	{
-		char str[256];
-
-		CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("npc말풍선"), _pos.x, _pos.y - 200);
-		CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key + _illustrator), _pos.x + 10, _pos.y - 220, 1, 1);
-
-		hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
-			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-		oldFont = (HFONT)SelectObject(getMemDC(), hFont);
-		DeleteObject(oldFont);
-
-		SetTextColor(getMemDC(), RGB(67, 42, 10));
-		wsprintf(str, _name.c_str(), strlen(str));
-		DrawText(getMemDC(), str, -1, &_nameRect, DT_LEFT | DT_WORDBREAK);
-
-		SetTextColor(getMemDC(), RGB(125, 112, 92));
-		wsprintf(str, _talk.c_str(), strlen(str));
-		DrawText(getMemDC(), str, -1, &_textRect, DT_LEFT | DT_WORDBREAK);
-
-	}
+	TalkInterfaceRender();
+	
 	//CAMERAMANAGER->FrameRect(getMemDC(), _rc, RGB(255, 0, 0));
 }
 
@@ -267,7 +223,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 	}
 }
 
-void npc::anim()
+void npc::anim() // npc각도에 따라 애니메이션을 바꿔주는 함수
 {
 
 	_aniNpc->update();
@@ -497,6 +453,8 @@ void npc::lookPlayer() // 플레이어를 바라보게 npc애니메이션을 바꾸는 함수
 		}
 	}
 
+
+	//이미지 왼쪽 오른쪽 순서가 강아지만 달라서 이렇게 해놈
 	if ((_pos.y < PLAYER->getY() && _pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() > PLAYER->getY()) &&
 		_pos.x > PLAYER->getX())
 	{
@@ -612,9 +570,35 @@ void npc::ItemGet()
 
 void npc::ItemActive()
 {
+	// 좌판에 아이템이 있고 npc가 비활성화일시 npc를 활성화 시킴
 	if (_displayStand->getDisplayItem()[shop_targetIdx].getType() != ITEM_EMPTY && !_isActive)
 	{
 		_isActive = true;
+	}
+}
+
+void npc::TalkInterfaceRender()
+{
+	if (_Istalk)
+	{
+		char str[256];
+
+		CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("npc말풍선"), _pos.x, _pos.y - 200);
+		CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key + _illustrator), _pos.x + 10, _pos.y - 220, 1, 1);
+
+		hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		oldFont = (HFONT)SelectObject(getMemDC(), hFont);
+		DeleteObject(oldFont);
+
+		SetTextColor(getMemDC(), RGB(67, 42, 10));
+		wsprintf(str, _name.c_str(), strlen(str));
+		DrawText(getMemDC(), str, -1, &_nameRect, DT_LEFT | DT_WORDBREAK);
+
+		SetTextColor(getMemDC(), RGB(125, 112, 92));
+		wsprintf(str, _talk.c_str(), strlen(str));
+		DrawText(getMemDC(), str, -1, &_textRect, DT_LEFT | DT_WORDBREAK);
+
 	}
 }
 

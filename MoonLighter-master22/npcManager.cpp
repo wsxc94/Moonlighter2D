@@ -80,7 +80,7 @@ void npcManager::update()
 	_redmond->move();
 	_masa->move();
 
-	_witch->action("너 양치 안했지? 입 닫아 냄새나");
+	_witch->action("너한텐 안팔아");
 	_girl->action("ㅎㅇ");
 	_blackOctopus->action("탈모빔 !!!!");
 	_masa->action("콧물 개꿀맛 밥도둑");

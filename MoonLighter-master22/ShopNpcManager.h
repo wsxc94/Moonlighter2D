@@ -37,8 +37,8 @@ public:
 	void release();
 	void update();
 	void render();
-	void getInit(int idx , int rnd);
-	void UseNpcCheck();
+	void getInit(int idx , int rnd); // 인덱스를 받아와서 npc를 초기화하는 함수
+	void UseNpcCheck(); // 현재 인덱스의 npc가 사용중인지 검사하는 함수
 
 	vector<npc*>& getVector() { return v_npcs; }
 	vector<pair<string, bool>>& getNpcNamePair() { return _npcName; }

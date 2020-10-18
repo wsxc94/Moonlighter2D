@@ -5,7 +5,7 @@
 
 class displayStand;
 
-enum NPC_ACTION
+enum NPC_ACTION // npc 상태 스테이트
 {
 	NPC_START,
 	NPC_MOVE,
@@ -16,7 +16,7 @@ enum NPC_ACTION
 	NPC_ITEM_PICK
 };
 
-enum NPC_MAP
+enum NPC_MAP // npc가 어디있는지 기본 = 마을
 {
 	NPC_SHOP
 };
@@ -34,49 +34,48 @@ private:
 	int _idx;
 	int _time;
 
-	int _spawnTime;
-	float _speed;
-	float _angle;
+	int _spawnTime; // npc 젠 타임
+	float _speed;   // npc 이동속도
+	float _angle;   // npc 가 바라볼 각도
 
-	string _key;
+	string _key;    // 이미지 키 이름
 
-	tagPosF _pos;
-	tagPosF _probe;
+	tagPosF _pos;   // x y 축 구조체
 
-	tagPosF _target[4];
+	tagPosF _target[4]; // 마을 npc 움직일 좌표
 
 	vector<vector<tagPosF>> shop_target; // 타겟 좌표 배열
 
-	int _targetIdx;
+	int _targetIdx; // 좌표 타겟 인덱스
 
 	int shop_targetIdx; // 좌판 번호 타겟 인덱스
 	int shop_currentTargetIdx; // 현재 좌표 위치정보 인덱스
 
-	RECT _rc;
-	RECT _talkRect;
-	bool _stop;
-	bool _Istalk;
-	bool _delay;
+	RECT _rc;  // npc 렉트
+	RECT _talkRect; // 말걸수 있는 범위 렉트
+	bool _stop; // 멈췄는가
+	bool _Istalk; // 대화중인가
+	bool _delay; // 시간 딜레이 변수
 
-	bool _isActive;
-	bool _isSpawn;
+	bool _isActive; // 활성화 상태
+	bool _isSpawn;  // 젠 활성화 상태
 
-	int _boxidx;
-	int _boxCnt;
+	int _boxidx; //박스 애니메이션 인덱스
+	int _boxCnt; //박스 애니메이션 시간
 
-	string _talk;
-	string _name;
+	string _talk; // 멘트
+	string _name; // npc 이름
 
-	HFONT hFont;
+	HFONT hFont;  
 	HFONT oldFont;
 
-	RECT _nameRect;
-	RECT _textRect;
+	RECT _nameRect; // 이름 drawtext용 렉트
+	RECT _textRect; // 멘트 drawtext용 렉트
 
 	displayStand* _displayStand; // 상점 좌판 정보
 	gameItem _itemEmpty;		//비어있는 아이템 
 
-	string _illustrator = "일러";
+	string _illustrator = "일러"; // 이름 + 일러 = 일러스트 이미지
 
 	NPC_ACTION _state; // npc 상태
 
@@ -124,8 +123,10 @@ public:
 	void ItemGet(); // 아이템 정보 가져오기
 	void ItemActive();
 
-	int& getPeekItemGold() { return _peekItemGold; }
-	int& getPeekItemCnt() { return _peekItemCnt; }
+	void TalkInterfaceRender(); //대화에 대한 인터페이스 렌더
+
+	int& getPeekItemGold() { return _peekItemGold; } // 현재 가지고 있는 아이템 가격
+	int& getPeekItemCnt() { return _peekItemCnt; }   // 현재 가지고 있는 아이템 개수
 
 	NPC_ACTION& getState() { return _state; } // npc 현재 스테이트 반환
 	void setState(NPC_ACTION st) { _state = st; } // npc 상태 업데이트
