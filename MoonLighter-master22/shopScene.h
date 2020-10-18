@@ -19,8 +19,16 @@ private:
 	vector <pair<int, int>> v_itemPos; //아이템위치
 	vector <pair<int, int>> v_itemShadowPos;//아이템그림자위치
 
+	vector < pair<float, float>> v_itemMoveSpeed; // 아이템 움직임 속도, 가속도 벡터
+	
+	vector<bool> b; // 아이템 움직임 true false 
+
 	RECT _desk; // 계산대
 	RECT _stand; // 좌판
+	RECT _doorRect; // 문열고 닫는 렉트
+
+	bool _shopDoorCheck;
+
 	void ItemPosSet(); // 아이템 위치 세팅
 
 
@@ -30,11 +38,8 @@ private:
 
 	animation* _cashRegister; // 책상 위 금고
 	animation* _button; // 좌판 배치 버튼
+	animation* _door; // 문
 
-
-	vector < pair<float, float>> v_itemMoveSpeed; // 아이템 움직임 속도, 가속도 벡터
-	
-	bool b[4] = { false, }; // 아이템 움직임 true false 
 
 public:
 	HRESULT init();
@@ -49,6 +54,9 @@ public:
 
 	void npcAI(); // npc update 여기다 넣음
 	void npcInit(int idx); //npc 초기화함수
+	void doorOpen();
+	void doorPlay();
+	void doorReverseplay();
 
 	void itemMove(); // 좌판에 설치된 아이템 움직임 함수
 

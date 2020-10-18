@@ -129,6 +129,10 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 
 void npc::release()
 {
+	SAFE_DELETE(_aniNpc);
+	SAFE_DELETE(_aniPriceCheck);
+	SAFE_DELETE(_peekItemImg);
+	SAFE_DELETE(_displayStand);
 }
 
 void npc::update()

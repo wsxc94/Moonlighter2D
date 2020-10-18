@@ -16,6 +16,16 @@ void shopScene::ItemPosSet()
 	v_itemShadowPos.push_back(make_pair(486, 738));
 	v_itemShadowPos.push_back(make_pair(534, 738));
 
+	v_itemMoveSpeed.push_back(make_pair(6.5f, 0.08f));
+	v_itemMoveSpeed.push_back(make_pair(6.5f, 0.08f));
+	v_itemMoveSpeed.push_back(make_pair(6.5f, 0.08f));
+	v_itemMoveSpeed.push_back(make_pair(6.5f, 0.08f));
+	
+	b.push_back(false);
+	b.push_back(false);
+	b.push_back(false);
+	b.push_back(false);
+
 
 	for(int i = 0 ; i < v_itemPos.size(); i++)
 	_itemText[i] = RectMake(v_itemPos[i].first, v_itemPos[i].second , 50, 50);
@@ -32,21 +42,21 @@ HRESULT shopScene::init()
 	_npc = new ShopNpcManager;
 	_npc->init(_displayStand);
 
+
 	PLAYER->init();
 	PLAYER->setX(700);
-	PLAYER->setY(850);
+	PLAYER->setY(840);
 
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2000, 1000, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 
 	//675 870
-	GoTownPortal = RectMake(670, 1000, 80, 50);
+	GoTownPortal = RectMake(670, 950, 80, 50);
+	_doorRect = RectMake(670, 880, 50, 50);
 
 	IMAGEMANAGER->addImage("temp", 2000, 1000);
 
-	CAMERAMANAGER->FadeInit(80, FADE_IN);
-	CAMERAMANAGER->FadeStart();
-
 	ItemPosSet(); //좌판에 설치될 아이템 위치 초기화
+
 	_disMenuOn = false;
 
 	_visit = false;
@@ -57,21 +67,28 @@ HRESULT shopScene::init()
 	_button = new animation; //상첨 배치 버튼
 	_button->init(IMAGEMANAGER->findImage("상점배치"), 0, 7);
 
-	
+	_door = new animation;
+	_door->init(IMAGEMANAGER->findImage("상점문열어"), 0, 7, false, false);
 
-	for (int i = 0; i < ITEMDESKCOUNT; i++)
-	{
-		v_itemMoveSpeed.push_back(make_pair(6.5f, 0.08f)); //아이템 움직임 벡터 (float float)
-	}
+	_shopDoorCheck = false;
+
+	CAMERAMANAGER->FadeInit(80, FADE_IN);
+	CAMERAMANAGER->FadeStart();
+
 	return S_OK;
 }
 
 void shopScene::release()
 {
-	//_npc->release();
+	_npc->release();
+	SAFE_DELETE(_npc);
 
-	//_displayStand->release();
-	//SAFE_DELETE(_displayStand);
+	SAFE_DELETE(_cashRegister);
+	SAFE_DELETE(_button);
+	SAFE_DELETE(_door);
+
+	_displayStand->release();
+	SAFE_DELETE(_displayStand);
 }
 
 void shopScene::update()
@@ -94,9 +111,11 @@ void shopScene::update()
 	PlayerSell();
 	itemInfoUpdate();
 	itemMove();
+	doorOpen();
 
 	_cashRegister->update();
 	_button->update();
+	_door->update();
 }
 
 void shopScene::render()
@@ -118,6 +137,8 @@ void shopScene::render()
 	PLAYER->render(getMemDC());
 	ITEMMENU->render(getMemDC());
 	_displayStand->render();
+
+	CAMERAMANAGER->Rectangle(getMemDC(), _doorRect);
 }
 
 void shopScene::PortaltoTown() // 마을행 포탈
@@ -176,6 +197,8 @@ void shopScene::PlayerSell()
 	_stand = RectMake(472, 674,
 		IMAGEMANAGER->findImage("상점좌판")->getWidth(),
 		IMAGEMANAGER->findImage("상점좌판")->getHeight());
+
+	//_doorRect = RectMake()
 
 	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
 	{
@@ -270,6 +293,59 @@ void shopScene::npcInit(int idx) // 인덱스 번호의 npc 초기화
 
 }
 
+void shopScene::doorOpen()
+{
+	RECT tmp;
+	/*if (IntersectRect(&tmp , &_doorRect , &PLAYER->getShadowRect()) && !_shopDoorCheck)
+	{
+		if (_door->getAniState() != ANIMATION_PLAY)
+		{
+			_door->setCurIndex(0);
+			_door->aniPlay();
+			SOUNDMANAGER->play("상점입장0");
+			_shopDoorCheck = true;
+		}
+	}*/
+	if (IntersectRect(&tmp, &_doorRect, &PLAYER->getShadowRect()) && !_shopDoorCheck) {
+		doorPlay();
+	}
+	else if (!IntersectRect(&tmp, &_doorRect, &PLAYER->getShadowRect()) && _shopDoorCheck)
+	{
+		doorReverseplay();
+	}
+	
+
+	/*for (int i = 0; i < _npc->getVector().size(); i++) {
+		if ((IntersectRect(&tmp, &_doorRect, &_npc->getVector()[i]->getRect())) && !_shopDoorCheck)
+		{
+			doorPlay();
+		}
+	}*/
+
+
+}
+
+void shopScene::doorPlay()
+{
+	if (_door->getAniState() != ANIMATION_PLAY)
+	{
+		_door->setCurIndex(0);
+		_door->aniPlay();
+		SOUNDMANAGER->play("상점입장0");
+		_shopDoorCheck = true;
+	}
+}
+
+void shopScene::doorReverseplay()
+{
+	if (_door->getAniState() != ANIMATION_PLAY)
+	{
+		_door->aniReverse();
+		SOUNDMANAGER->play("문닫아");
+		_shopDoorCheck = false;
+	}
+}
+
 void shopScene::itemMove()
 {
 
@@ -298,8 +374,13 @@ void shopScene::itemMove()
 void shopScene::SoundUpdate()
 {
 	if (!CAMERAMANAGER->getFadeIsStart() && !_visit) {
-		_visit = true;
-		SOUNDMANAGER->play("문닫아");
+		
+		
+		if (_door->getAniState() != ANIMATION_PLAY) {
+			_door->aniReverse();
+			SOUNDMANAGER->play("문닫아");
+			_visit = true;
+		}
 	}
 
 	if (!SOUNDMANAGER->isPlaySound("상점브금"))
@@ -328,6 +409,10 @@ void shopScene::backGroundRender()
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점좌판"), 674 + IMAGEMANAGER->findImage("상점좌판")->getFrameHeight() / 4, 472, 674);
 
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점책상"), 670 + IMAGEMANAGER->findImage("상점책상")->getFrameHeight() / 4, 646, 670);
+
+	//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점문열어"), 1000 + IMAGEMANAGER->findImage("상점문열어")->getFrameHeight() / 4, 665, 823);
+
+	_door->ZoderRender(1000, 665, 823);
 
 	_cashRegister->ZoderRender(700, 700 + _cashRegister->getImage()->getFrameWidth() / 4, 650 + _cashRegister->getImage()->getFrameHeight() / 4);
 }
