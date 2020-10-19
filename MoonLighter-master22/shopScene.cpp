@@ -192,7 +192,7 @@ void shopScene::PlayerSell()
 	RECT tmp;
 	// 상점책상앞에서 대기하는 npc들에게만 적용
 	
-	_desk = RectMake(646, 670,
+	_desk = RectMake(646, 660,
 		IMAGEMANAGER->findImage("상점책상")->getWidth(),
 		IMAGEMANAGER->findImage("상점책상")->getHeight()/2);
 
