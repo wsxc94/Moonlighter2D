@@ -70,6 +70,7 @@ protected:
 	bool _isHit;
 	bool _isItemDrop;
 
+	bool _coliSkillAroow;
 
 	float _x;
 	float _y;

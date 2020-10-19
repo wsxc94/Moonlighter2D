@@ -44,6 +44,7 @@ void enemy::initTileSize(int x, int y)
 	_finalList.clear();
 
 	_emPlayerColi = false;
+	_coliSkillAroow = false;
 	count = 0;
 
 }
@@ -224,6 +225,9 @@ void enemy::collision()
 	{
 		if (PLAYER->getPlayerAttackBox().isHit == false && _emState != EM_DIE)
 		{
+			EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", 2000,
+				(_emRC.right + _emRC.left) / 2,
+				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
 			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
 			_emHp -= PLAYERDATA->getAtk();
 			_isHit = true;
@@ -236,11 +240,11 @@ void enemy::collision()
 	{
 		if (PLAYER->getPlayerAttackTwoBox().isHit == false && _emState != EM_DIE)
 		{
-			EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2,
+			EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", 2000,
 				(_emRC.right + _emRC.left) / 2,
 				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
 			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
-			_emHp -= 25;
+			_emHp -= PLAYERDATA->getAtk();;
 			_isHit = true;
 			this->setProgressBar();
 			this->hitSoundPlay();
@@ -250,15 +254,34 @@ void enemy::collision()
 
 	if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_emRC) && PLAYER->getShoot())
 	{
-		EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2 + 3,
-			(_emRC.right + _emRC.left) / 2,
-			(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
-		DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
-		PLAYER->setShoot(false);
-		_emHp -= 20;
-		_isHit = true;
-		this->setProgressBar();
-		this->hitSoundPlay();
+		if (!_coliSkillAroow)
+		{
+			_coliSkillAroow = true;
+			EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2 + 3,
+				(_emRC.right + _emRC.left) / 2,
+				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
+
+			if (PLAYER->getSkill())
+			{
+				_emHp -= PLAYERDATA->getAtk();
+				_isHit = true;
+				this->setProgressBar();
+				this->hitSoundPlay();
+			}
+			else
+			{
+				_emHp -= PLAYERDATA->getAtk();
+				_isHit = true;
+				this->setProgressBar();
+				this->hitSoundPlay();
+				PLAYER->setShoot(false);
+			}
+		}	
+	}
+	else
+	{
+		_coliSkillAroow = false;
 	}
 
 }

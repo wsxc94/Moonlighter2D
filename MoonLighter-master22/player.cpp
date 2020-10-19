@@ -71,6 +71,15 @@ void player::release()
 
 void player::update()
 {
+	if (_state == BOW_CHARGE)
+	{
+		_skillCount++;
+	}
+	if (_skillCount > 50)
+	{
+		_bowCharge->aniStop();
+		_isSkill = true;
+	}
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -204,6 +213,7 @@ void player::animation(int frameY)
 	_aniRunHit->update();
 	_aniSwordHit->update();
 	_aniSwordTwoHit->update();
+	_bowCharge->update();
 	
 
 	_aniTownIdle->setFrameY(_player.direction);
@@ -224,10 +234,7 @@ void player::animation(int frameY)
 	_aniRunHit->setFrameY(_player.direction);
 	_aniSwordHit->setFrameY(_player.direction);
 	_aniSwordTwoHit->setFrameY(_player.direction);
-	if (_isSkill)
-	{
-		_bowCharge->update();
-	}
+
 	_bowCharge->setFrameY(_player.direction);
 }
 
@@ -341,6 +348,7 @@ void player::playerState()
 			break;
 
 		case PLAYER_ATTACK_SWORD:
+			PLAYERDATA->setAtk(RANDOM->range(22, 28));
 			if (_aniSword->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -353,6 +361,7 @@ void player::playerState()
 			break;
 
 		case PLAYER_ATTACK_SWORD_SECOND:
+			PLAYERDATA->setAtk(RANDOM->range(22, 28));
 			if (_aniSwordTwo->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -365,14 +374,20 @@ void player::playerState()
 			}
 			break;
 		case BOW_CHARGE:
+			PLAYERDATA->setAtk(RANDOM->range(25, 35));
 			if (INPUT->GetKeyUp('K'))
 			{
-				_isShoot = true;
+				if (_isSkill)
+				{
+					_isShoot = true;
+				}
 				_state = PLAYER_IDLE;
 				_skillCount = 0;
+				
 			}
 			break;
 		case PLAYER_ATTACK_BOW:
+			PLAYERDATA->setAtk(RANDOM->range(18, 23));
 			if (_aniBow->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -659,6 +674,7 @@ void player::playerSkill()
 {
 	if (INPUT->GetKey('K'))
 	{
+		_bowCharge->aniRestart();
 		switch (_player.weapon)
 		{
 		case EMPTY:
@@ -666,19 +682,16 @@ void player::playerSkill()
 		case SHORT_SOWRD:
 			_state = PLAYER_SHILED;
 			break;
-		case BOW: 
-			_state = BOW_CHARGE;		
+		case BOW:
+			if (!_isShoot)
+			{
+				_state = BOW_CHARGE;		
+			}
 			break;
 		}
 	}
-	if (_state ==  BOW_CHARGE)
-	{
-		_skillCount++;
-	}
-	if (_skillCount > 50)
-	{
-		_isSkill = true;
-	}		
+
+	
 }
 
 void player::playerPush()
@@ -776,7 +789,6 @@ void player::imageInit()
 
 	_aniShiled->init(IMAGEMANAGER->findImage("방패"), 0, 1);
 	_bowCharge->init(IMAGEMANAGER->findImage("활스킬"), 0, 3, true);
-	_bowCharge->aniStop();
 	_aniBow->init(IMAGEMANAGER->findImage("활날리기"), 0, 5);
 	_aniBow->aniStop();
 	_aniDie->init(IMAGEMANAGER->findImage("죽음"), 0, 7);

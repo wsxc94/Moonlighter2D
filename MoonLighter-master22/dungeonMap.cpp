@@ -633,6 +633,7 @@ void DungeonMap::checkColiMoveBen()
 		RECT temp;
 		if (IntersectRect(&temp, &PLAYER->getShadowRect(), &_vTile[i].rc))
 		{
+
 			if (_vTile[i].tState == TS_MOVEBAN)
 			{
 				int wid = temp.right - temp.left;
@@ -660,6 +661,7 @@ void DungeonMap::checkColiMoveBen()
 						PLAYER->setX(PLAYER->getX() - wid);
 					}
 				}
+
 			}
 		}
 	}
@@ -853,6 +855,7 @@ void DungeonMap::checkColiArrow()
 {
 	RECT temp;
 	float x, y;
+	
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		if (_vTile[i].tState == TS_MOVEBAN)
@@ -864,6 +867,7 @@ void DungeonMap::checkColiArrow()
 					SOUNDMANAGER->play("화살맞음", 0.5f);
 				}
 				PLAYER->setShoot(false);
+				PLAYER->setSkill(false);
 			}
 		}
 	}
