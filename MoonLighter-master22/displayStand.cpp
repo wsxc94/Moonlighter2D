@@ -502,6 +502,7 @@ void displayStand::keyInput()
 			if (_shopCtrl == CTRL_INVENTORY) _cursor->setCursorState(CURSOR_PRICE_OFF);
 			else _cursor->setCursorState(CURSOR_PRICE_ON);
 			break;
+
 	}//end of switch 
 }
 

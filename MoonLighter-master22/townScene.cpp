@@ -15,6 +15,9 @@ HRESULT townScene::init()
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 	ITEMMENU->init();
 
+	_potionShop = new potionShop;
+	_potionShop->init();
+
 	shopPortal = RectMake(1650, 315 , 80 , 80);
 	gotoDungeonPortal = RectMake(460, 0, 460, 20);
 
@@ -52,8 +55,12 @@ HRESULT townScene::init()
 void townScene::release()
 {
 	SAFE_DELETE(_aniPotalInit);
+	
 	_npcManager->release();
 	SAFE_DELETE(_npcManager);
+	
+	_potionShop->release();
+	SAFE_DELETE(_potionShop);
 	
 	for (int i = 0; i < _objManager.size(); i++) {
 		SAFE_DELETE(_objManager[i]);
@@ -69,7 +76,7 @@ void townScene::update()
 	}
 	else 
 	{
-		if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
+		if (ITEMMENU->getOpenMenu() || _potionShop->getMenuOn()) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
 		else SOUNDMANAGER->setVolumn("마을브금", 0.3f);
 	}
 
@@ -91,8 +98,12 @@ void townScene::update()
 		SCENEMANAGER->loadScene("던전가는길");
 	}
 
-	if (!_potal || (_potal->getPotalState() != POTAL_INIT && _potal->getPotalState() != POTAL_PLAYERIN && _potal->getPotalState() != POTAL_PLAYEROUT))
-	PLAYER->update();
+	if (!_potal || (_potal->getPotalState() != POTAL_INIT &&
+		_potal->getPotalState() != POTAL_PLAYERIN &&
+		_potal->getPotalState() != POTAL_PLAYEROUT))
+	{
+		if(!_potionShop->getMenuOn()) PLAYER->update();
+	}
 
 	this->updatePotal();
 
@@ -102,6 +113,7 @@ void townScene::update()
 
 	_npcManager->update();
     ITEMMENU->update();
+	if(!ITEMMENU->getOpenMenu()) _potionShop->update();
 
 	portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	ObjectAnim();
@@ -175,6 +187,7 @@ void townScene::render()
 		PLAYER->render(getMemDC());
 
 	ITEMMENU->render(getMemDC());
+	_potionShop->render();
 
 	this->renderPotal();
 

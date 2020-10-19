@@ -122,8 +122,12 @@ void itemMenu::render(HDC hdc)
 	}
 
 	//char str[128];
+	//wsprintf(str, "menuOn : %d", _menuOn);
+	//TextOut(hdc, 10, 170, str, strlen(str));
+
 	//wsprintf(str, "invenOn : %d", ITEMMENU->getInvenOn());
 	//TextOut(hdc, 10, 190, str, strlen(str));
+
 
 	//char str[128];
 	//wsprintf(str, "ctrlState : %d", _ctrlState);
