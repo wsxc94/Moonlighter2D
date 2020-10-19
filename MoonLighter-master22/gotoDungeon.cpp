@@ -24,8 +24,8 @@ HRESULT gotoDungeon::init()
 
 void gotoDungeon::release()
 {
-	//SAFE_DELETE(_playerGotoAnim);
-	//SAFE_DELETE(_DungeonDoorAnim);
+	SAFE_DELETE(_playerGotoAnim);
+	SAFE_DELETE(_DungeonDoorAnim);
 }
 
 void gotoDungeon::update()

@@ -15,7 +15,7 @@ private:
 
 	bool _visit; //플레이어 방문여부
 	bool _disMenuOn; // 좌판메뉴가 켜져있나 안켜져있나
-
+	int _doorTime;
 	vector <pair<int, int>> v_itemPos; //아이템위치
 	vector <pair<int, int>> v_itemShadowPos;//아이템그림자위치
 
@@ -28,7 +28,7 @@ private:
 	RECT _doorRect; // 문열고 닫는 렉트
 
 	bool _shopDoorCheck;
-
+	bool _doorOpen;
 	void ItemPosSet(); // 아이템 위치 세팅
 
 
