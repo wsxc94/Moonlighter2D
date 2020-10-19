@@ -639,7 +639,7 @@ void player::playerAttack()
 	
 	if (!_isShoot)
 	{
-		if (INPUT->GetKeyDown('J') && _place == TOWN_DUNGEON)
+		if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 		{
 
 			switch (_player.weapon)

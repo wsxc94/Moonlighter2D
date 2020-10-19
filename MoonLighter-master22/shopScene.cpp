@@ -45,6 +45,7 @@ HRESULT shopScene::init()
 	PLAYER->init();
 	PLAYER->setX(700);
 	PLAYER->setY(840);
+	//PLAYER->setPlace(SHOP);
 
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2000, 1000, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 

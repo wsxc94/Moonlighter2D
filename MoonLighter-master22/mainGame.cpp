@@ -31,6 +31,7 @@ HRESULT mainGame::init()
 	SCENEMANAGER->addScene("보스로딩", new bossLoading);
 
 	PLAYER->init();
+	PLAYERDATA->init();
 
 	SCENEMANAGER->loadScene("타운로딩");
 
@@ -90,6 +91,7 @@ void mainGame::render()
 	TIMEMANAGER->render(getMemDC());
 	
 	PLAYERDATA->render(getMemDC());
+
 	CAMERAMANAGER->FadeRender(getMemDC());
 
 //=============================================================

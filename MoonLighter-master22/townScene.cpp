@@ -26,6 +26,7 @@ HRESULT townScene::init()
 	_count = 0;
 
 	ObjectSetAnim();
+	PLAYERDATA->setIsActivate(true);
 
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
@@ -363,6 +364,7 @@ void townScene::updatePotal()
 	{
 		_potal->setPotalState(POTAL_PLAYERIN);
 	}
+
 	if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
 	{
 		SOUNDMANAGER->stop("마을브금");
