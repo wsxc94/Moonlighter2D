@@ -346,6 +346,15 @@ void townScene::MapColl()
 	}
 }
 
+void townScene::collArrow()
+{
+	RECT temp;
+	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
+	{
+		PLAYER->setShoot(false);
+	}
+}
+
 HRESULT townScene::initPotal()
 {
 	

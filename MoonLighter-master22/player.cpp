@@ -71,6 +71,7 @@ void player::release()
 
 void player::update()
 {
+	cout << _player.weapon << endl;
 	if (_state == BOW_CHARGE)
 	{
 		_skillCount++;
@@ -234,7 +235,6 @@ void player::animation(int frameY)
 	_aniRunHit->setFrameY(_player.direction);
 	_aniSwordHit->setFrameY(_player.direction);
 	_aniSwordTwoHit->setFrameY(_player.direction);
-
 	_bowCharge->setFrameY(_player.direction);
 }
 
@@ -374,7 +374,7 @@ void player::playerState()
 			}
 			break;
 		case BOW_CHARGE:
-			PLAYERDATA->setAtk(RANDOM->range(25, 35));
+			PLAYERDATA->setAtk(RANDOM->range(30, 40));
 			if (INPUT->GetKeyUp('K'))
 			{
 				if (_isSkill)
@@ -639,7 +639,7 @@ void player::playerAttack()
 	
 	if (!_isShoot)
 	{
-		if (INPUT->GetKeyDown('J') && _place == TOWN_DUNGEON)
+		if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 		{
 
 			switch (_player.weapon)
