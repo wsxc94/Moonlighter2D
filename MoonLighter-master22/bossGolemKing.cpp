@@ -10,8 +10,8 @@ HRESULT bossGolemKing::init(int x, int y)
 	_aniBossDead1->init(IMAGEMANAGER->findImage("bossDead1"), 0, 7, false);
 	_aniBossDead2 = new animation;
 	_aniBossDead2->init(IMAGEMANAGER->findImage("bossDead2"), 0, 7, false);
-	_aniBossFistShoot = new animation;
-	_aniBossFistShoot->init(IMAGEMANAGER->findImage("bossFistShoot"), 0, 7, false);
+	/*_aniBossFistShoot = new animation;
+	_aniBossFistShoot->init(IMAGEMANAGER->findImage("bossFistShoot"), 0, 7, false);*/
 	_aniBossHandShootStart = new animation;
 	_aniBossHandShootStart->init(IMAGEMANAGER->findImage("bossHandShootStart"), 0, 7, false);
 	_aniBossHandShootEnd = new animation;
@@ -20,6 +20,13 @@ HRESULT bossGolemKing::init(int x, int y)
 	_aniIdle->init(IMAGEMANAGER->findImage("bossIdle"), 0, 50, true);
 	_scroll = new animation;
 	_scroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 9);
+
+	_aniBossFistShoot = new animation;
+	vector<POINT> pt;
+	for (int i = 0; i < 17; i++)
+	{
+		pt.push_back(PointMake(i, 0));
+	}
 
 	//벡터에 담기
 	_vAni.push_back(_aniBossUp);					
@@ -103,8 +110,8 @@ void bossGolemKing::update()
 			this->initGolemHand();
 			//돌슛 초기황
 			_rockShootAngle[0] = RANDOM->range(DEGREE(240), DEGREE(300));
-			_rockShootAngle[1] = _rockShootAngle[0] + DEGREE(10);
-			_rockShootAngle[2] = _rockShootAngle[0] + DEGREE(20);
+			_rockShootAngle[1] = _rockShootAngle[0] + DEGREE(5);
+			_rockShootAngle[2] = _rockShootAngle[0] + DEGREE(10);
 		}
 
 		break;
@@ -113,6 +120,30 @@ void bossGolemKing::update()
 	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
 		_rockFireTime++;
 
+		//발사시간이 되면 발사해라
+		if (_rockFireTime % 20 == 0)
+		{
+			tagRock rock[3];
+			for (int i = 0; i < 3; i++)
+			{
+				string str = "bossRock" + to_string(RANDOM->range(4));
+				rock[i].img = IMAGEMANAGER->findImage(str);
+				rock[i].x = _x + cosf(_rockShootAngle[i]) * (100 + _rockFireTime * 5);
+				rock[i].y = _y - sinf(_rockShootAngle[i]) * (100 + _rockFireTime * 5);
+				rock[i].hight = -100;
+				rock[i].time = 0;
+				rock[i].shadowScale = 0.5f;
+				rock[i].isHit = false;
+				_vRock.push_back(rock[i]);
+			}
+			_rockFireCount++;
+		}
+		if (_rockFireCount > 8)
+		{
+			_rockFireCount = 0;
+			_rockFireTime = 0;
+			_golemState = GOLEMKINGSTATE::BS_IDLE;
+		}
 
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_ROUND:
