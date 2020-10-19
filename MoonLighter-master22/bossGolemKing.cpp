@@ -19,7 +19,7 @@ HRESULT bossGolemKing::init(int x, int y)
 	_aniIdle = new animation;
 	_aniIdle->init(IMAGEMANAGER->findImage("bossIdle"), 0, 50, true);
 	_scroll = new animation;
-	_scroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
+	_scroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 9);
 
 	//벡터에 담기
 	_vAni.push_back(_aniBossUp);					
@@ -82,6 +82,7 @@ void bossGolemKing::update()
 			_golemState = GOLEMKINGSTATE::BS_IDLE;
 		}
 		CAMERAMANAGER->ChangePivot(_x, _y, 10);
+		CAMERAMANAGER->setShake(10, 10, 1);
 		break;
 	case GOLEMKINGSTATE::BS_IDLE:
 		_attackCool--;
@@ -102,6 +103,7 @@ void bossGolemKing::update()
 	case  GOLEMKINGSTATE::BS_FIST:
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
+
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_ROUND:
 		//이전에 발사한것이 존재한다면 치아라
@@ -122,6 +124,7 @@ void bossGolemKing::update()
 				_rock.hight = -100;
 				_rock.time = 0;
 				_rock.shadowScale = 0.5f;
+				_rock.isHit = false;
 				_vRock.push_back(_rock);
 			}
 			//공격횟수 ++
@@ -263,6 +266,16 @@ void bossGolemKing::update()
 			}
 			else _vRock[i].rc = { 0,0,0,0 };
 		}
+
+		RECT temp;
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_vRock[i].rc) && !_vRock[i].isHit)
+		{
+			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
+			PLAYER->setPlayerState(HIT_IDLE);
+			PLAYER->setHit(true);
+			_vRock[i].isHit = true;
+		}
+
 		if (_vRock[i].time > 600)
 		{
 			_vRock.erase(_vRock.begin() + i);

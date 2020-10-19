@@ -38,7 +38,7 @@ struct tagRock
 	float hight;
 	float shadowScale;
 	int time;				//유지시간
-
+	bool isHit;
 };
 
 class bossGolemKing : public boss

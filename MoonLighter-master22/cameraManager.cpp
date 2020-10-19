@@ -85,8 +85,8 @@ void cameraManager::update(float pivotX, float  pivotY)
 		{
 			_pivotX = _changePivotX;
 			_pivotY = _changePivotY;
-			//pivotX = _pivotX;
-			//pivotY = _pivotY;
+			pivotX = _pivotX;
+			pivotY = _pivotY;
 			_CMState = CAMERAMANAGERSTATE::CAMERAMANAGER_FOLLOWPIVOT;
 		}
 
