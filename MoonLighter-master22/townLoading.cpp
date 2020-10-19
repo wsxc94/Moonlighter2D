@@ -138,7 +138,6 @@ void townLoading::loadingImage()
 	_loading->loadImage("bag_pendant", "Images/ItemMenu/bag_pendant.bmp", 70, 48, true, RGB(255, 0, 255));
 	_loading->loadImage("bag_emblem", "Images/ItemMenu/bag_emblem.bmp", 68, 66, true, RGB(255, 0, 255));
 
-
 	//커서 이미지 초기화 
 	_loading->loadFrameImage("cursor_move", "Images/ItemMenu/cursor_move.bmp", 304, 76, 4, 1);
 	_loading->loadFrameImage("cursor_click", "Images/ItemMenu/cursor_click.bmp", 380, 76, 5, 1);
@@ -146,23 +145,23 @@ void townLoading::loadingImage()
 	_loading->loadFrameImage("cursor_select", "Images/ItemMenu/cursor_select.bmp", 510, 102, 5, 1);
 
 	//아이템 이미지 초기화 
-	_loading->loadImage("richJelly", "Images/Item/item_richJelly.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("venomJelly", "Images/Item/item_venomJelly.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("crystal", "Images/Item/item_crystal.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("vine", "Images/Item/item_vine.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("teethStone", "Images/Item/item_teethStone.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("root", "Images/Item/item_root.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("ironBar", "Images/Item/item_ironBar.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("foundryRests", "Images/Item/item_foundryRests.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("brokenSword", "Images/Item/item_brokenSword.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("fabric", "Images/Item/item_fabric.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("hardenedSteel", "Images/Item/item_hardenedSteel.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("풍부한 젤리", "Images/Item/item_richJelly.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("맹독성 젤리", "Images/Item/item_venomJelly.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("강화 수정", "Images/Item/item_crystal.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("덩굴", "Images/Item/item_vine.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("이빨석", "Images/Item/item_teethStone.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("뿌리", "Images/Item/item_root.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("쇠막대", "Images/Item/item_ironBar.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("주물 잔해", "Images/Item/item_foundryRests.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("망가진 검", "Images/Item/item_brokenSword.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("천", "Images/Item/item_fabric.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("경화 강철", "Images/Item/item_hardenedSteel.bmp", 48, 48, true, RGB(255, 0, 255));
 
-	_loading->loadImage("trainingShortSword", "Images/Item/item_trainingShortSword.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("trainingBow", "Images/Item/item_trainingBow.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("훈련용 단검", "Images/Item/item_trainingShortSword.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("훈련용 활", "Images/Item/item_trainingBow.bmp", 48, 48, true, RGB(255, 0, 255));
 
-	_loading->loadImage("hpPotion1", "Images/Item/item_hpPotion1.bmp", 48, 48, true, RGB(255, 0, 255));
-	_loading->loadImage("hpPotion2", "Images/Item/item_hpPotion2.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("HP 물약Ⅰ", "Images/Item/item_hpPotion1.bmp", 48, 48, true, RGB(255, 0, 255));
+	_loading->loadImage("HP 물약Ⅱ", "Images/Item/item_hpPotion2.bmp", 48, 48, true, RGB(255, 0, 255));
 
 	//아이템 이름 이미지 초기화
 	_loading->loadImage("name_richJelly", "Images/Item/name_richJelly.bmp", 160, 24);
@@ -214,10 +213,18 @@ void townLoading::loadingImage()
 	_loading->loadFrameImage("weapon_frontIdx", "Images/Interface/weapon_frontIdx.bmp", 60, 30, 2, 1);
 	_loading->loadFrameImage("weapon_backIdx", "Images/Interface/weapon_backIdx.bmp", 60, 30, 2, 1);
 
-	//상점 이미지 
+	//상점 이미지 초기화 
 	_loading->loadImage("menu_shopInventory", "Images/Shop/menu_shopInventory.bmp", 482, 544, true, RGB(255, 0, 255));
 	_loading->loadImage("menu_display", "Images/Shop/menu_display.bmp", 500, 464, true, RGB(255, 0, 255));
 	_loading->loadImage("arrow_price", "Images/Shop/arrow_price.bmp", 14, 46, true, RGB(255, 0, 255));
+
+	//포션상점 이미지 초기화 
+	_loading->loadImage("shop_nameBase", "Images/PotionShop/shop_nameBase.bmp", 402, 88, true, RGB(255, 0, 255));
+	_loading->loadImage("menu_potion", "Images/PotionShop/menu_potion.bmp", 1124, 680, true, RGB(255, 0, 255));
+	_loading->loadImage("icon_potionKeyE", "Images/PotionShop/icon_potionKeyE.bmp", 68, 144, true, RGB(255, 0, 255));
+	_loading->loadImage("slot_base", "Images/PotionShop/slot_base.bmp", 60, 60, true, RGB(255, 0, 255));
+	_loading->loadImage("shop_bubble", "Images/PotionShop/shop_bubble.bmp", 500, 160, true, RGB(255, 0, 255));
+	_loading->loadFrameImage("shop_ox", "Images/PotionShop/shop_ox.bmp", 76, 60, 2, 1);
 
 	//숫자(흰색) 이미지 초기화 
 	_loading->loadImage("0", "Images/Number/0.bmp", 10, 14, true, RGB(255, 0, 255));
@@ -291,6 +298,9 @@ void townLoading::loadingSound()
 	_loading->loadSound("cursor_drop", "Sound/UI&inventorySound/cursor_drop.wav");
 	_loading->loadSound("cursor_error", "Sound/UI&inventorySound/cursor_error.wav");
 
+	//상점(포션,대장간) 사운드
+	_loading->loadSound("witch_Open", "Sound/witch&blacksmith/witch_open.wav");
+
 	//플레이어 사운드 
 	_loading->loadSound("heal", "Sound/playerSound/heal.wav");
 	_loading->loadSound("weaponChange", "Sound/playerSound/weaponChange.wav");
@@ -301,15 +311,14 @@ void townLoading::loadingSound()
 	_loading->loadSound("문닫아", "Sound/shopSound/문닫힘.wav");
 
 	_loading->loadSound("화살발사", "Sound/playerSound/bow.wav");			//적용
-	_loading->loadSound("화살맞음", "Sound/playerSound/bow_Attack.wav");	//적용
+	_loading->loadSound("화살맞음", "Sound/playerSound/bow_Attack.wav");		//적용
 	_loading->loadSound("화살스킬", "Sound/playerSound/bow_Charge.wav");	
-	_loading->loadSound("구르기", "Sound/playerSound/roll.wav");			//적용
+	_loading->loadSound("구르기", "Sound/playerSound/roll.wav");				//적용
 	_loading->loadSound("검휘두르기", "Sound/playerSound/Sword.wav");		//애매
 	_loading->loadSound("플레이어걷기", "Sound/playerSound/walk.wav");		//적용
 	_loading->loadSound("침대", "Sound/playerSound/침대.wav");
 	_loading->loadSound("온천", "Sound/playerSound/회복_샘.wav");			//적용
 
-	
 	//마을 사운드
 	_loading->loadSound("개소리" , "Sound/townSound/개소리.wav");
 

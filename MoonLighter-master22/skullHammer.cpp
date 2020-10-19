@@ -47,8 +47,8 @@ HRESULT skullHammer::init(int x, int y)
 	_itemNum = new int[_itemDropSize];
 
 	//나올수 있는 아이템인덱스 초기화
-	_itemIndex[0] = 10;
-	_itemIndex[1] = 9;
+	_itemIndex[0] = BROKENSWORD_IDX;
+	_itemIndex[1] = FABRIC_IDX;
 
 	// 드랍될 아이템의 인덱스를 랜덤으로 지정
 	for (int i = 0; i < _itemDropSize; i++)

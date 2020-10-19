@@ -54,10 +54,10 @@ HRESULT potGolem::init(int x, int y)
 	_itemNum = new int[_itemDropSize];
 
 	//나올수 있는 아이템인덱스 초기화
-	_itemIndex[0] = 4;
-	_itemIndex[1] = 5;
-	_itemIndex[2] = 6;
-	_itemIndex[3] = 7;
+	_itemIndex[0] = VINE_IDX;
+	_itemIndex[1] = TEETHSTONE_IDX;
+	_itemIndex[2] = ROOT_IDX;
+	_itemIndex[3] = IRONBAR_IDX;
 
 	// 드랍될 아이템의 인덱스를 랜덤으로 지정
 	for (int i = 0; i < _itemDropSize; i++)

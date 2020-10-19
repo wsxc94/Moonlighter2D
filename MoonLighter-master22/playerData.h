@@ -36,6 +36,10 @@ private:
 
 	bool _isInDungeon;			//플레이어가 던전에 있는지 여부 확인
 	bool _isActivate;			//UI 렌더할건지
+	bool _renderGold;			//UI - 골드 렌더여부 
+	bool _renderHP;				//UI - HP 렌더여부 
+	bool _renderKeyInfo;		//UI - 단축키 및 무기아이콘 렌더여부 
+	bool _renderItemCount;		//UI - 가방아이템카운트 렌더여부 
 
 	DungeonMap* _mapData;		//엠블렘으로 집을오면 던전맵데이터를 저장한다
 	int _dgFloor;				//몇층이었는지
@@ -73,6 +77,13 @@ public:
 	float getY() { return _y; }
 	bool getIsInDungeon() { return _isInDungeon; }
 	bool getIsActivate() { return _isActivate; }
+	bool getRenderGold() { return _renderGold; }
+	bool getRenderHp() { return _renderHP; }
+	bool getRenderKeyInfo() { return _renderKeyInfo; }
+	bool getRenderItemCount() { return _renderItemCount; }
+
+//======================================================================//
+
 	vector<RESULTENEMY> getVEnemy() { return _vEnemy; }
 	void pushVEnemy(RESULTENEMY enemy) { _vEnemy.push_back(enemy); }
 	void vEnemyClear() { _vEnemy.clear(); }
@@ -103,6 +114,10 @@ public:
 	void setWeaponIdx(int index) { _weaponIdx = index; }
 	void setWeaponEquipped(gameItem item) { _weaponEquipped = item; }
 	void setIsActivate(bool isActivate) { _isActivate = isActivate; }
+	void setRenderGold(bool value) { _renderGold = value; }
+	void setRenderHp(bool value) { _renderHP = value; }
+	void setRenderKeyInfo(bool value) { _renderKeyInfo = value; }
+	void setRenderItemCount(bool value) { _renderItemCount = value; }
 
 	void plusInDungeonHp(int plusHp);	//매개변수 값만큼 던전체력 더하기 
 	void minusInDungeonHp(int minusHp);	//매개변수 값만큼 던전체력 빼기 

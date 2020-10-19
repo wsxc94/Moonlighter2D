@@ -533,11 +533,11 @@ void player::updateWeaponState()
 {
 	switch (ITEMMENU->getInventory()->getWeaponEquipped().getItemIdx())
 	{
-	case 16:
+	case TRAININGSWORD_IDX:
 		_player.weapon = SHORT_SOWRD;
 		break;
 
-	case 15:
+	case TRAININGBOW_IDX:
 		_player.weapon = BOW;
 		break;
 

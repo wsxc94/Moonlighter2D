@@ -52,7 +52,6 @@ HRESULT townScene::init()
 void townScene::release()
 {
 	SAFE_DELETE(_aniPotalInit);
-	SAFE_DELETE(_playerClone);
 	_npcManager->release();
 	SAFE_DELETE(_npcManager);
 	

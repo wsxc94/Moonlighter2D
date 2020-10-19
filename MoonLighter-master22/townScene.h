@@ -2,12 +2,15 @@
 #include "gameNode.h"
 #include "npcManager.h"
 #include "dungeonMap.h"
+#include "potionShop.h"
 class townScene : public gameNode
 {
 private:
 	potal* _potal;
+	potionShop *_potionShop;
+
+private:
 	animation* _aniPotalInit;		//던전 시작 / 종료애니
-	animation* _playerClone;	//던던 돌아왔을때 구르기 / 죽어서왔을때 주르륵...
 	bool _isReturn;		//던전에서 돌아오는거냐?  맞으면 플레이어 클론애니로 굴려버려
 private:
 	//타일 가로세로길이
@@ -31,6 +34,7 @@ private:
 
 	int _index;
 	int _count;
+
 public:
 
 	HRESULT init();

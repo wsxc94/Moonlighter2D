@@ -125,6 +125,11 @@ void inventory::render(HDC hdc)
 
 }
 
+itemManager * inventory::getItemManager()
+{
+	return _itemManager;
+}
+
 int inventory::getCurItemCount()
 {
 	int itemCount = 0;
@@ -190,6 +195,22 @@ gameItem inventory::getWeaponEquipped()
 				}
 			}
 	}//end of switch
+}
+
+int inventory::getCountByIdx(int itemIdx)
+{
+	int count = 0;
+
+	for (int i = 0; i < _vInven.size(); i++)
+	{
+		//인덱스가 다른 아이템은 건너뛰기 
+		if (_vInven[i]->getItemIdx() != itemIdx) continue;
+
+		//인덱스가 같은 아이템은 카운트를 더해주기 
+		count += _vInven[i]->getCount();
+	}
+
+	return count;
 }
 
 void inventory::initPos()
@@ -343,7 +364,7 @@ void inventory::initItem()
 		{
 			if (!_invenSlot[j].isEmpty || _invenSlot[j].slotType != SLOT_ITEM) continue;
 	
-			if (i == 15)
+			if (item->getItemIdx() == TRAININGSWORD_IDX)
 			{
 				_invenSlot[5].isEmpty = false;
 				item->setInvenPosIdx(5);
@@ -360,11 +381,12 @@ void inventory::initItem()
 		}
 	}
 
-	_vInven[0]->setCount(5);
-	_vInven[1]->setCount(10);
-	_vInven[2]->setCount(5);
-	_vInven[3]->setCount(5);
-	_vInven[13]->setCount(5);
+	_vInven[RICHJELLY_IDX]->setCount(5);
+	_vInven[VENOMJELLY_IDX]->setCount(10);
+	_vInven[CRYSTAL_IDX]->setCount(5);
+	_vInven[VINE_IDX]->setCount(5);
+	_vInven[POTION1_IDX]->setCount(10);
+	_vInven[POTION2_IDX]->setCount(5);
 }
 
 bool inventory::addItemToInven(gameItem item)
@@ -544,25 +566,21 @@ void inventory::invenKeyInput()
 	{
 		upKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('S'))
 	{
 		downKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('A'))
 	{
 		leftKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('D'))
 	{
 		rightKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 
 	//버튼을 누르고 있는 시간에 따라 
@@ -610,14 +628,12 @@ void inventory::pendantKeyInput()
 			_selectMenu->setSelectIdx(SELECT_YES);
 			_selectMenu->setMenuState(SELECT_YES);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 		else
 		{
 			_selectMenu->setSelectIdx(SELECT_NO);
 			_selectMenu->setMenuState(SELECT_NO);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
 
@@ -644,6 +660,8 @@ void inventory::pendantKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
 			_selectMenu->setMenuState(SELECT_NO);
+
+			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
@@ -671,14 +689,12 @@ void inventory::emblemKeyInput()
 			_selectMenu->setSelectIdx(SELECT_YES);
 			_selectMenu->setMenuState(SELECT_YES);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 		else
 		{
 			_selectMenu->setSelectIdx(SELECT_NO);
 			_selectMenu->setMenuState(SELECT_NO);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
 
@@ -701,6 +717,8 @@ void inventory::emblemKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(1000);
 			_selectMenu->setMenuState(SELECT_NO);
+
+			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}

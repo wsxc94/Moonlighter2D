@@ -86,7 +86,7 @@ HRESULT bossSkeleton::init(int x, int y)
 	_itemNum = new int[_itemDropSize];
 
 	//나올수 있는 아이템인덱스 초기화
-	for (int i = 0; i < 11; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		_itemIndex[i] = i + 1;
 	}
