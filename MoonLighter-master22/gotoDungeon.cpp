@@ -62,8 +62,7 @@ void gotoDungeon::update()
 	CAMERAMANAGER->movePivot(x, y);
 	collTile();
 	this->collArrow();
-	//cout << x << " " << y << endl;
-	//_playerGotoAnim->update();
+	ITEMMENU->update();
 	
 
 }
@@ -81,7 +80,7 @@ void gotoDungeon::render()
 		}
 	}
 	PLAYER->render(getMemDC());
-
+	
 	//_playerGotoAnim->render(getMemDC() , WINSIZEX/2 , WINSIZEY/2);
 	_DungeonDoorAnim->CameraRender(getMemDC() , 565 , 770);
 
@@ -95,6 +94,8 @@ void gotoDungeon::render()
 	TextOut(getMemDC(), 5, 170, str, strlen(str));*/
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
+	ITEMMENU->render(getMemDC());
+
 }
 
 void gotoDungeon::loadTile()

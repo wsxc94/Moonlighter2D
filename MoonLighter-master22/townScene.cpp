@@ -12,8 +12,9 @@ HRESULT townScene::init()
 	_npcManager->init(_vTest);
 
 	PLAYER->init();
-	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 	ITEMMENU->init();
+
+	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 
 	_potionShop = new potionShop;
 	_potionShop->init();
@@ -25,6 +26,7 @@ HRESULT townScene::init()
 	_count = 0;
 
 	ObjectSetAnim();
+	PLAYERDATA->setIsActivate(true);
 
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
@@ -371,6 +373,7 @@ void townScene::updatePotal()
 	{
 		_potal->setPotalState(POTAL_PLAYERIN);
 	}
+
 	if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
 	{
 		SOUNDMANAGER->stop("마을브금");

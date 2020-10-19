@@ -117,12 +117,18 @@ void nomalDungeonScene::update()
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_PENDANT;
+
+			ITEMMENU->getInventory()->putGrabbingItem();
+			ITEMMENU->getInventory()->setitemGrabbed();
 		}
 		//엠블렘 사용했냐?? 사용했으면 포탈을 만들어라
 		else if (ITEMMENU->getGoToTownEmblem())
 		{
 			_currentDungeon->initPotal();
 			ITEMMENU->SetGoToTownEmblem(false);
+
+			ITEMMENU->getInventory()->putGrabbingItem();
+			ITEMMENU->getInventory()->setitemGrabbed();
 		}
 		this->emblemUpdate();
 		this->dungeonUpdate();
@@ -145,7 +151,7 @@ void nomalDungeonScene::update()
 			_killEnemy->attack->update();
 		if (INPUT->GetKeyDown('J') && _aniBefore->getAniState() == ANIMATION_END)
 		{
-			SCENEMANAGER->loadScene("타운로딩");
+			SCENEMANAGER->loadScene("타운화면");
 			SOUNDMANAGER->stop("dungeonBGM");
 			SOUNDMANAGER->stop("spaRoomBGM");
 			SOUNDMANAGER->stop("bossRoomBGM");
@@ -168,6 +174,7 @@ void nomalDungeonScene::update()
 				ITEMMENU->SetGoToTownEmblem(false);
 				PLAYERDATA->setIsInDungeon(false);
 			}
+
 			this->release();
 		}
 

@@ -31,6 +31,8 @@ HRESULT mainGame::init()
 	SCENEMANAGER->addScene("보스로딩", new bossLoading);
 
 	PLAYER->init();
+	PLAYERDATA->init();
+
 	SCENEMANAGER->loadScene("타운로딩");
 
 	CAMERAMANAGER->FadeInit(1, FADE_IN);
@@ -80,6 +82,7 @@ void mainGame::render()
 	SetBkMode(getMemDC(), TRANSPARENT);
 	SCENEMANAGER->render();
 
+	INPUT->Update();
 	//이펙트 매니저렌더
 	EFFECTMANAGER->render();
 	//데미지 폰트 렌더
@@ -88,6 +91,7 @@ void mainGame::render()
 	TIMEMANAGER->render(getMemDC());
 	
 	PLAYERDATA->render(getMemDC());
+
 	CAMERAMANAGER->FadeRender(getMemDC());
 
 //=============================================================

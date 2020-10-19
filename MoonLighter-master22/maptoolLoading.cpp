@@ -50,6 +50,7 @@ void maptoolLoading::loadingImage()
 	_loading->loadImage("townBack", "Images/맵툴/townBackground74X60.bmp", 2590, 2100);
 	_loading->loadImage("dungeonBack", "Images/맵툴/dungeon_default37X21.bmp", 1280, 720);
 	_loading->loadImage("gotoDungeon", "Images/던전/goToDungeon.bmp", 2380, 1995);
+	_loading->loadImage("bossDungeon", "Images/보스/bossRoom .bmp", 1024, 839);
 
 	//맵툴메뉴 이미지 초기화 
 	_loading->loadImage("menu_size", "Images/맵툴/menu_size.bmp", 408, 490, true, RGB(255, 0, 255));

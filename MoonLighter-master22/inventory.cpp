@@ -64,6 +64,8 @@ void inventory::update()
 	{
 		_selectMenu->update();
 	}
+
+	//cout << _cursor->getClickTime() << "    " << _grabTime << endl;
 }
 
 void inventory::render(HDC hdc)
@@ -244,11 +246,12 @@ void inventory::initInven()
 	_isGrabbingItem = false; 
 	_isPuttingItem = false; 
 	_grabSoundPlayed = false;
-	//_canGrab = true;
+	_canGrab = true;
 
 	_cursor->setSlotIdx(0);
 	setInvenCtrl(INVEN_INVENTORY);
 	putGrabbingItem();
+	//setitemGrabbed();
 }
 
 void inventory::initInvenSlot()
@@ -619,16 +622,6 @@ void inventory::invenKeyInput()
 
 	//버튼을 누르고 있는 시간에 따라 
 	//아이템을 한 개씩 잡거나 모두 잡는 동작 실행 
-	if (INPUT->GetKey('J'))
-	{
-		_cursor->setClickTime(_cursor->getClickTime() + 1);
-
-		//꾹 누르고 있으면 한꺼번에 잡기 실행 
-		if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
-		{
-			grabItem();
-		}
-	}
 	if (INPUT->GetKeyDown('J'))
 	{
 		_cursor->setCursorState(CURSOR_CLICK);
@@ -642,9 +635,18 @@ void inventory::invenKeyInput()
 		if (!_isPuttingItem) grabItem();
 
 		_isPuttingItem = false;
-		_canGrab = true; 
 		_grabSoundPlayed = false;
 		_cursor->setClickTime(0);
+	}
+	else if (INPUT->GetKey('J'))
+	{		
+		_cursor->setClickTime(_cursor->getClickTime() + 1);
+
+		//꾹 누르고 있으면 한꺼번에 잡기 실행 
+		if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
+		{
+			grabItem();
+		}
 	}
 }
 
@@ -694,6 +696,8 @@ void inventory::pendantKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
 			_selectMenu->setMenuState(SELECT_NO);
+			_canGrab = false;
+			_cursor->setClickTime(0);
 
 			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
@@ -751,6 +755,7 @@ void inventory::emblemKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(1000);
 			_selectMenu->setMenuState(SELECT_NO);
+			_canGrab = false;
 
 			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
@@ -1270,6 +1275,8 @@ void inventory::grabItem()
 	}
 	else //짧다면 1개씩 잡기 
 	{
+		if (_cursor->getClickTime() == 0) return; 
+
 		_isGrabbingItem = true;
 		grabOneItem();
 		SOUNDMANAGER->play("cursor_pick", 0.4f);
@@ -1554,6 +1561,7 @@ void inventory::putGrabbingItem()
 	//잡고 있는 아이템이 있다면 원래 자리로 돌려놓기 
 	if (!_isGrabbingItem) return; 
 	
+	 
 	//내가 아이템을 잡은 슬롯의 자리가 비어있다면
 	if (_invenSlot[_itemGrabbed.getInvenPosIdx()].isEmpty)
 	{

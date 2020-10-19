@@ -85,6 +85,8 @@ public:
 	void setCanKeyInput(bool value) { _canKeyInput = value; }	//아이템 메뉴 키 입력받기 변수 설정
 	void setGoToTownPendant(bool value) { _goToTown_Pentant = value; }
 	void SetGoToTownEmblem(bool value) { _goToTown_Emblem = value; }
+	void setMenuOn(bool value) { _menuOn = value; }
+	void setInvenOn(bool value) { _invenOn = value; }
 
 	void toggleMenu();						//메뉴창 껐다 켰다하기 
 	void DoCloseMenu();						//메뉴창을 닫기를 실행하는 함수(외부에서 접근해서 끄기 가능)
