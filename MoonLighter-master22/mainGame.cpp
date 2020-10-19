@@ -33,7 +33,7 @@ HRESULT mainGame::init()
 	PLAYER->init();
 	PLAYERDATA->init();
 
-	SCENEMANAGER->loadScene("타운로딩");
+	SCENEMANAGER->loadScene("타이틀화면");
 
 	CAMERAMANAGER->FadeInit(1, FADE_IN);
 
