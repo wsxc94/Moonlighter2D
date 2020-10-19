@@ -164,6 +164,6 @@ public:
 	void itemNameRender(HDC hdc);				//인벤토리 하단에 아이템 이름을 출력하는 함수  
 	void itemCountRender(HDC hdc, int count, int destX, int destY);	//아이템의 개수를 출력하는 함수 
 	void statusNumRender(HDC hdc, int number, int destY);			//스테이터스 숫자 출력 함수 
-
+	void setitemGrabbed() { _itemGrabbed = _itemEmpty; }
 };
 

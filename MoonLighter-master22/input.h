@@ -11,12 +11,20 @@ class input : public singletonBase <input>
 private:
 	bool _keyUp[KEYMAX];
 	bool _keyDown[KEYMAX];
+	bool _isLButtonDown;
+	bool _isRButtonDown;
 
 public:
 	//입력매니져 초기화
 	HRESULT init();
+	void Update();
+	void ButtonDownChecker();
 	//입력매니져 해제
 	void release();
+
+	// GETSET //
+	bool GetLButtonDown() { return _isLButtonDown; }
+	bool GetRButtonDown() { return _isRButtonDown; }
 
 	//키가 계속 눌려 있냐?
 	bool GetKey(int key);
