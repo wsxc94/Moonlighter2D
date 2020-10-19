@@ -238,8 +238,18 @@ void npc::anim() // npc각도에 따라 애니메이션을 바꿔주는 함수
 		if (_key != "에리스" && _key != "강아지npc") {
 			if (RadianToDegree(_angle) >= 225 && RadianToDegree(_angle) <= 360) _aniNpc->setFrameY(0);
 			if (RadianToDegree(_angle) >= 45 && RadianToDegree(_angle) < 135) _aniNpc->setFrameY(1);
-			if (RadianToDegree(_angle) >= 0 && RadianToDegree(_angle) < 45) _aniNpc->setFrameY(2);
-			if (RadianToDegree(_angle) >= 135 && RadianToDegree(_angle) < 225) _aniNpc->setFrameY(3);
+			if (RadianToDegree(_angle) >= 0 && RadianToDegree(_angle) < 45) {
+				if(_key != "도둑강아지")
+				_aniNpc->setFrameY(2);
+				else
+				_aniNpc->setFrameY(3);
+			}
+			if (RadianToDegree(_angle) >= 135 && RadianToDegree(_angle) < 225) {
+				if (_key != "도둑강아지")
+					_aniNpc->setFrameY(3);
+				else
+					_aniNpc->setFrameY(2);
+			}
 		}
 		else {
 			_aniNpc->setFrameY(0);
@@ -334,11 +344,17 @@ void npc::DistanceCheck()
 			if (shop_currentTargetIdx == 2) {
 
 				if (shop_targetIdx == 0 || shop_targetIdx == 2) {
+					if(_key != "도둑강아지")
 					_aniNpc->setFrameY(2);
+					else
+					_aniNpc->setFrameY(3);
 				}
 				else if (shop_targetIdx == 1 || shop_targetIdx == 3)
 				{
+					if (_key != "도둑강아지")
 					_aniNpc->setFrameY(3);
+					else
+					_aniNpc->setFrameY(2);
 				}
 				priceCheck();
 			}

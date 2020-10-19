@@ -69,7 +69,7 @@ HRESULT shopScene::init()
 
 	_door = new animation;
 	_door->init(IMAGEMANAGER->findImage("상점문열어"), 0, 7, false, false);
-	_door->aniStop();
+	//_door->aniStop();
 
 	_shopDoorCheck = false;
 	_doorOpen = false;
