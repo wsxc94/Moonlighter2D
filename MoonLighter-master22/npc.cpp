@@ -225,6 +225,8 @@ void npc::render(NPC_MAP NPC_SHOP)
 				_pos.y + _peekItemImg->getHeight() / 4);
 		}
 	}
+
+	//CAMERAMANAGER->FrameRect(getMemDC(), _rc, RGB(255, 0, 0));
 }
 
 void npc::anim() // npc각도에 따라 애니메이션을 바꿔주는 함수
