@@ -1125,6 +1125,27 @@ void maptoolScene::clickTileGotoDungeon()
 		TILESIZE * tile_Y, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 }
 
+void maptoolScene::clickTileBossDungeon()
+{
+	_backImg = IMAGEMANAGER->findImage("gotoDungeon");
+	tile_X = 68;
+	tile_Y = 57;
+	_vTiles.clear();
+	_vObject.clear();
+	for (int i = 0; i < tile_X * tile_Y; i++)
+	{
+		tagTile _tag;
+		_vTiles.push_back(_tag);
+		_vObject.push_back(_tag);
+	}
+	this->maptoolSetup(0, 0);
+
+	_pivotX = WINSIZEX / 2;
+	_pivotY = WINSIZEY / 2;
+	CAMERAMANAGER->init(_pivotX, _pivotY, TILESIZE * tile_X + WINSIZEX / 2,
+		TILESIZE * tile_Y, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
+}
+
 void maptoolScene::clickResetBtn()
 {
 	// 리셋버튼 클릭 시 모든 타일의 지형 및 오브젝트 타입을
