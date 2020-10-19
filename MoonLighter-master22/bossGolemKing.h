@@ -72,7 +72,7 @@ private:
 	int _rockFireCount;							//¸î¹ø ¶³±É³Ä?
 	vector<tagRock> _vRock;						//µ¹µé
 
-
+	float _rockShootAngle[3];						//½¸ÇÒ °¢µµµé
 
 public:
 	bossGolemKing() {}

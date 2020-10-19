@@ -151,12 +151,6 @@ void nomalDungeonScene::update()
 			_killEnemy->attack->update();
 		if (INPUT->GetKeyDown('J') && _aniBefore->getAniState() == ANIMATION_END)
 		{
-			SCENEMANAGER->loadScene("타운화면");
-			SOUNDMANAGER->stop("dungeonBGM");
-			SOUNDMANAGER->stop("spaRoomBGM");
-			SOUNDMANAGER->stop("bossRoomBGM");
-			PLAYERDATA->vEnemyClear();
-			
 			if (_resultKind == RESULT_EMBLEM)
 			{
 				//엠블렘 사용 시 
@@ -174,6 +168,12 @@ void nomalDungeonScene::update()
 				ITEMMENU->SetGoToTownEmblem(false);
 				PLAYERDATA->setIsInDungeon(false);
 			}
+
+			SCENEMANAGER->loadScene("타운화면");
+			SOUNDMANAGER->stop("dungeonBGM");
+			SOUNDMANAGER->stop("spaRoomBGM");
+			SOUNDMANAGER->stop("bossRoomBGM");
+			PLAYERDATA->vEnemyClear();
 
 			this->release();
 		}
@@ -368,31 +368,30 @@ void nomalDungeonScene::soundUpdate()
 
 void nomalDungeonScene::dungeonUpdate()
 {
-	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN
-		&& _currentDungeon->getDungeonKind() != DG_SEMIBOSS)
+	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
 		//플레이어 이동
 		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
 		{
 		case 1:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(1085 + 17);
+			PLAYER->setX(1085 + 20);
 			PLAYER->setY(350 + 17);
 			break;
 		case 2:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(140 + 17);
+			PLAYER->setX(140 + 20);
 			PLAYER->setY(350 + 17);
 			break;
 		case 3:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(595 + 17);
-			PLAYER->setY(595 + 17);
+			PLAYER->setY(595 + 20);
 			break;
 		case 4:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(595 + 17);
-			PLAYER->setY(105 + 17);
+			PLAYER->setY(105 + 20);
 			break;
 		}
 		//던전 이동

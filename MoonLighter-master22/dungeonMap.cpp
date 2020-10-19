@@ -983,6 +983,8 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 				{
 					if (_dgKind == DG_SEMIBOSS && _rightDoor->getDoorKind() == DOOR_BOSS)
 						return 5;
+					else if (_dgKind == DG_SEMIBOSS && _rightDoor->getDoorKind() == DOOR_NOMAL)
+						return 2;
 					else
 					return 2;
 				}
@@ -993,6 +995,8 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 				{
 					if (_dgKind == DG_SEMIBOSS && _topDoor->getDoorKind() == DOOR_BOSS)
 						return 5;
+					else if (_dgKind == DG_SEMIBOSS && _topDoor->getDoorKind() == DOOR_NOMAL)
+						return 3;
 					else
 					return 3;
 				}
@@ -1003,6 +1007,8 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 				{
 					if (_dgKind == DG_SEMIBOSS && _bottomDoor->getDoorKind() == DOOR_BOSS)
 						return 5;
+					else if (_dgKind == DG_SEMIBOSS && _bottomDoor->getDoorKind() == DOOR_NOMAL)
+						return 4;
 					else
 					return 4;
 				}

@@ -26,7 +26,7 @@ void input::ButtonDownChecker()
 	_isLButtonDown = false;
 	_isRButtonDown = false;
 	
-	if (GetKeyDown(VK_LBUTTON))
+	/*if (GetKeyDown(VK_LBUTTON))
 	{
 		_isLButtonDown = true;
 	}
@@ -34,7 +34,7 @@ void input::ButtonDownChecker()
 	if (GetKeyDown(VK_RBUTTON))
 	{
 		_isRButtonDown = true;
-	}
+	}*/
 }
 void input::release()
 {

@@ -98,18 +98,24 @@ void bossGolemKing::update()
 		if (_attackCool <= 0)
 		{
 			_attackCool = RANDOM->range(300, 500);
-			_golemState = GOLEMKINGSTATE::BS_ROCK_ROUND;
+			_golemState = GOLEMKINGSTATE::BS_ROCK_SHOOT;
+			//손 초기황
 			this->initGolemHand();
+			//돌슛 초기황
+			_rockShootAngle[0] = RANDOM->range(DEGREE(240), DEGREE(300));
+			_rockShootAngle[1] = _rockShootAngle[0] + DEGREE(10);
+			_rockShootAngle[2] = _rockShootAngle[0] + DEGREE(20);
 		}
 
 		break;
 	case  GOLEMKINGSTATE::BS_FIST:
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
+		_rockFireTime++;
+
 
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_ROUND:
-		//이전에 발사한것이 존재한다면 치아라
 		_rockFireTime++;
 		
 		if (_rockFireTime % 100 == 0)
@@ -314,6 +320,9 @@ void bossGolemKing::render()
 	case GOLEMKINGSTATE::BS_FIST:
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
+		LineMake(getMemDC(), _x, _y, _x + cosf(_rockShootAngle[0]) * 1000, _y - sinf(_rockShootAngle[0]) * 1000);
+		LineMake(getMemDC(), _x, _y, _x + cosf(_rockShootAngle[1]) * 1000, _y - sinf(_rockShootAngle[1]) * 1000);
+		LineMake(getMemDC(), _x, _y, _x + cosf(_rockShootAngle[2]) * 1000, _y - sinf(_rockShootAngle[2]) * 1000);
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_ROUND:
 		break;
@@ -343,9 +352,16 @@ void bossGolemKing::bossAtkUpdate()
 
 void bossGolemKing::initGolemAttack()
 {
-	for (int i = 2; i < 6; i++)
+	_vGolemAttack.push_back(GOLEMKINGSTATE::BS_FIST);
+	_vGolemAttack.push_back(GOLEMKINGSTATE::BS_HAND);
+	switch (RANDOM->range(2))
 	{
-		_vGolemAttack.push_back((GOLEMKINGSTATE)i);
+	case 0:
+		_vGolemAttack.push_back(GOLEMKINGSTATE::BS_ROCK_ROUND);
+		break;
+	case 1:
+		_vGolemAttack.push_back(GOLEMKINGSTATE::BS_ROCK_SHOOT);
+		break;
 	}
 }
 
