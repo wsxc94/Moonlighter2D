@@ -209,7 +209,7 @@ bool enemy::isAstarFail()
 {
 	for (int count = 0, x = 0; x < _idx; x++)
 	{
-		for (int y = 0; y < _idy; y++)
+		for (int y = 0; y < _idy; y++)   
 		{
 			if (_totalNode[y][x].nodeState != NODE_WALL) count++;
 		}
@@ -224,7 +224,8 @@ void enemy::collision()
 	{
 		if (PLAYER->getPlayerAttackBox().isHit == false && _emState != EM_DIE)
 		{
-			_emHp -= 25;
+			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
+			_emHp -= PLAYERDATA->getAtk();
 			_isHit = true;
 			this->setProgressBar();
 			this->hitSoundPlay();
@@ -238,6 +239,7 @@ void enemy::collision()
 			EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2,
 				(_emRC.right + _emRC.left) / 2,
 				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
 			_emHp -= 25;
 			_isHit = true;
 			this->setProgressBar();
@@ -248,9 +250,10 @@ void enemy::collision()
 
 	if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_emRC) && PLAYER->getShoot())
 	{
-		EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2,
+		EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2 + 3,
 			(_emRC.right + _emRC.left) / 2,
 			(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+		DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
 		PLAYER->setShoot(false);
 		_emHp -= 20;
 		_isHit = true;

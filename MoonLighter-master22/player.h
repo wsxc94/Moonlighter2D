@@ -80,6 +80,7 @@ private:
 	bool _isTalk;
 	bool _isHit;
 	bool _isDie;
+	bool _isReturn;
 	bool _isSkill;		//보우 스킬이냐?
 
 	bool _displayOn;

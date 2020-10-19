@@ -47,8 +47,8 @@ HRESULT gasMan::init(int x, int y)
 	_itemNum = new int[_itemDropSize];
 
 	//나올수 있는 아이템인덱스 초기화
-	_itemIndex[0] = 1;
-	_itemIndex[1] = 2;
+	_itemIndex[0] = RICHJELLY_IDX;
+	_itemIndex[1] = VENOMJELLY_IDX;
 
 	// 드랍될 아이템의 인덱스를 랜덤으로 지정
 	for (int i = 0; i < _itemDropSize; i++)
@@ -511,6 +511,7 @@ void gasMan::gasManCollision()
 				em->attack = new animation;
 				em->attack->init(_attack->getImage(), 0, 7, true);
 				em->frameY = 3;
+				em->scale = 1.f;
 				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);

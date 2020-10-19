@@ -28,6 +28,7 @@ HRESULT mainGame::init()
 	SCENEMANAGER->addScene("상점화면", new shopScene);
 	SCENEMANAGER->addScene("던전가는길", new gotoDungeon);
 	SCENEMANAGER->addScene("상점가판대", new displayStand);
+	SCENEMANAGER->addScene("보스로딩", new bossLoading);
 
 	PLAYER->init();
 	SCENEMANAGER->loadScene("타운로딩");
@@ -57,6 +58,8 @@ void mainGame::update()
 	//사운드매니져 업데이트 (이게 없으면 사운드매니져 제대로 동작하지 않는다!!!)
 	SOUNDMANAGER->update();
 
+	//데미지 폰트
+	DAMAGEFONT->update();
 	//이펙트 매니저 업데이트
 	EFFECTMANAGER->update();
 
@@ -79,6 +82,8 @@ void mainGame::render()
 
 	//이펙트 매니저렌더
 	EFFECTMANAGER->render();
+	//데미지 폰트 렌더
+	DAMAGEFONT->render(getMemDC());
 	//프레임을 보고싶으면 주석해제
 	TIMEMANAGER->render(getMemDC());
 	

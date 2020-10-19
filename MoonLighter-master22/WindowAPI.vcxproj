@@ -150,7 +150,10 @@
   <ItemGroup>
     <ClInclude Include="animation.h" />
     <ClInclude Include="arrow.h" />
+    <ClInclude Include="boss.h" />
     <ClInclude Include="bossDungeonScene.h" />
+    <ClInclude Include="bossGolemKing.h" />
+    <ClInclude Include="bossLoading.h" />
     <ClInclude Include="calendar.h" />
     <ClInclude Include="cameraManager.h" />
     <ClInclude Include="commonMacroFunction.h" />
@@ -177,6 +180,7 @@
     <ClInclude Include="maptoolLoading.h" />
     <ClInclude Include="mainGame.h" />
     <ClInclude Include="maptoolScene.h" />
+    <ClInclude Include="movingObject.h" />
     <ClInclude Include="nomalDungeonScene.h" />
     <ClInclude Include="noteBook.h" />
     <ClInclude Include="npc.h" />
@@ -184,9 +188,11 @@
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="playerData.h" />
+    <ClInclude Include="potal.h" />
     <ClInclude Include="potionShop.h" />
     <ClInclude Include="progressBar.h" />
     <ClInclude Include="random.h" />
+    <ClInclude Include="recipe.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="sceneManager.h" />
     <ClInclude Include="selectMenu.h" />
@@ -207,7 +213,10 @@
   <ItemGroup>
     <ClCompile Include="animation.cpp" />
     <ClCompile Include="arrow.cpp" />
+    <ClCompile Include="boss.cpp" />
     <ClCompile Include="bossDungeonScene.cpp" />
+    <ClCompile Include="bossGolemKing.cpp" />
+    <ClCompile Include="bossLoading.cpp" />
     <ClCompile Include="bossSkeleton.cpp" />
     <ClCompile Include="calendar.cpp" />
     <ClCompile Include="cameraManager.cpp" />
@@ -236,6 +245,7 @@
     <ClCompile Include="maptoolLoading.cpp" />
     <ClCompile Include="mainGame.cpp" />
     <ClCompile Include="maptoolScene.cpp" />
+    <ClCompile Include="movingObject.cpp" />
     <ClCompile Include="nomalDungeonScene.cpp" />
     <ClCompile Include="noteBook.cpp" />
     <ClCompile Include="npc.cpp" />
@@ -243,10 +253,12 @@
     <ClCompile Include="object.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="playerData.cpp" />
+    <ClCompile Include="potal.cpp" />
     <ClCompile Include="potGolem.cpp" />
     <ClCompile Include="potionShop.cpp" />
     <ClCompile Include="progressBar.cpp" />
     <ClCompile Include="random.cpp" />
+    <ClCompile Include="recipe.cpp" />
     <ClCompile Include="redGolem.cpp" />
     <ClCompile Include="sceneManager.cpp" />
     <ClCompile Include="selectMenu.cpp" />

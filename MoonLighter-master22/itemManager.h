@@ -1,21 +1,5 @@
 #pragma once
 #define MAXITEM	16
-#define RICHJELLY_IDX		1
-#define VENOMJELLY_IDX		2
-#define CRYSTAL_IDX			3
-#define VINE_IDX			4
-#define TEETHSTONE_IDX		5
-#define ROOT_IDX			6
-#define IRONBAR_IDX			7
-#define FOUNDRYRESTS_IDX	8
-#define BROKENSWORD_IDX		9
-#define FABRIC_IDX			10
-#define HARDENEDSTEEL_IDX	11
-
-#define POTION1_IDX			13
-#define POTION2_IDX			14
-#define TRAININGBOW_IDX		15
-#define TRAININGSWORD_IDX	16
 
 //아이템의 종류 
 enum ITEM
@@ -68,7 +52,7 @@ typedef struct
 	image *imgDes;			//아이템 설명 이미지 
 	RECT rc;				//아이템 RECT
 	ITEM type;				//아이템 종류
-	string name;			//아이템 이름(아이템 구분 시에 사용) 
+	const char* name;		//아이템 이름(출력 시에 사용)
 	POINT itemPos;			//아이템 좌표값(던전 등에서 움직일 때 사용)
 	int invenPosIdx;		//아이템 인벤토리 인덱스값(인벤토리 내에 있을 때의 위치값)
 	int itemIdx;			//아이템의 인덱스값(랜덤하게 아이템을 뽑아내거나 노트북에 사용)
@@ -81,11 +65,12 @@ typedef struct
 	int maxCount;			//한 칸의 슬롯에 소지 가능한 최대 아이템 개수 
 	bool isObtained;		//아이템의 최초 획득여부 (false.획득하지않은/true.획득한) 
 	//===========================================================================
-	ITEMMOVESTATE moveState; // 아이템 움직임상태
-	int holeAlpha;			// 아이템 알파렌더
-	float initSpeed;		// 통통튈때 스피드
-	float initAngle;		// 통통이 각도
-	bool isPop;				// 홀에 떨어진거 팝할거냐?
+	ITEMMOVESTATE moveState;	// 아이템 움직임상태
+	int holeAlpha;				// 아이템 알파렌더
+	float initSpeed;			// 통통튈때 스피드
+	float initAngle;			// 통통이 각도
+	bool isPop;					// 홀에 떨어진거 팝할거냐?
+
 }itemUnit;
 
 class gameItem
@@ -95,13 +80,13 @@ private:
 
 public:
 	//일반 아이템 초기화 
-	HRESULT init(string itemKey, string nameKey, string desKey, string name, int itemIdx,
+	HRESULT init(string itemKey, string nameKey, string desKey, const char* name, int itemIdx,
 		int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
 	//포션 아이템 초기화 
-	HRESULT init(string itemKey, string nameKey, string desKey, string name, int itemIdx, int potionValue,
+	HRESULT init(string itemKey, string nameKey, string desKey, const char* name, int itemIdx, int potionValue,
 		int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
 	//장비 아이템 초기화 
-	HRESULT init(string itemKey, string nameKey, string desKey, string name,
+	HRESULT init(string itemKey, string nameKey, string desKey, const char* name,
 		ITEM type, int itemIdx, int hpValue, int atkValue, int defValue, int spdValue,
 		int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
 	//클래스 복사하기 
@@ -118,7 +103,7 @@ public:
 	image *getDesImg() { return _item.imgDes; }
 	RECT getRect() { return _item.rc; }
 	ITEM getType() { return _item.type; }
-	string getName() { return _item.name; }
+	const char* getName() { return _item.name; }
 	POINT getPos() { return _item.itemPos; }
 
 	int getInvenPosIdx() { return _item.invenPosIdx; }
@@ -161,18 +146,19 @@ public:
 	void render(HDC hdc);
 
 	//일반 아이템 추가 
-	void addNormalItem(string itemKey, string nameKey, string desKey, string name, int itemIdx,
+	void addNormalItem(string itemKey, string nameKey, string desKey, const char* name, int itemIdx,
 		int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
 	//포션 아이템 추가 
-	void addPotionItem(string itemKey, string nameKey, string desKey, string name, int itemIdx,
+	void addPotionItem(string itemKey, string nameKey, string desKey, const char* name, int itemIdx,
 		int potionValue, int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
 	//장비 아이템 추가 
-	void addEquipmentItem(string itemKey, string nameKey, string desKey, string name,
+	void addEquipmentItem(string itemKey, string nameKey, string desKey, const char* name,
 		ITEM type, int itemIdx, int hpValue, int atkValue, int defValue, int spdValue,
 		int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
 
 	//게임에 사용하는 아이템들 추가하는 함수 
 	void addGameItems();
+	gameItem getItemByIdx(int idx);
 
 	//아이템 클래스 담겨있는 벡터 가져오기
 	vector<gameItem*> getItem() { return _vItem; }

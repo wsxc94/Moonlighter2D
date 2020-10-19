@@ -171,5 +171,9 @@ public:
 	inline int getMaxFrameX() { return _imageInfo->maxFrameX; }
 	inline int getMaxFrameY() { return _imageInfo->maxFrameY; }
 
+	//이미지 트랜스 설정
+	inline void setIsTrans(bool trans) { _isTrans = trans; }
+	inline void setTransColor(COLORREF color) { _transColor = color; }
+
 };
 
