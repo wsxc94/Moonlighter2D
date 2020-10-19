@@ -525,7 +525,7 @@ void player::keyInput()
 	{
 		ITEMMENU->getInventory()->switchWeapon();
 	}
-
+	cout << _player.weapon << endl;
 	//포션을 사용하는 함수
 	//아이템 메뉴가 오픈되지 않았을 때만 동작 
 	if (!ITEMMENU->getOpenMenu())
