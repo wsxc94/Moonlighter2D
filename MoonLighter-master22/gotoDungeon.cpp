@@ -62,6 +62,7 @@ void gotoDungeon::update()
 	CAMERAMANAGER->movePivot(x, y);
 	collTile();
 
+	ITEMMENU->update();
 	//cout << x << " " << y << endl;
 	//_playerGotoAnim->update();
 	
@@ -95,6 +96,8 @@ void gotoDungeon::render()
 	TextOut(getMemDC(), 5, 170, str, strlen(str));*/
 
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
+
+	ITEMMENU->render(getMemDC());
 }
 
 void gotoDungeon::loadTile()
