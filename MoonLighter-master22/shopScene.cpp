@@ -82,7 +82,6 @@ void shopScene::release()
 {
 	_npc->release();
 	SAFE_DELETE(_npc);
-
 	SAFE_DELETE(_cashRegister);
 	SAFE_DELETE(_button);
 	SAFE_DELETE(_door);

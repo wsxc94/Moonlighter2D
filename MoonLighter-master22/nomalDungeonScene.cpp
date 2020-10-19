@@ -10,7 +10,6 @@ HRESULT nomalDungeonScene::init()
 		return S_OK;
 	}
 
-
 	//던전 업데이트 종류
 	_dState = DS_UPDATE;
 	//던전층수
@@ -28,12 +27,12 @@ HRESULT nomalDungeonScene::init()
 	PLAYERDATA->setIsInDungeon(true);
 	//에너미 테스트
 
-
+	//플레이어 초기화 
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
 	SOUNDMANAGER->play("dungeonBGM",0.3f);
-
+	PLAYERDATA->initDungeonHp();
 
 	//카메라 초기화
 	CAMERAMANAGER->init(WINSIZEX / 2, WINSIZEY / 2, WINSIZEX, WINSIZEY, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
@@ -63,8 +62,9 @@ HRESULT nomalDungeonScene::initFromSave()
 	_golemScroll = new animation;
 	_golemScroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
 	PLAYERDATA->setIsInDungeon(true);
-	PLAYER->setX(WINSIZEX / 2);
-	PLAYER->setY(WINSIZEY / 2);
+	PLAYERDATA->initDungeonHp();
+	PLAYER->setX(_currentDungeon->getPotal()->getX());
+	PLAYER->setY(_currentDungeon->getPotal()->getY());
 	SOUNDMANAGER->play("dungeonBGM", 0.4f);
 	CAMERAMANAGER->init(WINSIZEX / 2, WINSIZEY / 2, WINSIZEX, WINSIZEY, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
@@ -155,16 +155,18 @@ void nomalDungeonScene::update()
 			
 			if (_resultKind == RESULT_EMBLEM)
 			{
+				//엠블렘 사용 시 
 				PLAYERDATA->saveDungeonMap(_currentDungeon);
 				PLAYERDATA->setIsEmblemReturn(true);
 				PLAYERDATA->setDungeonFloor(_dgFloor);
+				PLAYERDATA->setIsInDungeon(false);
 			}
 			else
 			{
 				PLAYERDATA->setIsEmblemReturn(false);
+				PLAYERDATA->setIsInDungeon(false);
 			}
 			this->release();
-
 		}
 
 		break;

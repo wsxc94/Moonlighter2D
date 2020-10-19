@@ -130,6 +130,16 @@ public:
 	void switchWeaponIdx();					//현재 무기 인덱스값 바꾸기 
 	void usePotionEquipped();				//현재 장착 중인 포션 사용하기 
 
+	//새로 만들기 
+	void wKeyDown();
+	void sKeyDown();
+	void aKeyDown();
+	void dKeyDown();
+	void jKey();
+	void jKeyDown();
+	void jKeyUp();
+	void lKeyDown();
+
 	//아이템 잡기 함수 
 	void grabItem();							//전체 아이템 잡기 함수 
 	void grabOneItem();							//빈손일 때 한 개의 아이템 잡기 
