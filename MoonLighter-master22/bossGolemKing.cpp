@@ -82,7 +82,10 @@ void bossGolemKing::update()
 			_golemState = GOLEMKINGSTATE::BS_IDLE;
 		}
 		CAMERAMANAGER->ChangePivot(_x, _y, 10);
-		CAMERAMANAGER->setShake(10, 10, 1);
+		if ((CAMERAMANAGER->getPivotX() == _x || CAMERAMANAGER->getPivotY() == _y) && !CAMERAMANAGER->getIsShake())
+		{
+			CAMERAMANAGER->setShake(5, 30, 2);
+		}
 		break;
 	case GOLEMKINGSTATE::BS_IDLE:
 		_attackCool--;

@@ -80,7 +80,7 @@ HRESULT shopScene::init()
 
 void shopScene::release()
 {
-	_npc->release();
+	/*_npc->release();
 	SAFE_DELETE(_npc);
 
 	SAFE_DELETE(_cashRegister);
@@ -88,7 +88,7 @@ void shopScene::release()
 	SAFE_DELETE(_door);
 
 	_displayStand->release();
-	SAFE_DELETE(_displayStand);
+	SAFE_DELETE(_displayStand);*/
 }
 
 void shopScene::update()

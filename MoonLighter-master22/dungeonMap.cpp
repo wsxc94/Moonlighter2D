@@ -707,45 +707,12 @@ void DungeonMap::checkColiHole()
 		}
 	}
 	// 던전문 열리기 전이면 충돌처리 해놓기
-	DOORKIND kind;
-	if (_dgKind == DG_SEMIBOSS)
-	{
-		if (_leftDoor)
-		{
-			if (_leftDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _leftDoor->getDoorKind();
-			}
-		}
-		if (_rightDoor)
-		{
-			if (_rightDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _rightDoor->getDoorKind();
-			}
-		}
-		if (_topDoor)
-		{
-			if (_topDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _topDoor->getDoorKind();
-			}
-		}
-		if (_bottomDoor)
-		{
-			if (_bottomDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _bottomDoor->getDoorKind();
-			}
-		}
-	}
-
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		RECT temp;
 		if (IntersectRect(&temp, &PLAYER->getShadowRect(), &_vTile[i].rc))
 		{
-			if (_vTile[i].tState == TS_PORTAL && ((_doorState == DOOR_CLOSE && _dgKind != DG_SEMIBOSS) || (_dgKind == DG_SEMIBOSS && kind == DG_NOMAL)))
+			if (_vTile[i].tState == TS_PORTAL)
 			{
 				int wid = temp.right - temp.left;
 				int hei = temp.bottom - temp.top;
@@ -997,6 +964,8 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 				{
 					if (_dgKind == DG_SEMIBOSS && _leftDoor->getDoorKind() == DOOR_BOSS)
 						return 5;
+					else if (_dgKind == DG_SEMIBOSS && _leftDoor->getDoorKind() == DOOR_NOMAL)
+						return 1;
 					else 
 						return 1;
 				}

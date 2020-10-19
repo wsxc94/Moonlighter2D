@@ -153,7 +153,7 @@ void player::render(HDC hdc)
 			_aniDie->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_DIE_PORTAL:
-			_aniDiePortal->ZoderRender(_player.y, _player.x - 128, _player.y - 140);
+			_aniDiePortal->ZorderStretchRender(_player.y, _player.x, _player.y - 20,2.f);
 			break;
 		case PLAYER_SWIM:
 			_aniSwim->ZoderRender(_player.y, _player.x - 20, _player.y - 15);

@@ -107,7 +107,6 @@ void nomalDungeonScene::update()
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_PLAYERDIE;
-			PLAYERDATA->setIsPendantReturn(true);
 		}
 		// 팬던트 사용했냐?? 사용했으면 에니메이션 띄우고 결과창 띄워라
 		else if (ITEMMENU->getGoToTownPendant())
@@ -118,7 +117,6 @@ void nomalDungeonScene::update()
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_PENDANT;
-			PLAYERDATA->setIsPendantReturn(true);
 		}
 		//엠블렘 사용했냐?? 사용했으면 포탈을 만들어라
 		else if (ITEMMENU->getGoToTownEmblem())
@@ -157,11 +155,15 @@ void nomalDungeonScene::update()
 			{
 				PLAYERDATA->saveDungeonMap(_currentDungeon);
 				PLAYERDATA->setIsEmblemReturn(true);
+				PLAYERDATA->setIsPendantReturn(false);
 				PLAYERDATA->setDungeonFloor(_dgFloor);
 			}
 			else
 			{
 				PLAYERDATA->setIsEmblemReturn(false);
+				PLAYERDATA->setIsPendantReturn(true);
+				ITEMMENU->setGoToTownPendant(false);
+				ITEMMENU->SetGoToTownEmblem(false);
 			}
 			this->release();
 
