@@ -106,11 +106,10 @@ void inventory::render(HDC hdc)
 		}//end of switch 
 	}
 
-	cout << "weapon : " << getWeaponEquipped().getItemIdx() << endl; 
-	//char str[128];
+	char str[128];
 
-	//wsprintf(str, "invenCtrl : %d", _invenCtrl);
-	//TextOut(hdc, 10, 130, str, strlen(str));
+	wsprintf(str, "invenSize : %d", _vInven.size());
+	TextOut(hdc, 10, 130, str, strlen(str));
 
 	//wsprintf(str, "canGrab : %d", _canGrab);
 	//TextOut(hdc, 10, 150, str, strlen(str));
@@ -123,7 +122,6 @@ void inventory::render(HDC hdc)
 	//	wsprintf(str, "inven[%d].invenIdx : %d", i, _vInvenItem[i]->getInvenPosIdx());
 	//	TextOut(hdc, 10, 170 + (i * 20), str, strlen(str));
 	//}
-
 }
 
 itemManager * inventory::getItemManager()
@@ -250,7 +248,6 @@ void inventory::initInven()
 	_cursor->setSlotIdx(0);
 	setInvenCtrl(INVEN_INVENTORY);
 	putGrabbingItem();
-	//setitemGrabbed();
 }
 
 void inventory::initInvenSlot()
@@ -387,7 +384,7 @@ void inventory::initItem()
 	_vInven[VENOMJELLY_IDX]->setCount(10);
 	_vInven[CRYSTAL_IDX]->setCount(5);
 	_vInven[VINE_IDX]->setCount(5);
-	_vInven[POTION1_IDX]->setCount(10);
+	_vInven[POTION1_IDX]->setCount(5);
 	_vInven[POTION2_IDX]->setCount(5);
 }
 
@@ -482,40 +479,6 @@ void inventory::syncWithShopInven(vector<gameItem*> vShopInven)
 
 void inventory::keyInput()
 {
-	//if (INPUT->GetKeyDown('W'))
-	//{
-	//	wKeyDown();
-	//}
-	//if (INPUT->GetKeyDown('S'))
-	//{
-	//	sKeyDown();
-	//}
-	//if (INPUT->GetKeyDown('A'))
-	//{
-	//	aKeyDown();
-	//}
-	//if (INPUT->GetKeyDown('D'))
-	//{
-	//	dKeyDown();
-	//}
-	//if (INPUT->GetKeyDown('L'))
-	//{
-	//	lKeyDown();
-	//}
-
-	//if (INPUT->GetKey('J'))
-	//{
-	//	jKey();
-	//}
-	//if (INPUT->GetKeyDown('J'))
-	//{
-	//	jKeyDown();
-	//}
-	//if (INPUT->GetKeyUp('J'))
-	//{
-	//	jKeyUp();
-	//}
-
 	switch (_invenCtrl)
 	{
 		case INVEN_INVENTORY:

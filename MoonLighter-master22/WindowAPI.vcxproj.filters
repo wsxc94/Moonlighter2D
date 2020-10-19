@@ -112,6 +112,9 @@
     <Filter Include="GameFramework\조합재료">
       <UniqueIdentifier>{3926f41c-8725-45ee-beea-ee432ca165ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameFramework\아이템\itemMenuLoading">
+      <UniqueIdentifier>{7986a9ed-97b9-49d4-ac67-1c1877006c49}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winMain.cpp">
@@ -306,6 +309,9 @@
     <ClCompile Include="recipe.cpp">
       <Filter>GameFramework\조합재료</Filter>
     </ClCompile>
+    <ClCompile Include="itemMenuLoading.cpp">
+      <Filter>GameFramework\아이템\itemMenuLoading</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -490,6 +496,9 @@
     </ClInclude>
     <ClInclude Include="recipe.h">
       <Filter>GameFramework\조합재료</Filter>
+    </ClInclude>
+    <ClInclude Include="itemMenuLoading.h">
+      <Filter>GameFramework\아이템\itemMenuLoading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

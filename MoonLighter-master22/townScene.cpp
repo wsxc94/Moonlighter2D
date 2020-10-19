@@ -12,8 +12,7 @@ HRESULT townScene::init()
 	_npcManager->init(_vTest);
 
 	PLAYER->init();
-	ITEMMENU->init();
-
+	
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 
 	_potionShop = new potionShop;
