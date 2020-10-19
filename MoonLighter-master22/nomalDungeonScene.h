@@ -34,10 +34,9 @@ private:
 	RESULTKIND _resultKind;					//결과창 뜨는 원인 죽었냐?  돌아가냐??
 	vector<RESULTENEMY> _vEnemy;			//결과창 에너미s
 	RESULTENEMY* _killEnemy;				//플레이어죽인에너미
-	tagPotal*	_potal;						//현재 던전에 포탈이있는지 확인용
+	potal* _potal;							//현재 던전에 포탈이있는지 확인용
 	animation* _aniBefore;					//결과창 출력전에 애니메이션
 	animation* _aniCenter;					//결과창 가운데에있는 애니메이션 ( 포탈 )
-	tagPotal _return;						//엠블렘타고 집갔다 올때 애니메이션
 	animation* _playerClone;				//포탈앞에서 구르는 플레이어 애니메이션
 private:
 	DUNGEONSCENESTATE _dState;

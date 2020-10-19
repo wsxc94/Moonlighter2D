@@ -73,17 +73,10 @@ HRESULT nomalDungeonScene::initFromSave()
 	this->getInvenItem();
 	_resultKind = RESULT_PLAYERDIE;
 	_dState = DS_RETURN;
-	_potal = nullptr;
+	_potal = _currentDungeon->getPotal();
+	_potal->setPotalState(POTAL_INIT);
 	_aniBefore = new animation;
 	_aniCenter = new animation;
-	_return.ani = new animation;
-	_return.ani->init(IMAGEMANAGER->findImage("potalInit"), 0, 7,false,true);
-	_return.isActivate = true;		//뱉고 없어지냐?
-	_return.isRange = false;		//이걸 플레이어 뱉었는지 확인
-	_return.isUpdate = false;		//이걸 처음 이닛확인용으로 사용
-	_return.x = _currentDungeon->getPotal()->x;
-	_return.y = _currentDungeon->getPotal()->y;
-	_currentDungeon->releasePotal();
 	_playerClone = new animation;
 	_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 4);
 	_playerClone->aniStop();
@@ -114,6 +107,7 @@ void nomalDungeonScene::update()
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_PLAYERDIE;
+			PLAYERDATA->setIsPendantReturn(true);
 		}
 		// 팬던트 사용했냐?? 사용했으면 에니메이션 띄우고 결과창 띄워라
 		else if (ITEMMENU->getGoToTownPendant())
@@ -124,12 +118,15 @@ void nomalDungeonScene::update()
 			_vEnemy = PLAYERDATA->getVEnemy();
 			_killEnemy = PLAYERDATA->getKillEnemy();
 			_resultKind = RESULT_PENDANT;
+			PLAYERDATA->setIsPendantReturn(true);
 		}
 		//엠블렘 사용했냐?? 사용했으면 포탈을 만들어라
 		else if (ITEMMENU->getGoToTownEmblem())
 		{
-			this->emblemUpdate();
+			_currentDungeon->initPotal();
+			ITEMMENU->SetGoToTownEmblem(false);
 		}
+		this->emblemUpdate();
 		this->dungeonUpdate();
 		PLAYER->update();
 		ITEMMENU->update();
@@ -172,30 +169,19 @@ void nomalDungeonScene::update()
 
 		break;
 	case DS_RETURN:
+		_currentDungeon->update();
 		_golemScroll->update();
-		_return.ani->update();
-		_playerClone->update();
-		if (_return.ani->getCurIndex() == _return.ani->getImage()->getMaxFrameX())
+		if (_potal->getPotalState() == POTAL_UPDATE)
 		{
-			PLAYER->setX(_return.x);
-			PLAYER->setY(_return.y - 1);
-			PLAYER->setPlayerDirection(0);
+			_potal->setPotalState(POTAL_BREAK);
 			PLAYER->setPlayerState(PLAYER_IDLE);
-			_playerClone->aniRestart();
+			PLAYER->setPlayerDirection(0);
 		}
-		if (_return.ani->getCurIndex() > _return.ani->getImage()->getMaxFrameX() && _playerClone->getAniState() != ANIMATION_END)
+		if (_potal->getPotalState() == POTAL_BREAK && _potal->getAnimation()->getAniState() == ANIMATION_END)
 		{
-			PLAYER->setY(PLAYER->getY() + 4);
-		}
-		if (_return.ani->getAniState() == ANIMATION_END)
-		{
-			_return.isActivate = false;
+			_currentDungeon->releasePotal();
 			_dState = DS_UPDATE;
-			ITEMMENU->SetGoToTownEmblem(false);
-			ITEMMENU->setGoToTownPendant(false);
-			PLAYERDATA->setIsEmblemReturn(false);
 		}
-
 		break;
 	default:
 		break;
@@ -231,7 +217,7 @@ void nomalDungeonScene::render()
 			_aniBefore->centerRender(getMemDC(), PLAYER->getX() - 12, PLAYER->getY() - 8);
 			break;
 		case RESULT_EMBLEM:
-			_aniBefore->stretchRender(getMemDC(), _potal->x, _potal->y,2.f);
+			_aniBefore->stretchRender(getMemDC(), _potal->getX(), _potal->getY(),2.f);
 			break;
 		}
 		if (_aniBefore->getAniState() == ANIMATION_END)
@@ -244,11 +230,11 @@ void nomalDungeonScene::render()
 		break;
 	case DS_RETURN:
 		this->golemScrollRender();
-		if (_playerClone->getCurIndex() == _playerClone->getImage()->getMaxFrameX())
+		
+		if (_potal->getPotalState() == POTAL_BREAK)
+		{
 			PLAYER->render(getMemDC());
-		else if(_playerClone->getAniState() == ANIMATION_PLAY)
-			_playerClone->ZoderRender(PLAYER->getY(), PLAYER->getX() - 60, PLAYER->getY() - 68);
-		_return.ani->ZorderStretchRender(_return.y, _return.x, _return.y, 2.f);
+		}
 		break;
 	
 	}
@@ -404,7 +390,10 @@ void nomalDungeonScene::dungeonUpdate()
 	}
 	else if (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()) == 5 && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
-		this->setNewFloor();
+		if (_dgFloor == 1)
+			this->setNewFloor();
+		else if (_dgFloor == 2)
+			SCENEMANAGER->loadScene("보스로딩");
 	}
 
 
@@ -617,30 +606,18 @@ void nomalDungeonScene::resultRender()
 
 void nomalDungeonScene::emblemUpdate()
 {
-	//던전에 포탈이 없으면 하나 만들어주자
-	if (!_potal && !_currentDungeon->getPotal())
-	{
-		_currentDungeon->initPotal();
-		_potal = _currentDungeon->getPotal();
-	}
+	if (!_currentDungeon->getPotal()) return;
 
 	_potal = _currentDungeon->getPotal();
-	//포탈이 없으면 리턴
-	if (!_potal) return;
 
-
-
-	//범위안에있고 j키를 누르면 결과창띄워라
-	if (_potal->isRange)
+	if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
 	{
-		if (INPUT->GetKeyDown('J'))
-		{
-			_aniBefore->init(IMAGEMANAGER->findImage("potalPlayer"), 0, 5);
-			_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5, true);
-			_dState = DS_RESULT;
-			_vEnemy = PLAYERDATA->getVEnemy();
-			_killEnemy = PLAYERDATA->getKillEnemy();
-			_resultKind = RESULT_EMBLEM;
-		}
+		_aniBefore->init(IMAGEMANAGER->findImage("potalPlayer"), 0, 5);
+		_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5, true);
+		_dState = DS_RESULT;
+		_vEnemy = PLAYERDATA->getVEnemy();
+		_killEnemy = PLAYERDATA->getKillEnemy();
+		_resultKind = RESULT_EMBLEM;
 	}
+
 }

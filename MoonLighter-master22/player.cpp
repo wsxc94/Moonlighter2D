@@ -39,6 +39,7 @@ HRESULT player::init()
 
 	_isHit = false;	//맞았냐
 	_isDie = false; //죽었냐
+	_isReturn = false;
 
 	_isSkill = true;
 
@@ -94,9 +95,7 @@ void player::update()
 
 void player::render(HDC hdc)
 {
-	POINT pt = CAMERAMANAGER->getRelativeMouse(PointMake(CAMERAMANAGER->getDistanceX(), CAMERAMANAGER->getDistanceY()));
-
-	if (_state != PLAYER_SWIM && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, pt.x - 35, pt.y - 10, 100);
+	if (_state != PLAYER_SWIM && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, _player.x - 35, _player.y - 10, 100);
 	if (_isShoot)
 	{
 		_arrow->render(hdc);
@@ -107,13 +106,13 @@ void player::render(HDC hdc)
 		switch (_state)
 		{
 		case PLAYER_IDLE:
-			_aniTownIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniTownIdle->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_RUN:
-			_aniTownRun->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniTownRun->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_ROLL:
-			_aniTownRoll->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniTownRoll->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_ATTACK_SWORD:
 
@@ -132,55 +131,55 @@ void player::render(HDC hdc)
 		switch (_state)
 		{
 		case PLAYER_IDLE:
-			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDgIdle->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_RUN:
-			_aniDgRun->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDgRun->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_ROLL:
-			_aniDgRoll->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDgRoll->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_FALL:
-			_aniFall->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _holeAlpha);
+			_aniFall->ZoderAlphaRender(_player.y, _player.x - 60, _player.y - 68, _holeAlpha);
 			break;
 		case PLAYER_ATTACK_SWORD:
-			_aniSword->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniSword->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_ATTACK_SWORD_SECOND:
-			_aniSwordTwo->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniSwordTwo->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_SHILED:
-			_aniShiled->ZoderRender(_player.y, pt.x - 60, pt.y - 68);			
+			_aniShiled->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_TALK:
-			_aniDgIdle->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDgIdle->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_ATTACK_BOW:
-			_aniBow->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniBow->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case BOW_CHARGE:
-			_bowCharge->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_bowCharge->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_DIE:
-			_aniDie->ZoderRender(_player.y, pt.x - 60, pt.y - 68);
+			_aniDie->ZoderRender(_player.y, _player.x - 60, _player.y - 68);
 			break;
 		case PLAYER_DIE_PORTAL:
-			_aniDiePortal->ZoderRender(_player.y, pt.x - 128, pt.y - 140);
+			_aniDiePortal->ZoderRender(_player.y, _player.x - 128, _player.y - 140);
 			break;
 		case PLAYER_SWIM:
-			_aniSwim->ZoderRender(_player.y, pt.x - 20, pt.y - 15);
+			_aniSwim->ZoderRender(_player.y, _player.x - 20, _player.y - 15);
 			break;
 		case HIT_IDLE:
-			_aniHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			_aniHit->ZoderAlphaRender(_player.y, _player.x - 60, _player.y - 68, _hitAlpha);
 			break;
 		case HIT_RUN:
-			_aniRunHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			_aniRunHit->ZoderAlphaRender(_player.y, _player.x - 60, _player.y - 68, _hitAlpha);
 			break;
 		case HIT_SWORD:
-			_aniSwordHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			_aniSwordHit->ZoderAlphaRender(_player.y, _player.x - 60, _player.y - 68, _hitAlpha);
 			break;
 		case HIT_SWORD_TWO:
-			_aniSwordTwoHit->ZoderAlphaRender(_player.y, pt.x - 60, pt.y - 68, _hitAlpha);
+			_aniSwordTwoHit->ZoderAlphaRender(_player.y, _player.x - 60, _player.y - 68, _hitAlpha);
 			break;
 		}
 		break;
@@ -417,7 +416,20 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_DIE_PORTAL:
-		
+			if (_aniDiePortal->getAniState() == ANIMATION_END)
+			{
+				if (!_isReturn)
+				{
+					_aniDiePortal->aniRestart();
+					_isReturn = true;
+				}
+				else
+				{
+					_isReturn = false;
+					_state = PLAYER_IDLE;
+				}
+			}		
+			
 			break;
 		case PLAYER_SWIM:
 			this->playerMove();
@@ -534,11 +546,11 @@ void player::updateWeaponState()
 {
 	switch (ITEMMENU->getInventory()->getWeaponEquipped().getItemIdx())
 	{
-	case 16:
+	case TRAININGSWORD_IDX:
 		_player.weapon = SHORT_SOWRD;
 		break;
 
-	case 15:
+	case TRAININGBOW_IDX:
 		_player.weapon = BOW;
 		break;
 

@@ -80,6 +80,7 @@ private:
 	bool _isTalk;
 	bool _isHit;
 	bool _isDie;
+	bool _isReturn;
 	bool _isSkill;		//보우 스킬이냐?
 
 	bool _displayOn;
@@ -170,6 +171,7 @@ public:
 
 	int getPlayerDirection() { return _player.direction; }
 	int getSpeed() { return _player.speed; }
+	float getJumpPower() { return _rollJumpPower; }
 
 	bool& getRight() { return _right; }
 	bool& getLeft() { return _left; }
@@ -186,7 +188,7 @@ public:
 	void setX(float x) { _player.x = x; }
 	void setY(float y) { _player.y = y; }
 	void setRollPower(float p) { _rollJumpPower = p; }
-
+	void setRollGravity(float g) { _rollGravity = g; }
 	void setShoot(bool isShoot) { _isShoot = isShoot; }
 
 	tagPlayerAttackBox& getPlayerAttackBox() { return _playerAttackBox; }

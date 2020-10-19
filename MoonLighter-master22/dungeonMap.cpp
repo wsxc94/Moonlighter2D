@@ -904,61 +904,25 @@ void DungeonMap::checkColiArrow()
 
 void DungeonMap::initPotal()
 {
-	_potal = new tagPotal;
-	_potal->ani = new animation;
-	_potal->ani->init(IMAGEMANAGER->findImage("potalInit"), 0, 7);
-	_potal->x = PLAYER->getX();
-	_potal->y = PLAYER->getY() - 20;
-	_potal->rc = RectMakeCenter(_potal->x, _potal->y + 25, 60, 16);
-	_potal->isUpdate = false;
-	_potal->isRange = false;
-	_potal->isActivate = true;
+	_potal = new potal;
+	_potal->init(PLAYER->getX(), PLAYER->getY(), POTAL_INIT);
 }
 
 void DungeonMap::potalUpdate()
 {
 	if (!_potal) return;
 	//포탈 업데이트하고
-	_potal->ani->update();
-	//만약 이닛중이었다면 업데이트로 전환해준다
-	if (!_potal->isUpdate)
-	{
-		if (_potal->ani->getAniState() == ANIMATION_END)
-		{
-			_potal->ani->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 7, true);
-			_potal->isUpdate = true;
-		}
-	}
-
-	//일정범위안에 들어오면 알려줘라
-	if (getDistance(PLAYER->getX(), PLAYER->getY(), _potal->x, _potal->y) < 30 && _potal->isUpdate)
-	{
-		_potal->isRange = true;
-	}
-	else _potal->isRange = false;
+	_potal->update();
 }
 
 void DungeonMap::potalRender()
 {
 	if (!_potal)return;
-	if (_potal->isActivate)
-	{
-		_potal->ani->ZorderStretchRender(_potal->y, _potal->x, _potal->y, 2.f);
-		if (_potal->isRange)
-		{
-			RECT txtRC = RectMake(_potal->x + 80, _potal->y - 90, 110, 50);
-			HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
-				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-			//IMAGEMANAGER->findImage("messegeBox_potal")->render(getMemDC(), _potal->x + 30, _potal->y - 90);
-			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("messegeBox_potal"), 1999, _potal->x + 30, _potal->y - 90);
-			CAMERAMANAGER->ZorderDrawText("To Town", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-		}
-	}
+	_potal->render();
 }
 
 void DungeonMap::releasePotal()
 {
-	SAFE_DELETE(_potal->ani);
 	SAFE_DELETE(_potal);
 }
 

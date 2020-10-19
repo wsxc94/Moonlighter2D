@@ -26,13 +26,38 @@ HRESULT townScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
+	// 포탈 
+	if (PLAYERDATA->getIsEmblemReturn())
+	{
+		_potal = new potal;
+		_potal->init(300, 200, POTAL_INIT);
+		PLAYER->setX(300);
+		PLAYER->setY(205);
+		PLAYER->setPlayerDirection(0);
+	}
+	else _potal = nullptr;
+
+	if (PLAYERDATA->getIsPendantReturn())
+	{
+		PLAYER->setX(300);
+		PLAYER->setY(205);
+		PLAYER->setPlayerState(PLAYER_DIE_PORTAL);
+		PLAYER->setPlayerDirection(0);
+	}
+
 	this->initPotal();
 	return S_OK;
 }
 
 void townScene::release()
 {
-	//_npcManager->release();
+	SAFE_DELETE(_aniPotalInit);
+	_npcManager->release();
+	SAFE_DELETE(_npcManager);
+	
+	for (int i = 0; i < _objManager.size(); i++) {
+		SAFE_DELETE(_objManager[i]);
+	}
 }
 
 void townScene::update()
@@ -42,7 +67,7 @@ void townScene::update()
 	{
 		SOUNDMANAGER->play("마을브금", 0.3f);
 	}
-	else
+	else 
 	{
 		if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
 		else SOUNDMANAGER->setVolumn("마을브금", 0.3f);
@@ -53,6 +78,10 @@ void townScene::update()
 		SOUNDMANAGER->stop("마을브금");
 		SCENEMANAGER->loadScene("던전로딩");
 	}
+	if (INPUT->GetKeyDown('H')) {
+		SOUNDMANAGER->stop("마을브금");
+		SCENEMANAGER->loadScene("보스로딩");
+	}
 	if (INPUT->GetKeyDown('P')) {
 		SOUNDMANAGER->stop("마을브금");
 		SCENEMANAGER->loadScene("상점로딩");
@@ -62,7 +91,7 @@ void townScene::update()
 		SCENEMANAGER->loadScene("던전가는길");
 	}
 
-	if(_playerClone->getAniState() == ANIMATION_END)
+	if (!_potal || (_potal->getPotalState() != POTAL_INIT && _potal->getPotalState() != POTAL_PLAYERIN && _potal->getPotalState() != POTAL_PLAYEROUT))
 	PLAYER->update();
 
 	this->updatePotal();
@@ -77,14 +106,13 @@ void townScene::update()
 	portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	ObjectAnim();
 	ObjectColl();
+	MapColl();
 
 }
 
 void townScene::render()
 {
-	
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
-	IMAGEMANAGER->findImage("죽음")->stretchFrameRender(getMemDC(), 200, 200, 0, 0, 2.f, 1.f);
 	
 	for (int i = 0; i < _objManager.size(); i++)
 	{
@@ -143,10 +171,9 @@ void townScene::render()
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 	_npcManager->render();
 
-	if (_playerClone->getAniState() == ANIMATION_END)
+	if (!_potal || (_potal->getPotalState() != POTAL_INIT && _potal->getPotalState() != POTAL_PLAYERIN && _potal->getPotalState() != POTAL_PLAYEROUT))
 		PLAYER->render(getMemDC());
-	else
-		_playerClone->ZoderRender(PLAYER->getY(), PLAYER->getX() - 60, PLAYER->getY() - 60);
+
 	ITEMMENU->render(getMemDC());
 
 	this->renderPotal();
@@ -209,7 +236,7 @@ void townScene::ObjectColl()
 					(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) - _objManager[i]->getImage()->getFrameHeight()*0.3);
 			}
 
-			if(IntersectRect(&tmp, &PLAYER->getShadowRect(), &temp)) {
+			if (IntersectRect(&tmp, &PLAYER->getShadowRect(), &temp)) {
 				int wid = tmp.right - tmp.left;
 				int hei = tmp.bottom - tmp.top;
 
@@ -235,7 +262,7 @@ void townScene::ObjectColl()
 						PLAYER->setX(PLAYER->getX() - wid);
 					}
 				}
-		}
+			}
 	}
 }
 
@@ -262,83 +289,76 @@ void townScene::ObjectSetAnim()
 	}
 }
 
-HRESULT townScene::initPotal()
+void townScene::MapColl()
 {
-	if (ITEMMENU->getGoToTownEmblem())
-	{
-		_potal.ani = new animation;
-		_potal.ani->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 7,true);
-		_potal.ani->aniPause();
-		_potal.x = 200;
-		_potal.y = 200;
-		_potal.isActivate = true;
-		_potal.isRange = false;
-		_potal.isUpdate = false;
-		PLAYER->setX(200);
-		PLAYER->setY(195);
-		_aniPotalInit = new animation;
-		_aniPotalInit->init(IMAGEMANAGER->findImage("potalInit"), 0, 7, false, true);
-		_playerClone = new animation;
-		_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 5);
-	}
-	else if (ITEMMENU->getGoToTownPendant())
-	{
 
-	}
-	else
+	if (30 > CAMERAMANAGER->getRelativeX(PLAYER->getX()))
 	{
-		_playerClone = new animation;
-		_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 5);
-		_playerClone->aniStop();
-		_potal.isActivate = false;
+		PLAYER->setX(PLAYER->getX() + PLAYER->getJumpPower() + 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setX(PLAYER->getX() + PLAYER->getSpeed());
+		
 		
 	}
+	if (WINSIZEX-30 < CAMERAMANAGER->getRelativeX(PLAYER->getX()))
+	{
+		PLAYER->setX(PLAYER->getX() - PLAYER->getJumpPower() - 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setX(PLAYER->getX() - PLAYER->getSpeed());
+		
+	}
+	if (30 > CAMERAMANAGER->getRelativeY(PLAYER->getY()))
+	{
+		PLAYER->setY(PLAYER->getY() + PLAYER->getJumpPower() + 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setY(PLAYER->getY() + PLAYER->getSpeed());
+	}
+	if (WINSIZEY-30 < CAMERAMANAGER->getRelativeY(PLAYER->getY()))
+	{
+		PLAYER->setY(PLAYER->getY() - PLAYER->getJumpPower() - 0.2);
+
+		PLAYER->setRollGravity(0);
+		PLAYER->setRollPower(0);
+
+		PLAYER->setY(PLAYER->getY() - PLAYER->getSpeed());
+	}
+}
+
+HRESULT townScene::initPotal()
+{
+	
 
 	return S_OK;
 }
 
 void townScene::updatePotal()
 {
-	if (_potal.isActivate == false) return;
-	_aniPotalInit->update();
-	if (_aniPotalInit->getCurIndex() == _aniPotalInit->getImage()->getMaxFrameX() && _playerClone->getAniState() != ANIMATION_END)
+	if (!_potal) return;
+	_potal->update();
+
+	if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
 	{
-		_playerClone->update();
-		PLAYER->setY(PLAYER->getY() + 4);
-		_aniPotalInit->aniPause();
-		_potal.ani->aniPlay();
+		_potal->setPotalState(POTAL_PLAYERIN);
+	}
+	if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
+	{
+		SOUNDMANAGER->stop("마을브금");
+		SCENEMANAGER->loadScene("던전로딩");
 	}
 
-	if (getDistance(PLAYER->getX(), PLAYER->getY(), _potal.x, _potal.y) < 30 && _potal.isUpdate)
-	{
-		_potal.isRange = true;
-	}
-	else _potal.isRange = false;
-
-
-	if (_potal.isRange)
-	{
-		if (INPUT->GetKeyDown('J'))
-		{
-			
-		}
-	}
 }
 
 void townScene::renderPotal()
 {
-
-	if (_potal.isActivate)
-	{
-		_potal.ani->ZorderStretchRender(_potal.y, _potal.x, _potal.y, 2.f);
-		if (_potal.isRange)
-		{
-			RECT txtRC = RectMake(_potal.x + 80, _potal.y - 90, 110, 50);
-			HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
-				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-			//IMAGEMANAGER.findImage("messegeBox_potal").render(getMemDC(), _potal.x + 30, _potal.y - 90);
-			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("messegeBox_potal"), 1999, _potal.x + 30, _potal.y - 90);
-			CAMERAMANAGER->ZorderDrawText("To Town", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-		}
-	}
+	if (!_potal) return;
+	_potal->render();
 }

@@ -2,14 +2,16 @@
 #include "gameNode.h"
 #include "npcManager.h"
 #include "dungeonMap.h"
+#include "potionShop.h"
 class townScene : public gameNode
 {
 private:
-	animation* _aniPotalInit;		//던전 시작 / 종료애니
-	tagPotal _potal;			//충돌처리하고 던전으로 날릴 애니
-	animation* _playerClone;	//던던 돌아왔을때 구르기 / 죽어서왔을때 주르륵...
-	bool _isReturn;		//던전에서 돌아오는거냐?  맞으면 플레이어 클론애니로 굴려버려
+	potal* _potal;
+	potionShop *_potionShop;
 
+private:
+	animation* _aniPotalInit;		//던전 시작 / 종료애니
+	bool _isReturn;		//던전에서 돌아오는거냐?  맞으면 플레이어 클론애니로 굴려버려
 private:
 	//타일 가로세로길이
 	int _tileX;
@@ -32,6 +34,7 @@ private:
 
 	int _index;
 	int _count;
+
 public:
 
 	HRESULT init();
@@ -42,8 +45,8 @@ public:
 	void portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	void ObjectColl(); // 플레이어 -> 오브젝트 충돌처리 - 팀장급 디렉터
 	void ObjectAnim(); // 오브젝트 애니메이션 함수 - 팀장급 디렉터
-
 	void ObjectSetAnim(); // _objManager 세팅 - 팀장급 디렉터
+	void MapColl();
 
 	HRESULT initPotal();
 	void updatePotal();

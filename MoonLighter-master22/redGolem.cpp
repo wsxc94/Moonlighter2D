@@ -48,9 +48,9 @@ HRESULT redGolem::init(int x, int y)
 	_itemNum = new int[_itemDropSize];
 
 	//나올수 있는 아이템인덱스 초기화
-	_itemIndex[0] = 3;
-	_itemIndex[1] = 8;
-	_itemIndex[2] = 11;
+	_itemIndex[0] = CRYSTAL_IDX;
+	_itemIndex[1] = FOUNDRYRESTS_IDX;
+	_itemIndex[2] = HARDENEDSTEEL_IDX;
 
 	// 드랍될 아이템의 인덱스를 랜덤으로 지정
 	for (int i = 0; i < _itemDropSize; i++)
@@ -341,6 +341,7 @@ void redGolem::attackBox()
 	{
 		SOUNDMANAGER->play("golemAttack");
 		_isAttackSoundPlay = true;
+		CAMERAMANAGER->setShake(10, 10, 5);
 	}
 }
 
@@ -455,6 +456,7 @@ void redGolem::redGolemCollision()
 				em->attack = new animation;
 				em->attack->init(_attack->getImage(), 0, 7, true);
 				em->frameY = 3;
+				em->scale = 1.f;
 				PLAYERDATA->setKillEnemy(em);
 				PLAYERDATA->setInDungeonHp(0);
 				PLAYER->setPlayerState(PLAYER_DIE);
