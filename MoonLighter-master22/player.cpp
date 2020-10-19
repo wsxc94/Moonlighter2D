@@ -40,7 +40,7 @@ HRESULT player::init()
 	_isHit = false;	//맞았냐
 	_isDie = false; //죽었냐
 
-	_isSkill = false;
+	_isSkill = true;
 
 	_rollCount = 0;
 	_rollIndex = 0;
@@ -70,6 +70,17 @@ void player::release()
 
 void player::update()
 {
+	if (_state == BOW_CHARGE)
+	{
+		_skillCount++;
+	}
+	if (_skillCount > 50)
+	{
+		_bowCharge->aniRestart();
+		_isSkill = true;
+	}
+	cout << _skillCount << endl;
+	cout << _isSkill << endl;
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -205,6 +216,7 @@ void player::animation(int frameY)
 	_aniRunHit->update();
 	_aniSwordHit->update();
 	_aniSwordTwoHit->update();
+	_bowCharge->update();
 	
 
 	_aniTownIdle->setFrameY(_player.direction);
@@ -225,10 +237,7 @@ void player::animation(int frameY)
 	_aniRunHit->setFrameY(_player.direction);
 	_aniSwordHit->setFrameY(_player.direction);
 	_aniSwordTwoHit->setFrameY(_player.direction);
-	if (_isSkill)
-	{
-		_bowCharge->update();
-	}
+
 	_bowCharge->setFrameY(_player.direction);
 }
 
@@ -368,7 +377,11 @@ void player::playerState()
 		case BOW_CHARGE:
 			if (INPUT->GetKeyUp('K'))
 			{
-				_isShoot = true;
+				if (_isSkill)
+				{
+					_isShoot = true;
+				}
+				_isSkill = false;
 				_state = PLAYER_IDLE;
 				_skillCount = 0;
 			}
@@ -659,14 +672,8 @@ void player::playerSkill()
 			break;
 		}
 	}
-	if (_state ==  BOW_CHARGE)
-	{
-		_skillCount++;
-	}
-	if (_skillCount > 50)
-	{
-		_isSkill = true;
-	}		
+
+	
 }
 
 void player::playerPush()
