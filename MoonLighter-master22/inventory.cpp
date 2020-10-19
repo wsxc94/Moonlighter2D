@@ -106,8 +106,6 @@ void inventory::render(HDC hdc)
 		}//end of switch 
 	}
 
-	cout << "weapon : " << getWeaponEquipped().getItemIdx() << endl; 
-
 	//char str[128];
 
 	//wsprintf(str, "invenCtrl : %d", _invenCtrl);

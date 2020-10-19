@@ -73,15 +73,15 @@ void player::update()
 {
 	this->updateWeaponState();
 
-	if (_state == BOW_CHARGE)
-	{
-		_skillCount++;
-	}
-	if (_skillCount > 50)
-	{
-		_bowCharge->aniStop();
-		_isSkill = true;
-	}
+	//if (_state == BOW_CHARGE)
+	//{
+	//	_skillCount++;
+	//}
+	//if (_skillCount > 50)
+	//{
+	//	_bowCharge->aniStop();
+	//	_isSkill = true;
+	//}
 
 	this->playerState();
 	this->animation(_player.direction);
@@ -637,8 +637,6 @@ void player::playerMove()
 
 void player::playerAttack()
 {
-	cout << _player.weapon << endl;
-
 	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
 		switch (_player.weapon)
