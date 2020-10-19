@@ -177,6 +177,7 @@
     <ClInclude Include="maptoolLoading.h" />
     <ClInclude Include="mainGame.h" />
     <ClInclude Include="maptoolScene.h" />
+    <ClInclude Include="movingObject.h" />
     <ClInclude Include="nomalDungeonScene.h" />
     <ClInclude Include="noteBook.h" />
     <ClInclude Include="npc.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="potionShop.h" />
     <ClInclude Include="progressBar.h" />
     <ClInclude Include="random.h" />
+    <ClInclude Include="recipe.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="sceneManager.h" />
     <ClInclude Include="selectMenu.h" />
@@ -236,6 +238,7 @@
     <ClCompile Include="maptoolLoading.cpp" />
     <ClCompile Include="mainGame.cpp" />
     <ClCompile Include="maptoolScene.cpp" />
+    <ClCompile Include="movingObject.cpp" />
     <ClCompile Include="nomalDungeonScene.cpp" />
     <ClCompile Include="noteBook.cpp" />
     <ClCompile Include="npc.cpp" />
@@ -247,6 +250,7 @@
     <ClCompile Include="potionShop.cpp" />
     <ClCompile Include="progressBar.cpp" />
     <ClCompile Include="random.cpp" />
+    <ClCompile Include="recipe.cpp" />
     <ClCompile Include="redGolem.cpp" />
     <ClCompile Include="sceneManager.cpp" />
     <ClCompile Include="selectMenu.cpp" />

@@ -2,8 +2,12 @@
 #include "gameNode.h"
 #include "npcManager.h"
 #include "dungeonMap.h"
+#include "potionShop.h"
 class townScene : public gameNode
 {
+private:
+	potionShop *_potionShop;
+
 private:
 	animation* _aniPotalInit;		//던전 시작 / 종료애니
 	tagPotal _potal;			//충돌처리하고 던전으로 날릴 애니
@@ -32,6 +36,7 @@ private:
 
 	int _index;
 	int _count;
+
 public:
 
 	HRESULT init();

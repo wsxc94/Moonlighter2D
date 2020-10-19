@@ -15,6 +15,9 @@ HRESULT townScene::init()
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 	ITEMMENU->init();
 
+	_potionShop = new potionShop;
+	_potionShop->init();
+
 	shopPortal = RectMake(1650, 315 , 80 , 80);
 	gotoDungeonPortal = RectMake(460, 0, 460, 20);
 
@@ -44,11 +47,12 @@ void townScene::update()
 	}
 	else
 	{
-		if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
+		if (ITEMMENU->getOpenMenu() || _potionShop->getMenuOn()) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
 		else SOUNDMANAGER->setVolumn("마을브금", 0.3f);
 	}
 
 	//====================================================
+
 	if (INPUT->GetKeyDown('G')) {
 		SOUNDMANAGER->stop("마을브금");
 		SCENEMANAGER->loadScene("던전로딩");
@@ -61,19 +65,28 @@ void townScene::update()
 		//SOUNDMANAGER->stop("마을브금");
 		SCENEMANAGER->loadScene("던전가는길");
 	}
+	if (INPUT->GetKeyDown('U')) {
+		//SOUNDMANAGER->stop("마을브금");
+		SCENEMANAGER->loadScene("던전가는길");
+	}
 
-	if(_playerClone->getAniState() == ANIMATION_END)
-	PLAYER->update();
+	if (_playerClone->getAniState() == ANIMATION_END)
+	{
+		if(!_potionShop->getMenuOn())
+			PLAYER->update();
+	}
 
 	this->updatePotal();
 
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
 	CAMERAMANAGER->update(PLAYER->getX(), PLAYER->getY());
+	
 	//====================================================
 
+	ITEMMENU->update();
 	_npcManager->update();
-    ITEMMENU->update();
-
+	if(!ITEMMENU->getOpenMenu()) _potionShop->update();
+ 
 	portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	ObjectAnim();
 	ObjectColl();
@@ -82,7 +95,6 @@ void townScene::update()
 
 void townScene::render()
 {
-	
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
 	IMAGEMANAGER->findImage("죽음")->stretchFrameRender(getMemDC(), 200, 200, 0, 0, 2.f, 1.f);
 	
@@ -147,7 +159,9 @@ void townScene::render()
 		PLAYER->render(getMemDC());
 	else
 		_playerClone->ZoderRender(PLAYER->getY(), PLAYER->getX() - 60, PLAYER->getY() - 60);
+	
 	ITEMMENU->render(getMemDC());
+	_potionShop->render();
 
 	this->renderPotal();
 

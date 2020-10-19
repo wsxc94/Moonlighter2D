@@ -6,6 +6,10 @@ HRESULT playerData::init()
 	initPlayerStatus();
 	initDungeonHp();
 	_isActivate = true;
+	_renderGold = true;
+	_renderHP = true;
+	_renderKeyInfo = true;
+	_renderItemCount = true;
 	
 	_killEnemy = nullptr;
 	_isEmblemReturn = false;
@@ -24,13 +28,14 @@ void playerData::update()
 void playerData::render(HDC hdc)
 {
 	if (!_isActivate) return;
-	//좌측 UI 출력
-	goldRender(hdc);
-	hpRender(hdc);
 
+	//좌측 UI 출력
+	if(_renderGold) goldRender(hdc);
+	if(_renderHP) hpRender(hdc);
 
 	//우측 UI 출력 
-	equipInfoRender(hdc);
+	if(_renderKeyInfo) equipInfoRender(hdc);
+	if(_renderItemCount) itemCountRender(hdc);
 }
 
 void playerData::initPlayerStatus()
@@ -47,7 +52,7 @@ void playerData::initPlayerStatus()
 
 	_hpBarLength = 130;
 
-	_gold = 5000;
+	_gold = 2000;
 
 	_itemCount = 0;
 
@@ -184,9 +189,6 @@ void playerData::equipInfoRender(HDC hdc)
 
 	//장착중인 포션 출력 
 	potionEquippedRender(hdc);
-
-	//아이템 개수 출력 
-	itemCountRender(hdc);
 }
 
 void playerData::itemCountRender(HDC hdc)

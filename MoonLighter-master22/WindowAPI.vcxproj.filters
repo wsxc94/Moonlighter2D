@@ -94,6 +94,12 @@
     <Filter Include="MainGame\potionShop">
       <UniqueIdentifier>{61cbcd31-afd3-4b2c-abf9-5e38e1847d76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameFramework\이동오브젝트">
+      <UniqueIdentifier>{84c87841-d8fe-4223-a10c-810f8ec72fe6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameFramework\조합재료">
+      <UniqueIdentifier>{3926f41c-8725-45ee-beea-ee432ca165ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winMain.cpp">
@@ -270,6 +276,12 @@
     <ClCompile Include="fadeManager.cpp">
       <Filter>GameFramework\매니져</Filter>
     </ClCompile>
+    <ClCompile Include="movingObject.cpp">
+      <Filter>GameFramework\이동오브젝트</Filter>
+    </ClCompile>
+    <ClCompile Include="recipe.cpp">
+      <Filter>GameFramework\조합재료</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -436,6 +448,12 @@
     </ClInclude>
     <ClInclude Include="fadeManager.h">
       <Filter>GameFramework\매니져</Filter>
+    </ClInclude>
+    <ClInclude Include="movingObject.h">
+      <Filter>GameFramework\이동오브젝트</Filter>
+    </ClInclude>
+    <ClInclude Include="recipe.h">
+      <Filter>GameFramework\조합재료</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
