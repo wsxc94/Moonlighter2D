@@ -248,7 +248,7 @@ void enemy::collision()
 
 	if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_emRC) && PLAYER->getShoot())
 	{
-		EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2,
+		EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2 + 3,
 			(_emRC.right + _emRC.left) / 2,
 			(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
 		PLAYER->setShoot(false);
