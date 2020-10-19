@@ -30,7 +30,7 @@ DungeonMap::DungeonMap(int x, int y)
 HRESULT DungeonMap::init()
 {
 	this->setStartDungeon();
-
+	
 	
 	return S_OK;
 }
@@ -68,13 +68,12 @@ void DungeonMap::update()
 	this->enemyUpdate();
 	// 아이템 업뎃
 	this->itemUpdate();
-
 }
 
 void DungeonMap::render()
 {
-	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage(_backImg), 0, 0);
 	
+	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage(_backImg), 0, 0);
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		if (_vTile[i].terrain == TR_NONE || _vTile[i].key == "") continue;
@@ -854,20 +853,24 @@ void DungeonMap::checkCollisionSpa()
 void DungeonMap::checkColiArrow()
 {
 	RECT temp;
+	RECT dunRC = RectMake(140, 105, 35 * 28, 35 * 15);
 	float x, y;
 	
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		if (_vTile[i].tState == TS_MOVEBAN)
 		{
-			if (IntersectRect(&temp, &_vTile[i].rc, &PLAYER->getArrow()->getRect()))
+			if (!IntersectRect(&temp, &dunRC, &PLAYER->getArrow()->getRect()))
+			{
+				PLAYER->setSkill(false);
+			}
+			if (IntersectRect(&temp, &_vTile[i].rc, &PLAYER->getArrow()->getRect()) && !PLAYER->getSkill())
 			{
 				if (!SOUNDMANAGER->isPlaySound("화살맞음") && PLAYER->getShoot())
 				{
 					SOUNDMANAGER->play("화살맞음", 0.5f);
 				}
 				PLAYER->setShoot(false);
-				PLAYER->setSkill(false);
 			}
 		}
 	}

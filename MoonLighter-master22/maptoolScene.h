@@ -116,6 +116,7 @@ public:
 	void clickTileTown();
 	void clickTileDungeon();
 	void clickTileGotoDungeon();
+	void clickTileBossDungeon();
 	void clickResetBtn();
 	void clickMoveBanBtn();
 	void clickPortalBtn();
