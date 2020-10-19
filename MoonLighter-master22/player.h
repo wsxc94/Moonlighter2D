@@ -146,7 +146,7 @@ public:
 	void playerState();
 	void attackRCUpdate();
 	void updateWeaponState();	//플레이어의 무기 장착 상태 업데이트 
-	void keyInput();		//플레이어의 상태에 상관없이 키 입력을 받는 함수 
+	void keyInput();			//플레이어의 상태에 상관없이 키 입력을 받는 함수 
 	void npcTalk(bool& isTalk);
 	void hitPlayer();
 	void playerMove();

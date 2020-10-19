@@ -41,7 +41,6 @@ HRESULT shopScene::init()
 	_npc = new ShopNpcManager;
 	_npc->init(_displayStand);
 
-
 	PLAYER->init();
 	PLAYER->setX(700);
 	PLAYER->setY(840);
@@ -198,7 +197,6 @@ void shopScene::PlayerSell()
 	_stand = RectMake(472, 674,
 		IMAGEMANAGER->findImage("»óÁ¡ÁÂÆÇ")->getWidth(),
 		IMAGEMANAGER->findImage("»óÁ¡ÁÂÆÇ")->getHeight());
-
 
 	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
 	{

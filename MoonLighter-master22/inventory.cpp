@@ -64,8 +64,6 @@ void inventory::update()
 	{
 		_selectMenu->update();
 	}
-
-	//cout << _cursor->getClickTime() << "    " << _grabTime << endl;
 }
 
 void inventory::render(HDC hdc)
@@ -107,6 +105,8 @@ void inventory::render(HDC hdc)
 				break;
 		}//end of switch 
 	}
+
+	cout << "weapon : " << getWeaponEquipped().getItemIdx() << endl; 
 
 	//char str[128];
 

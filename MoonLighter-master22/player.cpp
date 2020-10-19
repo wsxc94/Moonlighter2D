@@ -71,6 +71,8 @@ void player::release()
 
 void player::update()
 {
+	this->updateWeaponState();
+
 	if (_state == BOW_CHARGE)
 	{
 		_skillCount++;
@@ -80,6 +82,7 @@ void player::update()
 		_bowCharge->aniStop();
 		_isSkill = true;
 	}
+
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -88,7 +91,6 @@ void player::update()
 	_player.rc = RectMakeCenter(_player.x, _player.y - 12, 45, 60);
 	_arrow->update();
 	this->keyInput();
-	this->updateWeaponState();	
 }
 
 void player::render(HDC hdc)
@@ -267,8 +269,8 @@ void player::playerState()
 
 			this->playerAttack();
 			this->playerSkill();
-
 			break;
+
 		case PLAYER_RUN:
 			if (!SOUNDMANAGER->isPlaySound("플레이어걷기"))
 			{
@@ -344,7 +346,6 @@ void player::playerState()
 				_state = PLAYER_IDLE;
 			
 			}
-		
 			break;
 
 		case PLAYER_ATTACK_SWORD:
@@ -367,6 +368,7 @@ void player::playerState()
 				_state = PLAYER_IDLE;
 			}
 			break;
+
 		case PLAYER_SHILED:
 			if (INPUT->GetKeyUp('K'))
 			{
@@ -524,6 +526,7 @@ void player::keyInput()
 	if (INPUT->GetKeyDown('Z'))
 	{
 		ITEMMENU->getInventory()->switchWeapon();
+		updateWeaponState();
 	}
 
 	//포션을 사용하는 함수
@@ -556,9 +559,9 @@ void player::updateWeaponState()
 		_player.weapon = BOW;
 		break;
 
-	default:
-		_player.weapon = SHORT_SOWRD;
-		break;
+	//default:
+	//	_player.weapon = SHORT_SOWRD;
+	//	break;
 	}
 }
 
@@ -576,7 +579,6 @@ void player::hitPlayer()
 {
 	if (!PLAYERDATA->getIsInDungeon()) return; 
 
-
 	if (_isHit)
 	{
 		_playerHp = PLAYERDATA->getInDungeonHp();
@@ -588,7 +590,6 @@ void player::hitPlayer()
 			_isHit = false;
 		}
 	}
-
 }
 
 void player::playerMove()
@@ -636,9 +637,10 @@ void player::playerMove()
 
 void player::playerAttack()
 {
+	cout << _player.weapon << endl;
+
 	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
-
 		switch (_player.weapon)
 		{
 		case EMPTY:
