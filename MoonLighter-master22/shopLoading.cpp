@@ -43,7 +43,8 @@ void shopLoading::loadingImage()
 	_loading->loadImage("상점픽셀", "Images/상점/myShop_pixel2.bmp", 670, 860, true, RGB(255, 0, 255));
 	//_loading->loadImage("상점문기둥", "Images/상점/shop_door.bmp", 183, 118, true, RGB(255, 0, 255));
 	//_loading->loadImage("상점문기둥", "Images/상점/shop_door.bmp", 91, 64, true, RGB(255, 0, 255));
-	_loading->loadFrameImage("상점문열어", "Images/상점/shopDoor.bmp", 900, 139, 6, 1);
+
+	_loading->loadFrameImage("상점문열어", "Images/상점/shopDoor.bmp", 492, 90, 6, 1); // 900 139
 
 	_loading->loadFrameImage("상점길목", "Images/상점/상점길목.bmp", 80, 154, 1, 1);
 	_loading->loadFrameImage("상점문", "Images/상점/상점문.bmp", 110, 110, 1, 1);

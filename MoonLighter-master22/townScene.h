@@ -41,8 +41,8 @@ public:
 	void portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	void ObjectColl(); // 플레이어 -> 오브젝트 충돌처리 - 팀장급 디렉터
 	void ObjectAnim(); // 오브젝트 애니메이션 함수 - 팀장급 디렉터
-
 	void ObjectSetAnim(); // _objManager 세팅 - 팀장급 디렉터
+	void MapColl();
 
 	HRESULT initPotal();
 	void updatePotal();

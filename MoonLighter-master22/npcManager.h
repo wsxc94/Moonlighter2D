@@ -3,7 +3,7 @@
 #include "tileNode.h"
 #include "npc.h"
 
-class npcManager : public gameNode
+class npcManager : public gameNode // 마을 npc 매니저
 {
 private:
 	npc* _witch;
@@ -23,6 +23,6 @@ public:
 	void update();
 	void render();
 
-	void Coll();
+	void Coll(); // npc 충돌 함수
 };
 
