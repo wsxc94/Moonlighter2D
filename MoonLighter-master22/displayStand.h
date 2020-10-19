@@ -61,6 +61,7 @@ private:
 	viShopInven _viShopInven;
 
 private:
+	fadeManager *_fadeManager;			//페이드 매니져 
 	cursor *_cursor;					//메뉴 이동 커서 
 	shopSlot _shopSlot[MAXSHOPSLOT];	//슬롯 구조체 
 	priceCursor _priceCursor;			//가격책정 시 이동 커서 
@@ -77,19 +78,26 @@ private:
 	int _grabTime;						//아이템을 잡는 기준 시간(1개 잡을지/전부 잡을지)
 	int _lastPrice[MAXITEM];			//아이템 가격()
 
-	bool _menuOn;
-	bool _openMenu;
-	bool _closeMenu;
+	bool _menuOn;						//메뉴 on/off 여부 확인하는 변수 
+	bool _openMenu;						//메뉴를 여는 동작을 할 지 여부를 확인하는 변수 
+	bool _closeMenu;					//메뉴를 닫는 동작을 할 지 여부를 확인하는 변수 
 
-	bool _isGrabbingItem;
-	bool _isPuttingItem;
-	bool _grabSoundPlayed;
+	bool _canGrab;						//메뉴 오픈 시 중복 키입력으로 아이템 잡는 버그 방지 변수 
+	bool _isGrabbingItem;				//현재 아이템을 잡고 있는지 여부를 확인하는 변수 
+	bool _isPuttingItem;				//현재 아이템을 놓는 동작을 하고 있는지 확인하는 변수 
+	bool _grabSoundPlayed;				//아이템을 잡는 사운드가 플레이되었는지 확인하는 변수(중복 방지)
 
 public:
 	HRESULT init();
 	void release();
 	void update();
 	void render();
+
+	//get함수
+	bool getCanGrab() { return _canGrab; }
+
+	//set함수 
+	void setCanGrab(bool value) { _canGrab = value; }
 
 	//메뉴 열고 닫는 함수 
 	void openDisplayStand();								//상점가판대 열기 
@@ -104,6 +112,7 @@ public:
 	void menuMoveDown(POINT *pos, const int destPos);		//위치값을 받아 목적지로 아래쪽 이동 
 
 	//상점 인벤토리 관련 함수 
+	void initShopInven();				//상점 인벤토리에 필요한 모든 초기화 실행(가판대를 열때마다 실행)
 	void initShopSlot();				//최초의 상점 슬롯 초기화 
 	void initInvenSlot();				//인벤토리 슬롯 초기화(가판대를 열 때마다 실행)
 	void initInvenItem();				//인벤토리 아이템 초기화(가판대를 열 때마다 실행)
@@ -131,6 +140,7 @@ public:
 	void putItem();						//전체 아이템 놓기 함수 
 	void putItemOnEmptySlot();			//빈 곳에 아이템 놓기 함수 
 	void putItemOnOccupiedSlot();		//비어있지 않은 곳에 아이템 놓기 함수 
+	void putGrabbingItem();
 
 	//가격책정 관련 함수 
 	void setPriceUp();				//가격 올리기

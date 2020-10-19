@@ -204,10 +204,7 @@ void player::animation(int frameY)
 	_aniRunHit->update();
 	_aniSwordHit->update();
 	_aniSwordTwoHit->update();
-	if (_isSkill)
-	{
-		_bowCharge->update();
-	}
+	
 
 	_aniTownIdle->setFrameY(_player.direction);
 	_aniTownRun->setFrameY(_player.direction);
@@ -227,7 +224,10 @@ void player::animation(int frameY)
 	_aniRunHit->setFrameY(_player.direction);
 	_aniSwordHit->setFrameY(_player.direction);
 	_aniSwordTwoHit->setFrameY(_player.direction);
-
+	if (_isSkill)
+	{
+		_bowCharge->update();
+	}
 	_bowCharge->setFrameY(_player.direction);
 }
 
@@ -659,7 +659,6 @@ void player::playerSkill()
 {
 	if (INPUT->GetKey('K'))
 	{
-		_skillCount++;
 		switch (_player.weapon)
 		{
 		case EMPTY:
@@ -667,15 +666,19 @@ void player::playerSkill()
 		case SHORT_SOWRD:
 			_state = PLAYER_SHILED;
 			break;
-		case BOW:
+		case BOW: 
 			_state = BOW_CHARGE;		
 			break;
 		}
 	}
+	if (_state ==  BOW_CHARGE)
+	{
+		_skillCount++;
+	}
 	if (_skillCount > 50)
 	{
 		_isSkill = true;
-	}
+	}		
 }
 
 void player::playerPush()

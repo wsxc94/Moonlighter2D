@@ -51,6 +51,13 @@ HRESULT shopScene::init()
 	_disMenuOn = false;
 
 	_visit = false;
+
+	_cashRegister = new animation;
+	_cashRegister->init(IMAGEMANAGER->findImage("√•ªÛ±›∞Ì"), 0, 7);
+
+	_button = new animation;
+	_button->init(IMAGEMANAGER->findImage("ªÛ¡°πËƒ°"), 0, 7);
+
 	return S_OK;
 }
 
@@ -69,8 +76,14 @@ void shopScene::update()
 		SOUNDMANAGER->play("πÆ¥›æ∆");
 	}
 
-	if (!SOUNDMANAGER->isPlaySound("ªÛ¡°∫Í±›")) {
+	if (!SOUNDMANAGER->isPlaySound("ªÛ¡°∫Í±›")) 
+	{
 		SOUNDMANAGER->play("ªÛ¡°∫Í±›", 0.3f);
+	}
+	else
+	{
+		if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("ªÛ¡°∫Í±›", 0.08f);
+		else SOUNDMANAGER->setVolumn("ªÛ¡°∫Í±›", 0.3f);
 	}
 
 	_npc->update();
@@ -87,10 +100,14 @@ void shopScene::update()
 	npcAI();
 	PlayerSell();
 	itemInfoUpdate();
+
+	_cashRegister->update();
+	_button->update();
 }
 
 void shopScene::render()
 {
+	RECT tmp;
 
 	IMAGEMANAGER->findImage("ªÛ¡°«»ºø")->render(IMAGEMANAGER->findImage("temp")->getMemDC(), 304, 132);
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("ªÛ¡°∏ "), 304, 132);
@@ -107,9 +124,21 @@ void shopScene::render()
 
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("ªÛ¡°√•ªÛ"), 670 + IMAGEMANAGER->findImage("ªÛ¡°√•ªÛ")->getFrameHeight() / 4, 646, 670);
 
+	_cashRegister->ZoderRender(700, 700 + _cashRegister->getImage()->getFrameWidth() / 4, 650 + _cashRegister->getImage()->getFrameHeight()/4);
+
+	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
+	_button->ZoderRender(1000, PLAYER->getRect().left + _button->getImage()->getFrameWidth() / 2, PLAYER->getRect().top - _button->getImage()->getFrameHeight());
+
 	char str[256];
 	for (int i = 0; i < ITEMDESKCOUNT; i++)
 	{
+		if (_npc->getVector()[i]->getState() == NPC_WAIT) {
+			if (IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
+				CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("∆«∏≈πˆ∆∞"),
+					700, PLAYER->getRect().left + IMAGEMANAGER->findImage("∆«∏≈πˆ∆∞")->getWidth()
+					, PLAYER->getRect().top - IMAGEMANAGER->findImage("∆«∏≈πˆ∆∞")->getHeight());
+			}
+		}
 		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY) {
 
 			CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
@@ -122,22 +151,54 @@ void shopScene::render()
 			
 			wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getPrice());
 
-			int tmp;
-			if (strlen(str) % 2 == 1)
-				tmp = strlen(str) / 2 + 1;
-			else
-				tmp = strlen(str);
+			int tmp = strlen(str);
 
-			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc∏ª«≥º±∏ˆ"), 780,
+			CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("npc∏ª«≥º±∏ˆ"), 750,
 				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2,
-				v_itemPos[i].second, 400, 40);
+				v_itemPos[i].second - 10, 15 *tmp,
+				IMAGEMANAGER->findImage("npc∏ª«≥º±øﬁ¬ ")->getHeight());
 
-			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc∏ª«≥º±øﬁ¬ "), 781,
-				(v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2)
-				- (IMAGEMANAGER->findImage("npc∏ª«≥º±∏ˆ")->getWidth() * tmp) / 2 - IMAGEMANAGER->findImage("npc∏ª«≥º±øﬁ¬ ")->getWidth(),
-				v_itemPos[i].second - 12);
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc∏ª«≥º±øﬁ¬ "), 751,
+				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2 - 7*tmp - IMAGEMANAGER->findImage("npc∏ª«≥º±øﬁ¬ ")->getWidth(),
+				v_itemPos[i].second - 22);
+
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc∏ª«≥º±ø¿∏•¬ "), 751,
+				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 2 + 7 * tmp,
+				v_itemPos[i].second - 22);
+			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc∏ª«≥º±≤ø∏Æ"), 751,
+				v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth()/3,
+				v_itemPos[i].second+1);
 		  
-			CAMERAMANAGER->ZorderTextOut(str, 800, v_itemPos[i].first, v_itemPos[i].second - 10, strlen(str), RGB(0, 200, 0));
+			int _x;
+			int _price;
+
+			if(_displayStand->getDisplayItem()[i].getCount() != 0)
+			_price = _displayStand->getDisplayItem()[i].getPrice() * _displayStand->getDisplayItem()[i].getCount();
+
+			if (_price >= 1000000)
+			{
+				_x = v_itemPos[i].first - _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 4;
+			}else if (_price >= 100000) {
+				_x = v_itemPos[i].first - _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 8;
+			}else if (_price >= 10000) {
+				_x = v_itemPos[i].first - _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 20;
+			}
+			else if (_price >= 1000) {
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 10;
+			}
+			else if (_price >= 100)
+			{
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 6;
+			}
+			else if ((_price >= 10)){
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 4 + 2;
+			}
+			else {
+				_x = v_itemPos[i].first + _displayStand->getDisplayItem()[i].getItemImg()->getWidth() / 3 + 2;
+			}
+				CAMERAMANAGER->ZorderTextOut(str, 752,
+					_x
+					, v_itemPos[i].second - 20, strlen(str), RGB(0, 200, 0));
 
 			/*CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("npc∏ª«≥º±∏ˆ"),
 				780, v_itemPos[i].first, v_itemPos[i].second);*/
@@ -167,7 +228,6 @@ void shopScene::render()
 	PLAYER->render(getMemDC());
 	ITEMMENU->render(getMemDC());
 	_displayStand->render();
-
 }
 
 void shopScene::PortaltoTown()
@@ -223,15 +283,37 @@ void shopScene::PlayerSell()
 		IMAGEMANAGER->findImage("ªÛ¡°√•ªÛ")->getWidth(),
 		IMAGEMANAGER->findImage("ªÛ¡°√•ªÛ")->getHeight()/2);
 
+	_stand = RectMake(472, 674,
+		IMAGEMANAGER->findImage("ªÛ¡°¡¬∆«")->getWidth(),
+		IMAGEMANAGER->findImage("ªÛ¡°¡¬∆«")->getHeight());
+
+	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
+	{
+		_button->aniPlay();
+		if (INPUT->GetKeyDown('J'))
+		{
+			_displayStand->openDisplayStand();
+			_displayStand->setCanGrab(false);
+		}
+	}
+	else 
+	{
+		_button->setCurIndex(0);
+	}
+
 	for (int i = 0; i < _npc->getVector().size(); i++) {
 		if (_npc->getVector()[i]->getState() == NPC_WAIT) {
 			if(IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
-				if (INPUT->GetKeyDown('L')) {
+				if (INPUT->GetKeyDown('J')) {
+					_cashRegister->setCurIndex(0);
+					_cashRegister->aniPlay();
 					_npc->getVector()[i]->setState(NPC_MOVE);
 					_npc->getVector()[i]->setCurrentTargetIdxPlus();
+					PLAYERDATA->setGold(PLAYERDATA->getGold() + _displayStand->getDisplayItem()[i].getPrice() *_displayStand->getDisplayItem()[i].getCount());
 					SOUNDMANAGER->play("æ∆¿Ã≈€∆»∏≤");
 				}
 			}
+			
 		}
 	}
 	//IMAGEMANAGER->findImage("ªÛ¡°√•ªÛ")

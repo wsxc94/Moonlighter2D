@@ -19,6 +19,9 @@ HRESULT itemMenu::init()
 	_noteBook = new noteBook;
 	_noteBook->init();
 
+	_fadeManager = new fadeManager;
+	_fadeManager->init();
+
 	//메뉴 위치 초기화 
 	initMenuPos();
 	_tagPos.x = 490;
@@ -47,9 +50,6 @@ HRESULT itemMenu::init()
 	_goToTown_Pentant = false; 
 	_goToTown_Emblem = false;
 
-	//CAMERAMANAGER->FadeInit(80, FADE_OUT);
-	//CAMERAMANAGER->FadeStart();
-
 	return S_OK;
 }
 
@@ -66,10 +66,15 @@ void itemMenu::release()
 
 	_noteBook->release();
 	SAFE_DELETE(_noteBook);
+
+	_fadeManager->release();
+	SAFE_DELETE(_fadeManager);
 }
 
 void itemMenu::update()
 {
+	_fadeManager->update();
+
 	//메뉴 on/off 관련 함수 
 	if(_canKeyInput) toggleMenu();
 	openMenu();
@@ -108,6 +113,8 @@ void itemMenu::update()
 
 void itemMenu::render(HDC hdc)
 {
+	_fadeManager->render(hdc);
+
 	if (_menuOn)
 	{
 		menuRender(hdc);
@@ -154,6 +161,8 @@ void itemMenu::toggleMenu()
 		if (_menuOn)
 		{
 			DoCloseMenu();
+
+			_fadeManager->fadeInit(16, FADE_IN);
 		}
 		else
 		{
@@ -166,6 +175,7 @@ void itemMenu::toggleMenu()
 			_openMenu = true;
 			_openTagMenu = true;
 
+			_fadeManager->fadeInit(16, FADE_OUT, 205);
 			SOUNDMANAGER->play("openInven", 0.4f);
 		}
 	}

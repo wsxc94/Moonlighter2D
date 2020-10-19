@@ -5,6 +5,7 @@
 #include "wishList.h"
 #include "inventory.h"
 #include "noteBook.h"
+#include "fadeManager.h"
 #include "singletonBase.h"
 
 #define TAGPOSX			490
@@ -30,11 +31,12 @@ enum CTRL_MENU
 class itemMenu : public singletonBase <itemMenu>
 {
 private:
-	calendar *_calendar;
-	wishList *_wishList;
-	inventory *_inventory;
-	noteBook *_noteBook;
-	CTRL_MENU _ctrlState;	//현재 컨트롤러 상태 
+	calendar *_calendar;		//캘린더 메뉴 클래스 
+	wishList *_wishList;		//위시리스트 메뉴 클래스 
+	inventory *_inventory;		//인벤토리 메뉴 클래스
+	noteBook *_noteBook;		//노트북 메뉴 클래스 
+	fadeManager *_fadeManager;	//페이드 매니져 클래스 
+	CTRL_MENU _ctrlState;		//현재 컨트롤러 상태 
 
 	POINT _tagPos;			//상단의 태그메뉴(캘린더부터 노트북까지 나열된 메뉴)의 위치 
 	int _tagIdx;			//상단의 태그메뉴 인덱스(컨트롤러에 맞추면 속도가 좀 느림) 
@@ -56,7 +58,7 @@ private:
 	bool _movingLeft;		//메뉴가 왼쪽으로 움직이는지 확인하는 변수 
 	bool _movingRight;		//메뉴가 오른쪽으로 움직이는지 확인하는 변수 
 
-	bool _goToTown_Pentant;			//상인의 펜던트 사용여부 확인(마을로 돌아가기)
+	bool _goToTown_Pentant;		//상인의 펜던트 사용여부 확인(마을로 돌아가기)
 	bool _goToTown_Emblem;
 
 public:

@@ -644,7 +644,6 @@ void inventory::pendantKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
 			_selectMenu->setMenuState(SELECT_NO);
-			//if (_selectMenu->getSelectIdx() == SELECT_YES) _cursor->setSlotIdx(0);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
@@ -702,7 +701,6 @@ void inventory::emblemKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(1000);
 			_selectMenu->setMenuState(SELECT_NO);
-			//if (_selectMenu->getSelectIdx() == SELECT_YES) _cursor->setSlotIdx(0);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}

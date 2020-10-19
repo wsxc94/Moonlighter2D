@@ -291,6 +291,9 @@
     <ClCompile Include="bossGolemKing.cpp">
       <Filter>MainGame\dungeon\bossRoom\boss</Filter>
     </ClCompile>
+    <ClCompile Include="fadeManager.cpp">
+      <Filter>GameFramework\매니져</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -466,6 +469,9 @@
     </ClInclude>
     <ClInclude Include="bossGolemKing.h">
       <Filter>MainGame\dungeon\bossRoom\boss</Filter>
+    </ClInclude>
+    <ClInclude Include="fadeManager.h">
+      <Filter>GameFramework\매니져</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
