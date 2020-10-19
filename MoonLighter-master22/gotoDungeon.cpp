@@ -61,7 +61,7 @@ void gotoDungeon::update()
 	CAMERAMANAGER->update(x, y);
 	CAMERAMANAGER->movePivot(x, y);
 	collTile();
-
+	this->collArrow();
 	//cout << x << " " << y << endl;
 	//_playerGotoAnim->update();
 	
@@ -151,5 +151,14 @@ void gotoDungeon::collTile()
 				}
 			}
 		}
+	}
+}
+
+void gotoDungeon::collArrow()
+{
+	RECT temp;
+	if (!IntersectRect( &temp,&PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
+	{
+		PLAYER->setShoot(false);
 	}
 }

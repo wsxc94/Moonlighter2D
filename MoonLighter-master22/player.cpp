@@ -636,27 +636,29 @@ void player::playerMove()
 
 void player::playerAttack()
 {
-	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
+	
+	if (!_isShoot)
 	{
-
-		switch (_player.weapon)
+		if (INPUT->GetKeyDown('J') && _place == TOWN_DUNGEON)
 		{
-		case EMPTY:
-			_state = PLAYER_TALK;
-			break;
 
-		case SHORT_SOWRD:
-			_state = PLAYER_ATTACK_SWORD;
-			if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
+			switch (_player.weapon)
 			{
-				SOUNDMANAGER->play("검휘두르기", 0.3f);
-			}
-			_aniSword->aniRestart();
-			break;
+			case EMPTY:
+				_state = PLAYER_TALK;
+				break;
 
-		case BOW:
-			if (!_isShoot)
-			{
+			case SHORT_SOWRD:
+				_state = PLAYER_ATTACK_SWORD;
+				if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
+				{
+					SOUNDMANAGER->play("검휘두르기", 0.3f);
+				}
+				_aniSword->aniRestart();
+				break;
+
+			case BOW:
+
 				_state = PLAYER_ATTACK_BOW;
 				if (!SOUNDMANAGER->isPlaySound("화살발사"))
 				{
@@ -664,8 +666,8 @@ void player::playerAttack()
 				}
 				_aniBow->aniRestart();
 				_isShoot = true;
+				break;
 			}
-			break;
 		}
 	}
 }

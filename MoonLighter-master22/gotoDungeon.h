@@ -23,6 +23,7 @@ public:
 
 	void loadTile();
 	void collTile();
+	void collArrow();
 
 
 };
