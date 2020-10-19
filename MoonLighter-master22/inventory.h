@@ -84,13 +84,14 @@ public:
 
 	//get함수 
 	vector<gameItem*> getItem() { return _vInven; }			//인벤토리 아이템 반환 
-	itemManager* getItemManager() { return _itemManager; }	//아이템매니저 클래스 반환 
+	itemManager* getItemManager();							//아이템매니저 클래스 반환 
 	cursor *getCursor() { return _cursor; }					//인벤토리 커서 반환 
 	int getWeaponIdx() { return _curWeaponIdx; }			//현재의 무기인덱스 값을 반환 
 	int getMaxItemSlot() { return MAXITEMSLOT; }			//인벤토리에 소지 가능한 최대 아이템 개수 반환 
 	int getCurItemCount();									//현재 인벤토리에 소지하고 있는 아이템 수 반환
 	gameItem getPotionEquipped();							//현재 장착하고 있는 포션 아이템 클래스를 반환 
 	gameItem getWeaponEquipped();							//현재 장착하고 있는 무기 아이템 클래스를 반환 
+	int getCountByIdx(int itemIdx);									//특정 아이템의 소지개수를 인덱스를 값을 통해 찾아서 반환 
 
 	//set함수 
 	void setWeaponIdx(int index) { _curWeaponIdx = index; }	//장착하는 무기의 인덱스 값을 설정하는 함수 
@@ -129,6 +130,16 @@ public:
 	void switchWeaponIdx();					//현재 무기 인덱스값 바꾸기 
 	void usePotionEquipped();				//현재 장착 중인 포션 사용하기 
 
+	//새로 만들기 
+	void wKeyDown();
+	void sKeyDown();
+	void aKeyDown();
+	void dKeyDown();
+	void jKey();
+	void jKeyDown();
+	void jKeyUp();
+	void lKeyDown();
+
 	//아이템 잡기 함수 
 	void grabItem();							//전체 아이템 잡기 함수 
 	void grabOneItem();							//빈손일 때 한 개의 아이템 잡기 
@@ -153,6 +164,6 @@ public:
 	void itemNameRender(HDC hdc);				//인벤토리 하단에 아이템 이름을 출력하는 함수  
 	void itemCountRender(HDC hdc, int count, int destX, int destY);	//아이템의 개수를 출력하는 함수 
 	void statusNumRender(HDC hdc, int number, int destY);			//스테이터스 숫자 출력 함수 
-
+	void setitemGrabbed() { _itemGrabbed = _itemEmpty; }
 };
 

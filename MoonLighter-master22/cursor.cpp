@@ -4,6 +4,8 @@
 HRESULT cursor::init()
 {
 	//커서 초기화 
+	memset(&_cursor, 0, sizeof(_cursor));
+
 	_cursor.img = IMAGEMANAGER->findImage("cursor_move");
 	_cursor.state = CURSOR_MOVE;
 	_cursor.idx = 2;
@@ -30,6 +32,7 @@ void cursor::update()
 
 void cursor::render(HDC hdc)
 {
+	_cursor.img->frameRender(hdc, _cursor.destX, _cursor.destY, _cursor.idx, 0);
 }
 
 void cursor::setCursorState(CURSOR_STATE state)
@@ -50,6 +53,7 @@ void cursor::setCursorState(CURSOR_STATE state)
 
 		case CURSOR_MOVE:
 			_cursor.img = IMAGEMANAGER->findImage("cursor_move");
+			SOUNDMANAGER->play("cursor_move", 0.2f);
 			_cursor.idx = 0;
 			_cursor.state = state;
 
@@ -81,6 +85,7 @@ void cursor::setCursorState(CURSOR_STATE state)
 
 		case CURSOR_SELECT_MOVE:
 			_cursor.img = IMAGEMANAGER->findImage("cursor_select");
+			SOUNDMANAGER->play("cursor_move", 0.2f);
 			_cursor.idx = 0;
 			_cursor.state = state;
 			break;

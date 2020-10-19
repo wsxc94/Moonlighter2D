@@ -64,6 +64,8 @@ void inventory::update()
 	{
 		_selectMenu->update();
 	}
+
+	//cout << _cursor->getClickTime() << "    " << _grabTime << endl;
 }
 
 void inventory::render(HDC hdc)
@@ -123,6 +125,11 @@ void inventory::render(HDC hdc)
 	//	TextOut(hdc, 10, 170 + (i * 20), str, strlen(str));
 	//}
 
+}
+
+itemManager * inventory::getItemManager()
+{
+	return _itemManager;
 }
 
 int inventory::getCurItemCount()
@@ -192,6 +199,22 @@ gameItem inventory::getWeaponEquipped()
 	}//end of switch
 }
 
+int inventory::getCountByIdx(int itemIdx)
+{
+	int count = 0;
+
+	for (int i = 0; i < _vInven.size(); i++)
+	{
+		//인덱스가 다른 아이템은 건너뛰기 
+		if (_vInven[i]->getItemIdx() != itemIdx) continue;
+
+		//인덱스가 같은 아이템은 카운트를 더해주기 
+		count += _vInven[i]->getCount();
+	}
+
+	return count;
+}
+
 void inventory::initPos()
 {
 	_invenPos.x = INVENPOSX;
@@ -228,6 +251,7 @@ void inventory::initInven()
 	_cursor->setSlotIdx(0);
 	setInvenCtrl(INVEN_INVENTORY);
 	putGrabbingItem();
+	//setitemGrabbed();
 }
 
 void inventory::initInvenSlot()
@@ -343,7 +367,7 @@ void inventory::initItem()
 		{
 			if (!_invenSlot[j].isEmpty || _invenSlot[j].slotType != SLOT_ITEM) continue;
 	
-			if (i == 15)
+			if (item->getItemIdx() == TRAININGSWORD_IDX)
 			{
 				_invenSlot[5].isEmpty = false;
 				item->setInvenPosIdx(5);
@@ -360,11 +384,12 @@ void inventory::initItem()
 		}
 	}
 
-	_vInven[0]->setCount(5);
-	_vInven[1]->setCount(10);
-	_vInven[2]->setCount(5);
-	_vInven[3]->setCount(5);
-	_vInven[13]->setCount(5);
+	_vInven[RICHJELLY_IDX]->setCount(5);
+	_vInven[VENOMJELLY_IDX]->setCount(10);
+	_vInven[CRYSTAL_IDX]->setCount(5);
+	_vInven[VINE_IDX]->setCount(5);
+	_vInven[POTION1_IDX]->setCount(10);
+	_vInven[POTION2_IDX]->setCount(5);
 }
 
 bool inventory::addItemToInven(gameItem item)
@@ -458,6 +483,40 @@ void inventory::syncWithShopInven(vector<gameItem*> vShopInven)
 
 void inventory::keyInput()
 {
+	//if (INPUT->GetKeyDown('W'))
+	//{
+	//	wKeyDown();
+	//}
+	//if (INPUT->GetKeyDown('S'))
+	//{
+	//	sKeyDown();
+	//}
+	//if (INPUT->GetKeyDown('A'))
+	//{
+	//	aKeyDown();
+	//}
+	//if (INPUT->GetKeyDown('D'))
+	//{
+	//	dKeyDown();
+	//}
+	//if (INPUT->GetKeyDown('L'))
+	//{
+	//	lKeyDown();
+	//}
+
+	//if (INPUT->GetKey('J'))
+	//{
+	//	jKey();
+	//}
+	//if (INPUT->GetKeyDown('J'))
+	//{
+	//	jKeyDown();
+	//}
+	//if (INPUT->GetKeyUp('J'))
+	//{
+	//	jKeyUp();
+	//}
+
 	switch (_invenCtrl)
 	{
 		case INVEN_INVENTORY:
@@ -517,10 +576,10 @@ void inventory::setMerchantCtrl()
 {
 	switch (_cursor->getSlotIdx())
 	{
-		case 28:
-			setInvenCtrl(INVEN_MERCHANT_MIRROR);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
-			break;
+		//case 28:
+		//	setInvenCtrl(INVEN_MERCHANT_MIRROR);
+		//	SOUNDMANAGER->play("cursor_move", 0.2f);
+		//	break;
 
 		case 29:
 			if (PLAYERDATA->getIsInDungeon() && PLAYERDATA->getGold() >= 200)
@@ -544,39 +603,25 @@ void inventory::invenKeyInput()
 	{
 		upKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('S'))
 	{
 		downKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('A'))
 	{
 		leftKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('D'))
 	{
 		rightKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 
 	//버튼을 누르고 있는 시간에 따라 
 	//아이템을 한 개씩 잡거나 모두 잡는 동작 실행 
-	if (INPUT->GetKey('J'))
-	{
-		_cursor->setClickTime(_cursor->getClickTime() + 1);
-
-		//꾹 누르고 있으면 한꺼번에 잡기 실행 
-		if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
-		{
-			grabItem();
-		}
-	}
 	if (INPUT->GetKeyDown('J'))
 	{
 		_cursor->setCursorState(CURSOR_CLICK);
@@ -590,9 +635,18 @@ void inventory::invenKeyInput()
 		if (!_isPuttingItem) grabItem();
 
 		_isPuttingItem = false;
-		_canGrab = true; 
 		_grabSoundPlayed = false;
 		_cursor->setClickTime(0);
+	}
+	else if (INPUT->GetKey('J'))
+	{		
+		_cursor->setClickTime(_cursor->getClickTime() + 1);
+
+		//꾹 누르고 있으면 한꺼번에 잡기 실행 
+		if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
+		{
+			grabItem();
+		}
 	}
 }
 
@@ -610,14 +664,12 @@ void inventory::pendantKeyInput()
 			_selectMenu->setSelectIdx(SELECT_YES);
 			_selectMenu->setMenuState(SELECT_YES);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 		else
 		{
 			_selectMenu->setSelectIdx(SELECT_NO);
 			_selectMenu->setMenuState(SELECT_NO);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
 
@@ -640,10 +692,14 @@ void inventory::pendantKeyInput()
 			//5. 선택메뉴의 상태 초기화(NO)
 			//6. 플레이어 상태를 팬던트사용으로 변경해줌
 
-			ITEMMENU->SetGoToTownEmblem(true);
+			ITEMMENU->setGoToTownPendant(true);
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
 			_selectMenu->setMenuState(SELECT_NO);
+			_canGrab = false;
+			_cursor->setClickTime(0);
+
+			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
@@ -671,14 +727,12 @@ void inventory::emblemKeyInput()
 			_selectMenu->setSelectIdx(SELECT_YES);
 			_selectMenu->setMenuState(SELECT_YES);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 		else
 		{
 			_selectMenu->setSelectIdx(SELECT_NO);
 			_selectMenu->setMenuState(SELECT_NO);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
 
@@ -701,6 +755,9 @@ void inventory::emblemKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(1000);
 			_selectMenu->setMenuState(SELECT_NO);
+			_canGrab = false;
+
+			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
 			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
@@ -943,6 +1000,256 @@ void inventory::usePotionEquipped()
 	}
 }
 
+void inventory::wKeyDown()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			upKeyDown();
+			_cursor->setCursorState(CURSOR_MOVE);
+			break;
+	}
+}
+
+void inventory::sKeyDown()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			downKeyDown();
+			_cursor->setCursorState(CURSOR_MOVE);
+			break;
+	}
+}
+
+void inventory::aKeyDown()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			leftKeyDown();
+			_cursor->setCursorState(CURSOR_MOVE);
+			break;
+
+		case INVEN_MERCHANT_MIRROR:
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			if (_selectMenu->getSelectIdx() == SELECT_NO)
+			{
+				_selectMenu->setSelectIdx(SELECT_YES);
+				_selectMenu->setMenuState(SELECT_YES);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			else
+			{
+				_selectMenu->setSelectIdx(SELECT_NO);
+				_selectMenu->setMenuState(SELECT_NO);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			if (_selectMenu->getSelectIdx() == SELECT_NO)
+			{
+				_selectMenu->setSelectIdx(SELECT_YES);
+				_selectMenu->setMenuState(SELECT_YES);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			else
+			{
+				_selectMenu->setSelectIdx(SELECT_NO);
+				_selectMenu->setMenuState(SELECT_NO);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			break;
+	}
+}
+
+void inventory::dKeyDown()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			rightKeyDown();
+			_cursor->setCursorState(CURSOR_MOVE);
+			break;
+
+		case INVEN_MERCHANT_MIRROR:
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			if (_selectMenu->getSelectIdx() == SELECT_NO)
+			{
+				_selectMenu->setSelectIdx(SELECT_YES);
+				_selectMenu->setMenuState(SELECT_YES);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			else
+			{
+				_selectMenu->setSelectIdx(SELECT_NO);
+				_selectMenu->setMenuState(SELECT_NO);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			if (_selectMenu->getSelectIdx() == SELECT_NO)
+			{
+				_selectMenu->setSelectIdx(SELECT_YES);
+				_selectMenu->setMenuState(SELECT_YES);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			else
+			{
+				_selectMenu->setSelectIdx(SELECT_NO);
+				_selectMenu->setMenuState(SELECT_NO);
+				_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			}
+			break;
+	}
+}
+
+void inventory::jKey()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			_cursor->setClickTime(_cursor->getClickTime() + 1);
+
+			//꾹 누르고 있으면 한꺼번에 잡기 실행 
+			if (_cursor->getClickTime() >= _grabTime && !_isPuttingItem)
+			{
+				grabItem();
+			}			
+			break;
+	}
+}
+
+void inventory::jKeyDown()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			_cursor->setCursorState(CURSOR_CLICK);
+			putItem();
+			setMerchantCtrl();
+			break;
+
+		case INVEN_MERCHANT_MIRROR:
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			//아니요 선택 시 인벤토리 컨트롤러로 변경 
+			if (_selectMenu->getSelectIdx() == SELECT_NO)
+			{
+				setInvenCtrl(INVEN_INVENTORY);
+				SOUNDMANAGER->play("cursor_move", 0.2f);
+			}
+			else
+			{
+				//네 선택 시 마을로 돌아가기 
+				//1. gototown변수 true로 설정 
+				//2. 아이템메뉴 종료하기(메뉴 닫기)
+				//3. 사용비 골드에서 차감하기(200원)
+				//4. 인벤토리 컨트롤러 초기화 
+				//5. 선택메뉴의 상태 초기화(NO)
+				//6. 플레이어 상태를 팬던트사용으로 변경해줌
+
+				ITEMMENU->setGoToTownPendant(true);
+				ITEMMENU->DoCloseMenu();
+				PLAYERDATA->subGold(200);
+				_selectMenu->setMenuState(SELECT_NO);
+				_canGrab = false; 
+
+				ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
+				SOUNDMANAGER->play("cursor_move", 0.2f);
+			}
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			//아니오 선택 시 인벤토리 컨트롤러로 변경 
+			if (_selectMenu->getSelectIdx() == SELECT_NO) setInvenCtrl(INVEN_INVENTORY);
+			else
+			{
+				//네 선택 시 마을로 돌아가기 
+				//1. gototown변수 true로 설정 
+				//2. 아이템메뉴 종료하기(메뉴 닫기)
+				//3. 사용비 골드에서 차감하기(200원)
+				//4. 인벤토리 컨트롤러 초기화 
+				//5. 선택메뉴의 상태 초기화(NO)
+				//6. 플레이어 상태를 팬던트사용으로 변경해줌
+
+				ITEMMENU->SetGoToTownEmblem(true);
+				ITEMMENU->DoCloseMenu();
+				PLAYERDATA->subGold(1000);
+				_selectMenu->setMenuState(SELECT_NO);
+
+				ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
+				SOUNDMANAGER->play("cursor_move", 0.2f);
+			}
+			break;
+	}
+}
+
+void inventory::jKeyUp()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			//한꺼번에 잡기를 실행할 정도로 길게 누르지 않고 손을 뗄 경우
+			//1개씩 아이템을 잡을 수 있도록 함수 실행 
+			if (!_isPuttingItem) grabItem();
+
+			_isPuttingItem = false;
+			_canGrab = true;
+			_grabSoundPlayed = false;
+			_cursor->setClickTime(0);			
+			break;
+
+		case INVEN_MERCHANT_MIRROR:
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			_canGrab = false;
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			_canGrab = false;
+			break;
+	}
+}
+
+void inventory::lKeyDown()
+{
+	switch (_invenCtrl)
+	{
+		case INVEN_INVENTORY:
+			break;
+
+		case INVEN_MERCHANT_MIRROR:
+			break;
+
+		case INVEN_MERCHANT_PENDANT:
+			if (INPUT->GetKeyDown('L'))
+			{
+				setInvenCtrl(INVEN_INVENTORY);
+				_selectMenu->setMenuState(SELECT_NO);
+				SOUNDMANAGER->play("cursor_move", 0.2f);
+			}			
+			break;
+
+		case INVEN_MERCHANT_EMBLEM:
+			if (INPUT->GetKeyDown('L'))
+			{
+				setInvenCtrl(INVEN_INVENTORY);
+				_selectMenu->setMenuState(SELECT_NO);
+				SOUNDMANAGER->play("cursor_move", 0.2f);
+			}			
+			break;
+	}
+}
+
 void inventory::grabItem()
 {
 	if (!_canGrab) return; 
@@ -968,6 +1275,8 @@ void inventory::grabItem()
 	}
 	else //짧다면 1개씩 잡기 
 	{
+		if (_cursor->getClickTime() == 0) return; 
+
 		_isGrabbingItem = true;
 		grabOneItem();
 		SOUNDMANAGER->play("cursor_pick", 0.4f);
@@ -1252,6 +1561,7 @@ void inventory::putGrabbingItem()
 	//잡고 있는 아이템이 있다면 원래 자리로 돌려놓기 
 	if (!_isGrabbingItem) return; 
 	
+	 
 	//내가 아이템을 잡은 슬롯의 자리가 비어있다면
 	if (_invenSlot[_itemGrabbed.getInvenPosIdx()].isEmpty)
 	{

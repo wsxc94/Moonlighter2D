@@ -26,7 +26,6 @@ void shopScene::ItemPosSet()
 	b.push_back(false);
 	b.push_back(false);
 
-
 	for(int i = 0 ; i < v_itemPos.size(); i++)
 	_itemText[i] = RectMake(v_itemPos[i].first, v_itemPos[i].second , 50, 50);
 
@@ -46,12 +45,13 @@ HRESULT shopScene::init()
 	PLAYER->init();
 	PLAYER->setX(700);
 	PLAYER->setY(840);
+	//PLAYER->setPlace(SHOP);
 
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2000, 1000, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 
 	//675 870
 	GoTownPortal = RectMake(670, 950, 80, 50);
-	_doorRect = RectMake(670, 880, 50, 50);
+	_doorRect = RectMake(670, 880, 50, 20);
 
 	IMAGEMANAGER->addImage("temp", 2000, 1000);
 
@@ -69,8 +69,11 @@ HRESULT shopScene::init()
 
 	_door = new animation;
 	_door->init(IMAGEMANAGER->findImage("상점문열어"), 0, 7, false, false);
+	_door->aniStop();
 
 	_shopDoorCheck = false;
+	_doorOpen = false;
+	_doorTime = 0;
 
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
@@ -80,15 +83,14 @@ HRESULT shopScene::init()
 
 void shopScene::release()
 {
-	_npc->release();
+	/*_npc->release();
 	SAFE_DELETE(_npc);
-
 	SAFE_DELETE(_cashRegister);
 	SAFE_DELETE(_button);
 	SAFE_DELETE(_door);
 
 	_displayStand->release();
-	SAFE_DELETE(_displayStand);
+	SAFE_DELETE(_displayStand);*/
 }
 
 void shopScene::update()
@@ -138,7 +140,7 @@ void shopScene::render()
 	ITEMMENU->render(getMemDC());
 	_displayStand->render();
 
-	CAMERAMANAGER->Rectangle(getMemDC(), _doorRect);
+	//CAMERAMANAGER->Rectangle(getMemDC(), _doorRect);
 }
 
 void shopScene::PortaltoTown() // 마을행 포탈
@@ -190,7 +192,7 @@ void shopScene::PlayerSell()
 	RECT tmp;
 	// 상점책상앞에서 대기하는 npc들에게만 적용
 	
-	_desk = RectMake(646, 670,
+	_desk = RectMake(646, 660,
 		IMAGEMANAGER->findImage("상점책상")->getWidth(),
 		IMAGEMANAGER->findImage("상점책상")->getHeight()/2);
 
@@ -198,7 +200,6 @@ void shopScene::PlayerSell()
 		IMAGEMANAGER->findImage("상점좌판")->getWidth(),
 		IMAGEMANAGER->findImage("상점좌판")->getHeight());
 
-	//_doorRect = RectMake()
 
 	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
 	{
@@ -296,44 +297,37 @@ void shopScene::npcInit(int idx) // 인덱스 번호의 npc 초기화
 void shopScene::doorOpen()
 {
 	RECT tmp;
-	/*if (IntersectRect(&tmp , &_doorRect , &PLAYER->getShadowRect()) && !_shopDoorCheck)
-	{
-		if (_door->getAniState() != ANIMATION_PLAY)
-		{
-			_door->setCurIndex(0);
-			_door->aniPlay();
-			SOUNDMANAGER->play("상점입장0");
-			_shopDoorCheck = true;
+
+	_doorTime++;
+
+	if (IntersectRect(&tmp, &_doorRect, &PLAYER->getShadowRect())) _doorOpen = true;
+
+	for (int i = 0; i < _npc->getVector().size(); i++) {
+		if ((IntersectRect(&tmp, &_doorRect, &_npc->getVector()[i]->getRect())) && !_shopDoorCheck && _npc->getVector()[i]->getState() == NPC_MOVE)
+		{	
+			_doorOpen = true;
 		}
-	}*/
-	if (IntersectRect(&tmp, &_doorRect, &PLAYER->getShadowRect()) && !_shopDoorCheck) {
-		doorPlay();
 	}
-	else if (!IntersectRect(&tmp, &_doorRect, &PLAYER->getShadowRect()) && _shopDoorCheck)
-	{
-		doorReverseplay();
-	}
+
+	if (_doorOpen && _doorTime % 160 == 0) _doorOpen = false;
+
+	if (_doorOpen && !_shopDoorCheck) doorPlay();
+	else if(!_doorOpen && _shopDoorCheck) doorReverseplay();
 	
-
-	/*for (int i = 0; i < _npc->getVector().size(); i++) {
-		if ((IntersectRect(&tmp, &_doorRect, &_npc->getVector()[i]->getRect())) && !_shopDoorCheck)
-		{
-			doorPlay();
-		}
-	}*/
-
-
 }
 
 void shopScene::doorPlay()
 {
 	if (_door->getAniState() != ANIMATION_PLAY)
 	{
-		_door->setCurIndex(0);
+		//_door->setCurIndex(0);
 		_door->aniPlay();
+		if(!SOUNDMANAGER->isPlaySound("상점입장0"))
 		SOUNDMANAGER->play("상점입장0");
-		_shopDoorCheck = true;
+		_shopDoorCheck = true;	
 	}
+	
+
 }
 
 void shopScene::doorReverseplay()
@@ -341,9 +335,11 @@ void shopScene::doorReverseplay()
 	if (_door->getAniState() != ANIMATION_PLAY)
 	{
 		_door->aniReverse();
+		if (!SOUNDMANAGER->isPlaySound("문닫아"))
 		SOUNDMANAGER->play("문닫아");
 		_shopDoorCheck = false;
 	}
+	
 }
 
 void shopScene::itemMove()

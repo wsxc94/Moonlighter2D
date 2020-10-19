@@ -68,7 +68,9 @@ public:
 	void render(HDC hdc);
 
 	//get함수 
-	inventory *getInventory() { return _inventory; }				//인벤토리 클래스 가져오기 
+	inventory *getInventory() { return _inventory; }						//인벤토리 클래스 가져오기 
+	itemManager *getItemManager() { return _inventory->getItemManager(); }	//아이템매니져 클래스 가져오기
+	fadeManager *getFadeManager() { return _fadeManager; }
 	bool getInvenOn() { return _invenOn; }
 	int getMaxItemSlot() { return _inventory->getMaxItemSlot(); }	//소지 가능한 최대 아이템 개수 반환
 	bool getCanKeyInput() { return _canKeyInput; }					//아이템 메뉴 키 입력 받기변수 가져오기 
@@ -83,6 +85,8 @@ public:
 	void setCanKeyInput(bool value) { _canKeyInput = value; }	//아이템 메뉴 키 입력받기 변수 설정
 	void setGoToTownPendant(bool value) { _goToTown_Pentant = value; }
 	void SetGoToTownEmblem(bool value) { _goToTown_Emblem = value; }
+	void setMenuOn(bool value) { _menuOn = value; }
+	void setInvenOn(bool value) { _invenOn = value; }
 
 	void toggleMenu();						//메뉴창 껐다 켰다하기 
 	void DoCloseMenu();						//메뉴창을 닫기를 실행하는 함수(외부에서 접근해서 끄기 가능)

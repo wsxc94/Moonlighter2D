@@ -74,6 +74,8 @@ void cameraManager::update(float pivotX, float  pivotY)
 		}
 		_x = _pivotX;
 		_y = _pivotY;
+		_savePivot.x = _pivotX;
+		_savePivot.y = _pivotY;
 		_x += cosf(angle) * _changeSpeed;
 		_y -= sinf(angle) * _changeSpeed;
 		_cameraRect = ::RectMake(_x - _distanceX, _y - _distanceY, WINSIZEX, WINSIZEY);
@@ -87,6 +89,8 @@ void cameraManager::update(float pivotX, float  pivotY)
 			_pivotY = _changePivotY;
 			pivotX = _pivotX;
 			pivotY = _pivotY;
+			_savePivot.x = _pivotX;
+			_savePivot.y = _pivotY;
 			_CMState = CAMERAMANAGERSTATE::CAMERAMANAGER_FOLLOWPIVOT;
 		}
 
@@ -98,6 +102,7 @@ void cameraManager::update(float pivotX, float  pivotY)
 	if (_isShake == true)
 	{
 		_shakeTime.current++;
+		cout << _shakeTime.current << "   " << _shakeTime.max << "   " << _shakeTime.cool << endl;
 		if (_shakeTime.current > _shakeTime.max)
 		{
 			_isShake = false;

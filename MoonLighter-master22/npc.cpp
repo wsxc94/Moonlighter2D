@@ -225,6 +225,8 @@ void npc::render(NPC_MAP NPC_SHOP)
 				_pos.y + _peekItemImg->getHeight() / 4);
 		}
 	}
+
+	//CAMERAMANAGER->FrameRect(getMemDC(), _rc, RGB(255, 0, 0));
 }
 
 void npc::anim() // npc각도에 따라 애니메이션을 바꿔주는 함수
@@ -488,8 +490,9 @@ void npc::lookPlayer() // 플레이어를 바라보게 npc애니메이션을 바꾸는 함수
 
 void npc::npcSpawn()
 {
-	int rnd = RANDOM->range(0, 1);
-	string str = "상점입장" + to_string(rnd);
+	/*int rnd = RANDOM->range(0, 1);
+	string str = "상점입장" + to_string(rnd);*/
+	string str = "상점입장1";
 	SOUNDMANAGER->play(str, 0.5f);
 }
 

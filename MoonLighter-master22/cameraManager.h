@@ -177,6 +177,8 @@ public:
 	float getDistanceX() { return _distanceX; }
 	float getDistanceY() { return _distanceY; }
 
+	bool getIsShake() { return _isShake; }
+
 	RECT getRect() { return _cameraRect; }
 	POINT getRelativeMouse(POINT ptMouse);
 	RECT getRelativeRect(RECT rc);

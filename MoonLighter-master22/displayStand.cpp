@@ -502,6 +502,7 @@ void displayStand::keyInput()
 			if (_shopCtrl == CTRL_INVENTORY) _cursor->setCursorState(CURSOR_PRICE_OFF);
 			else _cursor->setCursorState(CURSOR_PRICE_ON);
 			break;
+
 	}//end of switch 
 }
 
@@ -513,25 +514,21 @@ void displayStand::invenKeyInput()
 	{
 		upKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('S'))
 	{
 		downKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('A'))
 	{
 		leftKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('D'))
 	{
 		rightKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 
 	//커서의 위치가 가격조정판에 있냐 아니냐에 따라서 키 입력 달리 받기 

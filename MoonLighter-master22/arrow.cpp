@@ -43,7 +43,7 @@ void arrow::render(HDC hdc)
 		break;
 	case ARROW_UP:
 		//IMAGEMANAGER->frameRender("화살", hdc, _x - 20, _y);
-		CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("화살"), (_rc.bottom + _rc.top) / 2, _x - 20, _y, IMAGEMANAGER->findImage("화살")->getFrameX(), IMAGEMANAGER->findImage("화살")->getFrameY());
+		CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("화살"), (_rc.bottom + _rc.top) / 2, _x - 10, _y, IMAGEMANAGER->findImage("화살")->getFrameX(), IMAGEMANAGER->findImage("화살")->getFrameY());
 		break;
 	case ARROW_RIGHT:
 		//IMAGEMANAGER->frameRender("화살", hdc, _x, _y - 20);

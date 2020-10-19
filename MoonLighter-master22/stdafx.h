@@ -10,6 +10,7 @@
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
+#define _CRT_SECURE_NO_WARNINGS
 // Windows 헤더 파일:
 #include <Windows.h>
 // C 런타임 헤더 파일입니다.
@@ -46,6 +47,7 @@ using namespace MY_UTIL;
 #include "player.h"
 #include "itemMenu.h"
 #include "effectManager.h"
+#include "damageFont.h"
 
 
 //=============================================================
@@ -63,6 +65,7 @@ using namespace MY_UTIL;
 #define PLAYER player::getSingleton()
 #define ITEMMENU itemMenu::getSingleton()
 #define EFFECTMANAGER effectManager::getSingleton()
+#define DAMAGEFONT damageFont::getSingleton()
 
 //=============================================================
 //	## 디파인문 ## (윈도우창 초기화)

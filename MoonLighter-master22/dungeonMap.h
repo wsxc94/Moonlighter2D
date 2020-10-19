@@ -4,6 +4,7 @@
 #include "object.h"
 #include "enemy.h"
 #include "itemManager.h"
+#include "potal.h"
 
 enum DUNGEONDOOR
 {
@@ -15,22 +16,13 @@ enum DUNGEONKIND
 	DG_NOMAL,DG_SEMIBOSS,DG_SPA
 };
 
-struct tagPotal
-{
-	RECT rc;
-	animation* ani;
-	int x, y;
-	bool isActivate;
-	bool isUpdate;
-	bool isRange;
-};
 
 class DungeonMap : public gameNode
 {
 private:
 	itemManager* _itemManager;
 	vector<gameItem*> _vItem;
-	tagPotal* _potal;		//¿¥ºí·½À¸·Î Áý°¥¶§ »ý¼ºµÉ Æ÷Å»
+	potal* _potal;		//¿¥ºí·½À¸·Î Áý°¥¶§ »ý¼ºµÉ Æ÷Å»
 private:
 	string _fileName;
 	string _backImg;
@@ -126,8 +118,7 @@ public:
 	DUNGEONDOOR getDungeonDoorState() { return _doorState; }
 	DUNGEONKIND getDungeonKind() { return _dgKind; }
 
+	potal* getPotal() { return _potal; }
 
-	tagPotal* getPotal() { return _potal; }
-	void setPotal(tagPotal* potal) { _potal = potal; }
 };
 

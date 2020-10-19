@@ -30,7 +30,7 @@ DungeonMap::DungeonMap(int x, int y)
 HRESULT DungeonMap::init()
 {
 	this->setStartDungeon();
-
+	
 	
 	return S_OK;
 }
@@ -68,13 +68,12 @@ void DungeonMap::update()
 	this->enemyUpdate();
 	// 아이템 업뎃
 	this->itemUpdate();
-
 }
 
 void DungeonMap::render()
 {
-	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage(_backImg), 0, 0);
 	
+	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage(_backImg), 0, 0);
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		if (_vTile[i].terrain == TR_NONE || _vTile[i].key == "") continue;
@@ -633,6 +632,7 @@ void DungeonMap::checkColiMoveBen()
 		RECT temp;
 		if (IntersectRect(&temp, &PLAYER->getShadowRect(), &_vTile[i].rc))
 		{
+
 			if (_vTile[i].tState == TS_MOVEBAN)
 			{
 				int wid = temp.right - temp.left;
@@ -660,6 +660,7 @@ void DungeonMap::checkColiMoveBen()
 						PLAYER->setX(PLAYER->getX() - wid);
 					}
 				}
+
 			}
 		}
 	}
@@ -707,45 +708,12 @@ void DungeonMap::checkColiHole()
 		}
 	}
 	// 던전문 열리기 전이면 충돌처리 해놓기
-	DOORKIND kind;
-	if (_dgKind == DG_SEMIBOSS)
-	{
-		if (_leftDoor)
-		{
-			if (_leftDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _leftDoor->getDoorKind();
-			}
-		}
-		if (_rightDoor)
-		{
-			if (_rightDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _rightDoor->getDoorKind();
-			}
-		}
-		if (_topDoor)
-		{
-			if (_topDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _topDoor->getDoorKind();
-			}
-		}
-		if (_bottomDoor)
-		{
-			if (_bottomDoor->getDoorKind() == DOOR_NOMAL)
-			{
-				kind = _bottomDoor->getDoorKind();
-			}
-		}
-	}
-
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		RECT temp;
 		if (IntersectRect(&temp, &PLAYER->getShadowRect(), &_vTile[i].rc))
 		{
-			if (_vTile[i].tState == TS_PORTAL && ((_doorState == DOOR_CLOSE && _dgKind != DG_SEMIBOSS) || (_dgKind == DG_SEMIBOSS && kind == DG_NOMAL)))
+			if (_vTile[i].tState == TS_PORTAL)
 			{
 				int wid = temp.right - temp.left;
 				int hei = temp.bottom - temp.top;
@@ -885,12 +853,18 @@ void DungeonMap::checkCollisionSpa()
 void DungeonMap::checkColiArrow()
 {
 	RECT temp;
+	RECT dunRC = RectMake(140, 105, 35 * 28, 35 * 15);
 	float x, y;
+	
 	for (int i = 0; i < _vTile.size(); i++)
 	{
 		if (_vTile[i].tState == TS_MOVEBAN)
 		{
-			if (IntersectRect(&temp, &_vTile[i].rc, &PLAYER->getArrow()->getRect()))
+			if (!IntersectRect(&temp, &dunRC, &PLAYER->getArrow()->getRect()))
+			{
+				PLAYER->setSkill(false);
+			}
+			if (IntersectRect(&temp, &_vTile[i].rc, &PLAYER->getArrow()->getRect()) && !PLAYER->getSkill())
 			{
 				if (!SOUNDMANAGER->isPlaySound("화살맞음") && PLAYER->getShoot())
 				{
@@ -904,61 +878,25 @@ void DungeonMap::checkColiArrow()
 
 void DungeonMap::initPotal()
 {
-	_potal = new tagPotal;
-	_potal->ani = new animation;
-	_potal->ani->init(IMAGEMANAGER->findImage("potalInit"), 0, 7);
-	_potal->x = PLAYER->getX();
-	_potal->y = PLAYER->getY() - 20;
-	_potal->rc = RectMakeCenter(_potal->x, _potal->y + 25, 60, 16);
-	_potal->isUpdate = false;
-	_potal->isRange = false;
-	_potal->isActivate = true;
+	_potal = new potal;
+	_potal->init(PLAYER->getX(), PLAYER->getY(), POTAL_INIT);
 }
 
 void DungeonMap::potalUpdate()
 {
 	if (!_potal) return;
 	//포탈 업데이트하고
-	_potal->ani->update();
-	//만약 이닛중이었다면 업데이트로 전환해준다
-	if (!_potal->isUpdate)
-	{
-		if (_potal->ani->getAniState() == ANIMATION_END)
-		{
-			_potal->ani->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 7, true);
-			_potal->isUpdate = true;
-		}
-	}
-
-	//일정범위안에 들어오면 알려줘라
-	if (getDistance(PLAYER->getX(), PLAYER->getY(), _potal->x, _potal->y) < 30 && _potal->isUpdate)
-	{
-		_potal->isRange = true;
-	}
-	else _potal->isRange = false;
+	_potal->update();
 }
 
 void DungeonMap::potalRender()
 {
 	if (!_potal)return;
-	if (_potal->isActivate)
-	{
-		_potal->ani->ZorderStretchRender(_potal->y, _potal->x, _potal->y, 2.f);
-		if (_potal->isRange)
-		{
-			RECT txtRC = RectMake(_potal->x + 80, _potal->y - 90, 110, 50);
-			HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
-				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
-			//IMAGEMANAGER->findImage("messegeBox_potal")->render(getMemDC(), _potal->x + 30, _potal->y - 90);
-			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("messegeBox_potal"), 1999, _potal->x + 30, _potal->y - 90);
-			CAMERAMANAGER->ZorderDrawText("To Town", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-		}
-	}
+	_potal->render();
 }
 
 void DungeonMap::releasePotal()
 {
-	SAFE_DELETE(_potal->ani);
 	SAFE_DELETE(_potal);
 }
 
@@ -1033,6 +971,8 @@ int DungeonMap::moveDungeonDirection(RECT rc)
 				{
 					if (_dgKind == DG_SEMIBOSS && _leftDoor->getDoorKind() == DOOR_BOSS)
 						return 5;
+					else if (_dgKind == DG_SEMIBOSS && _leftDoor->getDoorKind() == DOOR_NOMAL)
+						return 1;
 					else 
 						return 1;
 				}
