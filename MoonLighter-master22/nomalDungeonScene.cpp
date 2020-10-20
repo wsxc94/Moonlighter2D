@@ -315,6 +315,8 @@ void nomalDungeonScene::setNewFloor()
 
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
+	
+	_vMinimap.clear();
 }
 
 void nomalDungeonScene::soundUpdate()

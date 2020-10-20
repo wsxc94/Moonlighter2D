@@ -84,6 +84,14 @@ HRESULT animation::initReverse(image * img, int frameY, int aniFrame, bool isLoo
 		POINT temp = { i,frameY };
 		_aniList.push_back(temp);
 	}
+	if (isReverse)
+	{
+		for (int i = 0; i <= _maxFrameX; i++)
+		{
+			POINT temp = { i , frameY };
+			_aniList.push_back(temp);
+		}
+	}
 	return S_OK;
 }
 
@@ -207,6 +215,12 @@ void animation::ZorderStretchRender(float z, int centerX, int centerY, float sca
 {
 	if (!_isArray)	CAMERAMANAGER->ZorderStretchFrameRender(_img, z, centerX, centerY, _aniList[_curIndex].x, _frameY, scale);
 	if (_isArray) CAMERAMANAGER->ZorderStretchFrameRender(_img, z, centerX, centerY, _aniList[_curIndex].x, _aniList[_curIndex].y, scale);
+}
+
+void animation::ZorderRotateStretchRender(float z, int centerX, int centerY, float angle, float scale)
+{
+	if (!_isArray)	CAMERAMANAGER->ZorderRotateStretchRender(_img, z, centerX, centerY, _aniList[_curIndex].x, _frameY, angle,scale);
+	if (_isArray) CAMERAMANAGER->ZorderRotateStretchRender(_img, z, centerX, centerY, _aniList[_curIndex].x, _aniList[_curIndex].y, angle, scale);
 }
 
 void animation::aniPlay()

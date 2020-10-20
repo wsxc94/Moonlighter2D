@@ -9,7 +9,7 @@ enum class GOLEMKINGSTATE
 
 enum class GOLEMANISTATE
 {
-	ANI_BOSSUP,ANI_DEAD1,ANI_DEAD2,ANI_FISTSHOOT,ANI_HANDSHOOTSTART,ANI_HANDSHOOTEND,ANI_IDLE
+	ANI_BOSSUP,ANI_DEAD1,ANI_DEAD2,ANI_FISTSHOOT1, ANI_FISTSHOOT2, ANI_FISTSHOOT3, ANI_HANDSHOOTSTART,ANI_HANDSHOOTEND,ANI_IDLE
 };
 
 enum class HANDSTATE
@@ -41,8 +41,22 @@ struct tagRock
 	bool isHit;
 };
 
-class bossGolemKing : public boss
+struct tagFist
 {
+	animation* ani;
+	POINT pt[4];
+	int wid;
+	int hei;
+	int count;
+	float x;
+	float y;
+	float angle;
+	bool isMoveLeft;
+	bool isHit;
+};
+
+class bossGolemKing : public boss
+{ 
 private:
 	GOLEMKINGSTATE _golemState;					//골렘 스테이트
 	GOLEMANISTATE _golemAni;					//골렘 애니메이션
@@ -52,7 +66,9 @@ private:
 	animation* _aniBossUp;						//init모션
 	animation* _aniBossDead1;					//죽는거 첫번째
 	animation* _aniBossDead2;					//죽는거 두번째
-	animation* _aniBossFistShoot;				//슬라임이 주먹발사하는것
+	animation* _aniBossFistShoot1;				//슬라임이 주먹발사하는것
+	animation* _aniBossFistShoot2;
+	animation* _aniBossFistShoot3;
 	animation* _aniBossHandShootStart;			//골렘 손 위로 던지기
 	animation* _aniBossHandShootEnd;			//골렘 손 받기
 	animation* _aniIdle;						//평소 골렘업뎃
@@ -73,6 +89,8 @@ private:
 	vector<tagRock> _vRock;						//돌들
 
 	float _rockShootAngle[3];						//슛할 각도들
+
+	tagFist _bossFist;							//보스 주먹질
 
 public:
 	bossGolemKing() {}

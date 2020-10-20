@@ -21,18 +21,36 @@ HRESULT bossGolemKing::init(int x, int y)
 	_scroll = new animation;
 	_scroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 9);
 
-	_aniBossFistShoot = new animation;
+	_aniBossFistShoot1 = new animation;
+	_aniBossFistShoot2 = new animation;
+	_aniBossFistShoot3 = new animation;
 	vector<POINT> pt;
+
 	for (int i = 0; i < 17; i++)
 	{
 		pt.push_back(PointMake(i, 0));
 	}
+	_aniBossFistShoot1->initArray(pt, IMAGEMANAGER->findImage("bossFistShoot"), 7);
+	pt.clear();
+	for (int i = 0; i < 22; i++)
+	{
+		pt.push_back(PointMake(i, 1));
+	}
+	_aniBossFistShoot2->initArray(pt, IMAGEMANAGER->findImage("bossFistShoot"), 7);
+	pt.clear();
+	for (int i = 0; i < 16; i++)
+	{
+		pt.push_back(PointMake(i, 2));
+	}
+	_aniBossFistShoot3->initArray(pt, IMAGEMANAGER->findImage("bossFistShoot"), 7);
 
 	//벡터에 담기
 	_vAni.push_back(_aniBossUp);					
 	_vAni.push_back(_aniBossDead1);					
 	_vAni.push_back(_aniBossDead2);					
-	_vAni.push_back(_aniBossFistShoot);				
+	_vAni.push_back(_aniBossFistShoot1);				
+	_vAni.push_back(_aniBossFistShoot2);				
+	_vAni.push_back(_aniBossFistShoot3);				
 	_vAni.push_back(_aniBossHandShootStart);		
 	_vAni.push_back(_aniBossHandShootEnd);
 	_vAni.push_back(_aniIdle);
@@ -105,17 +123,105 @@ void bossGolemKing::update()
 		if (_attackCool <= 0)
 		{
 			_attackCool = RANDOM->range(300, 500);
-			_golemState = GOLEMKINGSTATE::BS_ROCK_SHOOT;
+			_golemState = GOLEMKINGSTATE::BS_FIST;
 			//손 초기황
 			this->initGolemHand();
 			//돌슛 초기황
 			_rockShootAngle[0] = RANDOM->range(DEGREE(240), DEGREE(300));
 			_rockShootAngle[1] = _rockShootAngle[0] + DEGREE(5);
 			_rockShootAngle[2] = _rockShootAngle[0] + DEGREE(10);
+			//주먹질 초기화
+			_bossFist.ani = new animation;
+			_bossFist.ani->initReverse(IMAGEMANAGER->findImage("bossFist"), 0, 7, false, true);
+			_bossFist.angle = RANDOM->range(DEGREE(240), DEGREE(300))+DEGREE(90);
+			_bossFist.x = _x - 70;
+			_bossFist.y = _y + 30;
+			_bossFist.count = RANDOM->range(4,7);
+			_bossFist.isMoveLeft = (bool)RANDOM->range(2);
+			_bossFist.isHit = false;
+
+			_golemAni = GOLEMANISTATE::ANI_FISTSHOOT1;
 		}
 
 		break;
 	case  GOLEMKINGSTATE::BS_FIST:
+	{
+		if (_vAni[(int)_golemAni]->getAniState() == ANIMATION_END)
+		{
+			_golemAni = GOLEMANISTATE::ANI_FISTSHOOT2;
+		}
+		if (_golemAni == GOLEMANISTATE::ANI_FISTSHOOT2)
+		{
+			_bossFist.ani->update();
+			//팔을 뻗고 애니메이션 퍼즈
+			if (_bossFist.ani->getCurIndex() == _bossFist.ani->getAniList().size() / 2)
+			{
+				_bossFist.ani->aniPause();
+			}
+			//팔 흔들기
+			if (_bossFist.ani->getAniState() == ANIMATION_PAUSE)
+			{
+				if (_bossFist.isMoveLeft)
+				{
+					_bossFist.angle -= DEGREE(1);
+					if (_bossFist.angle <= DEGREE(270))
+					{
+						_bossFist.isMoveLeft = false;
+						_bossFist.isHit = false;
+						_bossFist.count--;
+					}
+				}
+				else if (!_bossFist.isMoveLeft)
+				{
+					_bossFist.angle += DEGREE(1);
+					if (_bossFist.angle > DEGREE(360 + 90))
+					{
+						_bossFist.isMoveLeft = true;
+						_bossFist.isHit = false;
+						_bossFist.count--;
+					}
+				}
+			}
+			//공격끝났으면 다음 애니메이션으로
+			if (_bossFist.count <= 0)
+			{
+				_golemAni = GOLEMANISTATE::ANI_FISTSHOOT3;
+			}
+		}
+		//플레이어와 충돌처리
+		if (_golemAni == GOLEMANISTATE::ANI_FISTSHOOT2)
+		{
+			//플레잉어 선점충돌
+			float bx = _bossFist.x - 20;
+			float by = _bossFist.y;
+			float x = bx + cosf(_bossFist.angle - DEGREE(90)) * 555;
+			float y = by - sinf(_bossFist.angle - DEGREE(90)) * 555;
+			float sDist = getDistance(bx, by, PLAYER->getX(), PLAYER->getY());
+			float eDist = getDistance(x, y, PLAYER->getX(), PLAYER->getY());
+			float tDist = getDistance(bx, by, x, y);
+			if (sDist + eDist <= tDist + 5.f && sDist + eDist >= tDist - 10.f && _bossFist.isHit == false)
+			{
+				//영빈아 여기다 충돌처리쓰면 된다
+				_bossFist.isHit = true;
+				PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
+			}
+		}
+		//아이들 상태로 바꾸기
+		if (_golemAni == GOLEMANISTATE::ANI_FISTSHOOT3)
+		{
+			//멈춰있던팔 재생
+			if (_bossFist.ani->getAniState() == ANIMATION_PAUSE)
+				_bossFist.ani->aniPlay();
+
+			if (_bossFist.ani->getAniState() == ANIMATION_END)
+			{
+				_golemAni = GOLEMANISTATE::ANI_IDLE;
+				_golemState = GOLEMKINGSTATE::BS_IDLE;
+			}
+		}
+	}
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
 		_rockFireTime++;
@@ -341,7 +447,6 @@ void bossGolemKing::render()
 		0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 	CAMERAMANAGER->ZorderDrawText("골 렘 왕", 2000, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
 
-
 	switch (_golemState)
 	{
 	case GOLEMKINGSTATE::BS_INIT:
@@ -349,6 +454,8 @@ void bossGolemKing::render()
 	case GOLEMKINGSTATE::BS_IDLE:
 		break;
 	case GOLEMKINGSTATE::BS_FIST:
+		if(_golemAni != GOLEMANISTATE::ANI_FISTSHOOT1)
+		_bossFist.ani->ZorderRotateStretchRender(1999, _bossFist.x, _bossFist.y, _bossFist.angle, 1.5f);
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
 		LineMake(getMemDC(), _x, _y, _x + cosf(_rockShootAngle[0]) * 1000, _y - sinf(_rockShootAngle[0]) * 1000);

@@ -11,7 +11,7 @@ HRESULT townScene::init()
 	_npcManager = new npcManager;
 	_npcManager->init(_vTest);
 
-	PLAYER->init();
+
 	ITEMMENU->init();
 
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
@@ -48,6 +48,7 @@ HRESULT townScene::init()
 		PLAYER->setY(205);
 		PLAYER->setPlayerState(PLAYER_DIE_PORTAL);
 		PLAYER->setPlayerDirection(0);
+		PLAYERDATA->setIsPendantReturn(false);
 	}
 
 	this->initPotal();

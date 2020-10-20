@@ -57,7 +57,7 @@ void bossLoading::loadImage()
 	_loading->loadImage("bossRock2", "Images/보스/Boss_Rock2 .bmp", 100, 108, true, RGB(255, 0, 255));
 	_loading->loadImage("bossRock3", "Images/보스/Boss_Rock3 .bmp", 100, 108, true, RGB(255, 0, 255));
 	//_loading->loadImage("bossFist", "Images/보스/fist .bmp", 104, 373, true, RGB(255, 0, 255));
-	_loading->loadFrameImage("bossFist", "Images/보스/fist2 .bmp", 623, 373, 6, 1);
+	_loading->loadFrameImage("bossFist", "Images/보스/fist2 .bmp", 623, 746, 6, 1);
 	_loading->loadFrameImage("bossHand", "Images/보스/hand.bmp", 1140, 60, 19, 1);
 
 

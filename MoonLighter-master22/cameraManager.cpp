@@ -102,7 +102,6 @@ void cameraManager::update(float pivotX, float  pivotY)
 	if (_isShake == true)
 	{
 		_shakeTime.current++;
-		cout << _shakeTime.current << "   " << _shakeTime.max << "   " << _shakeTime.cool << endl;
 		if (_shakeTime.current > _shakeTime.max)
 		{
 			_isShake = false;
@@ -345,6 +344,16 @@ void cameraManager::ZorderStretchFrameRender(image * img, float z, int centerX, 
 	_vZoderRender.push_back(_zo);
 }
 
+void cameraManager::ZorderRotateStretchRender(image * img, float z, int centerX, int centerY, int frameX, int frameY, float angle, float scale)
+{
+	tagZoderRender* _zo = new tagZoderRender(IMG_ROTATESTRETCH, img, z, getRelativeX(centerX), getRelativeY(centerY));
+	_zo->frameX = frameX;
+	_zo->frameY = frameY;
+	_zo->angle = angle;
+	_zo->scale = scale;
+	_vZoderRender.push_back(_zo);
+}
+
 void cameraManager::ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, COLORREF color, UINT format)
 {
 	tagZoderRender* _zo = new tagZoderRender(IMG_TXT, nullptr, z, 0, 0);
@@ -454,6 +463,9 @@ void cameraManager::ZorderTotalRender(HDC hdc)
 			_vZoderRender[i]->img->stretchFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->scale);
 			if (_vZoderRender[i]->stretchKind == STRETCH_EACH)
 				_vZoderRender[i]->img->stretchFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->scaleX, _vZoderRender[i]->scaleY);
+			break;
+		case IMG_ROTATESTRETCH:
+			_vZoderRender[i]->img->rotateStretchFrameRender(hdc, _vZoderRender[i]->x, _vZoderRender[i]->y, _vZoderRender[i]->frameX, _vZoderRender[i]->frameY, _vZoderRender[i]->angle, _vZoderRender[i]->scale);
 			break;
 		case IMG_TXT:
 		{

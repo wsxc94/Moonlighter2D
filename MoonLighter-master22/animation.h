@@ -51,6 +51,7 @@ public:
 	void ZorderRotateRender(HDC hdc, float z, int centerX, int centerY, float angle);
 	void ZorderRotateAlphaRender(HDC hdc, float z, int centerX, int centerY, float angle, BYTE alpha);
 	void ZorderStretchRender(float z, int centerX, int centerY, float scale);
+	void ZorderRotateStretchRender(float z, int centerX, int centerY, float angle, float scale);
 
 	void aniPlay();
 	void aniPause();
