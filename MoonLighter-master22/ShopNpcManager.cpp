@@ -17,8 +17,13 @@ HRESULT ShopNpcManager::init(displayStand* dis)
 	for (int i = 0; i < MAX_NPC; i++)
 	{
 		v_npcs[i] = new npc;
+		
+		int rnd = RANDOM->range(0, 1);
+
+		if(rnd == 0)
 		v_npcs[i]->init(_pos, _npcName[i].first, NPC_SHOP, i, _displayStand);
-		_npcName[i].second = true;
+		else
+		v_npcs[i]->init(_pos, _npcName[i].second, NPC_SHOP, i, _displayStand);
 	}
 	return S_OK;
 }
@@ -52,24 +57,15 @@ void ShopNpcManager::render()
 
 void ShopNpcManager::getInit(int idx , int rnd)
 {
-	v_npcs[idx]->init(_pos, _npcName[rnd].first, NPC_SHOP, idx, _displayStand);
-	_npcName[rnd].second = true;
+	int tmp = RANDOM->range(0, 1);
 
+	if(tmp == 0)
+	v_npcs[idx]->init(_pos, _npcName[rnd].first, NPC_SHOP, idx, _displayStand);
+	else
+	v_npcs[idx]->init(_pos, _npcName[rnd].second, NPC_SHOP, idx, _displayStand);
 }
 
 void ShopNpcManager::UseNpcCheck()
 {
-
-	for (int i = 0; i < v_npcs.size(); i++)
-	{
-
-		if (!v_npcs[i]->getActive()) {
-			_npcName[i].second = false;
-		}
-		else {
-			_npcName[i].second = true;
-		}
-		
-	}
 }
 

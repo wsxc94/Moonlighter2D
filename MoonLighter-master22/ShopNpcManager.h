@@ -20,11 +20,11 @@ private:
 	displayStand* _displayStand;
 
 	int _npcTime;
-	vector<pair<string, bool>> _npcName = {
-		make_pair("마사" , false),
-		make_pair("토모" , false),
-		make_pair("레드먼드" , false),
-		make_pair("모리" , false)
+	vector<pair<string, string>> _npcName = {
+		make_pair("마사" , "배낭맨여자"),
+		make_pair("토모" , "원형아저씨"),
+		make_pair("레드먼드" , "도둑강아지"),
+		make_pair("모리" , "히어로")
 	};
 	/*vector<string> _npcName = {
 		"마사",
@@ -41,7 +41,7 @@ public:
 	void UseNpcCheck(); // 현재 인덱스의 npc가 사용중인지 검사하는 함수
 
 	vector<npc*>& getVector() { return v_npcs; }
-	vector<pair<string, bool>>& getNpcNamePair() { return _npcName; }
+	vector<pair<string, string>>& getNpcNamePair() { return _npcName; }
 
 };
 
