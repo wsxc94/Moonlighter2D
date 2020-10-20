@@ -267,7 +267,7 @@ void potionShop::initPotionSlot()
 	//슬롯 2번(HP물약2 제조)
 	_potionSlot[3].slotIdx = 3;
 	_potionSlot[3].type = POTION_MAKE;
-	_potionSlot[3].item = ITEMMENU->getItemManager()->getItemByIdx(POTION1_IDX);
+	_potionSlot[3].item = ITEMMENU->getItemManager()->getItemByIdx(POTION2_IDX);
 	_potionSlot[3].price = 800;
 	_potionSlot[3].description[0] = "체력을 75 회복한다. 제값을";
 	_potionSlot[3].description[1] = "톡톡히 하는 제품이다.";
@@ -307,6 +307,16 @@ void potionShop::setPotionCtrl(POTION_CTRL state)
 
 bool potionShop::checkRequirements()
 {
+	//가방에 공간이 없다면 구매,제조 상관없이 false
+	int itemIdx = _potionSlot[_cursor->getSlotIdx()].item.getItemIdx();
+	if (!ITEMMENU->getInventory()->checkRoomForItem(itemIdx))
+	{
+		_messageType = LACK_OF_ROOM;
+		setPotionCtrl(POTION_MESSAGE);
+		SOUNDMANAGER->play("cursor_error", 0.6f);
+		return false; 
+	}
+
 	//포션 구매 시 골드 충족여부만 확인 
 	if (_potionSlot[_cursor->getSlotIdx()].type == POTION_BUY)
 	{
@@ -315,6 +325,7 @@ bool potionShop::checkRequirements()
 		{
 			_messageType = LACK_OF_GOLD;
 			setPotionCtrl(POTION_MESSAGE);
+			SOUNDMANAGER->play("cursor_error", 0.6f);
 			return false; 
 		}
 		else return true;
@@ -329,12 +340,14 @@ bool potionShop::checkRequirements()
 			{
 				_messageType = LACK_OF_BOTH;
 				setPotionCtrl(POTION_MESSAGE);
+				SOUNDMANAGER->play("cursor_error", 0.6f);
 				return false;
 			}
 			else
 			{
 				_messageType = LACK_OF_MATERIAL;
 				setPotionCtrl(POTION_MESSAGE);
+				SOUNDMANAGER->play("cursor_error", 0.6f);
 				return false; 
 			}
 		}
@@ -345,6 +358,7 @@ bool potionShop::checkRequirements()
 			{
 				_messageType = LACK_OF_GOLD;
 				setPotionCtrl(POTION_MESSAGE);
+				SOUNDMANAGER->play("cursor_error", 0.6f);
 				return false;
 			}
 			else return true; 
@@ -366,6 +380,10 @@ void potionShop::printMessage()
 
 		case LACK_OF_BOTH:
 			printLackOfBoth();
+			break;
+
+		case LACK_OF_ROOM:
+			printLackOfRoom();
 			break;
 	}
 }
@@ -414,6 +432,21 @@ void potionShop::printLackOfBoth()
 	HFONT oFont = (HFONT)SelectObject(getMemDC(), font);
 	SetTextColor(getMemDC(), RGB(230, 215, 187));
 	DrawText(getMemDC(), "필요한 재료나 골드가 부족해.",
+		-1, &txtRC, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+	SelectObject(getMemDC(), oFont);
+	DeleteObject(font);
+}
+
+void potionShop::printLackOfRoom()
+{
+	IMAGEMANAGER->render("shop_bubble", getMemDC(), 328, 120);
+
+	RECT txtRC = RectMake(356, 168, 400, 54);
+	HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+	HFONT oFont = (HFONT)SelectObject(getMemDC(), font);
+	SetTextColor(getMemDC(), RGB(230, 215, 187));
+	DrawText(getMemDC(), "가방에 아이템을 넣을 공간이 부족해.",
 		-1, &txtRC, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
 	SelectObject(getMemDC(), oFont);
 	DeleteObject(font);
@@ -474,19 +507,23 @@ void potionShop::menuKeyInput()
 	if (INPUT->GetKeyDown('J'))
 	{
 		_cursor->setCursorState(CURSOR_CLICK);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
 
 		if (_cursor->getSlotIdx() >= POTION_MAXSLOT) return; 
 
 		//포션 제조를 위한 필요요건 충족여부 확인하고 구매,제조에 따라 함수 실행 
-		if (_potionSlot[_cursor->getSlotIdx()].type == POTION_BUY)
-		{
-			if(checkRequirements()) buyPotion();
-		}
-		else
-		{
-			if(checkRequirements()) makePotion();
-		}
+		//if (_potionSlot[_cursor->getSlotIdx()].type == POTION_BUY)
+		//{
+		//	if(checkRequirements()) buyPotion();
+		//	SOUNDMANAGER->play("cursor_move", 0.2f);
+		//}
+		//else
+		//{
+		//	if(checkRequirements()) makePotion();
+		//	SOUNDMANAGER->play("cursor_move", 0.2f);
+		//}
+
+		if (checkRequirements()) setPotionCtrl(POTION_SET_COUNT);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 }
 
@@ -497,6 +534,10 @@ void potionShop::messageKeyInput()
 		setPotionCtrl(POTION_MENU);
 		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
+}
+
+void potionShop::setCountKeyInput()
+{
 }
 
 void potionShop::leftKeyDown()
@@ -707,6 +748,10 @@ void potionShop::recipeInfoRender()
 		_potionSlot[_cursor->getSlotIdx()].type == POTION_BUY) return;
 
 	_potionSlot[_cursor->getSlotIdx()].mixRecipe->render(getMemDC(), 892, 430);
+}
+
+void potionShop::setCountRender()
+{
 }
 
 

@@ -91,6 +91,7 @@ public:
 	void printLackOfGold();					//골드 부족 메시지 띄우기 
 	void printLackOfMaterial();				//재료 부족 메시지 띄우기 
 	void printLackOfBoth();					//골드와 재료 부족 메시지 띄우기 
+	void printLackOfRoom();					//공간 부족 메시지 띄우기 
 	void buyPotion();						//포션 구매 
 	void makePotion();						//포션 직접 제조
 
@@ -98,6 +99,7 @@ public:
 	void keyInput();					//전체 키입력 함수 
 	void menuKeyInput();				//메뉴 컨트롤러 키입력 함수 
 	void messageKeyInput();				//메시지 컨트롤러 키입력 함수 
+	void setCountKeyInput();			//카운트 세팅 컨트롤러 키입력 함수 
 	void leftKeyDown();					//왼쪽 키(A) 입력 함수 
 	void rightKeyDown();				//오른쪽 키(D) 입력 함수 
 	void upKeyDown();					//위쪽 키(W) 입력 함수 
@@ -114,5 +116,7 @@ public:
 	void potionPriceRender();			//커서가 가리키는 포션의 제조비용 출력 
 	void possessCountRender();			//커서가 가리키는 포션의 소지개수 출력 
 	void recipeInfoRender();			//커서가 가리키는 레시피 정보 출력 
+
+	void setCountRender();
 };
 

@@ -39,7 +39,8 @@ enum MESSAGE_TYPE
 {
 	LACK_OF_GOLD,
 	LACK_OF_MATERIAL,
-	LACK_OF_BOTH
+	LACK_OF_BOTH,
+	LACK_OF_ROOM
 };
 
 //===================================================

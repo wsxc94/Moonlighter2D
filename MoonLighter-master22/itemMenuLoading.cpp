@@ -150,6 +150,11 @@ void itemMenuLoading::loadingImage()
 	_loading->loadImage("slot_base", "Images/PotionShop/slot_base.bmp", 60, 60, true, RGB(255, 0, 255));
 	_loading->loadImage("shop_bubble", "Images/PotionShop/shop_bubble.bmp", 500, 160, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("shop_ox", "Images/PotionShop/shop_ox.bmp", 76, 60, 2, 1);
+	_loading->loadImage("menu_potionMake", "Images/PotionShop/menu_potionMake.bmp", 442, 248, true, RGB(255, 0, 255));
+	_loading->loadFrameImage("minusFive", "Images/PotionShop/minusFive.bmp", 38, 12, true, 2,1);
+	_loading->loadFrameImage("plusFive", "Images/PotionShop/plusFive.bmp", 38, 12, true, 2,1);
+	_loading->loadFrameImage("potion_arrow", "Images/PotionShop/potion_arrow.bmp", 442, 248, true, RGB(255, 0, 255));
+
 
 	//숫자(흰색) 이미지 초기화 
 	_loading->loadImage("0", "Images/Number/0.bmp", 10, 14, true, RGB(255, 0, 255));
