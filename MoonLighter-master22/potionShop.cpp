@@ -472,6 +472,7 @@ void potionShop::keyInput()
 			messageKeyInput();
 
 		case POTION_SET_COUNT:
+			setCountKeyInput();
 			break;
 
 		case POTION_SET_OX:
