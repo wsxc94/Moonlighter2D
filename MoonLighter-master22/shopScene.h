@@ -27,7 +27,7 @@ private:
 	RECT _stand; // 좌판
 	RECT _doorRect; // 문열고 닫는 렉트
 
-	bool _shopDoorCheck;
+	bool _shopDoorCheck; 
 	bool _doorOpen;
 	void ItemPosSet(); // 아이템 위치 세팅
 
@@ -39,6 +39,10 @@ private:
 	animation* _cashRegister; // 책상 위 금고
 	animation* _button; // 좌판 배치 버튼
 	animation* _door; // 문
+	animation* _cauldron; //꿀단지
+	animation* _sellButton; // 판매 버튼
+
+	bool _sellNpcCheck;
 
 
 public:
@@ -54,9 +58,12 @@ public:
 
 	void npcAI(); // npc update 여기다 넣음
 	void npcInit(int idx); //npc 초기화함수
-	void doorOpen();
-	void doorPlay();
-	void doorReverseplay();
+	void doorOpen(); //문여는 조건 함수
+	void doorPlay(); //문 애니메이션 사운드 ON 함수
+	void doorReverseplay(); // 문 애니메이션 반대로
+
+	void sellStandAction(); // 좌판 액션
+	void sellDeskAction(); // 계산대 액션
 
 	void itemMove(); // 좌판에 설치된 아이템 움직임 함수
 
