@@ -461,16 +461,8 @@ void skullHammer::skullHammerCollision()
 		{
 			_emPlayerColi = true;
 		
-			if (PLAYER->getPlayerState() == PLAYER_SHILED)
-			{
-				PLAYER->playerPush();
-			}
-			else
-			{
-				PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
-			}
+			allEnemyColi(_emAtk, checkDirection());
+
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
 				RESULTENEMY* em = new RESULTENEMY;

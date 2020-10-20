@@ -121,13 +121,14 @@ void townScene::update()
 	ObjectAnim();
 	ObjectColl();
 	MapColl();
+	this->collArrow();
 
 }
 
 void townScene::render()
 {
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
-	
+	//Rectangle(getMemDC(), CAMERAMANAGER->getRect());
 	for (int i = 0; i < _objManager.size(); i++)
 	{
 		RECT tmp;
@@ -368,7 +369,6 @@ void townScene::updatePotal()
 {
 	if (!_potal) return;
 	_potal->update();
-
 	if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
 	{
 		_potal->setPotalState(POTAL_PLAYERIN);

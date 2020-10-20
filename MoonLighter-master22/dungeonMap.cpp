@@ -102,7 +102,7 @@ void DungeonMap::render()
 
 void DungeonMap::setStartDungeon()
 {
-	_fileName = "maptool/dungeonStart";
+	_fileName = "maptool/dungeonstart";
 	_vMaps.push_back(this);
 	_mapSize = 3;
 

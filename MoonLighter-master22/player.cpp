@@ -71,16 +71,8 @@ void player::release()
 
 void player::update()
 {
-	cout << _player.weapon << endl;
-	if (_state == BOW_CHARGE)
-	{
-		_skillCount++;
-	}
-	if (_skillCount > 50)
-	{
-		_bowCharge->aniStop();
-		_isSkill = true;
-	}
+
+	this->arrowSkillSet();
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -89,7 +81,6 @@ void player::update()
 	_player.rc = RectMakeCenter(_player.x, _player.y - 12, 45, 60);
 	_arrow->update();
 	this->keyInput();
-	this->updateWeaponState();	
 }
 
 void player::render(HDC hdc)
@@ -368,6 +359,41 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_SHILED:
+			if (INPUT->GetKey('W'))
+			{
+				_player.y -= 1;
+				_player.direction = 1;
+				_up = true;
+			}
+			else {
+				_up = false;
+			}
+
+			if (INPUT->GetKey('S'))
+			{
+				_player.y += 1;
+				_player.direction = 0;
+				_down = true;
+			}
+			else {
+				_down = false;
+			}
+
+			if (INPUT->GetKey('A'))
+			{
+				_player.x -=  1;
+				_player.direction = 3;
+				_left = true;
+			}
+			else {
+				_left = false;
+			}
+			if (INPUT->GetKey('D'))
+			{
+				_player.x += 1;
+				_player.direction = 2;
+				_right = true;
+			}
 			if (INPUT->GetKeyUp('K'))
 			{
 				_state = PLAYER_IDLE;
@@ -401,7 +427,7 @@ void player::playerState()
 
 		case PLAYER_TALK:
 			if (this->getKeyMove()) _state = PLAYER_RUN;
-
+			this->playerMove();
 			if (INPUT->GetKeyDown(VK_SPACE))
 			{
 				_lastRollX = _player.x;
@@ -409,6 +435,7 @@ void player::playerState()
 				_holeAlpha = 255;
 				_state = PLAYER_ROLL;
 			}
+			cout << _state << endl;
 			break;
 		case PLAYER_DIE:
 			if (_aniDie->getAniState() == ANIMATION_END && !_isDie)
@@ -431,7 +458,7 @@ void player::playerState()
 					_state = PLAYER_IDLE;
 				}
 			}		
-			
+		
 			break;
 		case PLAYER_SWIM:
 			this->playerMove();
@@ -525,7 +552,6 @@ void player::keyInput()
 	{
 		ITEMMENU->getInventory()->switchWeapon();
 	}
-	cout << _player.weapon << endl;
 	//포션을 사용하는 함수
 	//아이템 메뉴가 오픈되지 않았을 때만 동작 
 	if (!ITEMMENU->getOpenMenu())
@@ -564,11 +590,13 @@ void player::updateWeaponState()
 
 void player::npcTalk(bool& isTalk)
 {
-	if (isTalk) {
+	if (isTalk) 
+	{
 		_player.weapon = EMPTY;
 	}
-	else {
-		_player.weapon = SHORT_SOWRD;
+	else
+	{
+		this->updateWeaponState();
 	}
 }
 
@@ -593,7 +621,6 @@ void player::hitPlayer()
 
 void player::playerMove()
 {
-
 	if (INPUT->GetKey('W'))
 	{
 		_player.y -= _player.speed;
@@ -636,29 +663,26 @@ void player::playerMove()
 
 void player::playerAttack()
 {
-	
-	if (!_isShoot)
+	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
-		if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
+
+		switch (_player.weapon)
 		{
+		case EMPTY:
 
-			switch (_player.weapon)
+			break;
+		case SHORT_SOWRD:
+			_state = PLAYER_ATTACK_SWORD;
+			if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
 			{
-			case EMPTY:
-				_state = PLAYER_TALK;
-				break;
+				SOUNDMANAGER->play("검휘두르기", 0.3f);
+			}
+			_aniSword->aniRestart();
+			break;
 
-			case SHORT_SOWRD:
-				_state = PLAYER_ATTACK_SWORD;
-				if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
-				{
-					SOUNDMANAGER->play("검휘두르기", 0.3f);
-				}
-				_aniSword->aniRestart();
-				break;
-
-			case BOW:
-
+		case BOW:
+			if (!_isShoot)
+			{
 				_state = PLAYER_ATTACK_BOW;
 				if (!SOUNDMANAGER->isPlaySound("화살발사"))
 				{
@@ -666,15 +690,15 @@ void player::playerAttack()
 				}
 				_aniBow->aniRestart();
 				_isShoot = true;
-				break;
 			}
+			break;
 		}
 	}
 }
 
 void player::playerSkill()
 {
-	if (INPUT->GetKey('K'))
+	if (INPUT->GetKey('K') && _place == TOWN_DUNGEON)
 	{
 		_bowCharge->aniRestart();
 		switch (_player.weapon)
@@ -721,6 +745,20 @@ bool player::getKeyMove()
 		|| INPUT->GetKey('A')
 		|| INPUT->GetKey('D')) return true;
 	return false;
+}
+
+void player::arrowSkillSet()
+{
+	if (_state == BOW_CHARGE)
+	{
+		_skillCount++;
+	}
+	if (_skillCount > 50)
+	{
+		_bowCharge->aniStop();
+		_isSkill = true;
+	}
+
 }
 
 void player::imageInit()

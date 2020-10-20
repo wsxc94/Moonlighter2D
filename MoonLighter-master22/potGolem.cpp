@@ -489,16 +489,7 @@ void potGolem::potGolemCollision()
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_bullet[i].rc) && _bullet[i].isFire  && PLAYER->getPlayerState() != PLAYER_ROLL)
 		{
 
-			if (PLAYER->getPlayerState() == PLAYER_SHILED)
-			{
-				PLAYER->playerPush();
-			}
-			else
-			{
-				PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
-			}
+			allEnemyColi(_emAtk, PLAYER->getPlayerDirection() == _bullet[i].direction);
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
 				RESULTENEMY* em = new RESULTENEMY;

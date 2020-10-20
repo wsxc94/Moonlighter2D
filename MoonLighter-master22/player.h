@@ -142,24 +142,24 @@ public:
 	//인벤토리 관련 함수 
 	int getMaxItemSlot();
 
-	void animation(int frameY);
-	void playerState();
-	void attackRCUpdate();
+	void animation(int frameY);	//플레이어 애니메이션
+	void playerState();			//플레이어 상태에따른 행동
+	void attackRCUpdate();		//플레이어 공격 렉트 업데이트
 	void updateWeaponState();	//플레이어의 무기 장착 상태 업데이트 
-	void keyInput();		//플레이어의 상태에 상관없이 키 입력을 받는 함수 
-	void npcTalk(bool& isTalk);
-	void hitPlayer();
-	void playerMove();
-	void playerAttack();
-	void playerSkill();
-	void playerPush();		//방패를 든채로 맞거나 화살을 쏠때 밀려나나
-	bool getKeyMove();
+	void keyInput();			//플레이어의 상태에 상관없이 키 입력을 받는 함수 
+	void npcTalk(bool& isTalk);	//npc와 이야기 중이냐
+	void hitPlayer();			//플레이어가 맞았냐
+	void playerMove();			//플레이어 움직임
+	void playerAttack();		//j 키를 이용한 공격
+	void playerSkill();			//k키 스킬
+	void playerPush();			//방패를 든채로 맞거나 화살을 쏠때 밀려나나
+	bool getKeyMove();			//wasd를 눌렀냐?
+	void arrowSkillSet();		//플레이어 스킬 차지
 
 	void imageInit();
 
 	void setDisplayOn(bool on) { _displayOn = on; }
 	bool& getDisplayOn() { return _displayOn; }
-
 
 	float getX() { return _player.x; }
 	float getY() { return _player.y; }

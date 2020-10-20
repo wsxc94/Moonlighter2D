@@ -300,3 +300,27 @@ void enemy::hitSoundPlay()
 {
 }
 
+bool enemy::checkDirection()
+{
+	if (PLAYER->getPlayerDirection() == _emDirection)
+	{
+		return true;
+	}
+	return false;
+}
+
+void enemy::allEnemyColi(int emDemage, bool checkDirection)
+{
+	if (PLAYER->getPlayerState() == PLAYER_SHILED && checkDirection)
+	{
+		PLAYER->playerPush();
+	}
+	else
+	{
+		PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - emDemage);
+		PLAYER->setPlayerState(HIT_IDLE);
+		PLAYER->setHit(true);
+	}
+}
+
+
