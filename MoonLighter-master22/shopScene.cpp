@@ -243,11 +243,16 @@ void shopScene::itemInfoUpdate()  // 좌판의 아이템정보를 검사해 npc를 초기화시키
 	}
 	for (int i = 0; i < _npc->getVector().size(); i++)
 	{
-		if (!_npc->getVector()[i]->getActive() && 
+		/*if (!_npc->getVector()[i]->getActive() && 
 			_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY &&
 			_displayStand->getDisplayItem()[i].getPrice() != 0 &&
 			_npc->getVector()[i]->getThinkInfo() != "비싸다" &&
 			_npc->getVector()[i]->getThinkInfo() != "엄청비싸다") {
+			npcInit(i);
+		}*/
+
+		if (!_npc->getVector()[i]->getActive()){
+			 
 			npcInit(i);
 		}
 	}
@@ -325,8 +330,9 @@ void shopScene::doorReverseplay()
 	if (_door->getAniState() == ANIMATION_END)
 	{
 		_door->aniReverse();
-
+		SOUNDMANAGER->play("문닫아");
 		_shopDoorCheck = false;
+		return;
 	}
 	
 }
@@ -340,6 +346,7 @@ void shopScene::sellStandAction()
 		if (INPUT->GetKeyDown('J'))
 		{
 			_displayStand->openDisplayStand();
+
 			_displayStand->setCanGrab(false);
 		}
 	}
@@ -470,11 +477,12 @@ void shopScene::InterfaceRender()
 	}
 
 	char str[256];
+
 	for (int i = 0; i < ITEMDESKCOUNT; i++)
 	{
 		
 			if (IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
-				_sellButton->ZoderRender(700, 766, 628);
+				_sellButton->ZoderRender(900, 766, 628);
 			}
 		
 		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY && _displayStand->getDisplayItem()[i].getPrice() != 0) {

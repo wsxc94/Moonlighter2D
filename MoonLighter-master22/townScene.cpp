@@ -74,12 +74,12 @@ void townScene::update()
 	//PLAYER->setPlace(SHOP);
 	if (!SOUNDMANAGER->isPlaySound("마을브금")) 
 	{
-		SOUNDMANAGER->play("마을브금", 0.3f);
+		SOUNDMANAGER->play("마을브금", 0.03f);
 	}
 	else 
 	{
 		if (ITEMMENU->getOpenMenu() || _potionShop->getMenuOn()) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
-		else SOUNDMANAGER->setVolumn("마을브금", 0.3f);
+		else SOUNDMANAGER->setVolumn("마을브금", 0.03f);
 	}
 
 	//====================================================

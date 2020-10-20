@@ -96,7 +96,7 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 	_count = 0;
 	_time = 0;
 	_angle = 0;
-	_spawnTime = RANDOM->range(200, 500);
+	_spawnTime = RANDOM->range(200, 1000);
 	_Istalk = false;
 	_boxidx = 0;
 	_boxCnt = 0;
@@ -516,7 +516,11 @@ void npc::npcSpawn()
 
 void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 {
-
+	if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() == 0 || _displayStand->getDisplayItem()[shop_targetIdx].getType() == ITEM_EMPTY) {
+		shop_currentTargetIdx++;
+		_state = NPC_MOVE;
+		return;
+	}
 	for (int i = 0; i < 4; i++) {
 
 		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() / _displayStand->getDisplayItem()[shop_targetIdx].getCount()
