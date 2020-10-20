@@ -358,7 +358,7 @@ void cameraManager::ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, 
 {
 	tagZoderRender* _zo = new tagZoderRender(IMG_TXT, nullptr, z, 0, 0);
 	_zo->txt = txt;
-	_zo->txtRC = txtRC;
+	_zo->txtRC = { txtRC.left - _cameraRect.left,txtRC.top - _cameraRect.top,txtRC.right - _cameraRect.left,txtRC.bottom - _cameraRect.top };
 	_zo->font = font;
 	_zo->txtColor = color;
 	_zo->format = format;

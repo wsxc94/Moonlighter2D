@@ -4,7 +4,7 @@
 
 enum class GOLEMKINGSTATE
 {
-	BS_INIT,BS_IDLE,BS_FIST,BS_ROCK_SHOOT,BS_ROCK_ROUND,BS_HAND
+	BS_INIT,BS_IDLE,BS_FIST,BS_ROCK_SHOOT,BS_ROCK_ROUND,BS_HAND,BS_DEAD
 };
 
 enum class GOLEMANISTATE
@@ -92,6 +92,11 @@ private:
 
 	tagFist _bossFist;							//보스 주먹질
 
+	bool _isAttackSoundPlay;					//공격전 사운드
+	bool _isDeadSoundPlay;						//죽는 사운드
+	bool _isDead;								//죽었냐?
+
+
 public:
 	bossGolemKing() {}
 	~bossGolemKing() {}
@@ -100,15 +105,23 @@ public:
 	void release();
 	void update();
 	void render();
+	void changeAniState(GOLEMANISTATE state);						//애니메이션 변경
+	void initAttack();							//공격하기전 상태별 초기화
 
-	void bossAtkUpdate();
+	void initVGolemAttack();					//벡터에 공격패턴 넣기
+	void suffleVGolemAttack();					//랜덤하게 셔플하기
+	void initGolemHand();						//손공격 이닛
 
-	void initGolemAttack();
-	void suffleGolemAttack();
-	void initGolemHand();
+	void bsFistUpdate();
+	void bsRockShootUpdate();
+	void bsRockRoundUpdate();
+	void bsHandUpdate();
+	void vRockUpdate();
+
 
 	float getX() { return _x; }
 	float getY() { return _y; }
+	bool getIsDead() { return _isDead; }
 
 	void setX(float x) { _x = x; }
 	void setY(float y) { _y = y; }
