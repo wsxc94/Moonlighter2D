@@ -71,7 +71,6 @@ void player::release()
 
 void player::update()
 {
-
 	this->arrowSkillSet();
 	this->playerState();
 	this->animation(_player.direction);
@@ -339,7 +338,6 @@ void player::playerState()
 			break;
 
 		case PLAYER_ATTACK_SWORD:
-			PLAYERDATA->setAtk(RANDOM->range(22, 28));
 			if (_aniSword->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -351,8 +349,7 @@ void player::playerState()
 			}
 			break;
 
-		case PLAYER_ATTACK_SWORD_SECOND:
-			PLAYERDATA->setAtk(RANDOM->range(22, 28));
+		case PLAYER_ATTACK_SWORD_SECOND:		
 			if (_aniSwordTwo->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -400,7 +397,6 @@ void player::playerState()
 			}
 			break;
 		case BOW_CHARGE:
-			PLAYERDATA->setAtk(RANDOM->range(30, 40));
 			if (INPUT->GetKeyUp('K'))
 			{
 				if (_isSkill)
@@ -413,7 +409,6 @@ void player::playerState()
 			}
 			break;
 		case PLAYER_ATTACK_BOW:
-			PLAYERDATA->setAtk(RANDOM->range(18, 23));
 			if (_aniBow->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;

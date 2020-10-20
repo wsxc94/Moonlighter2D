@@ -26,6 +26,7 @@ void bossDungeonScene::release()
 void bossDungeonScene::update()
 {
 	PLAYER->update();
+	PLAYER->updateWeaponState();
 	if(_golemKing)
 	_golemKing->update();
 

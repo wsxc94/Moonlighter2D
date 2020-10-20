@@ -31,6 +31,7 @@ void gotoDungeon::release()
 void gotoDungeon::update()
 {
 	PLAYER->update();
+	PLAYER->updateWeaponState();
 
 	float x = PLAYER->getX();
 	float y = PLAYER->getY();
