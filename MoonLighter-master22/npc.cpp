@@ -188,6 +188,8 @@ void npc::render()
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 	}
+	
+	ShadowPosRender();
 
 	TalkInterfaceRender();
 	
@@ -598,6 +600,34 @@ void npc::ItemActive()
 	{
 		_isActive = true;
 	}
+}
+
+void npc::ShadowPosRender() // 더 수정 및 함수화
+{
+	if (_key == "레드먼드" || _key == "토모") {
+		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
+			_pos.x + _aniNpc->getImage()->getFrameWidth() / 4 - 2,
+			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 4) - 1, 0, 0, 150);
+	}
+	else if(_key == "모리"){
+		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
+			_pos.x + _aniNpc->getImage()->getFrameWidth() / 4 - 6,
+			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 4) - 4, 0, 0, 150);
+	}
+	else if(_key == "마사") {
+		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
+			_pos.x + _aniNpc->getImage()->getFrameWidth() / 4 - 3,
+			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 4) - 3, 0, 0, 150);
+	}
+	else {
+		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
+			_pos.x +1,
+			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 3), 0, 0, 150);
+	}
+}
+
+void npc::ShadowPosSet()
+{
 }
 
 void npc::TalkInterfaceRender()

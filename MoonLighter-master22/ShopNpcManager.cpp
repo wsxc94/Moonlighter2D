@@ -18,7 +18,8 @@ HRESULT ShopNpcManager::init(displayStand* dis)
 	{
 		v_npcs[i] = new npc;
 		
-		int rnd = RANDOM->range(0, 1);
+		//int rnd = RANDOM->range(0, 1);
+		int rnd = 0;
 
 		if(rnd == 0)
 		v_npcs[i]->init(_pos, _npcName[i].first, NPC_SHOP, i, _displayStand);
@@ -57,7 +58,8 @@ void ShopNpcManager::render()
 
 void ShopNpcManager::getInit(int idx , int rnd)
 {
-	int tmp = RANDOM->range(0, 1);
+	//int tmp = RANDOM->range(0, 1);
+	int tmp = 0;
 
 	if(tmp == 0)
 	v_npcs[idx]->init(_pos, _npcName[rnd].first, NPC_SHOP, idx, _displayStand);
