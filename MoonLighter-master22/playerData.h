@@ -5,6 +5,12 @@
 class animation;
 class DungeonMap;
 
+enum GOLD_CHANGE
+{
+	GOLD_ADD,
+	GOLD_SUBTRACT
+};
+
 //결과창에서 보여줄 에너미 공격애니메이션
 typedef struct tagResultEnemyAnimation
 {
@@ -34,12 +40,18 @@ private:
 	int _weaponIdx;				//장착 설정이 되어있는 무기의 인덱스(1 or 2)
 	float _x, _y;
 
+	int _changeValue;				//더하거나 감소시켜줄 값 
+	int _changeFrame;				//1프레임당 변경값 
+	int _destGold;					//최종 변화값
+	GOLD_CHANGE _changeType;		//변화타입(증가/감소)
+
 	bool _isInDungeon;			//플레이어가 던전에 있는지 여부 확인
 	bool _isActivate;			//UI 렌더할건지
 	bool _renderGold;			//UI - 골드 렌더여부 
 	bool _renderHP;				//UI - HP 렌더여부 
 	bool _renderKeyInfo;		//UI - 단축키 및 무기아이콘 렌더여부 
 	bool _renderItemCount;		//UI - 가방아이템카운트 렌더여부 
+	bool _startChangeGold;		//골드 변경 여부 확인
 
 	DungeonMap* _mapData;		//엠블렘으로 집을오면 던전맵데이터를 저장한다
 	int _dgFloor;				//몇층이었는지
@@ -130,6 +142,10 @@ public:
 	void setIsEmblemReturn(bool value) { _isEmblemReturn = value; }
 	void setIsPendantReturn(bool value) { _isPendantReturn = value; }
 	void setDungeonFloor(int floor) { _dgFloor = floor; }
+
+	//골드 감소시키기(1단위로 낮추기)
+	void startChangeGold(int changeValue, GOLD_CHANGE type);
+	void changeGold();
 
 	//인터페이스 렌더함수 
 	void goldRender(HDC hdc);					//현재 소지하고 있는 골드 출력 

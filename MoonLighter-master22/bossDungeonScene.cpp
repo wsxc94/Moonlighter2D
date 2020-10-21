@@ -38,8 +38,7 @@ void bossDungeonScene::release()
 	{
 		_potal->release();
 		SAFE_DELETE(_potal);
-	}
-	
+	}	
 }
 
 void bossDungeonScene::update()

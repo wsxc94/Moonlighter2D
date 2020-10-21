@@ -15,6 +15,11 @@ HRESULT playerData::init()
 	_isEmblemReturn = false;
 	_isPendantReturn = false;
 	_isBossReturn = false;
+	_startChangeGold = false; 
+	_changeType = GOLD_ADD;
+	_changeValue = 0;
+	_destGold = 0;
+	_changeFrame = 20;
 
 	return S_OK;
 }
@@ -25,6 +30,7 @@ void playerData::release()
 
 void playerData::update()
 {
+	changeGold();
 }
 
 void playerData::render(HDC hdc)
@@ -78,6 +84,48 @@ void playerData::minusInDungeonHp(int minusHp)
 	_inDungeonHp -= minusHp;
 
 	if (_inDungeonHp < 0) _inDungeonHp = 0;
+}
+
+void playerData::startChangeGold(int changeValue, GOLD_CHANGE type)
+{
+	_startChangeGold = true; 
+	_changeValue = changeValue;
+	_changeType = type;
+
+	if (_changeType == GOLD_ADD)
+	{
+		_destGold = _gold + changeValue;
+	}
+	else
+	{
+		_destGold = _gold - changeValue;
+	}
+}
+
+void playerData::changeGold()
+{
+	if (!_startChangeGold) return; 
+
+	if (_changeType == GOLD_ADD)
+	{
+		_gold += _changeFrame;
+
+		if (_gold > _destGold)
+		{
+			_gold = _destGold;
+			_startChangeGold = false; 
+		}
+	}
+	else
+	{
+		_gold -= _changeFrame;
+
+		if (_gold < _destGold)
+		{
+			_gold = _destGold;
+			_startChangeGold = false; 
+		}
+	}
 }
 
 void playerData::goldRender(HDC hdc)

@@ -217,7 +217,10 @@ void itemMenuLoading::loadingSound()
 	_loading->loadSound("cursor_pick", "Sound/UI&inventorySound/cursor_pick.wav");
 	_loading->loadSound("cursor_drop", "Sound/UI&inventorySound/cursor_drop.wav");
 	_loading->loadSound("cursor_error", "Sound/UI&inventorySound/cursor_error.wav");
+	_loading->loadSound("gold_decrement", "Sound/UI&inventorySound/gold_decrement.wav");
 
 	//상점(포션,대장간) 사운드
-	_loading->loadSound("witch_Open", "Sound/witch&blacksmith/witch_open.wav");
+	_loading->loadSound("witch_open", "Sound/witch&blacksmith/witch_open.wav");
+	_loading->loadSound("witch_craft", "Sound/witch&blacksmith/witch_craft.wav");
+
 }
