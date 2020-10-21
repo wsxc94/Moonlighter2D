@@ -770,7 +770,7 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("구멍빠짐", "Images/플레이어/hole_fall3X1.bmp", 360, 120, 3, 1);
 	IMAGEMANAGER->addFrameImage("죽음포탈", "Images/플레이어/teleportOut58x1.bmp", 7424, 128, 58, 1);
 
-	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack9X4.bmp", 1080, 480, 9, 4);
+	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack5X4.bmp", 600, 480, 5, 4);
 	IMAGEMANAGER->addFrameImage("활스킬", "Images/플레이어/bow_skill2X4.bmp", 240, 480, 2, 4);
 
 	IMAGEMANAGER->addFrameImage("숏소드", "Images/플레이어/short_attack6X4.bmp", 720, 480, 6, 4);
