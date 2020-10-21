@@ -153,7 +153,8 @@ void itemMenuLoading::loadingImage()
 	_loading->loadImage("menu_potionMake", "Images/PotionShop/menu_potionMake.bmp", 442, 248, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("icon_five", "Images/PotionShop/icon_five.bmp", 38, 12, 2, 1);
 	_loading->loadFrameImage("potion_arrow", "Images/PotionShop/potion_arrow.bmp", 124, 62, 2, 1);
-
+	_loading->loadImage("potion_shadow", "Images/PotionShop/potion_shadow.bmp", 32, 18, true, RGB(255, 0, 255));
+	_loading->loadFrameImage("craftPotionAnim", "Images/PotionShop/craftPotionAnim.bmp", 5888, 368, 16, 1);
 
 	//숫자(흰색) 이미지 초기화 
 	_loading->loadImage("0", "Images/Number/0.bmp", 10, 14, true, RGB(255, 0, 255));

@@ -110,6 +110,10 @@ void potionShop::render()
 				selectMenuRender();
 				_cursor->render(getMemDC());
 				break;
+
+			case POTION_CRAFTING:
+				potionCraftRender();
+				break;
 		}
 	}
 }
@@ -254,7 +258,7 @@ void potionShop::initPotionSlot()
 	
 	//슬롯 2번(HP물약1 제조)
 	_potionSlot[1].slotIdx = 1;
-	_potionSlot[1].type = POTION_MAKE;
+	_potionSlot[1].type = POTION_CRAFT;
 	_potionSlot[1].item = ITEMMENU->getItemManager()->getItemByIdx(POTION1_IDX);
 	_potionSlot[1].price = 125;
 	_potionSlot[1].description[0] = "체력을 40 회복한다. 한두 개";
@@ -272,7 +276,7 @@ void potionShop::initPotionSlot()
 
 	//슬롯 2번(HP물약2 제조)
 	_potionSlot[3].slotIdx = 3;
-	_potionSlot[3].type = POTION_MAKE;
+	_potionSlot[3].type = POTION_CRAFT;
 	_potionSlot[3].item = ITEMMENU->getItemManager()->getItemByIdx(POTION2_IDX);
 	_potionSlot[3].price = 800;
 	_potionSlot[3].description[0] = "체력을 75 회복한다. 제값을";
@@ -325,7 +329,8 @@ void potionShop::setPotionCtrl(POTION_CTRL state)
 			_potionCtrl = state;
 			break;
 
-		case POTION_MAKING:
+		case POTION_CRAFTING:
+			_potionCtrl = state;
 			break; 
 	}
 }
@@ -405,7 +410,7 @@ void potionShop::checkMaxProduceCount()
 	if (maxGoldCount < _maxProduceCount) _maxProduceCount = maxGoldCount;
 
 	//3.포션을 직접 만들 경우 재료에 기반한 최대제조개수까지 구해서 비교  
-	if (_potionSlot[_cursor->getSlotIdx()].type == POTION_MAKE)
+	if (_potionSlot[_cursor->getSlotIdx()].type == POTION_CRAFT)
 	{
 		int maxMaterialCount = _potionSlot[_cursor->getSlotIdx()].mixRecipe->getMaxProduceBasedOnMaterial();
 		if (maxMaterialCount < _maxProduceCount) _maxProduceCount = maxMaterialCount;
@@ -517,8 +522,8 @@ void potionShop::keyInput()
 			selectMenuKeyInput();
 			break;
 
-		case POTION_MAKING:
-			break;
+		//case POTION_CRAFTING:
+		//	break;
 	}
 }
 
@@ -637,7 +642,7 @@ void potionShop::selectMenuKeyInput()
 		{
 			//네
 			SOUNDMANAGER->play("cursor_move", 0.2f);
-			setPotionCtrl(POTION_MAKING);
+			setPotionCtrl(POTION_CRAFTING);
 		}
 		else
 		{
@@ -986,6 +991,26 @@ void potionShop::selectMenuAnimRender()
 		_selectMenu->render(getMemDC(), 730, 150);
 	}
 }
+
+void potionShop::potionCraftRender()
+{
+
+	//포션 그림자 띄우기 
+	IMAGEMANAGER->render("potion_shadow", getMemDC(), 586, 512);
+
+	//제작한 포션개수 출력 
+	countRender(_produceCount, 616, 518, COLOR_WHITE);
+}
+
+void potionShop::potionCraftAnimRender()
+{
+	
+}
+
+void potionShop::potionCraftCountRender()
+{
+}
+
 
 
 

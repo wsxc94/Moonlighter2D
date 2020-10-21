@@ -21,7 +21,7 @@
 enum POTION_TYPE
 {
 	POTION_BUY,
-	POTION_MAKE
+	POTION_CRAFT
 };
 
 //포션메뉴 컨트롤러 
@@ -31,7 +31,7 @@ enum POTION_CTRL
 	POTION_MESSAGE,
 	POTION_SET_COUNT,
 	POTION_SELECTMENU,
-	POTION_MAKING
+	POTION_CRAFTING
 };
 
 //포션메뉴 슬롯 구조체 
@@ -138,5 +138,11 @@ public:
 	void selectMenuRender();			//네,아니오 선택메뉴 렌더 전체 함수 
 	void selectMenuTextRender();		//선택메뉴 텍스트 렌더 
 	void selectMenuAnimRender();		//선택메뉴 아이콘 애니메이션 렌더 
+
+	//렌더 함수(포션 제작)
+	void potionCraftRender();			//포션 제작 렌더 전체 함수 
+	void potionCraftAnimRender();		//포션 제작 애니메이션 렌더 
+	void potionCraftCountRender();
+
 };
 
