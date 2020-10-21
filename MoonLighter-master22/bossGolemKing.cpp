@@ -87,6 +87,27 @@ HRESULT bossGolemKing::init(int x, int y)
 	_isDead = false;
 	_isHit = false;
 	_coliSkillAroow = false;
+	
+
+	//아이템 초기화
+	//아이템 초기화
+	_isItemDrop = true;
+	_itemIndexSize = 11;
+	_itemDropSize = RANDOM->range(3, 10);
+	_itemIndex = new int[_itemIndexSize];
+	_itemNum = new int[_itemDropSize];
+
+	//나올수 있는 아이템인덱스 초기화
+	for (int i = 0; i < 10; i++)
+	{
+		_itemIndex[i] = i + 1;
+	}
+
+	// 드랍될 아이템의 인덱스를 랜덤으로 지정
+	for (int i = 0; i < _itemDropSize; i++)
+	{
+		_itemNum[i] = _itemIndex[RANDOM->range(_itemIndexSize)];
+	}
 
 	return S_OK;
 }
@@ -177,6 +198,7 @@ void bossGolemKing::update()
 			if (_golemAni == GOLEMANISTATE::ANI_DEAD2)
 			{
 				_isDead = true;
+				_isItemDrop = false;
 			}
 		}
 		break;

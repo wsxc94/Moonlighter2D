@@ -89,6 +89,12 @@ private:
 	int _attackCool;							//공격 쿨타임
 	int _hitCount;
 
+	int* _itemIndex;			//아이템 인덱스
+	int* _itemNum;				//아이템 개수
+	int	 _itemIndexSize;		//아이템인덱스 사이즈
+	int  _itemDropSize;			//아이템드롭될개수
+	bool _isItemDrop;
+
 	tagGolemHand _golemHand;					//손으로 찍는공격
 
 	int _rockFireTime;							//일정주기로 돌을 떨어뜨려라
@@ -134,8 +140,12 @@ public:
 	float getX() { return _x; }
 	float getY() { return _y; }
 	bool getIsDead() { return _isDead; }
+	bool getIsItemDrop() { return _isItemDrop; }
 
 	void setX(float x) { _x = x; }
 	void setY(float y) { _y = y; }
+	void setIsItemDrop(bool drop) { _isItemDrop = drop; }
+	int* getDropItemIndex() { return _itemNum; }
+	int getDropItemSize() { return _itemDropSize; }
 };
 

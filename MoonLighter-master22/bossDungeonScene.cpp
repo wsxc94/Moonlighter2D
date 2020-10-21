@@ -29,6 +29,9 @@ HRESULT bossDungeonScene::init()
 
 	this->initItemSlot();
 
+	_itemManager = new itemManager;
+	_itemManager->init();
+
 	return S_OK;
 }
 
@@ -88,6 +91,24 @@ void bossDungeonScene::update()
 		{
 			_potal = new potal;
 			_potal->init(1024, 839, POTAL_INIT);
+
+			if (!_golemKing->getIsItemDrop())
+			{
+				//아이템 드랍
+				for (int j = 0; j < _golemKing->getDropItemSize(); j++)
+				{
+					gameItem* item = new gameItem;
+
+					for (int k = 0; k < _itemManager->getItem().size(); k++)
+					{
+						if (_itemManager->getItem()[k]->getItemIdx() != _golemKing->getDropItemIndex()[j]) continue;
+						item->init(_itemManager->getItem()[k]);
+						item->setItemPos(PointMake(_golemKing->getX(), _golemKing->getY() + 180));
+						_vRootItem.push_back(item);
+					}
+				}
+				_golemKing->setIsItemDrop(true);
+			}
 		}
 		
 		//플레이어 죽으면 결과창
@@ -136,7 +157,22 @@ void bossDungeonScene::update()
 		break;
 	}
 	
-	cout << CAMERAMANAGER->getRect().left << endl;
+	cout << _vRootItem.size() << endl;
+	//아이템 업데이트
+	for (int i = 0; i < _vRootItem.size(); i++)
+	{
+		_vRootItem[i]->moveUpdate(PLAYER->getX(), PLAYER->getY());
+
+		//아이템 랙트와 플레이어 랙트가 충돌할 경우 
+		//획득한 아이템은 인벤토리 벡터로 이동하고 현재 벡터에서는 해당 아이템 삭제 
+		if (_vRootItem[i]->checkCollision(PLAYER->getRect()) && _vRootItem[i]->getItem().moveState != ITEM_INIT)
+		{
+			if (ITEMMENU->getInventory()->addItemToInven(*_vRootItem[i]))
+			{
+				_vRootItem.erase(_vRootItem.begin() + i);
+			}
+		}
+	}
 
 	CAMERAMANAGER->update(PLAYER->getX(), PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
@@ -173,6 +209,11 @@ void bossDungeonScene::render()
 	POINT pt = CAMERAMANAGER->getRelativeMouse(_ptMouse);
 	//textOut(getMemDC(), 10, 120, to_string(pt.x).c_str(), to_string(pt.x).size());
 	//textOut(getMemDC(), 10, 150, to_string(pt.y).c_str(), to_string(pt.y).size());
+
+	for (int i = 0; i < _vRootItem.size(); i++)
+	{
+		_vRootItem[i]->render(getMemDC());
+	}
 
 	//타일 확인용
 	if (INPUT->GetToggleKey(VK_F1))
