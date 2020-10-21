@@ -1,12 +1,11 @@
 #pragma once
-#include "gameNode.h"
 #include "tileNode.h"
-#include "npc.h"
+#include "PotionShopNpc.h"
 
-class npcManager : public gameNode // 마을 npc 매니저
+class npcManager // 마을 npc 매니저
 {
 private:
-	npc* _witch;
+	PotionShopNpc* _witch;
 	npc* _girl;
 	npc* _blackOctopus;
 	npc* _masa;
@@ -24,5 +23,7 @@ public:
 	void render();
 
 	void Coll(); // npc 충돌 함수
+
+	PotionShopNpc* getPotionShopNpc() { return dynamic_cast<PotionShopNpc*>(_witch); }
 };
 

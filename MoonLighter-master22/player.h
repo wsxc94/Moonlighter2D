@@ -76,7 +76,6 @@ private:
 	bool _left;
 	bool _up;
 	bool _down;
-	bool _isShoot;
 	bool _isTalk;
 	bool _isHit;
 	bool _isDie;
@@ -178,7 +177,6 @@ public:
 	bool& getLeft() { return _left; }
 	bool& getUp() { return _up; }
 	bool& getDown() { return _down; }
-	bool getShoot() { return _isShoot; }
 	bool getSkill() { return _isSkill; }
 
 
@@ -192,7 +190,6 @@ public:
 	void setY(float y) { _player.y = y; }
 	void setRollPower(float p) { _rollJumpPower = p; }
 	void setRollGravity(float g) { _rollGravity = g; }
-	void setShoot(bool isShoot) { _isShoot = isShoot; }
 	void setSkill(bool isSkill) { _isSkill = isSkill; }
 
 	tagPlayerAttackBox& getPlayerAttackBox() { return _playerAttackBox; }

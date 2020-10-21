@@ -25,6 +25,7 @@ private:
 	int _alpha;
 	float _x, _y;
 	bool _isSkill;
+	bool _isShoot;
 
 	vector<tagShadowArrow> _shadowArrow;
 
@@ -51,6 +52,8 @@ public:
 	void setY(float y) { _y = y; }
 	void setAlpha(int alpha) { _alpha = alpha; }
 
+	bool getIsShoot() { return _isShoot; }
+	void setIsShoot(bool value);
 
 };
 

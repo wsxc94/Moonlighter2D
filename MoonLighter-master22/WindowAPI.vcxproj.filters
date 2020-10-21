@@ -312,6 +312,9 @@
     <ClCompile Include="itemMenuLoading.cpp">
       <Filter>GameFramework\아이템\itemMenuLoading</Filter>
     </ClCompile>
+    <ClCompile Include="PotionShopNpc.cpp">
+      <Filter>MainGame\NPC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -499,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="itemMenuLoading.h">
       <Filter>GameFramework\아이템\itemMenuLoading</Filter>
+    </ClInclude>
+    <ClInclude Include="PotionShopNpc.h">
+      <Filter>MainGame\NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
