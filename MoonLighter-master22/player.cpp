@@ -658,8 +658,10 @@ void player::playerMove()
 
 void player::playerAttack()
 {
+	
 	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
+
 		if (!_isShoot)
 		{
 
@@ -679,16 +681,24 @@ void player::playerAttack()
 				break;
 
 			case BOW:
-				if (!_isShoot)
+           
+				_isShoot = true;
+
+				if (_isShoot)
 				{
+
 					_state = PLAYER_ATTACK_BOW;
+
 					if (!SOUNDMANAGER->isPlaySound("화살발사"))
 					{
 						SOUNDMANAGER->play("화살발사", 0.3f);
 					}
 					_aniBow->aniRestart();
-					_isShoot = true;
+
+					return;
 				}
+
+					
 				break;
 			}
 		}

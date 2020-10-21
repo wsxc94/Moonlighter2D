@@ -11,11 +11,12 @@ void npc::setshopTargetPos() // 상점에서 npc쪽 좌표 set
 	tmp.push_back(tagPosF(600, 750));
 	tmp.push_back(tagPosF(425, 750));
 	tmp.push_back(tagPosF(421, 650));
-
 	tmp.push_back(tagPosF(421, 600));
 	tmp.push_back(tagPosF(580, 600));
 	tmp.push_back(tagPosF(580, 690));
+
 	tmp.push_back(tagPosF(620, 680));
+	tmp.push_back(tagPosF(800, 710));
 	tmp.push_back(tagPosF(660, 830));
 
 	shop_target.push_back(tmp);
@@ -28,6 +29,7 @@ void npc::setshopTargetPos() // 상점에서 npc쪽 좌표 set
 
 	tmp.push_back(tagPosF(610, 740));
 	tmp.push_back(tagPosF(640, 680));
+	tmp.push_back(tagPosF(800, 710));
 	tmp.push_back(tagPosF(660, 830));
 	shop_target.push_back(tmp);
 
@@ -38,6 +40,7 @@ void npc::setshopTargetPos() // 상점에서 npc쪽 좌표 set
 	tmp.push_back(tagPosF(420, 710));
 	tmp.push_back(tagPosF(460, 790));
 	tmp.push_back(tagPosF(660, 680));
+	tmp.push_back(tagPosF(800, 710));
 	tmp.push_back(tagPosF(660, 830));
 
 	shop_target.push_back(tmp);
@@ -47,6 +50,7 @@ void npc::setshopTargetPos() // 상점에서 npc쪽 좌표 set
 	tmp.push_back(tagPosF(580, 731));
 	tmp.push_back(tagPosF(563, 711));
 	tmp.push_back(tagPosF(680, 680));
+	tmp.push_back(tagPosF(800, 710));
 	tmp.push_back(tagPosF(660, 830));
 	shop_target.push_back(tmp);
 
@@ -111,7 +115,6 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 	_isSpawn = false;
 
 	setshopTargetPos();
-
 
 	shop_targetIdx = idx;
 
@@ -206,7 +209,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 		_aniNpc->aniStop();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 
-		if (_state == NPC_CHECK_PRICE || NPC_WAIT)
+		if (_state == NPC_CHECK_PRICE || _state == NPC_WAIT)
 		{
 			_aniPriceCheck->ZoderRender(
 				_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight(),
@@ -235,14 +238,13 @@ void npc::render(NPC_MAP NPC_SHOP)
 
 void npc::anim() // npc각도에 따라 애니메이션을 바꿔주는 함수
 {
-
 	_aniNpc->update();
 	if ((_state == NPC_MOVE || _state == NPC_ITEM_PICK) && !_stop)
 	{
 		if (_key != "에리스" && _key != "강아지npc") {
-			if (RadianToDegree(_angle) >= 225 && RadianToDegree(_angle) <= 360) _aniNpc->setFrameY(0);
+			if (RadianToDegree(_angle) >= 225 && RadianToDegree(_angle) <= 330) _aniNpc->setFrameY(0);
 			if (RadianToDegree(_angle) >= 45 && RadianToDegree(_angle) < 135) _aniNpc->setFrameY(1);
-			if (RadianToDegree(_angle) >= 0 && RadianToDegree(_angle) < 45) {
+			if (RadianToDegree(_angle) >= 0 && RadianToDegree(_angle) < 45 || RadianToDegree(_angle) >= 335) {
 				if(_key != "도둑강아지")
 				_aniNpc->setFrameY(2);
 				else
@@ -309,6 +311,12 @@ void npc::move()
 void npc::move(NPC_MAP NPC_SHOP)
 {
 	_time++;
+	if (_state == NPC_STOP) {
+		if (_time % 160 == 0) {
+			shop_currentTargetIdx++;
+			_state = NPC_MOVE;
+		}
+	}
 
 	if (_state == NPC_MOVE || _state == NPC_ITEM_PICK)
 	{
@@ -336,6 +344,9 @@ void npc::DistanceCheck()
 			shop_currentTargetIdx++;
 		}
 	}
+	if (_key != "배낭맨여자" && shop_currentTargetIdx == shop_target[shop_targetIdx].size() - 2) {
+		shop_currentTargetIdx++;
+	}
 
 	if (getDistance(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
 		shop_target[shop_targetIdx][shop_currentTargetIdx].y) < 1)
@@ -344,6 +355,7 @@ void npc::DistanceCheck()
 
 		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() && !_delay) {
 			_delay = true;
+			
 
 			if (shop_currentTargetIdx == 2) {
 
@@ -374,14 +386,20 @@ void npc::DistanceCheck()
 				}
 
 			}
+			else if (_key == "배낭맨여자" && (shop_target[shop_targetIdx].size() - 2) == shop_currentTargetIdx)
+			{
+				_state = NPC_STOP;
+				_aniNpc->setFrameY(2);
+				_time = 0;
+
+			}
 			else if (shop_target[shop_targetIdx].size() - 1 == shop_currentTargetIdx)
 			{
-			
+
 				_state = NPC_GO_HOME;
 				_isActive = false;
 				//SOUNDMANAGER->play();
 			}
-
 			else {
 				shop_currentTargetIdx++;
 			}
@@ -580,11 +598,9 @@ void npc::PriceCheckAnim()
 			else {
 				_state = NPC_MOVE;
 			}
-
 			_stop = false;
 			_speed = 1.0f;
 			shop_currentTargetIdx++;
-			//_state = NPC_MOVE;
 		}
 	}
 }
