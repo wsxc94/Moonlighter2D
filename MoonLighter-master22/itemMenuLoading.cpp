@@ -58,8 +58,8 @@ void itemMenuLoading::loadingImage()
 	_loading->loadImage("grabBase", "Images/ItemMenu/grabBase.bmp", 72, 72, true, RGB(255, 0, 255));
 	_loading->loadImage("item_slot", "Images/ItemMenu/item_slot.bmp", 60, 60, true, RGB(255, 0, 255));
 	_loading->loadImage("inventory_selectBubble", "Images/ItemMenu/inventory_selectBubble.bmp", 220, 144, true, RGB(255, 0, 255));
-	_loading->loadFrameImage("select_yes", "Images/ItemMenu/select_yes.bmp", 312, 78, 4, 1);
-	_loading->loadFrameImage("select_no", "Images/ItemMenu/select_no.bmp", 312, 78, 4, 1);
+	_loading->loadFrameImage("select_yes", "Images/ItemMenu/select_yes.bmp", 390, 78, 5, 1);
+	_loading->loadFrameImage("select_no", "Images/ItemMenu/select_no.bmp", 390, 78, 5, 1);
 	_loading->loadImage("bag_pendant", "Images/ItemMenu/bag_pendant.bmp", 70, 48, true, RGB(255, 0, 255));
 	_loading->loadImage("bag_emblem", "Images/ItemMenu/bag_emblem.bmp", 68, 66, true, RGB(255, 0, 255));
 
@@ -151,9 +151,8 @@ void itemMenuLoading::loadingImage()
 	_loading->loadImage("shop_bubble", "Images/PotionShop/shop_bubble.bmp", 500, 160, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("shop_ox", "Images/PotionShop/shop_ox.bmp", 76, 60, 2, 1);
 	_loading->loadImage("menu_potionMake", "Images/PotionShop/menu_potionMake.bmp", 442, 248, true, RGB(255, 0, 255));
-	_loading->loadFrameImage("minusFive", "Images/PotionShop/minusFive.bmp", 38, 12, true, 2,1);
-	_loading->loadFrameImage("plusFive", "Images/PotionShop/plusFive.bmp", 38, 12, true, 2,1);
-	_loading->loadFrameImage("potion_arrow", "Images/PotionShop/potion_arrow.bmp", 442, 248, true, RGB(255, 0, 255));
+	_loading->loadFrameImage("icon_five", "Images/PotionShop/icon_five.bmp", 38, 12, 2, 1);
+	_loading->loadFrameImage("potion_arrow", "Images/PotionShop/potion_arrow.bmp", 124, 62, 2, 1);
 
 
 	//숫자(흰색) 이미지 초기화 

@@ -7,10 +7,17 @@ HRESULT potionShop::init()
 	_fadeManager = new fadeManager;
 	_fadeManager->init();
 
-	//포션슬롯 초기화 
+	//셀렉트메뉴 초기화 
+	_selectMenu = new selectMenu;
+	_selectMenu->init();
+
+	//커서 초기화 
+	_cursor = new cursor;
+	_cursor->init();
+
+	//포션상점 초기화 
 	initPotionSlot();
-	_potionCtrl = POTION_MENU;
-	_messageType = LACK_OF_GOLD;
+	initPotionShop();
 
 	//이동메뉴 클래스 초기화 
 	_potionMenu = new movingObject;
@@ -24,11 +31,6 @@ HRESULT potionShop::init()
 	_eKeyIcon = new movingObject;
 	_eKeyIcon->init(IMAGEMANAGER->findImage("icon_potionKeyE"),
 		WINSIZEX, POTION_EKEYPOSY, 20.f);
-
-	//커서 초기화 
-	_cursor = new cursor;
-	_cursor->init();
-	initCursor();
 
 	//메뉴 열고 닫기 관련 변수 초기화 
 	_menuOn = false; 
@@ -45,12 +47,14 @@ void potionShop::release()
 	SAFE_DELETE(_potionMenu);
 	SAFE_DELETE(_shopBanner);
 	SAFE_DELETE(_eKeyIcon);
+	SAFE_DELETE(_selectMenu);
 	SAFE_DELETE(_cursor);
 }
 
 void potionShop::update()
 {
 	_fadeManager->update();
+	_selectMenu->update();
 	_cursor->update();
 
 	//메뉴 열고 닫기 
@@ -62,7 +66,6 @@ void potionShop::update()
 	{
 		//키입력 함수 
 		keyInput();
-
 	}
 }
 
@@ -71,7 +74,7 @@ void potionShop::render()
 	_fadeManager->render(getMemDC());
 
 	//char str[100];
-	//wsprintf(str, "cursorIdx : %d", _cursor->getSlotIdx());
+	//wsprintf(str, "maxProduceCount : %d", _maxProduceCount);
 	//TextOut(getMemDC(), 10, 130, str, strlen(str));
 	
 	if (!_menuOn) return; 
@@ -100,9 +103,11 @@ void potionShop::render()
 				break;
 
 			case POTION_SET_COUNT:
+				setCountRender();
 				break;
 
-			case POTION_SET_OX:
+			case POTION_SELECTMENU:
+				selectMenuRender();
 				_cursor->render(getMemDC());
 				break;
 		}
@@ -127,6 +132,7 @@ void potionShop::toggleMenu()
 		{
 			_menuOn = true;
 			_openMenu = true;
+			initPotionShop();
 
 			//인터페이스 렌더여부 설정 
 			PLAYERDATA->setRenderHp(false);
@@ -272,8 +278,8 @@ void potionShop::initPotionSlot()
 	_potionSlot[3].description[0] = "체력을 75 회복한다. 제값을";
 	_potionSlot[3].description[1] = "톡톡히 하는 제품이다.";
 	_potionSlot[3].mixRecipe = new recipe;
-	_potionSlot[3].mixRecipe->addMaterial(RICHJELLY_IDX, 10);
-	_potionSlot[3].mixRecipe->addMaterial(VENOMJELLY_IDX, 15);
+	_potionSlot[3].mixRecipe->addMaterial(RICHJELLY_IDX, 1);
+	_potionSlot[3].mixRecipe->addMaterial(VENOMJELLY_IDX, 1);
 }
 
 void potionShop::initCursor()
@@ -283,11 +289,24 @@ void potionShop::initCursor()
 	_cursor->setDestY(POTION_CURSORY);
 }
 
+void potionShop::initPotionShop()
+{
+	setPotionCtrl(POTION_MENU);
+	_messageType = LACK_OF_GOLD;
+	initCursor();
+
+	_produceCount = 1;
+	_maxProduceCount = 1;
+}
+
 void potionShop::setPotionCtrl(POTION_CTRL state)
 {
 	switch (state)
 	{
 		case POTION_MENU:
+			_cursor->setDestX(POTION_CURSORX + (_cursor->getSlotIdx()*POTION_CURSOR_DISTANCE));
+			_cursor->setDestY(POTION_CURSORY);
+			_cursor->setCursorState(CURSOR_MOVE);
 			_potionCtrl = state;
 			break;
 
@@ -296,12 +315,18 @@ void potionShop::setPotionCtrl(POTION_CTRL state)
 			break;
 
 		case POTION_SET_COUNT:
+			_produceCount = 1;
 			_potionCtrl = state;
 			break;
 
-		case POTION_SET_OX:
+		case POTION_SELECTMENU:
+			_cursor->setDestPos(718, 138);
+			_cursor->setCursorState(CURSOR_SELECT_MOVE);
 			_potionCtrl = state;
 			break;
+
+		case POTION_MAKING:
+			break; 
 	}
 }
 
@@ -363,6 +388,27 @@ bool potionShop::checkRequirements()
 			}
 			else return true; 
 		}
+	}
+}
+
+void potionShop::checkMaxProduceCount()
+{
+	//1.인벤토리 슬롯에 기반한 최대제조개수 구하기 
+	_maxProduceCount = ITEMMENU->getInventory()->getMaxProduceBasedOnRoom(
+		_potionSlot[_cursor->getSlotIdx()].item.getItemIdx(),
+		_potionSlot[_cursor->getSlotIdx()].item.getMaxCount());
+
+	//2.골드에 기반한 최대제조개수 구하기 
+	int maxGoldCount = PLAYERDATA->getGold() / _potionSlot[_cursor->getSlotIdx()].price;
+
+	//1. 2번 중에서 최종적으로 더 적은 경우를 최대제조개수로 설정 
+	if (maxGoldCount < _maxProduceCount) _maxProduceCount = maxGoldCount;
+
+	//3.포션을 직접 만들 경우 재료에 기반한 최대제조개수까지 구해서 비교  
+	if (_potionSlot[_cursor->getSlotIdx()].type == POTION_MAKE)
+	{
+		int maxMaterialCount = _potionSlot[_cursor->getSlotIdx()].mixRecipe->getMaxProduceBasedOnMaterial();
+		if (maxMaterialCount < _maxProduceCount) _maxProduceCount = maxMaterialCount;
 	}
 }
 
@@ -452,14 +498,6 @@ void potionShop::printLackOfRoom()
 	DeleteObject(font);
 }
 
-void potionShop::buyPotion()
-{
-}
-
-void potionShop::makePotion()
-{
-}
-
 void potionShop::keyInput()
 {
 	switch (_potionCtrl)
@@ -475,7 +513,11 @@ void potionShop::keyInput()
 			setCountKeyInput();
 			break;
 
-		case POTION_SET_OX:
+		case POTION_SELECTMENU:
+			selectMenuKeyInput();
+			break;
+
+		case POTION_MAKING:
 			break;
 	}
 }
@@ -487,44 +529,43 @@ void potionShop::menuKeyInput()
 	{
 		leftKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('D'))
 	{
 		rightKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('W'))
 	{
 		upKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('S'))
 	{
 		downKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 
 	//J키 입력(포션 제조)
 	if (INPUT->GetKeyDown('J'))
 	{
 		_cursor->setCursorState(CURSOR_CLICK);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 
+		//빈 슬롯은 건너뛰기 
 		if (_cursor->getSlotIdx() >= POTION_MAXSLOT) return; 
 
-		//포션 제조를 위한 필요요건 충족여부 확인하고 구매,제조에 따라 함수 실행 
-		//if (_potionSlot[_cursor->getSlotIdx()].type == POTION_BUY)
-		//{
-		//	if(checkRequirements()) buyPotion();
-		//	SOUNDMANAGER->play("cursor_move", 0.2f);
-		//}
-		//else
-		//{
-		//	if(checkRequirements()) makePotion();
-		//	SOUNDMANAGER->play("cursor_move", 0.2f);
-		//}
-
-		if (checkRequirements()) setPotionCtrl(POTION_SET_COUNT);
-		SOUNDMANAGER->play("cursor_move", 0.2f);
+		//필요충분조건을 확인하고 생성 가능하면 개수 선택화면으로 이동 
+		if (checkRequirements())
+		{
+			//생성 가능한 최대 개수를 세팅하고 개수 선택창으로 이동 
+			checkMaxProduceCount();
+			setPotionCtrl(POTION_SET_COUNT);
+		}
 	}
 }
 
@@ -539,6 +580,72 @@ void potionShop::messageKeyInput()
 
 void potionShop::setCountKeyInput()
 {
+	//상하좌우 키 입력에 따라 만들고자 하는 개수 변경 
+	if (INPUT->GetKeyDown('W'))
+	{
+		if(_produceCount < _maxProduceCount)_produceCount++;
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+	if (INPUT->GetKeyDown('S'))
+	{
+		if(_produceCount > 1) _produceCount--;
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+	if (INPUT->GetKeyDown('A'))
+	{
+		if (_produceCount <= 5) _produceCount = 1;
+		else _produceCount -= 5;
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+	if (INPUT->GetKeyDown('D'))
+	{
+		if (_produceCount + 5 > _maxProduceCount) _produceCount = _maxProduceCount;
+		else _produceCount += 5;
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+
+	//J키를 입력해서 제조 결정 
+	if (INPUT->GetKeyDown('J'))
+	{
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+		
+		setPotionCtrl(POTION_SELECTMENU);
+	}
+}
+
+void potionShop::selectMenuKeyInput()
+{
+	//좌우 키 입력 시 selectIdx값 변경하기(네,아니오)
+	if (INPUT->GetKeyDown('A') && _selectMenu->getSelectIdx() != SELECT_YES)
+	{
+		_selectMenu->setMenuState(SELECT_YES);
+		_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		_cursor->setDestX(620);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+	if (INPUT->GetKeyDown('D') && _selectMenu->getSelectIdx() != SELECT_NO)
+	{
+		_selectMenu->setMenuState(SELECT_NO);
+		_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		_cursor->setDestX(718);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+
+	if (INPUT->GetKeyDown('J'))
+	{
+		if (_selectMenu->getSelectIdx() == SELECT_YES)
+		{
+			//네
+			SOUNDMANAGER->play("cursor_move", 0.2f);
+			setPotionCtrl(POTION_MAKING);
+		}
+		else
+		{
+			//아니요 
+			SOUNDMANAGER->play("cursor_move", 0.2f);
+			setPotionCtrl(POTION_MENU);
+		}
+	}
 }
 
 void potionShop::leftKeyDown()
@@ -753,6 +860,131 @@ void potionShop::recipeInfoRender()
 
 void potionShop::setCountRender()
 {
+	//카운트 세팅 메뉴 렌더 
+	IMAGEMANAGER->render("menu_potionMake", getMemDC(), 396, 236);
+	setCountTextRender();
+
+	//카운트 세팅 화살표 렌더 
+	setCountIconRender();
+
+	//카운트 세팅 아이템 렌더 
+	_potionSlot[_cursor->getSlotIdx()].item.getItemImg()->render(getMemDC(), 470, 354);
+
+	//카운트 렌더 
+	countRender(_produceCount, 505, 394, COLOR_BLACK);
+	totalPriceRender();
+}
+
+void potionShop::setCountTextRender()
+{
+	//'몇 개나 필요하세요?' 출력  
+	RECT txtRC1 = RectMake(414, 254, 174, 24);
+	HFONT font = CreateFont(19, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+	HFONT oFont = (HFONT)SelectObject(getMemDC(), font);
+	SetTextColor(getMemDC(), RGB(224, 205, 169));
+	DrawText(getMemDC(), "몇 개나 필요하세요?", -1, &txtRC1, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+	SelectObject(getMemDC(), oFont);
+	DeleteObject(font);
+
+	//'필요:' 출력  
+	RECT txtRC2 = RectMake(604, 304, 46, 24);
+	DrawText(getMemDC(), "필요:", -1, &txtRC2, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+	SelectObject(getMemDC(), oFont);
+	DeleteObject(font);
+}
+
+void potionShop::setCountIconRender()
+{
+	if (_produceCount > 1)
+	{
+		IMAGEMANAGER->frameRender("potion_arrow", getMemDC(), 439, 372, 0, 0);
+		IMAGEMANAGER->frameRender("icon_five", getMemDC(), 424, 356, 0, 0);
+	}
+
+	if (_produceCount < _maxProduceCount)
+	{
+		IMAGEMANAGER->frameRender("potion_arrow", getMemDC(), 487, 324, 1, 0);
+		IMAGEMANAGER->frameRender("icon_five", getMemDC(), 545, 356, 1, 0);
+	}
+}
+
+void potionShop::produceCountRender()
+{
+
+}
+
+void potionShop::totalPriceRender()
+{
+	int totalPrice = _produceCount * _potionSlot[_cursor->getSlotIdx()].price;
+
+	countRender(totalPrice, 769, 330, COLOR_WHITE);
+}
+
+void potionShop::countRender(int count, int destX, int destY, COLOR_TYPE color)
+{
+	for (int i = 1, distance = 0; i <= count; i *= 10)
+	{
+		int number = (count / i) % 10;
+
+		char keyName[16];
+
+		switch (color)
+		{
+			case COLOR_BLACK:
+				wsprintf(keyName, "%d_black", number);
+				IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
+				break;
+
+			case COLOR_WHITE:
+				wsprintf(keyName, "%d", number);
+				IMAGEMANAGER->render(keyName, getMemDC(), destX - (distance * 12), destY);
+				break;
+		}
+
+		distance++;
+
+	}//end of for 
+}
+
+void potionShop::selectMenuRender()
+{
+	//말풍선 출력 
+	IMAGEMANAGER->render("shop_bubble", getMemDC(), 328, 120);
+	selectMenuTextRender();
+
+	selectMenuAnimRender();
+}
+
+void potionShop::selectMenuTextRender()
+{
+	char tempStr[72];
+	strcpy(tempStr, _potionSlot[_cursor->getSlotIdx()].item.getName());
+	strcat(tempStr, "을(를) 만들고 싶어?");
+
+	RECT txtRC = RectMake(352, 168, 448, 54);
+	HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+	HFONT oFont = (HFONT)SelectObject(getMemDC(), font);
+	SetTextColor(getMemDC(), RGB(230, 215, 187));
+	DrawText(getMemDC(), tempStr,
+		-1, &txtRC, DT_LEFT | DT_SINGLELINE | DT_VCENTER);
+	SelectObject(getMemDC(), oFont);
+	DeleteObject(font);
+}
+
+void potionShop::selectMenuAnimRender()
+{
+	if (_selectMenu->getSelectIdx() == SELECT_YES)
+	{
+		IMAGEMANAGER->frameRender("select_no", getMemDC(), 730, 150, 0, 0);
+		_selectMenu->render(getMemDC(), 632, 150);
+	}
+	else
+	{
+		IMAGEMANAGER->frameRender("select_yes", getMemDC(), 632, 150, 0, 0);
+		_selectMenu->render(getMemDC(), 730, 150);
+	}
 }
 
 

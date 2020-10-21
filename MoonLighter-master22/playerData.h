@@ -109,7 +109,7 @@ public:
 	void setItemCount(int itemCount) { _itemCount = itemCount; }
 	void setX(float x) { _x = x; }
 	void setY(float y) { _y = y; }
-	void setIsInDungeon(bool value) { _isInDungeon = value; }
+	void setIsInDungeon(bool value) {_isInDungeon = value; }
 	void setPotionEquipped(gameItem item) { _potionEquipped = item; }
 	void setWeaponIdx(int index) { _weaponIdx = index; }
 	void setWeaponEquipped(gameItem item) { _weaponEquipped = item; }

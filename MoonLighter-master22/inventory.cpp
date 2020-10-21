@@ -106,13 +106,13 @@ void inventory::render(HDC hdc)
 		}//end of switch 
 	}
 
-	//char str[128];
+	char str[128];
 
-	//wsprintf(str, "invenSize : %d", _vInven.size());
-	//TextOut(hdc, 10, 130, str, strlen(str));
+	wsprintf(str, "cursorTime : %d", _cursor->getClickTime());
+	TextOut(hdc, 10, 130, str, strlen(str));
 
-	//wsprintf(str, "canGrab : %d", _canGrab);
-	//TextOut(hdc, 10, 150, str, strlen(str));
+	wsprintf(str, "canGrab : %d", _canGrab);
+	TextOut(hdc, 10, 150, str, strlen(str));
 
 	//wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
 	//TextOut(hdc, 10, 170, str, strlen(str));
@@ -238,6 +238,40 @@ bool inventory::checkRoomForItem(int itemIdx)
 	cout << slotOccupied << endl;
 
 	if (slotOccupied >= MAXITEMSLOT) return false; 
+}
+
+int inventory::getMaxProduceBasedOnRoom(int itemIdx, int maxCount)
+{
+	int possibleCount = 0;
+
+	for (int i = 0; i < MAXSLOT; i++)
+	{
+		//일반 아이템 슬롯만 확인 
+		if (_invenSlot[i].type != ITEM_NORMAL) continue;
+
+		//빈 슬롯이 있다면 해당 아이템의 맥스개수만큼 더하고 건너뛰기 
+		if (_invenSlot[i].isEmpty)
+		{
+			possibleCount += maxCount;
+			continue;
+		}
+
+		for (int j = 0; j < _vInven.size(); j++)
+		{
+			//i번 인덱스 자리에 있는 아이템이 아니라면 건너뛰기 
+			if (_vInven[j]->getInvenPosIdx() != i) continue;
+
+			//i번 인덱스 자리에 있는 아이템이 다른 종류의 아이템이라면 카운트++;
+			if (_vInven[j]->getItemIdx() != itemIdx) continue;
+			else
+			{
+				//같은 종류일 때는 (최대소지개수 - 소지개수)만큼 더하기 
+				possibleCount += (maxCount - _vInven[j]->getCount());
+			}
+		}//end of for(j)
+	}//end of for(i)
+
+	return possibleCount;
 }
 
 void inventory::initPos()
@@ -593,21 +627,25 @@ void inventory::invenKeyInput()
 	{
 		upKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('S'))
 	{
 		downKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('A'))
 	{
 		leftKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 	if (INPUT->GetKeyDown('D'))
 	{
 		rightKeyDown();
 		_cursor->setCursorState(CURSOR_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 
 	//버튼을 누르고 있는 시간에 따라 
@@ -618,6 +656,7 @@ void inventory::invenKeyInput()
 		putItem();
 		setMerchantCtrl();
 	}
+
 	if (INPUT->GetKeyUp('J'))
 	{
 		//한꺼번에 잡기를 실행할 정도로 길게 누르지 않고 손을 뗄 경우
@@ -627,9 +666,10 @@ void inventory::invenKeyInput()
 		_isPuttingItem = false;
 		_grabSoundPlayed = false;
 		_cursor->setClickTime(0);
+		_canGrab = true;
 	}
 	else if (INPUT->GetKey('J'))
-	{		
+	{
 		_cursor->setClickTime(_cursor->getClickTime() + 1);
 
 		//꾹 누르고 있으면 한꺼번에 잡기 실행 
@@ -646,21 +686,17 @@ void inventory::mirrorKeyInput()
 
 void inventory::pendantKeyInput()
 {
-	//좌우 키 입력 시 selectIdx값 변경하기(네,아니오)
-	if (INPUT->GetKeyDown('A') || INPUT->GetKeyDown('D'))
+	if (INPUT->GetKeyDown('A') && _selectMenu->getSelectIdx() != SELECT_YES)
 	{
-		if (_selectMenu->getSelectIdx() == SELECT_NO)
-		{
-			_selectMenu->setSelectIdx(SELECT_YES);
-			_selectMenu->setMenuState(SELECT_YES);
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-		}
-		else
-		{
-			_selectMenu->setSelectIdx(SELECT_NO);
-			_selectMenu->setMenuState(SELECT_NO);
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-		}
+		_selectMenu->setMenuState(SELECT_YES);
+		_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+	if (INPUT->GetKeyDown('D') && _selectMenu->getSelectIdx() != SELECT_NO)
+	{
+		_selectMenu->setMenuState(SELECT_NO);
+		_cursor->setCursorState(CURSOR_SELECT_MOVE);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
 	}
 
 	//네,아니요 중 선택하기 
@@ -682,15 +718,14 @@ void inventory::pendantKeyInput()
 			//5. 선택메뉴의 상태 초기화(NO)
 			//6. 플레이어 상태를 팬던트사용으로 변경해줌
 
+			SOUNDMANAGER->play("cursor_move", 0.2f);
 			ITEMMENU->setGoToTownPendant(true);
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(200);
 			_selectMenu->setMenuState(SELECT_NO);
-			_canGrab = false;
 			_cursor->setClickTime(0);
 
 			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 		}
 	}
 	if (INPUT->GetKeyUp('J'))
@@ -710,27 +745,27 @@ void inventory::pendantKeyInput()
 void inventory::emblemKeyInput()
 {
 	//좌우 키 입력 시 selectIdx값 변경하기(네,아니오)
-	if (INPUT->GetKeyDown('A') || INPUT->GetKeyDown('D'))
+	if (INPUT->GetKeyDown('A') && _selectMenu->getSelectIdx() != SELECT_YES)
 	{
-		if (_selectMenu->getSelectIdx() == SELECT_NO)
-		{
-			_selectMenu->setSelectIdx(SELECT_YES);
-			_selectMenu->setMenuState(SELECT_YES);
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-		}
-		else
-		{
-			_selectMenu->setSelectIdx(SELECT_NO);
-			_selectMenu->setMenuState(SELECT_NO);
-			_cursor->setCursorState(CURSOR_SELECT_MOVE);
-		}
+		_selectMenu->setMenuState(SELECT_YES);
+		_cursor->setCursorState(CURSOR_SELECT_MOVE);
+	}
+	if (INPUT->GetKeyDown('D') && _selectMenu->getSelectIdx() != SELECT_NO)
+	{
+		_selectMenu->setMenuState(SELECT_NO);
+		_cursor->setCursorState(CURSOR_SELECT_MOVE);
+
 	}
 
 	//네,아니오 중 선택하기 
 	if (INPUT->GetKeyDown('J'))
 	{
 		//아니오 선택 시 인벤토리 컨트롤러로 변경 
-		if (_selectMenu->getSelectIdx() == SELECT_NO) setInvenCtrl(INVEN_INVENTORY);
+		if (_selectMenu->getSelectIdx() == SELECT_NO)
+		{
+			setInvenCtrl(INVEN_INVENTORY);
+			SOUNDMANAGER->play("cursor_move", 0.2f);
+		}
 		else
 		{
 			//네 선택 시 마을로 돌아가기 
@@ -745,7 +780,7 @@ void inventory::emblemKeyInput()
 			ITEMMENU->DoCloseMenu();
 			PLAYERDATA->subGold(1000);
 			_selectMenu->setMenuState(SELECT_NO);
-			_canGrab = false;
+			_cursor->setClickTime(0);
 
 			ITEMMENU->getFadeManager()->fadeInit(16, FADE_IN);
 			SOUNDMANAGER->play("cursor_move", 0.2f);

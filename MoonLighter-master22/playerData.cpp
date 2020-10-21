@@ -53,7 +53,7 @@ void playerData::initPlayerStatus()
 
 	_hpBarLength = 130;
 
-	_gold = 2000;
+	_gold = 5000;
 
 	_itemCount = 0;
 

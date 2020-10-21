@@ -60,6 +60,7 @@ public:
 	void setShowCursor(bool value) { _showCursor = value; }
 	void setDestX(int destX) { _cursor.destX = destX; }
 	void setDestY(int destY) { _cursor.destY = destY; }
+	void setDestPos(int destX, int destY) { _cursor.destX = destX; _cursor.destY = destY; }
 
 	//animation 함수 
 	void setCursorState(CURSOR_STATE state);	//커서의 상태 setting 함수(커서 애니메이션 변경에 사용)
