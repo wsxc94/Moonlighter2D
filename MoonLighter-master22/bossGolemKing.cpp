@@ -208,7 +208,7 @@ void bossGolemKing::render()
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		CAMERAMANAGER->ZorderDrawText("°ñ ·½ ¿Õ", 2000, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
 	}
-	CAMERAMANAGER->FrameRect(getMemDC(), _bossRC, RGB(255, 0, 0));
+	//CAMERAMANAGER->FrameRect(getMemDC(), _bossRC, RGB(255, 0, 0));
 
 	switch (_golemState)
 	{
@@ -227,7 +227,7 @@ void bossGolemKing::render()
 	case GOLEMKINGSTATE::BS_HAND:
 		CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("±×¸²ÀÚ"), 0, _golemHand.x, _golemHand.y, _golemHand.shadowScale);
 		_golemHand.ani->ZorderStretchRender(_golemHand.y, _golemHand.x, _golemHand.hight,3.f);
-		CAMERAMANAGER->FrameRect(getMemDC(), _golemHand.rc, RGB(255, 0, 0));
+		//CAMERAMANAGER->FrameRect(getMemDC(), _golemHand.rc, RGB(255, 0, 0));
 		break;
 	}
 
@@ -238,10 +238,10 @@ void bossGolemKing::render()
 		int cx = _vRock[i].x - _vRock[i].img->getWidth() / 2;
 		int cy = _vRock[i].hight - _vRock[i].img->getHeight() / 2;
 		CAMERAMANAGER->ZorderRender(_vRock[i].img, _vRock[i].y, cx, cy);
-		CAMERAMANAGER->FrameRect(getMemDC(), _vRock[i].colRC, RGB(255, 0, 0));
+		//CAMERAMANAGER->FrameRect(getMemDC(), _vRock[i].colRC, RGB(255, 0, 0));
 	}
 
-	textOut(getMemDC(), 10, 200, to_string((int)_golemState).c_str(), to_string((int)_golemState).size());
+	//textOut(getMemDC(), 10, 200, to_string((int)_golemState).c_str(), to_string((int)_golemState).size());
 }
 
 void bossGolemKing::changeAniState(GOLEMANISTATE state)

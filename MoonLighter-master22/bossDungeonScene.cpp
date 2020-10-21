@@ -172,8 +172,8 @@ void bossDungeonScene::render()
 	_potal->render();
 
 	POINT pt = CAMERAMANAGER->getRelativeMouse(_ptMouse);
-	textOut(getMemDC(), 10, 120, to_string(pt.x).c_str(), to_string(pt.x).size());
-	textOut(getMemDC(), 10, 150, to_string(pt.y).c_str(), to_string(pt.y).size());
+	//textOut(getMemDC(), 10, 120, to_string(pt.x).c_str(), to_string(pt.x).size());
+	//textOut(getMemDC(), 10, 150, to_string(pt.y).c_str(), to_string(pt.y).size());
 
 	//타일 확인용
 	if (INPUT->GetToggleKey(VK_F1))

@@ -11,8 +11,6 @@ HRESULT townScene::init()
 	_npcManager = new npcManager;
 	_npcManager->init(_vTest);
 
-
-
 	PLAYER->init();
 	
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);

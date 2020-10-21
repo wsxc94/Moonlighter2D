@@ -69,7 +69,6 @@ void mainGame::update()
 	CAMERAMANAGER->FadeUpdate();
 
 	PLAYERDATA->update();
-	cout << PLAYERDATA->getIsEmblemReturn() << endl;
 }
 
 //=============================================================
