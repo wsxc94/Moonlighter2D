@@ -119,6 +119,7 @@ public:
 	bool addItemToInven(gameItem item);		//던전에서 획득한 아이템을 인벤토리에 추가 
 	void deleteInvenItem();					//인벤토리 슬롯에 있는 아이템들 전부 제거 
 	void syncWithShopInven(vector<gameItem*> vShopInven);	//상점의 인벤토리와 동기화하는 함수 
+	void updateStatus();					//장비 능력치 반영해서 스탯창 업데이트 
 
 	//키입력 관련 함수 
 	void keyInput();						//w,a,s,d(상하좌우) 키 값을 받아서 커서 움직이기 

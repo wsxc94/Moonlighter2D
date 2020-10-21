@@ -33,6 +33,7 @@ HRESULT nomalDungeonScene::init()
 
 	SOUNDMANAGER->play("dungeonBGM",0.3f);
 	PLAYERDATA->initDungeonHp();
+	ITEMMENU->getInventory()->updateStatus();
 
 	//카메라 초기화
 	CAMERAMANAGER->init(WINSIZEX / 2, WINSIZEY / 2, WINSIZEX, WINSIZEY, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
