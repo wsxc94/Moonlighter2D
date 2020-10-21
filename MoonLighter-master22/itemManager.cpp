@@ -279,7 +279,7 @@ void itemManager::addGameItems()
 
 	//포션 아이템 추가 
 	addPotionItem("HP 물약Ⅰ", "name_hpPotion1", "des_hpPotion1", "HP 물약Ⅰ",
-		POTION1_IDX, 40, 111, 138, 144, 145, 10);
+		POTION1_IDX, 40, 111, 138, 144, 145, 5);
 	addPotionItem("HP 물약Ⅱ", "name_hpPotion2", "des_hpPotion2", "HP 물약Ⅱ",
 		POTION2_IDX, 75, 719, 880, 920, 921, 5);
 

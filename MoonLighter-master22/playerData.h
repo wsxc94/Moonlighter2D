@@ -43,6 +43,7 @@ private:
 
 	DungeonMap* _mapData;		//엠블렘으로 집을오면 던전맵데이터를 저장한다
 	int _dgFloor;				//몇층이었는지
+	bool _isBossReturn;			//보스를 클리어하고 오는건지
 	bool _isEmblemReturn;		//엠블렘리턴인지 확인
 	bool _isPendantReturn;		//팬던트리턴 / 죽음인지 확인
 private:
@@ -95,6 +96,7 @@ public:
 	} // 킬에너미가 존재하냐?
 
 	DungeonMap* getMapData() { return _mapData; }
+	bool getIsBossReturn() { return _isBossReturn; }
 	bool getIsEmblemReturn() { return _isEmblemReturn; }
 	bool getIsPendantReturn() { return _isPendantReturn; }
 	int getDungeonFloor() { return _dgFloor; }
@@ -109,7 +111,7 @@ public:
 	void setItemCount(int itemCount) { _itemCount = itemCount; }
 	void setX(float x) { _x = x; }
 	void setY(float y) { _y = y; }
-	void setIsInDungeon(bool value) { _isInDungeon = value; }
+	void setIsInDungeon(bool value) {_isInDungeon = value; }
 	void setPotionEquipped(gameItem item) { _potionEquipped = item; }
 	void setWeaponIdx(int index) { _weaponIdx = index; }
 	void setWeaponEquipped(gameItem item) { _weaponEquipped = item; }
@@ -124,6 +126,7 @@ public:
 	void addGold(int addValue) { _gold += addValue; }	//매개변수 값만큼 골드 더하기 
 	void subGold(int subValue) { _gold -= subValue; if (_gold < 0) _gold = 0; }	//매개변수 값만큼 골드 빼기 
 	void saveDungeonMap(DungeonMap* data) { _mapData = data; }
+	void setIsBossReturn(bool value) { _isBossReturn = value; }
 	void setIsEmblemReturn(bool value) { _isEmblemReturn = value; }
 	void setIsPendantReturn(bool value) { _isPendantReturn = value; }
 	void setDungeonFloor(int floor) { _dgFloor = floor; }

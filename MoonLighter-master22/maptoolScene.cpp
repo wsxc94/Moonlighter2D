@@ -181,7 +181,7 @@ void maptoolScene::update()
 
 	if (INPUT->GetKeyDown('T'))  this->clickTileTown();
 	if (INPUT->GetKeyDown('Y')) this->clickTileDungeon();
-	if (INPUT->GetKeyDown('U')) this->clickTileGotoDungeon();
+	if (INPUT->GetKeyDown('U')) this->clickTileBossDungeon();
 
 	CAMERAMANAGER->update(_pivotX,_pivotY);
 	moveRect();
@@ -195,7 +195,8 @@ void maptoolScene::update()
 
 	void maptoolScene::render()
 	{
-		if (_backImg != nullptr) CAMERAMANAGER->Render(getMemDC(), _backImg, 0, 0);
+		//if (_backImg != nullptr) CAMERAMANAGER->Render(getMemDC(), _backImg, 0, 0);
+		CAMERAMANAGER->StretchRender(getMemDC(), IMAGEMANAGER->findImage("bossDungeon"), IMAGEMANAGER->findImage("bossDungeon")->getWidth(), IMAGEMANAGER->findImage("bossDungeon")->getHeight(), 2.f);
 
 		//타일맵 이미지 전체화면 우측상단에 배치하기
 
@@ -230,7 +231,7 @@ void maptoolScene::update()
 			else this->dragFrameRectRender(RGB(0, 0, 255));
 		}
 
-		if (INPUT->GetToggleKey('G')) IMAGEMANAGER->findImage("dungeonBack")->render(getMemDC(), 0, 0);
+		//if (INPUT->GetToggleKey('G')) IMAGEMANAGER->findImage("dungeonBack")->render(getMemDC(), 0, 0);
 
 		//타일 속성에따른 색상 출력
 		this->tileStateRender();
@@ -1127,9 +1128,9 @@ void maptoolScene::clickTileGotoDungeon()
 
 void maptoolScene::clickTileBossDungeon()
 {
-	_backImg = IMAGEMANAGER->findImage("gotoDungeon");
-	tile_X = 68;
-	tile_Y = 57;
+	_backImg = IMAGEMANAGER->findImage("bossDungeon");
+	tile_X = 30*2;
+	tile_Y = 24*2;
 	_vTiles.clear();
 	_vObject.clear();
 	for (int i = 0; i < tile_X * tile_Y; i++)

@@ -19,11 +19,21 @@ HRESULT potal::init(float x, float y, POTALSTATE state)
 	_playerIn->init(IMAGEMANAGER->findImage("potalPlayer"), 0, 7);
 	_playerOut->initReverse(IMAGEMANAGER->findImage("potalPlayer"), 0, 7);
 
+
 	_isActivate = true;	
 	_isInRange = false;
 
 
 	return S_OK;
+}
+
+void potal::release()
+{
+	SAFE_DELETE(_init);
+	SAFE_DELETE(_update);
+	SAFE_DELETE(_break);
+	SAFE_DELETE(_playerIn);
+	SAFE_DELETE(_playerOut);
 }
 
 void potal::update()
@@ -75,7 +85,7 @@ void potal::render()
 				0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 			//IMAGEMANAGER->findImage("messegeBox_potal")->render(getMemDC(), _potal->x + 30, _potal->y - 90);
 			CAMERAMANAGER->ZorderRender(IMAGEMANAGER->findImage("messegeBox_potal"), 1999, _x + 30, _y - 90);
-			CAMERAMANAGER->ZorderDrawText("텔레포트", 2000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+			CAMERAMANAGER->ZorderDrawText("텔레포트", 3000, txtRC, hFont, RGB(0, 0, 0), DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		}
 		break;
 	case POTAL_BREAK:

@@ -11,6 +11,7 @@
 #include "bossDungeonScene.h"
 #include "dungeonLoading.h"
 #include "itemMenu.h"
+#include "itemMenuLoading.h"
 #include "shopLoading.h"
 #include "shopScene.h"
 #include "gotoDungeon.h"

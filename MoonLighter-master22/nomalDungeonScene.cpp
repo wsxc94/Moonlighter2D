@@ -4,7 +4,7 @@
 
 HRESULT nomalDungeonScene::init()
 {
-	if (PLAYERDATA->getIsEmblemReturn())
+	if (PLAYERDATA->getIsEmblemReturn() && PLAYERDATA->getMapData() != nullptr)
 	{
 		this->initFromSave();
 		return S_OK;
@@ -40,7 +40,7 @@ HRESULT nomalDungeonScene::init()
 	CAMERAMANAGER->FadeStart();
 
 	this->initItemSlot();
-	this->getInvenItem();
+	//this->getInvenItem();
 	_resultKind = RESULT_PLAYERDIE;
 
 
@@ -101,6 +101,7 @@ void nomalDungeonScene::update()
 		//죽으면 결과창띄워라
 		if (PLAYER->getPlayerState() == PLAYER_DIE)
 		{
+			this->getInvenItem();
 			_aniBefore->init(IMAGEMANAGER->findImage("죽음"), 0, 5);
 			_aniCenter->init(IMAGEMANAGER->findImage("죽음"), 0, 5);
 			_dState = DS_RESULT;
@@ -111,6 +112,7 @@ void nomalDungeonScene::update()
 		// 팬던트 사용했냐?? 사용했으면 에니메이션 띄우고 결과창 띄워라
 		else if (ITEMMENU->getGoToTownPendant())
 		{
+			this->getInvenItem();
 			_aniBefore->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 5);
 			_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5,true);
 			_dState = DS_RESULT;
@@ -124,6 +126,7 @@ void nomalDungeonScene::update()
 		//엠블렘 사용했냐?? 사용했으면 포탈을 만들어라
 		else if (ITEMMENU->getGoToTownEmblem())
 		{
+			this->getInvenItem();
 			_currentDungeon->initPotal();
 			ITEMMENU->SetGoToTownEmblem(false);
 
@@ -133,6 +136,7 @@ void nomalDungeonScene::update()
 		this->emblemUpdate();
 		this->dungeonUpdate();
 		PLAYER->update();
+		PLAYER->updateWeaponState();
 		ITEMMENU->update();
 		break;
 	case DS_RESULT:
@@ -151,12 +155,6 @@ void nomalDungeonScene::update()
 			_killEnemy->attack->update();
 		if (INPUT->GetKeyDown('J') && _aniBefore->getAniState() == ANIMATION_END)
 		{
-			SCENEMANAGER->loadScene("타운화면");
-			SOUNDMANAGER->stop("dungeonBGM");
-			SOUNDMANAGER->stop("spaRoomBGM");
-			SOUNDMANAGER->stop("bossRoomBGM");
-			PLAYERDATA->vEnemyClear();
-			
 			if (_resultKind == RESULT_EMBLEM)
 			{
 				//엠블렘 사용 시 
@@ -174,6 +172,12 @@ void nomalDungeonScene::update()
 				ITEMMENU->SetGoToTownEmblem(false);
 				PLAYERDATA->setIsInDungeon(false);
 			}
+
+			SCENEMANAGER->loadScene("타운화면");
+			SOUNDMANAGER->stop("dungeonBGM");
+			SOUNDMANAGER->stop("spaRoomBGM");
+			SOUNDMANAGER->stop("bossRoomBGM");
+			PLAYERDATA->vEnemyClear();
 
 			this->release();
 		}
@@ -237,6 +241,13 @@ void nomalDungeonScene::render()
 			IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
 			this->resultRender();
 			this->itemResultRender();
+
+			char str[100];
+			wsprintf(str, "invenSize : %d", ITEMMENU->getInventory()->getItem().size());
+			TextOut(getMemDC(), 10, 110, str, strlen(str));
+
+			wsprintf(str, "dungeonInvenSize : %d", _vItem.size());
+			TextOut(getMemDC(), 10, 130, str, strlen(str));
 		}
 		break;
 	case DS_RETURN:
@@ -315,6 +326,8 @@ void nomalDungeonScene::setNewFloor()
 
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
+	
+	_vMinimap.clear();
 }
 
 void nomalDungeonScene::soundUpdate()
@@ -368,31 +381,30 @@ void nomalDungeonScene::soundUpdate()
 
 void nomalDungeonScene::dungeonUpdate()
 {
-	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN
-		&& _currentDungeon->getDungeonKind() != DG_SEMIBOSS)
+	if (_currentDungeon->moveDungeon(PLAYER->getShadowRect()) != nullptr && _currentDungeon->getDungeonDoorState() == DUNGEONDOOR::DOOR_OPEN)
 	{
 		//플레이어 이동
 		switch (_currentDungeon->moveDungeonDirection(PLAYER->getShadowRect()))
 		{
 		case 1:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(1085 + 17);
+			PLAYER->setX(1085 + 20);
 			PLAYER->setY(350 + 17);
 			break;
 		case 2:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(140 + 17);
+			PLAYER->setX(140 + 20);
 			PLAYER->setY(350 + 17);
 			break;
 		case 3:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(595 + 17);
-			PLAYER->setY(595 + 17);
+			PLAYER->setY(595 + 20);
 			break;
 		case 4:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(595 + 17);
-			PLAYER->setY(105 + 17);
+			PLAYER->setY(105 + 20);
 			break;
 		}
 		//던전 이동

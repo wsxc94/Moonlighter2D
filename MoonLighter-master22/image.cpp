@@ -260,6 +260,23 @@ HRESULT image::initForStretch()
 	return S_OK;
 }
 
+HRESULT image::initForStretch(int x, int y)
+{
+	HDC hdc = GetDC(_hWnd);
+
+	_stretchImage = new IMAGE_INFO;
+	_stretchImage->loadType = LOAD_EMPTY;
+	_stretchImage->hMemDC = CreateCompatibleDC(hdc);
+	_stretchImage->hBit = (HBITMAP)CreateCompatibleBitmap(hdc,x,y);
+	_stretchImage->hOBit = (HBITMAP)SelectObject(_stretchImage->hMemDC, _stretchImage->hBit);
+	_stretchImage->width = x;
+	_stretchImage->height = y;
+
+	ReleaseDC(_hWnd, hdc);
+
+	return S_OK;
+}
+
 HRESULT image::initForMinimap(int sizeX, int sizeY)
 {
 	HDC hdc = GetDC(_hWnd);
@@ -530,7 +547,7 @@ void image::stretchRender(HDC hdc, int centerX, int centerY, float size)
 	if (_isTrans) //배경색 없앨꺼냐?
 	{
 		//원본이미지를 Scale값 만큼 확대/축소시켜서 그려준다
-		SetStretchBltMode(getMemDC(), COLORONCOLOR);
+		SetStretchBltMode(hdc, COLORONCOLOR);
 		StretchBlt(_stretchImage->hMemDC, 0, 0, _stretchImage->width, _stretchImage->height,
 			_imageInfo->hMemDC, 0, 0, _imageInfo->width, _imageInfo->height, SRCCOPY);
 
@@ -568,7 +585,7 @@ void image::stretchRender(HDC hdc, int centerX, int centerY, int scaleX, int sca
 	if (_isTrans) //배경색 없앨꺼냐?
 	{
 		//원본이미지를 Scale값 만큼 확대/축소시켜서 그려준다
-		SetStretchBltMode(getMemDC(), COLORONCOLOR);
+		SetStretchBltMode(hdc, COLORONCOLOR);
 		StretchBlt(_stretchImage->hMemDC, 0, 0, _stretchImage->width, _stretchImage->height,
 			_imageInfo->hMemDC, 0, 0, _imageInfo->width, _imageInfo->height, SRCCOPY);
 
@@ -598,7 +615,7 @@ void image::stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFra
 {
 	//스트레치이미지 처음 사용하냐?
 	//이미지 스케일링을 사용할 수 있도록 초기화 해라
-	if (!_stretchImage) this->initForStretch();
+	if (!_stretchImage) this->initForStretch(_imageInfo->width * size, _imageInfo->height * size);
 
 	_stretchImage->width = _imageInfo->width * size;
 	_stretchImage->height = _imageInfo->height * size;
@@ -655,7 +672,7 @@ void image::stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFra
 	if (_isTrans) //배경색 없앨꺼냐?
 	{
 		//원본이미지를 Scale값 만큼 확대/축소시켜서 그려준다
-		SetStretchBltMode(getMemDC(), COLORONCOLOR);
+		SetStretchBltMode(hdc, COLORONCOLOR);
 		StretchBlt(_stretchImage->hMemDC, 0, 0, _stretchImage->frameWidth, _stretchImage->frameHeight,
 			_imageInfo->hMemDC,
 			currentFrameX * _imageInfo->frameWidth,
@@ -1100,4 +1117,64 @@ void image::rotateAlphaFrameRender(HDC hdc, float centerX, float centerY, float 
 	{
 		PlgBlt(hdc, rPoint, _imageInfo->hMemDC, _imageInfo->frameWidth * frameX, _imageInfo->frameHeight * frameY, _imageInfo->frameWidth, _imageInfo->frameHeight, NULL, 0, 0);
 	}
+}
+
+void image::rotateStretchFrameRender(HDC hdc, float centerX, float centerY, int frameX, int frameY, float angle, float scale)
+{
+	if (!_rotateImage) this->initForRotate();
+
+	POINT rPoint[3];
+	int dist = sqrt((_imageInfo->frameWidth / 2) * (_imageInfo->frameWidth / 2) + (_imageInfo->frameHeight / 2) * (_imageInfo->frameHeight / 2));
+	float baseAngle[3];
+	baseAngle[0] = PI - atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+	baseAngle[1] = atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+	baseAngle[2] = PI + atanf(((float)_imageInfo->frameHeight / 2) / ((float)_imageInfo->frameWidth / 2));
+
+	for (int i = 0; i < 3; i++)
+	{
+		rPoint[i].x = (_rotateImage->width / 2 + cosf(baseAngle[i] + angle) * dist);
+		rPoint[i].y = (_rotateImage->height / 2 + -sinf(baseAngle[i] + angle) * dist);
+	}
+
+	if (!_stretchImage) this->initForStretch(_rotateImage->width * scale, _rotateImage->height * scale);
+
+	if (_isTrans)
+	{
+		BitBlt(_rotateImage->hMemDC, 0, 0, _rotateImage->width, _rotateImage->height, hdc, 0, 0, BLACKNESS);
+		HBRUSH hBrush = CreateSolidBrush(_transColor);
+		HBRUSH oBrush = (HBRUSH)SelectObject(_rotateImage->hMemDC, hBrush);
+		ExtFloodFill(_rotateImage->hMemDC, 1, 1, RGB(0, 0, 0), FLOODFILLSURFACE);
+		DeleteObject(hBrush);
+
+		SetStretchBltMode(hdc, COLORONCOLOR);
+
+		PlgBlt(_rotateImage->hMemDC, rPoint, _imageInfo->hMemDC,
+			_imageInfo->frameWidth * frameX, _imageInfo->frameHeight * frameY,
+			_imageInfo->frameWidth,
+			_imageInfo->frameHeight,
+			NULL, 0, 0);
+
+		StretchBlt(_stretchImage->hMemDC,
+			0, 0, _stretchImage->width, _stretchImage->height, _rotateImage->hMemDC,
+			0, 0, _rotateImage->width, _rotateImage->height, SRCCOPY);
+
+		GdiTransparentBlt(hdc,
+			centerX - _stretchImage->width / 2,
+			centerY - _stretchImage->height / 2,
+			_stretchImage->width,
+			_stretchImage->height,
+			_stretchImage->hMemDC,
+			0, 0,
+			_stretchImage->width,
+			_stretchImage->height,
+			_transColor);
+	
+	
+	}
+	else
+	{
+		PlgBlt(hdc, rPoint, _imageInfo->hMemDC, _imageInfo->frameWidth * frameX, _imageInfo->frameHeight * frameY, _imageInfo->frameWidth, _imageInfo->frameHeight, NULL, 0, 0);
+	}
+	delete _stretchImage;
+	_stretchImage = nullptr;
 }

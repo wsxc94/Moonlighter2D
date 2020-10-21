@@ -35,11 +35,20 @@
 #define TRAININGBOW_IDX		13
 #define TRAININGSWORD_IDX	14
 
+//상점 메시지 타입 
 enum MESSAGE_TYPE
 {
 	LACK_OF_GOLD,
 	LACK_OF_MATERIAL,
-	LACK_OF_BOTH
+	LACK_OF_BOTH,
+	LACK_OF_ROOM
+};
+
+//숫자 이미지 색상 
+enum COLOR_TYPE
+{
+	COLOR_BLACK,
+	COLOR_WHITE
 };
 
 //===================================================

@@ -4,7 +4,6 @@
 
 HRESULT gotoDungeon::init()
 {
-	
 	this->loadTile();
 	PLAYER->setX(1200);
 	PLAYER->setY(1900);
@@ -24,13 +23,14 @@ HRESULT gotoDungeon::init()
 
 void gotoDungeon::release()
 {
-	SAFE_DELETE(_playerGotoAnim);
-	SAFE_DELETE(_DungeonDoorAnim);
+	//SAFE_DELETE(_playerGotoAnim);
+	//SAFE_DELETE(_DungeonDoorAnim);
 }
 
 void gotoDungeon::update()
 {
 	PLAYER->update();
+	PLAYER->updateWeaponState();
 
 	float x = PLAYER->getX();
 	float y = PLAYER->getY();

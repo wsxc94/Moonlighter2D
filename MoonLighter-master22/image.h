@@ -76,6 +76,7 @@ public:
 	//알파블렌드 초기화
 	HRESULT initForAlphaBlend();
 	HRESULT initForStretch();
+	HRESULT initForStretch(int x, int y);
 	HRESULT initForMinimap(int sizeX, int sizeY);
 	HRESULT initForRotate();
 
@@ -112,6 +113,7 @@ public:
 	void rotateFrameRender(HDC hdc, float centerX, float centerY, float angle, int frameX = 0, int frameY = 0);
 	void rotateAlphaRender(HDC hdc, float centerX, float centerY, float angle, BYTE alpha);
 	void rotateAlphaFrameRender(HDC hdc, float centerX, float centerY, float angle, int frameX = 0, int frameY = 0, BYTE alpha = 255);
+	void rotateStretchFrameRender(HDC hdc, float centerX, float centerY, int frameX, int frameY, float angle, float scale);
 
 	//DC 얻기
 	inline HDC getMemDC() { return _imageInfo->hMemDC; }

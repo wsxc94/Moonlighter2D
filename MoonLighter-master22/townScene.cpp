@@ -11,9 +11,10 @@ HRESULT townScene::init()
 	_npcManager = new npcManager;
 	_npcManager->init(_vTest);
 
-	PLAYER->init();
-	ITEMMENU->init();
 
+
+	PLAYER->init();
+	
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 
 	_potionShop = new potionShop;
@@ -32,7 +33,7 @@ HRESULT townScene::init()
 	CAMERAMANAGER->FadeStart();
 
 	// 포탈 
-	if (PLAYERDATA->getIsEmblemReturn())
+	if (PLAYERDATA->getIsEmblemReturn() || PLAYERDATA->getIsBossReturn())
 	{
 		_potal = new potal;
 		_potal->init(300, 200, POTAL_INIT);
@@ -48,6 +49,7 @@ HRESULT townScene::init()
 		PLAYER->setY(205);
 		PLAYER->setPlayerState(PLAYER_DIE_PORTAL);
 		PLAYER->setPlayerDirection(0);
+		PLAYERDATA->setIsPendantReturn(false);
 	}
 
 	this->initPotal();
@@ -56,7 +58,7 @@ HRESULT townScene::init()
 
 void townScene::release()
 {
-	SAFE_DELETE(_aniPotalInit);
+	/*SAFE_DELETE(_aniPotalInit);
 	
 	_npcManager->release();
 	SAFE_DELETE(_npcManager);
@@ -66,7 +68,7 @@ void townScene::release()
 	
 	for (int i = 0; i < _objManager.size(); i++) {
 		SAFE_DELETE(_objManager[i]);
-	}
+	}*/
 }
 
 void townScene::update()
@@ -121,13 +123,14 @@ void townScene::update()
 	ObjectAnim();
 	ObjectColl();
 	MapColl();
+	this->collArrow();
 
 }
 
 void townScene::render()
 {
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
-	
+	//Rectangle(getMemDC(), CAMERAMANAGER->getRect());
 	for (int i = 0; i < _objManager.size(); i++)
 	{
 		RECT tmp;
@@ -348,6 +351,15 @@ void townScene::MapColl()
 	}
 }
 
+void townScene::collArrow()
+{
+	RECT temp;
+	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
+	{
+		PLAYER->setShoot(false);
+	}
+}
+
 HRESULT townScene::initPotal()
 {
 	
@@ -359,17 +371,33 @@ void townScene::updatePotal()
 {
 	if (!_potal) return;
 	_potal->update();
-
-	if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
+	if (PLAYERDATA->getIsBossReturn())
 	{
-		_potal->setPotalState(POTAL_PLAYERIN);
+		if (_potal->getPotalState() == POTAL_UPDATE)
+		{
+			_potal->setPotalState(POTAL_BREAK);
+		}
+		if (_potal->getIsActivate() == false)
+		{
+			_potal->release();
+			SAFE_DELETE(_potal);
+		}
+	}
+	else
+	{
+		if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
+		{
+			_potal->setPotalState(POTAL_PLAYERIN);
+		}
+
+		if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
+		{
+			SOUNDMANAGER->stop("마을브금");
+			SCENEMANAGER->loadScene("던전로딩");
+		}
 	}
 
-	if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
-	{
-		SOUNDMANAGER->stop("마을브금");
-		SCENEMANAGER->loadScene("던전로딩");
-	}
+
 
 }
 

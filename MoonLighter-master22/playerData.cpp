@@ -14,6 +14,7 @@ HRESULT playerData::init()
 	_killEnemy = nullptr;
 	_isEmblemReturn = false;
 	_isPendantReturn = false;
+	_isBossReturn = false;
 
 	return S_OK;
 }
@@ -53,7 +54,7 @@ void playerData::initPlayerStatus()
 
 	_hpBarLength = 130;
 
-	_gold = 2000;
+	_gold = 5000;
 
 	_itemCount = 0;
 
@@ -194,10 +195,12 @@ void playerData::equipInfoRender(HDC hdc)
 
 void playerData::itemCountRender(HDC hdc)
 {
+	int itemCount = ITEMMENU->getInventory()->getCurItemCount();
+
 	//현재 소지하고 있는 아이템 개수 출력 
-	for (int i = 1, distance = 0; i <= _itemCount; i *= 10)
+	for (int i = 1, distance = 0; i <= itemCount; i *= 10)
 	{
-		int num = (_itemCount / i) % 10;
+		int num = (itemCount / i) % 10;
 
 		char keyName[24];
 		wsprintf(keyName, "%d_white_small", num);

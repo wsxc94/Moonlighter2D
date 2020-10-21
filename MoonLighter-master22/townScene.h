@@ -47,6 +47,7 @@ public:
 	void ObjectAnim(); // 오브젝트 애니메이션 함수 - 팀장급 디렉터
 	void ObjectSetAnim(); // _objManager 세팅 - 팀장급 디렉터
 	void MapColl();
+	void collArrow();
 
 	HRESULT initPotal();
 	void updatePotal();

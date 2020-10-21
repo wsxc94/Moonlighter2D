@@ -17,13 +17,6 @@ enum SHOP_CTRL
 	CTRL_PRICE
 };
 
-//숫자 이미지 색상 
-enum COLOR_TYPE
-{
-	COLOR_BLACK,
-	COLOR_WHITE
-};
-
 //상점 인벤토리 슬롯의 타입 
 enum SHOPSLOT
 {

@@ -20,7 +20,7 @@ enum ZORDERIMGKIND
 {
 	IMG_NOMAL, IMG_NOMAL_SOUR, IMG_FRAME, IMG_ALPHA, IMG_ALPHA_SOUR, IMG_ALPHA_FRAME,
 	IMG_ROTATE_RENDER, IMG_ROTATE_FRAME, IMG_ROTATE_ALPHA, IMG_ROTATE_ALPHAFRAME,
-	IMG_STRETCH_RENDER,IMG_STRETCH_FRAME, IMG_TXT, IMG_TXTOUT
+	IMG_STRETCH_RENDER,IMG_STRETCH_FRAME, IMG_TXT, IMG_TXTOUT,IMG_ROTATESTRETCH
 };
 
 enum STRETCHRENDERKIND
@@ -149,6 +149,7 @@ public:
 	void ZorderStretchRender(image* img, float z, int centerX, int centerY, float scaleX, float scaleY);
 	void ZorderStretchFrameRender(image* img, float z, int centerX, int centerY, int frameX, int frameY, float scale);
 	void ZorderStretchFrameRender(image* img, float z, int centerX, int centerY, int frameX, int frameY, float scaleX, float scaleY);
+	void ZorderRotateStretchRender(image* img, float z, int centerX, int centerY, int frameX, int frameY, float angle, float scale);
 	void ZorderDrawText(string txt, float z, RECT txtRC, HFONT font, COLORREF color, UINT format);
 	void ZorderTextOut(string txt, float z, int x, int y, int size, COLORREF color);
 

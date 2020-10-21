@@ -53,7 +53,6 @@ void cursor::setCursorState(CURSOR_STATE state)
 
 		case CURSOR_MOVE:
 			_cursor.img = IMAGEMANAGER->findImage("cursor_move");
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 			_cursor.idx = 0;
 			_cursor.state = state;
 
@@ -85,7 +84,6 @@ void cursor::setCursorState(CURSOR_STATE state)
 
 		case CURSOR_SELECT_MOVE:
 			_cursor.img = IMAGEMANAGER->findImage("cursor_select");
-			SOUNDMANAGER->play("cursor_move", 0.2f);
 			_cursor.idx = 0;
 			_cursor.state = state;
 			break;

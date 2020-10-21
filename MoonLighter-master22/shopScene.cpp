@@ -41,7 +41,6 @@ HRESULT shopScene::init()
 	_npc = new ShopNpcManager;
 	_npc->init(_displayStand);
 
-
 	PLAYER->init();
 	PLAYER->setX(700);
 	PLAYER->setY(840);
@@ -217,6 +216,19 @@ void shopScene::PlayerSell()
 
 	sellStandAction();
 	sellDeskAction();
+	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
+	{
+		_button->aniPlay();
+		if (INPUT->GetKeyDown('J'))
+		{
+			_displayStand->openDisplayStand();
+			_displayStand->setCanGrab(false);
+		}
+	}
+	else 
+	{
+		_button->setCurIndex(0);
+	}
 
 }
 

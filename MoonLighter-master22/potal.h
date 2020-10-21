@@ -28,6 +28,7 @@ public:
 	~potal() {}
 
 	HRESULT init(float x, float y, POTALSTATE state);
+	void release();
 	void update();
 	void render();
 
