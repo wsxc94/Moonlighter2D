@@ -551,6 +551,7 @@ void player::keyInput()
 	{
 		ITEMMENU->getInventory()->switchWeapon();
 		updateWeaponState();
+		ITEMMENU->getInventory()->updateStatus();
 	}
 	//포션을 사용하는 함수
 	//아이템 메뉴가 오픈되지 않았을 때만 동작 

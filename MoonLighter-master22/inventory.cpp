@@ -685,6 +685,55 @@ void inventory::syncWithShopInven(vector<gameItem*> vShopInven)
 	}//end of for 
 }
 
+void inventory::updateStatus()
+{
+	//플레이어 데이터에서 디폴트 스탯값 가져오기 
+	int hp = PLAYERDATA->getDefaultHp();
+	int atk = PLAYERDATA->getDefaultAtk();
+	int def = PLAYERDATA->getDefaultDef();
+	int spd = PLAYERDATA->getDefaultSpd();
+
+	//착용한 무기의 스테이터스값을 가져와서 더하기 
+	switch (_curWeaponIdx)
+	{
+	case 1:
+		if (!_invenSlot[5].isEmpty)
+		{
+			for (int i = 0; i < _vInven.size(); i++)
+			{
+				if (_vInven[i]->getInvenPosIdx() != 5) continue;
+
+				hp += *(_vInven[i]->getAbility() + ABILITY_HP);
+				atk += *(_vInven[i]->getAbility() + ABILITY_ATK);
+				def += *(_vInven[i]->getAbility() + ABILITY_DEF);
+				spd += *(_vInven[i]->getAbility() + ABILITY_SPD);
+			}
+		}
+		break;
+
+	case 2:
+		if (!_invenSlot[6].isEmpty)
+		{
+			for (int i = 0; i < _vInven.size(); i++)
+			{
+				if (_vInven[i]->getInvenPosIdx() != 6) continue;
+
+				hp += *(_vInven[i]->getAbility() + ABILITY_HP);
+				atk += *(_vInven[i]->getAbility() + ABILITY_ATK);
+				def += *(_vInven[i]->getAbility() + ABILITY_DEF);
+				spd += *(_vInven[i]->getAbility() + ABILITY_SPD);
+			}
+		}
+		break;
+	}
+
+	//장비 스탯값이 반영된 스테이터스값을 플레이어 데이터에 반영하기 
+	PLAYERDATA->setHp(hp);
+	PLAYERDATA->setAtk(atk);
+	PLAYERDATA->setDef(def);
+	PLAYERDATA->setSpd(spd);
+}
+
 void inventory::keyInput()
 {
 	switch (_invenCtrl)
