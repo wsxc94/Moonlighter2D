@@ -7,7 +7,6 @@ class townScene : public gameNode
 {
 private:
 	potal* _potal;
-	potionShop *_potionShop;
 
 private:
 	animation* _aniPotalInit;		//던전 시작 / 종료애니

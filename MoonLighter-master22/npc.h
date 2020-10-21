@@ -85,7 +85,7 @@ protected:
 
 
 public:
-	virtual HRESULT init(tagPosF pos, string key); // 마을 npc 초기화
+    virtual HRESULT init(tagPosF pos, string key); // 마을 npc 초기화
 	HRESULT init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displayStand* dis);  //상점 npc 초기화
 
 	void release();
