@@ -219,6 +219,8 @@ void npc::render(NPC_MAP NPC_SHOP)
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 
+		ShadowPosRender();
+
 		if (_state == NPC_ITEM_PICK) {
 
 			CAMERAMANAGER->ZorderRender(_peekItemImg,
@@ -608,30 +610,37 @@ void npc::ItemActive()
 
 void npc::ShadowPosRender() // 더 수정 및 함수화
 {
-	if (_key == "레드먼드" || _key == "토모") {
+	if (_key == "강아지npc"){
 		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
-			_pos.x + _aniNpc->getImage()->getFrameWidth() / 4 - 2,
-			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 4) - 1, 0, 0, 150);
+			_pos.x + 1,
+			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 3), 0, 0, 150);
 	}
-	else if(_key == "모리"){
-		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
-			_pos.x + _aniNpc->getImage()->getFrameWidth() / 4 - 6,
-			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 4) - 4, 0, 0, 150);
+	else if(_key == "모리" || _key == "원형아저씨")
+	{
+		ShadowPosSet(6, 4, 4);
 	}
-	else if(_key == "마사") {
-		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
-			_pos.x + _aniNpc->getImage()->getFrameWidth() / 4 - 3,
-			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 4) - 3, 0, 0, 150);
+	else if(_key == "마사")
+	{
+		ShadowPosSet(3, 3, 4);
+	}
+	else if (_key == "히어로")
+	{
+		ShadowPosSet(3, 8, 4);
+	}
+	else if (_key == "배낭맨여자")
+	{
+		ShadowPosSet(0, 3, 4);
 	}
 	else {
-		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
-			_pos.x +1,
-			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 3), 0, 0, 150);
+		ShadowPosSet(2, 1, 4);
 	}
 }
 
-void npc::ShadowPosSet()
+void npc::ShadowPosSet(int x , int y , int div)
 {
+	CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
+		_pos.x + _aniNpc->getImage()->getFrameWidth() / div - x,
+		_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / div) - y, 0, 0, 150);
 }
 
 void npc::TalkInterfaceRender()

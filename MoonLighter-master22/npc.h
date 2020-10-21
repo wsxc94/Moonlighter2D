@@ -123,8 +123,8 @@ public:
 	void PriceCheckAnim(); // 이모티콘 애니메이션
 	void ItemGet(); // 아이템 정보 가져오기
 	void ItemActive();
-	void ShadowPosRender(); //그림자 렌더 (캐릭별로 그림자 위치가 달라야하네 ㅎ)
-	void ShadowPosSet();
+	void ShadowPosRender(); //그림자 렌더
+	void ShadowPosSet(int x, int y, int div); //npc 그림자 위치잡아주는 함수
 
 	void TalkInterfaceRender(); //대화에 대한 인터페이스 렌더
 
