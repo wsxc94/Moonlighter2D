@@ -613,7 +613,7 @@ void npc::ShadowPosRender() // 더 수정 및 함수화
 	if (_key == "강아지npc"){
 		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
 			_pos.x + 1,
-			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 3), 0, 0, 150);
+			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 3), 0, 0, 80);
 	}
 	else if(_key == "모리" || _key == "원형아저씨")
 	{
@@ -640,7 +640,7 @@ void npc::ShadowPosSet(int x , int y , int div)
 {
 	CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
 		_pos.x + _aniNpc->getImage()->getFrameWidth() / div - x,
-		_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / div) - y, 0, 0, 150);
+		_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / div) - y, 0, 0, 80);
 }
 
 void npc::TalkInterfaceRender()
