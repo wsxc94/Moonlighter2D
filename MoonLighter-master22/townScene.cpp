@@ -251,27 +251,29 @@ void townScene::ObjectColl()
 			if (IntersectRect(&tmp, &PLAYER->getShadowRect(), &temp)) {
 				int wid = tmp.right - tmp.left;
 				int hei = tmp.bottom - tmp.top;
+				int pwid = (PLAYER->getShadowRect().right - PLAYER->getShadowRect().left) / 2;
+				int phei = (PLAYER->getShadowRect().bottom - PLAYER->getShadowRect().top) / 2;
 
 				if (wid > hei) // 위아래
 				{
 					if (tmp.top == PLAYER->getShadowRect().top) // 아래
 					{
-						PLAYER->setY(PLAYER->getY() + hei);
+						PLAYER->setY(temp.bottom + phei);
 					}
 					else  // 위
 					{
-						PLAYER->setY(PLAYER->getY() - hei);
+						PLAYER->setY(temp.top - phei);
 					}
 				}
 				else  // 양옆
 				{
 					if (tmp.left == PLAYER->getShadowRect().left) // 오른쪽
 					{
-						PLAYER->setX(PLAYER->getX() + wid);
+						PLAYER->setX(temp.right + pwid);
 					}
 					else // 왼쪽
 					{
-						PLAYER->setX(PLAYER->getX() - wid);
+						PLAYER->setX(temp.left - pwid);
 					}
 				}
 			}
