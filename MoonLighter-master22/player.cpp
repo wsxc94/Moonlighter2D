@@ -787,8 +787,8 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack5X4.bmp", 600, 480, 5, 4);
 	IMAGEMANAGER->addFrameImage("활스킬", "Images/플레이어/bow_skill2X4.bmp", 240, 480, 2, 4);
 
-	IMAGEMANAGER->addFrameImage("숏소드", "Images/플레이어/short_attack6X4.bmp", 720, 480, 6, 4);
-	IMAGEMANAGER->addFrameImage("숏소드2연격", "Images/플레이어/short_attack_two5X4.bmp", 600, 480, 5, 4);
+	IMAGEMANAGER->addFrameImage("숏소드", "Images/플레이어/short_attack5X4.bmp", 600, 480, 5, 4);
+	IMAGEMANAGER->addFrameImage("숏소드2연격", "Images/플레이어/short_attack_two4X4.bmp", 480, 480, 4, 4);
 	IMAGEMANAGER->addFrameImage("방패", "Images/플레이어/shiled_state1X4.bmp", 120, 480, 1, 4);
 
 	IMAGEMANAGER->addImage("그림자", "Images/플레이어/player_Shadow.bmp", 70, 50, true, RGB(255, 0, 255));
