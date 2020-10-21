@@ -68,6 +68,14 @@ void recipe::addMaterial(int itemIdx, int count)
 	_vMaterial.push_back(item);
 }
 
+void recipe::deleteUsedMaterial(int count)
+{
+	for (int i = 0; i < _vMaterial.size(); i++)
+	{
+		ITEMMENU->getInventory()->deleteItemByCount(_vMaterial[i]->getItem(), count);
+	}
+}
+
 bool recipe::checkMaterialOX(int index)
 {
 	int itemIdx = _vMaterial[index]->getItem().getItemIdx();
@@ -213,6 +221,12 @@ void recipe::countRender(HDC hdc, int destX, int destY, int count)
 {
 	int multiplyCount = 0;
 	int tempCount = count;
+
+	if (count == 0)
+	{
+		IMAGEMANAGER->render("0_black", hdc, destX, destY);
+		return;
+	}
 
 	while (true)
 	{

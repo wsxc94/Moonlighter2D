@@ -93,11 +93,15 @@ public:
 	gameItem getWeaponEquipped();						//현재 장착하고 있는 무기 아이템 클래스를 반환 
 	int getCountByIdx(int itemIdx);						//특정 아이템의 소지개수를 인덱스를 값을 통해 찾아서 반환 
 	bool checkRoomForItem(int itemIdx);					//특정 아이템이 인벤토리에 들어갈 공간이 있는지 확인
-	int getMaxProduceBasedOnRoom(int itemIdx, int maxCount);//특정 아이템이 인벤토리에 들어갈 수 있는 최대개수	
+	int getMaxProduceBasedOnRoom(int itemIdx, const int maxCount);//특정 아이템이 인벤토리에 들어갈 수 있는 최대개수	
 
 	//set함수 
 	void setWeaponIdx(int index) { _curWeaponIdx = index; }	//장착하는 무기의 인덱스 값을 설정하는 함수 
 	void setCanGrab(bool value) { _canGrab = value; }
+
+	//제조관련 함수 
+	void deleteItemByCount(gameItem item, int count);	//게임 아이템을 count 수만큼 삭감
+	void addItemByCount(gameItem item, int count);	//게임 아이템을 count 수만큼 생성 
 
 	//인벤토리메뉴 이동 관련 함수 
 	POINT getInvenPos() { return _invenPos; }				//인벤토리 위치값 get함수

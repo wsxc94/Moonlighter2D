@@ -2,6 +2,7 @@
 #include "fadeManager.h"
 #include "movingObject.h"
 #include "selectMenu.h"
+#include "animation.h"
 #include "cursor.h"
 #include "recipe.h"
 #include "gameNode.h"
@@ -30,8 +31,7 @@ enum POTION_CTRL
 	POTION_MENU,
 	POTION_MESSAGE,
 	POTION_SET_COUNT,
-	POTION_SELECTMENU,
-	POTION_CRAFTING
+	POTION_SELECTMENU
 };
 
 //포션메뉴 슬롯 구조체 
@@ -50,6 +50,7 @@ class potionShop : public gameNode
 {
 private:
 	fadeManager *_fadeManager;
+	animation *_animation;
 	movingObject *_potionMenu;
 	movingObject *_shopBanner;
 	movingObject *_eKeyIcon;
@@ -65,9 +66,13 @@ private:
 	bool _openMenu;			//메뉴 열기 동작 실행여부 
 	bool _closeMenu;		//메뉴 닫기 동작 실행여부 
 	bool _showBannerTxt;	//상점배너 텍스트 출력여부 
+	bool _animPlayed;		//애니메이션 플레이 1회 시키기 
+	bool _playAnim;			//애니메이션이 현재 플레이 중인지 확인 
 
 	int _produceCount;			//제조 할 아이템 개수 
 	int _maxProduceCount;		//인벤토리의 빈 공간을 참조 해서 생성 가능한 최대 아이템 개수 
+	float _potionPosY;			//제조 시 변경시켜줄 포션 위치 
+	int _frameCount;
 
 public:
 	HRESULT init();
@@ -95,6 +100,8 @@ public:
 	void setPotionCtrl(POTION_CTRL state);	//포션상점 컨트롤러 설정 
 	bool checkRequirements();				//포션 제조에 필요한 요건이 충족되는지 여부 확인
 	void checkMaxProduceCount();			//생성 가능한 최대 아이템 개수 확인 
+	void playCraftingAnim();				//포션 제조 애니메이션 실행 
+	void applyCraftingResult();
 
 	//키입력 함수 
 	void keyInput();					//전체 키입력 함수 
@@ -141,8 +148,6 @@ public:
 
 	//렌더 함수(포션 제작)
 	void potionCraftRender();			//포션 제작 렌더 전체 함수 
-	void potionCraftAnimRender();		//포션 제작 애니메이션 렌더 
-	void potionCraftCountRender();
 
 };
 

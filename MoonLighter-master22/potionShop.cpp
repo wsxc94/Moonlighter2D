@@ -11,6 +11,11 @@ HRESULT potionShop::init()
 	_selectMenu = new selectMenu;
 	_selectMenu->init();
 
+	//애니메이션 초기화 
+	_animation = new animation;
+	_animation->init(IMAGEMANAGER->findImage("craftPotionAnim"), 0, 5, false, false);
+	_animation->aniStop();
+
 	//커서 초기화 
 	_cursor = new cursor;
 	_cursor->init();
@@ -32,12 +37,16 @@ HRESULT potionShop::init()
 	_eKeyIcon->init(IMAGEMANAGER->findImage("icon_potionKeyE"),
 		WINSIZEX, POTION_EKEYPOSY, 20.f);
 
+	_frameCount = 0;
+
 	//메뉴 열고 닫기 관련 변수 초기화 
 	_menuOn = false; 
 	_openMenu = false; 
 	_closeMenu = false; 
 	_showBannerTxt = false; 
-
+	_animPlayed = false; 
+	_playAnim = false; 
+	
 	return S_OK;
 }
 
@@ -55,6 +64,7 @@ void potionShop::update()
 {
 	_fadeManager->update();
 	_selectMenu->update();
+	_animation->update();
 	_cursor->update();
 
 	//메뉴 열고 닫기 
@@ -74,9 +84,12 @@ void potionShop::render()
 	_fadeManager->render(getMemDC());
 
 	//char str[100];
-	//wsprintf(str, "maxProduceCount : %d", _maxProduceCount);
+	//wsprintf(str, "produceCount : %d", _produceCount);
 	//TextOut(getMemDC(), 10, 130, str, strlen(str));
-	
+	//
+	//wsprintf(str, "frameCount : %d", _frameCount);
+	//TextOut(getMemDC(), 10, 150, str, strlen(str));
+
 	if (!_menuOn) return; 
 
 	//상점메뉴 이미지 출력 
@@ -96,6 +109,7 @@ void potionShop::render()
 		{
 			case POTION_MENU:
 				_cursor->render(getMemDC());
+				if (_playAnim) potionCraftRender();
 				break;
 
 			case POTION_MESSAGE:
@@ -109,10 +123,6 @@ void potionShop::render()
 			case POTION_SELECTMENU:
 				selectMenuRender();
 				_cursor->render(getMemDC());
-				break;
-
-			case POTION_CRAFTING:
-				potionCraftRender();
 				break;
 		}
 	}
@@ -146,7 +156,7 @@ void potionShop::toggleMenu()
 			//아이템메뉴의 키입력을 받지 않는다.(메뉴의 키값이 서로 충돌하기 때문)
 			ITEMMENU->setCanKeyInput(false);
 			_fadeManager->fadeInit(16, FADE_OUT, 205);
-			SOUNDMANAGER->play("witch_Open", 0.5f);
+			SOUNDMANAGER->play("witch_open", 0.5f);
 		}
 	}
 }
@@ -326,12 +336,10 @@ void potionShop::setPotionCtrl(POTION_CTRL state)
 		case POTION_SELECTMENU:
 			_cursor->setDestPos(718, 138);
 			_cursor->setCursorState(CURSOR_SELECT_MOVE);
+			_potionPosY = 484;
+			_selectMenu->init();
 			_potionCtrl = state;
 			break;
-
-		case POTION_CRAFTING:
-			_potionCtrl = state;
-			break; 
 	}
 }
 
@@ -415,6 +423,35 @@ void potionShop::checkMaxProduceCount()
 		int maxMaterialCount = _potionSlot[_cursor->getSlotIdx()].mixRecipe->getMaxProduceBasedOnMaterial();
 		if (maxMaterialCount < _maxProduceCount) _maxProduceCount = maxMaterialCount;
 	}
+}
+
+void potionShop::playCraftingAnim()
+{
+	if (!_animPlayed)
+	{
+		int totalPrice = (_produceCount * _potionSlot[_cursor->getSlotIdx()].price);
+		DAMAGEFONT->init(90, 112, -totalPrice);
+		PLAYERDATA->startChangeGold(totalPrice, GOLD_SUBTRACT);
+
+		_animation->aniRestart();
+		applyCraftingResult();
+		_animPlayed = true;
+
+		SOUNDMANAGER->play("witch_craft", 0.4f);
+		SOUNDMANAGER->play("gold_decrement", 0.3f);
+	}
+}
+
+void potionShop::applyCraftingResult()
+{	
+	//1. 제조한 만큼 인벤토리에 재료 삭감(크래프팅일 경우 )
+	if (_potionSlot[_cursor->getSlotIdx()].type == POTION_CRAFT)
+	{
+		_potionSlot[_cursor->getSlotIdx()].mixRecipe->deleteUsedMaterial(_produceCount);
+	}
+
+	//2. 제조한 만큼 인벤토리에 생성 
+	ITEMMENU->getInventory()->addItemByCount(_potionSlot[_cursor->getSlotIdx()].item, _produceCount);
 }
 
 void potionShop::printMessage()
@@ -529,6 +566,21 @@ void potionShop::keyInput()
 
 void potionShop::menuKeyInput()
 {
+	if (_playAnim)
+	{
+		playCraftingAnim();
+		_potionPosY -= 0.3f;
+		_frameCount++;
+
+		if (_frameCount >= 85 && _animPlayed)
+		{
+			_playAnim = false;
+			_animPlayed = false;
+			_frameCount = 0;
+		}
+		return;
+	}
+
 	//상하좌우 키입력 
 	if (INPUT->GetKeyDown('A'))
 	{
@@ -642,7 +694,8 @@ void potionShop::selectMenuKeyInput()
 		{
 			//네
 			SOUNDMANAGER->play("cursor_move", 0.2f);
-			setPotionCtrl(POTION_CRAFTING);
+			setPotionCtrl(POTION_MENU);
+			_playAnim = true; 
 		}
 		else
 		{
@@ -994,21 +1047,18 @@ void potionShop::selectMenuAnimRender()
 
 void potionShop::potionCraftRender()
 {
-
 	//포션 그림자 띄우기 
 	IMAGEMANAGER->render("potion_shadow", getMemDC(), 586, 512);
 
 	//제작한 포션개수 출력 
 	countRender(_produceCount, 616, 518, COLOR_WHITE);
-}
 
-void potionShop::potionCraftAnimRender()
-{
-	
-}
+	IMAGEMANAGER->findImage(_potionSlot[_cursor->getSlotIdx()].item.getName())->stretchRender(
+		getMemDC(), 602, (int)_potionPosY, 1.5f);
 
-void potionShop::potionCraftCountRender()
-{
+	//애니메이션 출력 
+	if (_animation->getAniState() == ANIMATION_PLAY) 
+		_animation->render(getMemDC(), 418, 314);
 }
 
 
