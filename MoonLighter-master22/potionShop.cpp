@@ -178,7 +178,8 @@ void potionShop::openPotionMenu()
 
 	_menuOn = true;
 	_openMenu = true;
-	
+	initPotionShop();
+
 	//인터페이스 렌더여부 설정 
 	PLAYERDATA->setRenderHp(false);
 	PLAYERDATA->setRenderKeyInfo(false);
@@ -186,19 +187,22 @@ void potionShop::openPotionMenu()
 
 	//아이템메뉴의 키입력을 받지 않는다.(메뉴의 키값이 서로 충돌하기 때문)
 	ITEMMENU->setCanKeyInput(false);
-
 	_fadeManager->fadeInit(16, FADE_OUT, 205);
-	SOUNDMANAGER->play("witch_Open", 0.5f);
+	SOUNDMANAGER->play("witch_open", 0.5f);
 }
 
 void potionShop::closePotionMenu()
 {
-	//현재 메뉴를 열고 있거나 닫고 있는 중이라면 함수 종료 
+	//현재 메뉴를 열고 있거나 닫고 있는 중이라면 함수 종료
 	if (_openMenu || _closeMenu) return;
 
-	_closeMenu = true;
-	_fadeManager->fadeInit(16, FADE_IN);
-	_cursor->setShowCursor(false);
+	if (_menuOn)
+	{
+		_closeMenu = true;
+		_showBannerTxt = false;
+		_fadeManager->fadeInit(16, FADE_IN);
+		_cursor->setShowCursor(false);
+	}
 }
 
 void potionShop::openMenu()
