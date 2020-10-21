@@ -338,6 +338,7 @@ void player::playerState()
 			break;
 
 		case PLAYER_ATTACK_SWORD:
+		
 			if (_aniSword->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -349,7 +350,8 @@ void player::playerState()
 			}
 			break;
 
-		case PLAYER_ATTACK_SWORD_SECOND:		
+		case PLAYER_ATTACK_SWORD_SECOND:	
+			
 			if (_aniSwordTwo->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -406,7 +408,10 @@ void player::playerState()
 				}
 				_state = PLAYER_IDLE;
 				_skillCount = 0;
-				
+				if (!SOUNDMANAGER->isPlaySound("화살발사"))
+				{
+					SOUNDMANAGER->play("화살발사", 0.3f);
+				}
 			}
 			break;
 		case PLAYER_ATTACK_BOW:
@@ -673,10 +678,9 @@ void player::playerAttack()
 			case SHORT_SOWRD:
 				_state = PLAYER_ATTACK_SWORD;
 				if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
-					switch (_player.weapon)
-					{
-						SOUNDMANAGER->play("검휘두르기", 0.3f);
-					}
+				{
+					SOUNDMANAGER->play("검휘두르기", 0.3f);
+				}
 				_aniSword->aniRestart();
 				break;
 
@@ -719,9 +723,13 @@ void player::playerSkill()
 			_state = PLAYER_SHILED;
 			break;
 		case BOW:
+			if (!SOUNDMANAGER->isPlaySound("화살스킬"))
+			{
+				SOUNDMANAGER->play("화살스킬", 0.3f);
+			}
 			if (!_isShoot)
 			{
-				_state = BOW_CHARGE;		
+				_state = BOW_CHARGE;
 			}
 			break;
 		}
@@ -759,6 +767,7 @@ bool player::getKeyMove()
 
 void player::arrowSkillSet()
 {
+	
 	if (_state == BOW_CHARGE)
 	{
 		_skillCount++;
@@ -788,8 +797,8 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("활날리기", "Images/플레이어/bow_attack5X4.bmp", 600, 480, 5, 4);
 	IMAGEMANAGER->addFrameImage("활스킬", "Images/플레이어/bow_skill2X4.bmp", 240, 480, 2, 4);
 
-	IMAGEMANAGER->addFrameImage("숏소드", "Images/플레이어/short_attack6X4.bmp", 720, 480, 6, 4);
-	IMAGEMANAGER->addFrameImage("숏소드2연격", "Images/플레이어/short_attack_two5X4.bmp", 600, 480, 5, 4);
+	IMAGEMANAGER->addFrameImage("숏소드", "Images/플레이어/short_attack5X4.bmp", 600, 480, 5, 4);
+	IMAGEMANAGER->addFrameImage("숏소드2연격", "Images/플레이어/short_attack_two4X4.bmp", 480, 480, 4, 4);
 	IMAGEMANAGER->addFrameImage("방패", "Images/플레이어/shiled_state1X4.bmp", 120, 480, 1, 4);
 
 	IMAGEMANAGER->addImage("그림자", "Images/플레이어/player_Shadow.bmp", 70, 50, true, RGB(255, 0, 255));
