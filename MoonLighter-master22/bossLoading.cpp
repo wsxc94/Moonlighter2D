@@ -73,6 +73,9 @@ void bossLoading::loadImage()
 	_loading->loadImage("messegeBox_potal", "Images/던전/messegeBox_potal.bmp", 183, 50, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("dungeonStageBar", "Images/던전결과창/dungeonProgress1X3.bmp", 85, 45, 1, 3);
 	_loading->loadImage("resultBack", "Images/던전결과창/ui_dungeonResult4022.bmp", 1158, 656, true, RGB(255, 0, 255));
+
+	_loading->loadFrameImage("화살이펙트", "Images/플레이어/bowEffect 3X4.bmp", 768, 1024, 3, 4);
+	_loading->loadFrameImage("공격이펙트", "Images/플레이어/swordEffect 3X4.bmp", 768, 1024, 3, 4);
 	
 }
 

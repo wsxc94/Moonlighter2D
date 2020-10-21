@@ -11,8 +11,6 @@ HRESULT townScene::init()
 	_npcManager = new npcManager;
 	_npcManager->init(_vTest);
 
-
-
 	PLAYER->init();
 	
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
@@ -352,7 +350,7 @@ void townScene::collArrow()
 	RECT temp;
 	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
 	{
-		PLAYER->setShoot(false);
+		PLAYER->getArrow()->setIsShoot(false);
 	}
 }
 
@@ -375,6 +373,7 @@ void townScene::updatePotal()
 		}
 		if (_potal->getIsActivate() == false)
 		{
+			PLAYERDATA->setIsBossReturn(false);
 			_potal->release();
 			SAFE_DELETE(_potal);
 		}

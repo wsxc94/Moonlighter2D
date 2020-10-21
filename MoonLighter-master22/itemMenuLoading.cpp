@@ -29,7 +29,7 @@ void itemMenuLoading::update()
 	if (_loading->loadingDone())
 	{
 		ITEMMENU->init();
-		SCENEMANAGER->loadScene("타운로딩");
+		SCENEMANAGER->loadScene("타이틀화면");
 	}
 }
 

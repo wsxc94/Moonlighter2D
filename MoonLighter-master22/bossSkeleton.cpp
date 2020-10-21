@@ -871,6 +871,7 @@ void bossSkeleton::bossColi(int bossTypeDemage, tagAtkBox &bossTypeRect)
 		PLAYERDATA->minusInDungeonHp(bossTypeDemage);
 		PLAYER->setPlayerState(HIT_IDLE);
 		PLAYER->setHit(true);
+		DAMAGEFONT->init(PLAYER->getX(), PLAYER->getY(), bossTypeDemage);
 	}
 }
 
