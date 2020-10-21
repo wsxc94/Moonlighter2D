@@ -106,16 +106,13 @@ void inventory::render(HDC hdc)
 		}//end of switch 
 	}
 
-	char str[128];
+	//char str[128];
 
-	wsprintf(str, "cursorTime : %d", _cursor->getClickTime());
-	TextOut(hdc, 10, 130, str, strlen(str));
+	//wsprintf(str, "cursorTime : %d", _cursor->getClickTime());
+	//TextOut(hdc, 10, 130, str, strlen(str));
 
-	wsprintf(str, "canGrab : %d", _canGrab);
-	TextOut(hdc, 10, 150, str, strlen(str));
-
-	//wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
-	//TextOut(hdc, 10, 170, str, strlen(str));
+	//wsprintf(str, "canGrab : %d", _canGrab);
+	//TextOut(hdc, 10, 150, str, strlen(str));
 }
 
 itemManager * inventory::getItemManager()
@@ -213,7 +210,7 @@ bool inventory::checkRoomForItem(int itemIdx)
 	for (int i = 0; i < MAXSLOT; i++)
 	{
 		//일반 아이템 슬롯만 확인 
-		if (_invenSlot[i].type != ITEM_NORMAL) continue;
+		if (_invenSlot[i].type != ITEM_NORMAL && _invenSlot[i].type != ITEM_POTION) continue;
 
 		//빈 슬롯이 있다면 참 리턴 
 		if (_invenSlot[i].isEmpty) return true; 
@@ -246,8 +243,9 @@ int inventory::getMaxProduceBasedOnRoom(int itemIdx, int maxCount)
 
 	for (int i = 0; i < MAXSLOT; i++)
 	{
-		//일반 아이템 슬롯만 확인 
-		if (_invenSlot[i].type != ITEM_NORMAL) continue;
+		////일반 아이템 슬롯과 포션 슬롯만 확인 
+		//if (_invenSlot[i].type != ITEM_NORMAL) continue;
+		if (_invenSlot[i].type != ITEM_NORMAL && _invenSlot[i].type != ITEM_POTION) continue;
 
 		//빈 슬롯이 있다면 해당 아이템의 맥스개수만큼 더하고 건너뛰기 
 		if (_invenSlot[i].isEmpty)
@@ -272,6 +270,150 @@ int inventory::getMaxProduceBasedOnRoom(int itemIdx, int maxCount)
 	}//end of for(i)
 
 	return possibleCount;
+}
+
+void inventory::deleteItemByCount(gameItem item, int count)
+{
+	int deleteCount = count; 
+
+	for (int i = 0; i < _vInven.size(); i++)
+	{
+		//같은 아이템이 아니라면 건너뛰기 
+		if (_vInven[i]->getItemIdx() != item.getItemIdx()) continue;
+
+		if (deleteCount >= _vInven[i]->getCount())
+		{
+			deleteCount -= _vInven[i]->getCount();
+			_invenSlot[_vInven[i]->getInvenPosIdx()].isEmpty = true; 
+			SAFE_DELETE(_vInven[i]);
+			_vInven.erase(_vInven.begin() + i);
+			i--;
+
+			if (deleteCount == 0) return; 
+		}
+		else
+		{
+			_vInven[i]->setCount(_vInven[i]->getCount() - deleteCount);
+			deleteCount = 0;
+			return; 
+		}
+	}//end of for 
+}
+
+void inventory::addItemByCount(gameItem item, int count)
+{
+	int addCount = count;
+
+	for (int i = 0; i < _vInven.size(); i++)
+	{
+		//추가하고자 하는 아이템과 같은 종류의 아이템이 인벤토리 슬롯에 있을 경우 
+		if (_vInven[i]->getItemIdx() == item.getItemIdx())
+		{
+			//슬롯의 아이템이 이미 최대개수 이상일 때는 건너뛰기 
+			if (_vInven[i]->getCount() >= _vInven[i]->getMaxCount()) continue;
+
+			//슬롯에 채워야 하는 수만큼 채우기 
+			int tempCount = _vInven[i]->getMaxCount() - _vInven[i]->getCount();
+			if (addCount > tempCount)
+			{
+				_vInven[i]->setCount(_vInven[i]->getCount() + tempCount);
+				addCount -= tempCount;
+			}
+			else
+			{
+				_vInven[i]->setCount(_vInven[i]->getCount() + addCount);
+				addCount = 0;
+				return; 
+			}
+		}
+	}//end of for(i)
+
+	//같은 종류의 아이템이 인벤토리 슬롯에 없거나 꽉 찬 경우 인벤토리에 새롭게 추가하기 
+	//인벤토리의 빈 자리로 위치값을 설정하여 인벤토리 벡터에 푸시백 
+	for (int i = 0; i < MAXSLOT; i++)
+	{
+		if (_invenSlot[i].type != ITEM_NORMAL && _invenSlot[i].type != ITEM_POTION) continue;
+		if (!_invenSlot[i].isEmpty) continue;
+
+		gameItem *tempItem = new gameItem;
+		tempItem->init(&item);
+		tempItem->setInvenPosIdx(i);
+
+		if (addCount > item.getMaxCount())
+		{
+			int tempCount = item.getMaxCount();
+			addCount -= tempCount;
+			tempItem->setCount(tempCount);
+			_vInven.push_back(tempItem);
+			_invenSlot[i].isEmpty = false;
+		}
+		else
+		{
+			tempItem->setCount(addCount);
+			_vInven.push_back(tempItem);
+			_invenSlot[i].isEmpty = false;
+			addCount = 0;
+			return;
+		}
+
+	}//end of for(j)
+
+	//for (int i = 0; i < _vInven.size(); i++)
+	//{
+	//	//추가하고자 하는 아이템과 같은 종류의 아이템이 인벤토리 슬롯에 있을 경우 
+	//	if (_vInven[i]->getItemIdx() == item.getItemIdx())
+	//	{
+	//		//슬롯의 아이템이 이미 최대개수 이상일 때는 건너뛰기 
+	//		if (_vInven[i]->getCount() >= _vInven[i]->getMaxCount()) continue;
+
+	//		//슬롯에 채워야 하는 수만큼 채우기 
+	//		int tempCount = _vInven[i]->getMaxCount() - _vInven[i]->getCount();
+	//		if (addCount > tempCount)
+	//		{
+	//			_vInven[i]->setCount(_vInven[i]->getCount() + tempCount);
+	//			addCount -= tempCount;
+	//		}
+	//		else
+	//		{
+	//			_vInven[i]->setCount(_vInven[i]->getCount() + addCount);
+	//			addCount = 0;
+	//			return;
+	//		}
+	//	}
+
+	//	//같은 종류의 아이템이 인벤토리 슬롯에 없거나 꽉 찬 경우 인벤토리에 새롭게 추가하기 
+	//	while (i == _vInven.size() - 1 && addCount > 0)
+	//	{
+	//		//인벤토리의 빈 자리로 위치값을 설정하여 인벤토리 벡터에 푸시백 
+	//		for (int j = 0; j < MAXSLOT; j++)
+	//		{
+	//			if (_invenSlot[j].type != ITEM_NORMAL && _invenSlot[j].type != ITEM_POTION) continue;
+	//			if (!_invenSlot[j].isEmpty) continue;
+
+	//			gameItem *tempItem = new gameItem;
+	//			tempItem->init(&item);
+	//			tempItem->setInvenPosIdx(j);
+
+	//			if (addCount > item.getMaxCount())
+	//			{
+	//				int tempCount = item.getMaxCount();
+	//				addCount -= tempCount;
+	//				tempItem->setCount(tempCount);
+	//				_vInven.push_back(tempItem);
+	//				_invenSlot[j].isEmpty = false;
+	//			}
+	//			else
+	//			{
+	//				tempItem->setCount(addCount);
+	//				_vInven.push_back(tempItem);
+	//				_invenSlot[j].isEmpty = false;
+	//				addCount = 0;
+	//				return;
+	//			}
+
+	//		}//end of for(j)
+	//	}//end of while
+	//}//end of for(i)
 }
 
 void inventory::initPos()
@@ -446,7 +588,7 @@ void inventory::initItem()
 	_vInven[VENOMJELLY_IDX]->setCount(10);
 	_vInven[CRYSTAL_IDX]->setCount(5);
 	_vInven[VINE_IDX]->setCount(5);
-	_vInven[POTION1_IDX]->setCount(5);
+	//_vInven[POTION1_IDX]->setCount(5);
 	_vInven[POTION2_IDX]->setCount(5);
 }
 

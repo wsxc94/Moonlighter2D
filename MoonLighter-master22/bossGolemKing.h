@@ -2,6 +2,10 @@
 #include "boss.h"
 #include "progressBar.h"
 
+#define ROCKDAMAGE 7
+#define FISTDAMAGE 15
+#define HANDDAMAGE 10
+
 enum class GOLEMKINGSTATE
 {
 	BS_INIT,BS_IDLE,BS_FIST,BS_ROCK_SHOOT,BS_ROCK_ROUND,BS_HAND,BS_DEAD
@@ -26,6 +30,7 @@ struct tagGolemHand
 	float speed;
 	float shadowScale;
 	int count;
+	int atkCount;
 	bool isHit;
 	HANDSTATE state;
 };
@@ -34,6 +39,7 @@ struct tagRock
 {
 	image* img;
 	RECT rc;
+	RECT colRC;
 	float x, y;
 	float hight;
 	float shadowScale;
@@ -97,6 +103,7 @@ private:
 	bool _isDeadSoundPlay;						//죽는 사운드
 	bool _isDead;								//죽었냐?
 	bool _isHit;
+	bool _coliSkillAroow;
 
 public:
 	bossGolemKing() {}
@@ -110,6 +117,7 @@ public:
 	void initAttack();										//공격하기전 상태별 초기화
 
 	void collisionPlayer();
+	void hitUpdate();
 
 	void initVGolemAttack();								//벡터에 공격패턴 넣기
 	void suffleVGolemAttack();								//랜덤하게 셔플하기
@@ -120,6 +128,7 @@ public:
 	void bsRockRoundUpdate();
 	void bsHandUpdate();
 	void vRockUpdate();
+	void collisionRock();
 
 
 	float getX() { return _x; }

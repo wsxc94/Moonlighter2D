@@ -12,6 +12,7 @@ HRESULT arrow::init()
 	_speed = 8;
 	_alpha = 255;
 	_isSkill = false;
+	_isShoot = false;
 
 	//_shadowArrow.img = IMAGEMANAGER->addFrameImage()
 	//_shadowArrow.x = 0;
@@ -95,10 +96,6 @@ void arrow::shootArrow()
 
 void arrow::moveArrow()
 {
-	if (!PLAYER->getShoot())
-	{
-		this->shootArrow();
-	}
 	switch (_arrowDirection)
 	{
 	case ARROW_DOWN:
@@ -117,5 +114,14 @@ void arrow::moveArrow()
 		_x -= _speed;
 		_rc = RectMake(_x, _y, 50, 20);
 		break;
+	}
+}
+
+void arrow::setIsShoot(bool value)
+{
+	_isShoot = value;
+	if (_isShoot == true)
+	{
+		this->shootArrow();
 	}
 }

@@ -11,14 +11,9 @@ HRESULT townScene::init()
 	_npcManager = new npcManager;
 	_npcManager->init(_vTest);
 
-
-
 	PLAYER->init();
 	
 	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
-
-	_potionShop = new potionShop;
-	_potionShop->init();
 
 	shopPortal = RectMake(1650, 315 , 80 , 80);
 	gotoDungeonPortal = RectMake(460, 0, 460, 20);
@@ -76,12 +71,12 @@ void townScene::update()
 	//PLAYER->setPlace(SHOP);
 	if (!SOUNDMANAGER->isPlaySound("마을브금")) 
 	{
-		SOUNDMANAGER->play("마을브금", 0.03f);
+		SOUNDMANAGER->play("마을브금", 0.3f);
 	}
 	else 
 	{
-		if (ITEMMENU->getOpenMenu() || _potionShop->getMenuOn()) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
-		else SOUNDMANAGER->setVolumn("마을브금", 0.03f);
+		if (ITEMMENU->getOpenMenu() || _npcManager->getPotionShopNpc() ) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
+		else SOUNDMANAGER->setVolumn("마을브금", 0.3f);
 	}
 
 	//====================================================
@@ -106,7 +101,7 @@ void townScene::update()
 		_potal->getPotalState() != POTAL_PLAYERIN &&
 		_potal->getPotalState() != POTAL_PLAYEROUT))
 	{
-		if(!_potionShop->getMenuOn()) PLAYER->update();
+		if(!_npcManager->getPotionShopNpc()->getPotionShop()->getMenuOn()) PLAYER->update();
 	}
 
 	this->updatePotal();
@@ -117,7 +112,7 @@ void townScene::update()
 
 	_npcManager->update();
     ITEMMENU->update();
-	if(!ITEMMENU->getOpenMenu()) _potionShop->update();
+	//if(!ITEMMENU->getOpenMenu()) _potionShop->update();
 
 	portalColl(); // 포탈 이동 추가 - 팀장급 디렉터
 	ObjectAnim();
@@ -192,7 +187,6 @@ void townScene::render()
 		PLAYER->render(getMemDC());
 
 	ITEMMENU->render(getMemDC());
-	_potionShop->render();
 
 	this->renderPotal();
 
@@ -356,7 +350,7 @@ void townScene::collArrow()
 	RECT temp;
 	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
 	{
-		PLAYER->setShoot(false);
+		PLAYER->getArrow()->setIsShoot(false);
 	}
 }
 
@@ -379,6 +373,7 @@ void townScene::updatePotal()
 		}
 		if (_potal->getIsActivate() == false)
 		{
+			PLAYERDATA->setIsBossReturn(false);
 			_potal->release();
 			SAFE_DELETE(_potal);
 		}

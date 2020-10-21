@@ -1,6 +1,6 @@
 #pragma once
 #include "gameNode.h"
-#include "npc.h"
+#include "PotionShopNpc.h"
 
 class displayStand;
 
@@ -16,22 +16,17 @@ private:
 
 	vector<npc*> v_npcs;
 
-
 	displayStand* _displayStand;
 
 	int _npcTime;
+
 	vector<pair<string, string>> _npcName = {
 		make_pair("마사" , "배낭맨여자"),
 		make_pair("토모" , "원형아저씨"),
 		make_pair("레드먼드" , "도둑강아지"),
 		make_pair("모리" , "히어로")
 	};
-	/*vector<string> _npcName = {
-		"마사",
-		"토모",
-		"레드먼드",
-		"모리"
-	};*/
+
 public:
 	HRESULT init(displayStand* dis);
 	void release();

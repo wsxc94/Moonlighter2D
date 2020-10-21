@@ -47,15 +47,17 @@ public:
 	void release();
 	void update();
 	void render(HDC hdc, int destX, int destY);
-
+\
 	//get함수 
 	vector<material*> getMeterial() { return _vMaterial; }
-
-	void addMaterial(int itemIdx, int count);		//레시피에 재료 추가하기 
 	bool checkMaterialOX(int index);				//해당 재료의 조건충족여부 확인
 	bool checkRequirements();						//전체 재료의 조건충족여부 확인 
 	int getMaxProduceBasedOnMaterial();				//소지 중인 재료를 기반으로 최대제조개수 구하기 
 	const char *getShortMaterialName();				//부족한 재료의 이름 받기 
+
+	//재료 추가 및 인벤토리에서 삭제 함수 
+	void addMaterial(int itemIdx, int count);		//레시피에 재료 추가하기 
+	void deleteUsedMaterial(int count);				//사용한 재료 인벤토리에서 삭제하기  
 
 	//렌더함수 
 	void recipeIconRender(HDC hdc, int destX, int destY);

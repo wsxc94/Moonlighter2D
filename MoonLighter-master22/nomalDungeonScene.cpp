@@ -4,7 +4,7 @@
 
 HRESULT nomalDungeonScene::init()
 {
-	if (PLAYERDATA->getIsEmblemReturn() && PLAYERDATA->getMapData() != nullptr)
+	if (PLAYERDATA->getIsEmblemReturn())
 	{
 		this->initFromSave();
 		return S_OK;
@@ -50,7 +50,7 @@ HRESULT nomalDungeonScene::init()
 	_aniBefore = new animation;
 
 	_aniCenter = new animation;
-	
+	_vMinimap.clear();
 	return S_OK;
 }
 
@@ -61,6 +61,7 @@ HRESULT nomalDungeonScene::initFromSave()
 
 	_golemScroll = new animation;
 	_golemScroll->init(IMAGEMANAGER->findImage("golemScroll"), 0, 7);
+	PLAYERDATA->setIsEmblemReturn(false);
 	PLAYERDATA->setIsInDungeon(true);
 	PLAYERDATA->initDungeonHp();
 	PLAYER->setX(_currentDungeon->getPotal()->getX());
@@ -80,6 +81,7 @@ HRESULT nomalDungeonScene::initFromSave()
 	_playerClone = new animation;
 	_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 4);
 	_playerClone->aniStop();
+	_vMinimap.clear();
 	return S_OK;
 }
 
@@ -388,7 +390,7 @@ void nomalDungeonScene::dungeonUpdate()
 		{
 		case 1:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
-			PLAYER->setX(1085 + 20);
+			PLAYER->setX(1085 + 10);
 			PLAYER->setY(350 + 17);
 			break;
 		case 2:
@@ -399,7 +401,7 @@ void nomalDungeonScene::dungeonUpdate()
 		case 3:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());
 			PLAYER->setX(595 + 17);
-			PLAYER->setY(595 + 20);
+			PLAYER->setY(595 + 10);
 			break;
 		case 4:
 			_currentDungeon = _currentDungeon->moveDungeon(PLAYER->getShadowRect());

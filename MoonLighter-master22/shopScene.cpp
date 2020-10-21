@@ -141,11 +141,11 @@ void shopScene::render()
 	
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
 
-	/*POINT tmp = CAMERAMANAGER->getRelativeMouse(_ptMouse);
-
-	wsprintf(str, "X: %d", tmp.x);
+	/*POINT point = CAMERAMANAGER->getRelativeMouse(_ptMouse);
+	char str[256];
+	wsprintf(str, "X: %d", point.x);
 	TextOut(getMemDC(), 5, 150, str, strlen(str));
-	wsprintf(str, "Y: %d", tmp.y);
+	wsprintf(str, "Y: %d", point.y);
 	TextOut(getMemDC(), 5, 170, str, strlen(str));*/
 
 	PLAYER->render(getMemDC());
@@ -444,12 +444,12 @@ void shopScene::SoundUpdate()
 
 	if (!SOUNDMANAGER->isPlaySound("상점브금"))
 	{
-		SOUNDMANAGER->play("상점브금", 0.2f);
+		SOUNDMANAGER->play("상점브금", 0.3f);
 	}
 	else
 	{
 		if (ITEMMENU->getOpenMenu()) SOUNDMANAGER->setVolumn("상점브금", 0.08f);
-		else SOUNDMANAGER->setVolumn("상점브금", 0.2f);
+		else SOUNDMANAGER->setVolumn("상점브금", 0.3f);
 	}
 }
 

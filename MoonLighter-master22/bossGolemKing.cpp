@@ -64,8 +64,8 @@ HRESULT bossGolemKing::init(int x, int y)
 
 
 	_hp = 0;
-	//_attackCool = RANDOM->range(300,500);
-	_attackCool = 200;
+	_attackCool = RANDOM->range(150,300);
+
 
 	_golemState = GOLEMKINGSTATE::BS_INIT;
 	_golemAni = GOLEMANISTATE::ANI_BOSSUP;
@@ -86,6 +86,7 @@ HRESULT bossGolemKing::init(int x, int y)
 	_isDeadSoundPlay = false;
 	_isDead = false;
 	_isHit = false;
+	_coliSkillAroow = false;
 
 	return S_OK;
 }
@@ -107,13 +108,15 @@ void bossGolemKing::update()
 	//체력바 업데이트
 	_hpRed->update(_hp);
 	_hpWhite->update(_hp);
-
 	//체력 0되면 죽여!
 	if (_hp <= 0 && _golemState != GOLEMKINGSTATE::BS_INIT && _golemState != GOLEMKINGSTATE::BS_DEAD)
 	{
 		this->changeAniState(GOLEMANISTATE::ANI_DEAD1);
 		_golemState = GOLEMKINGSTATE::BS_DEAD;
 	}
+	//충돌처리
+	this->collisionPlayer();
+	this->hitUpdate();
 
 	//상태에따른 업데이트
 	switch (_golemState)
@@ -181,7 +184,7 @@ void bossGolemKing::update()
 
 	//돌맹이들 업데이트
 	this->vRockUpdate();
-
+	this->collisionRock();
 
 }
 
@@ -205,7 +208,7 @@ void bossGolemKing::render()
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		CAMERAMANAGER->ZorderDrawText("골 렘 왕", 2000, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
 	}
-	CAMERAMANAGER->FrameRect(getMemDC(), _bossRC, RGB(255, 0, 0));
+	//CAMERAMANAGER->FrameRect(getMemDC(), _bossRC, RGB(255, 0, 0));
 
 	switch (_golemState)
 	{
@@ -224,7 +227,7 @@ void bossGolemKing::render()
 	case GOLEMKINGSTATE::BS_HAND:
 		CAMERAMANAGER->ZorderStretchRender(IMAGEMANAGER->findImage("그림자"), 0, _golemHand.x, _golemHand.y, _golemHand.shadowScale);
 		_golemHand.ani->ZorderStretchRender(_golemHand.y, _golemHand.x, _golemHand.hight,3.f);
-		CAMERAMANAGER->FrameRect(getMemDC(), _golemHand.rc, RGB(255, 0, 0));
+		//CAMERAMANAGER->FrameRect(getMemDC(), _golemHand.rc, RGB(255, 0, 0));
 		break;
 	}
 
@@ -235,10 +238,10 @@ void bossGolemKing::render()
 		int cx = _vRock[i].x - _vRock[i].img->getWidth() / 2;
 		int cy = _vRock[i].hight - _vRock[i].img->getHeight() / 2;
 		CAMERAMANAGER->ZorderRender(_vRock[i].img, _vRock[i].y, cx, cy);
-		CAMERAMANAGER->FrameRect(getMemDC(), _vRock[i].rc, RGB(255, 0, 0));
+		//CAMERAMANAGER->FrameRect(getMemDC(), _vRock[i].colRC, RGB(255, 0, 0));
 	}
 
-	textOut(getMemDC(), 10, 200, to_string((int)_golemState).c_str(), to_string((int)_golemState).size());
+	//textOut(getMemDC(), 10, 200, to_string((int)_golemState).c_str(), to_string((int)_golemState).size());
 }
 
 void bossGolemKing::changeAniState(GOLEMANISTATE state)
@@ -273,6 +276,7 @@ void bossGolemKing::initAttack()
 		this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_ROUND:
+		if (_vRock.size() > 0) _vRock.clear();
 		if (!_isAttackSoundPlay)
 		{
 			SOUNDMANAGER->play("bossRock");
@@ -281,7 +285,7 @@ void bossGolemKing::initAttack()
 		else if (SOUNDMANAGER->isPlaySound("bossRock")) return;
 		break;
 	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
-
+		if (_vRock.size() > 0) _vRock.clear();
 		if (!_isAttackSoundPlay)
 		{
 			SOUNDMANAGER->play("bossRock");
@@ -297,7 +301,7 @@ void bossGolemKing::initAttack()
 		break;
 	}
 
-	_attackCool = RANDOM->range(300, 500);
+	_attackCool = RANDOM->range(150, 300);
 	_golemState = _vGolemAttack.back();
 	_isAttackSoundPlay = false;
 
@@ -307,7 +311,87 @@ void bossGolemKing::initAttack()
 
 void bossGolemKing::collisionPlayer()
 {
-	
+	int damage = RANDOM->range(PLAYERDATA->getAtk() - 2, PLAYERDATA->getAtk() + 2);
+	RECT temp;
+	if (IntersectRect(&temp, &PLAYER->getPlayerAttackBox().rc, &_bossRC))
+	{
+		if (PLAYER->getPlayerAttackBox().isHit == false && _golemState != GOLEMKINGSTATE::BS_DEAD)
+		{
+			EFFECTMANAGER->addEffect("공격이펙트", 2000,
+				(_bossRC.right + _bossRC.left) / 2,
+				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, damage);
+			_hp -= damage;
+			_isHit = true;
+			PLAYER->setPlayerAttackBoxHit(true);
+		}
+	}
+
+	if (IntersectRect(&temp, &PLAYER->getPlayerAttackTwoBox().rc, &_bossRC))
+	{
+		if (PLAYER->getPlayerAttackTwoBox().isHit == false && _golemState != GOLEMKINGSTATE::BS_DEAD)
+		{
+			EFFECTMANAGER->addEffect("공격이펙트", 2000,
+				(_bossRC.right + _bossRC.left) / 2,
+				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, damage);
+			_hp -= damage;
+			_isHit = true;
+			PLAYER->setPlayerAttackTwoBoxHit(true);
+		}
+	}
+
+	if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_bossRC) && PLAYER->getArrow()->getIsShoot())
+	{
+		if (!_coliSkillAroow)
+		{
+			_coliSkillAroow = true;
+			EFFECTMANAGER->addEffect("화살이펙트", (_bossRC.bottom + _bossRC.top) / 2 + 3,
+				(_bossRC.right + _bossRC.left) / 2,
+				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, damage);
+
+			if (PLAYER->getSkill())
+			{
+				_hp -= 10 + damage;
+				_isHit = true;
+			}
+			else
+			{
+				_hp -= damage;
+				_isHit = true;
+				PLAYER->getArrow()->setIsShoot(false);
+			}
+		}
+	}
+	else
+	{
+		_coliSkillAroow = false;
+	}
+}
+
+void bossGolemKing::hitUpdate()
+{
+	if (!_isHit) return;
+
+	_hitCount++;
+
+	if (_hitCount < 10)
+	{
+		_hpBar = _hpWhite;
+	}
+	if (_hitCount < 20)
+	{
+		_hpBar = _hpRed;
+	}
+	if (_hitCount > 20)
+	{
+		_hitCount = 0;
+		_isHit = false;
+		_hpBar = _hpRed;
+	}
+
+
 }
 
 void bossGolemKing::initVGolemAttack()
@@ -347,6 +431,7 @@ void bossGolemKing::initGolemHand()
 	_golemHand.rc = RectMakeCenter(_golemHand.x, _golemHand.hight + 20, 100, 50);
 	_golemHand.hight = CAMERAMANAGER->getRect().top - 200;
 	_golemHand.count = 200;
+	_golemHand.atkCount = 0;
 	_golemHand.state = HANDSTATE::HAND_INIT;
 	_golemHand.isHit = false;
 	_golemHand.speed = 15;
@@ -408,11 +493,12 @@ void bossGolemKing::bsFistUpdate()
 		float sDist = getDistance(bx, by, PLAYER->getX(), PLAYER->getY());
 		float eDist = getDistance(x, y, PLAYER->getX(), PLAYER->getY());
 		float tDist = getDistance(bx, by, x, y);
-		if (sDist + eDist <= tDist + 5.f && sDist + eDist >= tDist - 10.f && _bossFist.isHit == false)
+		if (sDist + eDist <= tDist + 5.f && sDist + eDist >= tDist - 10.f && _bossFist.isHit == false && PLAYER->getPlayerState() != PLAYER_ROLL)
 		{
 			//영빈아 여기다 충돌처리쓰면 된다
+			DAMAGEFONT->init(PLAYER->getX(), PLAYER->getY(), FISTDAMAGE);
 			_bossFist.isHit = true;
-			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
+			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - FISTDAMAGE);
 			PLAYER->setPlayerState(HIT_IDLE);
 			PLAYER->setHit(true);
 
@@ -530,7 +616,8 @@ void bossGolemKing::bsHandUpdate()
 		}
 		else
 		{
-			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
+			DAMAGEFONT->init(PLAYER->getX(), PLAYER->getY(), HANDDAMAGE);
+			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - HANDDAMAGE);
 			PLAYER->setPlayerState(HIT_IDLE);
 			PLAYER->setHit(true);
 			_golemHand.isHit = true;
@@ -610,12 +697,25 @@ void bossGolemKing::bsHandUpdate()
 		//카메라 밖으로 나갔으면 상태변경
 		if (_golemHand.hight < CAMERAMANAGER->getRect().top - 200)
 		{
-			_golemAni = GOLEMANISTATE::ANI_HANDSHOOTEND;
-			if (_vAni[(int)_golemAni]->getAniState() == ANIMATION_END)
+			if (_golemHand.atkCount < 3)
 			{
-				_golemAni = GOLEMANISTATE::ANI_IDLE;
-				_golemState = GOLEMKINGSTATE::BS_IDLE;
+				_golemHand.state = HANDSTATE::HAND_INIT;
+				_golemHand.count = 200;
+				_golemHand.atkCount++;
+				_golemHand.ani->aniRestart();
+				_golemHand.ani->aniStop();
 			}
+			else if(_golemHand.atkCount == 3)
+			{
+				if(_golemAni != GOLEMANISTATE::ANI_HANDSHOOTEND)
+				this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTEND);
+				if (_vAni[(int)_golemAni]->getAniState() == ANIMATION_END)
+				{
+					_golemAni = GOLEMANISTATE::ANI_IDLE;
+					_golemState = GOLEMKINGSTATE::BS_IDLE;
+				}
+			}
+			
 		}
 		//그림자 크기 줄이기
 		_golemHand.shadowScale -= 0.04f;
@@ -633,21 +733,23 @@ void bossGolemKing::vRockUpdate()
 		_vRock[i].hight += 10;
 		if (_vRock[i].hight >= _vRock[i].y)
 		{
+			//충돌용렉트생성
+			_vRock[i].colRC = RectMakeCenter(_vRock[i].x, _vRock[i].y + 10, 60, 60);
 			_vRock[i].hight = _vRock[i].y;
 			//바닥 도착하면 타이머 시작
 			_vRock[i].time++;
 			if (_vRock[i].time < 30)
 			{
-
 				_vRock[i].rc = RectMakeCenter(_vRock[i].x, _vRock[i].y + 10, 60, 60);
 			}
 			else _vRock[i].rc = { 0,0,0,0 };
 		}
 
 		RECT temp;
-		if (IntersectRect(&temp, &PLAYER->getRect(), &_vRock[i].rc) && !_vRock[i].isHit)
+		if (IntersectRect(&temp, &PLAYER->getRect(), &_vRock[i].rc) && !_vRock[i].isHit && PLAYER->getPlayerState() != PLAYER_ROLL)
 		{
-			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
+			DAMAGEFONT->init(PLAYER->getX(), PLAYER->getY(), ROCKDAMAGE);
+			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - ROCKDAMAGE);
 			PLAYER->setPlayerState(HIT_IDLE);
 			PLAYER->setHit(true);
 			_vRock[i].isHit = true;
@@ -667,5 +769,44 @@ void bossGolemKing::vRockUpdate()
 			_vRock.erase(_vRock.begin() + i);
 		}
 		else i++;
+	}
+}
+
+void bossGolemKing::collisionRock()
+{
+	for (int i = 0; i < _vRock.size(); i++)
+	{
+		RECT temp;
+		if (IntersectRect(&temp, &_vRock[i].colRC, &PLAYER->getShadowRect()))
+		{
+			int wid = temp.right - temp.left;
+			int hei = temp.bottom - temp.top;
+			int pWid = (PLAYER->getShadowRect().right - PLAYER->getShadowRect().left) / 2;
+			int phei = (PLAYER->getShadowRect().bottom - PLAYER->getShadowRect().top) / 2;
+
+			if (wid > hei) // 위아래
+			{
+				if (temp.top == PLAYER->getShadowRect().top) // 아래
+				{
+					PLAYER->setY(_vRock[i].colRC.bottom + phei);
+				}
+				else  // 위
+				{
+					PLAYER->setY(_vRock[i].colRC.top - phei);
+				}
+			}
+			else  // 양옆
+			{
+				if (temp.left == PLAYER->getShadowRect().left) // 오른쪽
+				{
+					PLAYER->setX(_vRock[i].colRC.right + pWid);
+				}
+				else // 왼쪽
+				{
+					PLAYER->setX(_vRock[i].colRC.left - phei);
+				}
+			}
+			
+		}
 	}
 }
