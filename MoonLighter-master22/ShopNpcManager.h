@@ -38,5 +38,7 @@ public:
 	vector<npc*>& getVector() { return v_npcs; }
 	vector<pair<string, string>>& getNpcNamePair() { return _npcName; }
 
+	ShopNpcManager(){}
+	~ShopNpcManager(){}
 };
 

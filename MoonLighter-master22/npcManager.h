@@ -25,5 +25,8 @@ public:
 	void Coll(); // npc 충돌 함수
 
 	PotionShopNpc* getPotionShopNpc() { return dynamic_cast<PotionShopNpc*>(_witch); }
+
+	npcManager(){}
+	~npcManager(){}
 };
 

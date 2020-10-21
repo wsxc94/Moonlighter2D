@@ -48,6 +48,8 @@ public:
 	void ObjectSetAnim(); // _objManager 세팅 - 팀장급 디렉터
 	void MapColl();
 	void collArrow();
+
+	void cloudInit();
 	void cloudMove();
 	void cloudRender();
 

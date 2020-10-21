@@ -47,17 +47,8 @@ HRESULT townScene::init()
 		PLAYERDATA->setIsPendantReturn(false);
 	}
 
-	for (int i = 0; i < 3; i++)
-	{	
-		Cloud* tmp_cloud;
-		tmp_cloud = new Cloud;
-		v_cloud.push_back(tmp_cloud);
-		tagPosF tmp;
-		tmp.x = RANDOM->range(WINSIZEX, IMAGEMANAGER->findImage("townBack")->getWidth());
-		tmp.y = RANDOM->range(WINSIZEY, IMAGEMANAGER->findImage("townBack")->getHeight());
-		v_cloud[i]->init(tmp);		
-	}
-
+	
+	cloudInit();
 	this->initPotal();
 	return S_OK;
 }
@@ -369,6 +360,20 @@ void townScene::collArrow()
 	}
 }
 
+void townScene::cloudInit()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		Cloud* tmp_cloud;
+		tmp_cloud = new Cloud;
+		v_cloud.push_back(tmp_cloud);
+		tagPosF tmp;
+		tmp.x = RANDOM->range(100, IMAGEMANAGER->findImage("townBack")->getWidth() + 200);
+		tmp.y = RANDOM->range(-2000, -3500);
+		v_cloud[i]->init(tmp);
+	}
+}
+
 void townScene::cloudMove()
 {
 	for (int i = 0; i < v_cloud.size(); i++)
@@ -381,6 +386,7 @@ void townScene::cloudRender()
 {
 	for (int i = 0; i < v_cloud.size(); i++)
 	{
+		
 		v_cloud[i]->render(getMemDC());
 	}
 }

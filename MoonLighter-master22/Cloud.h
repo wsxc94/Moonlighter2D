@@ -5,7 +5,9 @@ private:
 	tagPosF _pos;
 	float _angle;
 	float _speed;
-
+	int _time;
+	bool _isActive;
+	int delay;
 public:
 	HRESULT init(tagPosF pos);
 	void release();
@@ -13,5 +15,7 @@ public:
 	void render(HDC hdc);
 	void move();
 
+	Cloud() {}
+	~Cloud() {}
 };
 
