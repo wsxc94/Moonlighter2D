@@ -32,6 +32,9 @@ HRESULT bossDungeonScene::init()
 	_itemManager = new itemManager;
 	_itemManager->init();
 
+	ITEMMENU->getInventory()->updateStatus();
+
+
 	return S_OK;
 }
 
@@ -50,6 +53,9 @@ void bossDungeonScene::update()
 	//타일이랑 충돌처리
 	this->collisionTile();
 	PLAYER->updateWeaponState();
+
+	if (_bsState != BS_RESULT)
+		ITEMMENU->update();
 
 	switch (_bsState)
 	{
@@ -157,7 +163,6 @@ void bossDungeonScene::update()
 		break;
 	}
 	
-	cout << _vRootItem.size() << endl;
 	//아이템 업데이트
 	for (int i = 0; i < _vRootItem.size(); i++)
 	{
@@ -206,9 +211,8 @@ void bossDungeonScene::render()
 	if(_potal)
 	_potal->render();
 
-	POINT pt = CAMERAMANAGER->getRelativeMouse(_ptMouse);
-	//textOut(getMemDC(), 10, 120, to_string(pt.x).c_str(), to_string(pt.x).size());
-	//textOut(getMemDC(), 10, 150, to_string(pt.y).c_str(), to_string(pt.y).size());
+	if (_bsState != BS_RESULT)
+		ITEMMENU->render(getMemDC());
 
 	for (int i = 0; i < _vRootItem.size(); i++)
 	{
