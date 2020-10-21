@@ -108,11 +108,15 @@ void inventory::render(HDC hdc)
 
 	//char str[128];
 
-	//wsprintf(str, "cursorTime : %d", _cursor->getClickTime());
+	//wsprintf(str, "isGrabbingItem : %d", _isGrabbingItem);
 	//TextOut(hdc, 10, 130, str, strlen(str));
 
-	//wsprintf(str, "canGrab : %d", _canGrab);
+	//wsprintf(str, "itemGrabbed.index : %d", _itemGrabbed.getInvenPosIdx());
 	//TextOut(hdc, 10, 150, str, strlen(str));
+
+	//wsprintf(str, "slot[20].isEmpty : %d", _invenSlot[20].isEmpty);
+	//TextOut(hdc, 10, 170, str, strlen(str));
+
 }
 
 itemManager * inventory::getItemManager()
@@ -679,6 +683,55 @@ void inventory::syncWithShopInven(vector<gameItem*> vShopInven)
 
 		}//end of switch 
 	}//end of for 
+}
+
+void inventory::updateStatus()
+{
+	//플레이어 데이터에서 디폴트 스탯값 가져오기 
+	int hp = PLAYERDATA->getDefaultHp();
+	int atk = PLAYERDATA->getDefaultAtk();
+	int def = PLAYERDATA->getDefaultDef();
+	int spd = PLAYERDATA->getDefaultSpd();
+
+	//착용한 무기의 스테이터스값을 가져와서 더하기 
+	switch (_curWeaponIdx)
+	{
+	case 1:
+		if (!_invenSlot[5].isEmpty)
+		{
+			for (int i = 0; i < _vInven.size(); i++)
+			{
+				if (_vInven[i]->getInvenPosIdx() != 5) continue;
+
+				hp += *(_vInven[i]->getAbility() + ABILITY_HP);
+				atk += *(_vInven[i]->getAbility() + ABILITY_ATK);
+				def += *(_vInven[i]->getAbility() + ABILITY_DEF);
+				spd += *(_vInven[i]->getAbility() + ABILITY_SPD);
+			}
+		}
+		break;
+
+	case 2:
+		if (!_invenSlot[6].isEmpty)
+		{
+			for (int i = 0; i < _vInven.size(); i++)
+			{
+				if (_vInven[i]->getInvenPosIdx() != 6) continue;
+
+				hp += *(_vInven[i]->getAbility() + ABILITY_HP);
+				atk += *(_vInven[i]->getAbility() + ABILITY_ATK);
+				def += *(_vInven[i]->getAbility() + ABILITY_DEF);
+				spd += *(_vInven[i]->getAbility() + ABILITY_SPD);
+			}
+		}
+		break;
+	}
+
+	//장비 스탯값이 반영된 스테이터스값을 플레이어 데이터에 반영하기 
+	PLAYERDATA->setHp(hp);
+	PLAYERDATA->setAtk(atk);
+	PLAYERDATA->setDef(def);
+	PLAYERDATA->setSpd(spd);
 }
 
 void inventory::keyInput()
@@ -1478,7 +1531,6 @@ void inventory::putGrabbingItem()
 	//잡고 있는 아이템이 있다면 원래 자리로 돌려놓기 
 	if (!_isGrabbingItem) return; 
 	
-	 
 	//내가 아이템을 잡은 슬롯의 자리가 비어있다면
 	if (_invenSlot[_itemGrabbed.getInvenPosIdx()].isEmpty)
 	{
@@ -1498,7 +1550,19 @@ void inventory::putGrabbingItem()
 			//현재 잡고 있는 아이템이 원래 있던 자리의 인덱스 찾기 
 			if (_vInven[i]->getInvenPosIdx() != _itemGrabbed.getInvenPosIdx()) continue;
 
-			_vInven[i]->setCount(_vInven[i]->getCount() + _itemGrabbed.getCount());
+			if (_itemGrabbed.getCount() + _vInven[i]->getCount() > _vInven[i]->getMaxCount())
+			{
+				//채울 수 있을만큼 채우고 나머지는 빈공간에 인서트 
+				int tempCount = _vInven[i]->getMaxCount() - _vInven[i]->getCount();
+				_vInven[i]->setCount(_vInven[i]->getCount() + tempCount);
+				_itemGrabbed.setCount(_itemGrabbed.getCount() - tempCount);
+
+				addItemByCount(_itemGrabbed, _itemGrabbed.getCount());
+			}
+			else
+			{
+				_vInven[i]->setCount(_vInven[i]->getCount() + _itemGrabbed.getCount());
+			}
 
 			_itemGrabbed = _itemEmpty;
 			_isGrabbingItem = false;

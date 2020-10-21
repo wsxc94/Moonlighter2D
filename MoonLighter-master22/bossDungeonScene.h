@@ -4,6 +4,8 @@
 #include "bossGolemKing.h"
 #include "tileNode.h"
 #include "potal.h"
+#include "itemManager.h"
+
 
 enum BOSSSCENESTATE
 {
@@ -23,6 +25,9 @@ enum class BOSSRESULTKIND
 
 class bossDungeonScene : public gameNode
 {
+private:
+	itemManager* _itemManager;
+	vector<gameItem*> _vRootItem;
 private:
 	vector<gameItem*> _vItem;
 	tagDungeonSlot _dungeonSlot[28];
