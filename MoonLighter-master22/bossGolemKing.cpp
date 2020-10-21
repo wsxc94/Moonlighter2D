@@ -86,6 +86,7 @@ HRESULT bossGolemKing::init(int x, int y)
 	_isDeadSoundPlay = false;
 	_isDead = false;
 	_isHit = false;
+	_coliSkillAroow = false;
 
 	return S_OK;
 }
@@ -107,13 +108,15 @@ void bossGolemKing::update()
 	//체력바 업데이트
 	_hpRed->update(_hp);
 	_hpWhite->update(_hp);
-
 	//체력 0되면 죽여!
 	if (_hp <= 0 && _golemState != GOLEMKINGSTATE::BS_INIT && _golemState != GOLEMKINGSTATE::BS_DEAD)
 	{
 		this->changeAniState(GOLEMANISTATE::ANI_DEAD1);
 		_golemState = GOLEMKINGSTATE::BS_DEAD;
 	}
+	//충돌처리
+	this->collisionPlayer();
+	this->hitUpdate();
 
 	//상태에따른 업데이트
 	switch (_golemState)
@@ -307,7 +310,87 @@ void bossGolemKing::initAttack()
 
 void bossGolemKing::collisionPlayer()
 {
-	
+	int damage = RANDOM->range(PLAYERDATA->getAtk() - 2, PLAYERDATA->getAtk() + 2);
+	RECT temp;
+	if (IntersectRect(&temp, &PLAYER->getPlayerAttackBox().rc, &_bossRC))
+	{
+		if (PLAYER->getPlayerAttackBox().isHit == false && _golemState != GOLEMKINGSTATE::BS_DEAD)
+		{
+			EFFECTMANAGER->addEffect("공격이펙트", 2000,
+				(_bossRC.right + _bossRC.left) / 2,
+				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, damage);
+			_hp -= damage;
+			_isHit = true;
+			PLAYER->setPlayerAttackBoxHit(true);
+		}
+	}
+
+	if (IntersectRect(&temp, &PLAYER->getPlayerAttackTwoBox().rc, &_bossRC))
+	{
+		if (PLAYER->getPlayerAttackTwoBox().isHit == false && _golemState != GOLEMKINGSTATE::BS_DEAD)
+		{
+			EFFECTMANAGER->addEffect("공격이펙트", 2000,
+				(_bossRC.right + _bossRC.left) / 2,
+				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, damage);
+			_hp -= damage;
+			_isHit = true;
+			PLAYER->setPlayerAttackTwoBoxHit(true);
+		}
+	}
+
+	if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_bossRC) && PLAYER->getShoot())
+	{
+		if (!_coliSkillAroow)
+		{
+			_coliSkillAroow = true;
+			EFFECTMANAGER->addEffect("화살이펙트", (_bossRC.bottom + _bossRC.top) / 2 + 3,
+				(_bossRC.right + _bossRC.left) / 2,
+				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			DAMAGEFONT->init(_x, _y - 30, damage);
+
+			if (PLAYER->getSkill())
+			{
+				_hp -= 10 + damage;
+				_isHit = true;
+			}
+			else
+			{
+				_hp -= damage;
+				_isHit = true;
+				PLAYER->setShoot(false);
+			}
+		}
+	}
+	else
+	{
+		_coliSkillAroow = false;
+	}
+}
+
+void bossGolemKing::hitUpdate()
+{
+	if (!_isHit) return;
+
+	_hitCount++;
+
+	if (_hitCount < 10)
+	{
+		_hpBar = _hpWhite;
+	}
+	if (_hitCount < 20)
+	{
+		_hpBar = _hpRed;
+	}
+	if (_hitCount > 20)
+	{
+		_hitCount = 0;
+		_isHit = false;
+		_hpBar = _hpRed;
+	}
+
+
 }
 
 void bossGolemKing::initVGolemAttack()

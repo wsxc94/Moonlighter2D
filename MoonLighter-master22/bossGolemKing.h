@@ -97,6 +97,7 @@ private:
 	bool _isDeadSoundPlay;						//죽는 사운드
 	bool _isDead;								//죽었냐?
 	bool _isHit;
+	bool _coliSkillAroow;
 
 public:
 	bossGolemKing() {}
@@ -110,6 +111,7 @@ public:
 	void initAttack();										//공격하기전 상태별 초기화
 
 	void collisionPlayer();
+	void hitUpdate();
 
 	void initVGolemAttack();								//벡터에 공격패턴 넣기
 	void suffleVGolemAttack();								//랜덤하게 셔플하기

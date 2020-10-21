@@ -109,7 +109,14 @@ void bossDungeonScene::update()
 		break;
 	case BS_RESULT:
 		_aniCenter->update();
+		if(_rtKind == BOSSRESULTKIND::RT_DIE)
 		_killEnemy->attack->update();
+
+		for (int i = 0; i < _vEnemy.size(); i++)
+		{
+			_vEnemy[i].attack->update();
+		}
+
 		PLAYERDATA->setIsActivate(false);
 		if (INPUT->GetKeyDown('J'))
 		{

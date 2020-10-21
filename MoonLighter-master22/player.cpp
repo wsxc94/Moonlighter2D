@@ -85,7 +85,7 @@ void player::update()
 
 void player::render(HDC hdc)
 {
-	if (_state != PLAYER_SWIM && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, _player.x - 35, _player.y - 10, 100);
+	if (_state != PLAYER_SWIM && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, _player.x - 18, _player.y + 7, 100);
 	if (_isShoot)
 	{
 		_arrow->render(hdc);
@@ -345,6 +345,7 @@ void player::playerState()
 				{
 					_state = PLAYER_ATTACK_SWORD_SECOND;
 					_aniSwordTwo->aniRestart();
+					SOUNDMANAGER->play("검휘두르기", 0.3f);
 				}
 			}
 			break;
@@ -670,11 +671,7 @@ void player::playerAttack()
 				break;
 			case SHORT_SOWRD:
 				_state = PLAYER_ATTACK_SWORD;
-				if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
-					switch (_player.weapon)
-					{
-						SOUNDMANAGER->play("검휘두르기", 0.3f);
-					}
+				SOUNDMANAGER->play("검휘두르기", 0.3f);
 				_aniSword->aniRestart();
 				break;
 
@@ -782,7 +779,7 @@ void player::imageInit()
 	IMAGEMANAGER->addFrameImage("숏소드2연격", "Images/플레이어/short_attack_two5X4.bmp", 600, 480, 5, 4);
 	IMAGEMANAGER->addFrameImage("방패", "Images/플레이어/shiled_state1X4.bmp", 120, 480, 1, 4);
 
-	IMAGEMANAGER->addImage("그림자", "Images/플레이어/player_Shadow.bmp", 70, 50, true, RGB(255, 0, 255));
+	IMAGEMANAGER->addFrameImage("그림자", "Images/npc/npc_shadow.bmp", 36, 20, 1, 1);
 	IMAGEMANAGER->addFrameImage("온천", "Images/플레이어/swimState10X4.bmp", 500, 208, 10, 4);
 
 	IMAGEMANAGER->addFrameImage("던전idleHIT", "Images/플레이어/player_idle_dungeon_Hit10X4.bmp", 1200, 480, 10, 4);
