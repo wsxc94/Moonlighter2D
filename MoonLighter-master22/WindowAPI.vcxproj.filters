@@ -315,6 +315,9 @@
     <ClCompile Include="PotionShopNpc.cpp">
       <Filter>MainGame\NPC</Filter>
     </ClCompile>
+    <ClCompile Include="Cloud.cpp">
+      <Filter>MainGame\townScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -505,6 +508,9 @@
     </ClInclude>
     <ClInclude Include="PotionShopNpc.h">
       <Filter>MainGame\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Cloud.h">
+      <Filter>MainGame\townScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
