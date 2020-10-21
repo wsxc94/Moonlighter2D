@@ -338,6 +338,7 @@ void player::playerState()
 			break;
 
 		case PLAYER_ATTACK_SWORD:
+		
 			if (_aniSword->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -350,7 +351,8 @@ void player::playerState()
 			}
 			break;
 
-		case PLAYER_ATTACK_SWORD_SECOND:		
+		case PLAYER_ATTACK_SWORD_SECOND:	
+			
 			if (_aniSwordTwo->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
@@ -407,7 +409,10 @@ void player::playerState()
 				}
 				_state = PLAYER_IDLE;
 				_skillCount = 0;
-				
+				if (!SOUNDMANAGER->isPlaySound("화살발사"))
+				{
+					SOUNDMANAGER->play("화살발사", 0.3f);
+				}
 			}
 			break;
 		case PLAYER_ATTACK_BOW:
@@ -706,9 +711,13 @@ void player::playerSkill()
 			_state = PLAYER_SHILED;
 			break;
 		case BOW:
+			if (!SOUNDMANAGER->isPlaySound("화살스킬"))
+			{
+				SOUNDMANAGER->play("화살스킬", 0.3f);
+			}
 			if (!_isShoot)
 			{
-				_state = BOW_CHARGE;		
+				_state = BOW_CHARGE;
 			}
 			break;
 		}
@@ -746,6 +755,7 @@ bool player::getKeyMove()
 
 void player::arrowSkillSet()
 {
+	
 	if (_state == BOW_CHARGE)
 	{
 		_skillCount++;
