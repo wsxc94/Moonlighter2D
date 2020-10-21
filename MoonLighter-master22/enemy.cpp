@@ -253,7 +253,7 @@ void enemy::collision()
 		}
 	}
 
-	if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_emRC) && PLAYER->getShoot())
+	if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_emRC) && PLAYER->getArrow()->getIsShoot())
 	{
 		if (!_coliSkillAroow)
 		{
@@ -265,7 +265,7 @@ void enemy::collision()
 
 			if (PLAYER->getSkill())
 			{
-				_emHp -= 10 + damage;
+				_emHp -= (10 + damage);
 				_isHit = true;
 				this->setProgressBar();
 				this->hitSoundPlay();
@@ -276,7 +276,7 @@ void enemy::collision()
 				_isHit = true;
 				this->setProgressBar();
 				this->hitSoundPlay();
-				PLAYER->setShoot(false);
+				PLAYER->getArrow()->setIsShoot(false);
 			}
 		}	
 	}
@@ -321,6 +321,7 @@ void enemy::allEnemyColi(int emDemage, bool checkDirection)
 		PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - emDemage);
 		PLAYER->setPlayerState(HIT_IDLE);
 		PLAYER->setHit(true);
+		DAMAGEFONT->init(PLAYER->getX(), PLAYER->getY(), emDemage);
 	}
 }
 

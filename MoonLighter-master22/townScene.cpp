@@ -356,7 +356,7 @@ void townScene::collArrow()
 	RECT temp;
 	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
 	{
-		PLAYER->setShoot(false);
+		PLAYER->getArrow()->setIsShoot(false);
 	}
 }
 
@@ -379,6 +379,7 @@ void townScene::updatePotal()
 		}
 		if (_potal->getIsActivate() == false)
 		{
+			PLAYERDATA->setIsBossReturn(false);
 			_potal->release();
 			SAFE_DELETE(_potal);
 		}

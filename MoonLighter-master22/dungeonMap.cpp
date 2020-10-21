@@ -866,11 +866,11 @@ void DungeonMap::checkColiArrow()
 			}
 			if (IntersectRect(&temp, &_vTile[i].rc, &PLAYER->getArrow()->getRect()) && !PLAYER->getSkill())
 			{
-				if (!SOUNDMANAGER->isPlaySound("화살맞음") && PLAYER->getShoot())
+				if (!SOUNDMANAGER->isPlaySound("화살맞음") && PLAYER->getArrow()->getIsShoot())
 				{
 					SOUNDMANAGER->play("화살맞음", 0.5f);
 				}
-				PLAYER->setShoot(false);
+				PLAYER->getArrow()->setIsShoot(false);
 			}
 		}
 	}

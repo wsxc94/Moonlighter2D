@@ -2,6 +2,10 @@
 #include "boss.h"
 #include "progressBar.h"
 
+#define ROCKDAMAGE 7
+#define FISTDAMAGE 15
+#define HANDDAMAGE 10
+
 enum class GOLEMKINGSTATE
 {
 	BS_INIT,BS_IDLE,BS_FIST,BS_ROCK_SHOOT,BS_ROCK_ROUND,BS_HAND,BS_DEAD
@@ -26,6 +30,7 @@ struct tagGolemHand
 	float speed;
 	float shadowScale;
 	int count;
+	int atkCount;
 	bool isHit;
 	HANDSTATE state;
 };
@@ -34,6 +39,7 @@ struct tagRock
 {
 	image* img;
 	RECT rc;
+	RECT colRC;
 	float x, y;
 	float hight;
 	float shadowScale;
@@ -122,6 +128,7 @@ public:
 	void bsRockRoundUpdate();
 	void bsHandUpdate();
 	void vRockUpdate();
+	void collisionRock();
 
 
 	float getX() { return _x; }

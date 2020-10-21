@@ -34,7 +34,6 @@ HRESULT player::init()
 	_left = false;
 	_up = false;
 	_down = false;
-	_isShoot = false;
 	_isTalk = false;
 
 	_isHit = false;	//맞았냐
@@ -86,10 +85,8 @@ void player::update()
 void player::render(HDC hdc)
 {
 	if (_state != PLAYER_SWIM && _state != PLAYER_DIE_PORTAL) CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("그림자"), _player.y - 1, _player.x - 18, _player.y + 7, 100);
-	if (_isShoot)
-	{
-		_arrow->render(hdc);
-	}
+	if(_arrow->getIsShoot())
+	_arrow->render(hdc);
 	switch (_place)
 	{
 	case SHOP:
@@ -405,7 +402,7 @@ void player::playerState()
 			{
 				if (_isSkill)
 				{
-					_isShoot = true;
+					_arrow->setIsShoot(true);
 				}
 				_state = PLAYER_IDLE;
 				_skillCount = 0;
@@ -666,34 +663,31 @@ void player::playerAttack()
 {
 	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
-		if (!_isShoot)
+		switch (_player.weapon)
 		{
+		case EMPTY:
 
-			switch (_player.weapon)
+			break;
+		case SHORT_SOWRD:
+			_state = PLAYER_ATTACK_SWORD;
+			SOUNDMANAGER->play("검휘두르기", 0.3f);
+			_aniSword->aniRestart();
+			break;
+
+		case BOW:
+			if (!_arrow->getIsShoot() && _state != PLAYER_ATTACK_BOW)
 			{
-			case EMPTY:
-
-				break;
-			case SHORT_SOWRD:
-				_state = PLAYER_ATTACK_SWORD;
-				SOUNDMANAGER->play("검휘두르기", 0.3f);
-				_aniSword->aniRestart();
-				break;
-
-			case BOW:
-				if (!_isShoot)
+				_state = PLAYER_ATTACK_BOW;
+				if (!SOUNDMANAGER->isPlaySound("화살발사"))
 				{
-					_state = PLAYER_ATTACK_BOW;
-					if (!SOUNDMANAGER->isPlaySound("화살발사"))
-					{
-						SOUNDMANAGER->play("화살발사", 0.3f);
-					}
-					_aniBow->aniRestart();
-					_isShoot = true;
+					SOUNDMANAGER->play("화살발사", 0.3f);
 				}
-				break;
+				_aniBow->aniRestart();
+				_arrow->setIsShoot(true);
 			}
+			break;
 		}
+		
 	}
 	
 }
@@ -711,11 +705,11 @@ void player::playerSkill()
 			_state = PLAYER_SHILED;
 			break;
 		case BOW:
-			if (!SOUNDMANAGER->isPlaySound("화살스킬"))
+			if (!SOUNDMANAGER->isPlaySound("화살스킬") && !_arrow->getIsShoot())
 			{
 				SOUNDMANAGER->play("화살스킬", 0.3f);
 			}
-			if (!_isShoot)
+			if (!_arrow->getIsShoot())
 			{
 				_state = BOW_CHARGE;
 			}
