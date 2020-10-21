@@ -40,7 +40,7 @@ HRESULT nomalDungeonScene::init()
 	CAMERAMANAGER->FadeStart();
 
 	this->initItemSlot();
-	this->getInvenItem();
+	//this->getInvenItem();
 	_resultKind = RESULT_PLAYERDIE;
 
 
@@ -101,6 +101,7 @@ void nomalDungeonScene::update()
 		//죽으면 결과창띄워라
 		if (PLAYER->getPlayerState() == PLAYER_DIE)
 		{
+			this->getInvenItem();
 			_aniBefore->init(IMAGEMANAGER->findImage("죽음"), 0, 5);
 			_aniCenter->init(IMAGEMANAGER->findImage("죽음"), 0, 5);
 			_dState = DS_RESULT;
@@ -111,6 +112,7 @@ void nomalDungeonScene::update()
 		// 팬던트 사용했냐?? 사용했으면 에니메이션 띄우고 결과창 띄워라
 		else if (ITEMMENU->getGoToTownPendant())
 		{
+			this->getInvenItem();
 			_aniBefore->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 5);
 			_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5,true);
 			_dState = DS_RESULT;
@@ -124,6 +126,7 @@ void nomalDungeonScene::update()
 		//엠블렘 사용했냐?? 사용했으면 포탈을 만들어라
 		else if (ITEMMENU->getGoToTownEmblem())
 		{
+			this->getInvenItem();
 			_currentDungeon->initPotal();
 			ITEMMENU->SetGoToTownEmblem(false);
 
@@ -238,6 +241,13 @@ void nomalDungeonScene::render()
 			IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
 			this->resultRender();
 			this->itemResultRender();
+
+			char str[100];
+			wsprintf(str, "invenSize : %d", ITEMMENU->getInventory()->getItem().size());
+			TextOut(getMemDC(), 10, 110, str, strlen(str));
+
+			wsprintf(str, "dungeonInvenSize : %d", _vItem.size());
+			TextOut(getMemDC(), 10, 130, str, strlen(str));
 		}
 		break;
 	case DS_RETURN:

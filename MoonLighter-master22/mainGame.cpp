@@ -24,6 +24,7 @@ HRESULT mainGame::init()
 	SCENEMANAGER->addScene("노말던전", new nomalDungeonScene);
 	SCENEMANAGER->addScene("보스던전", new bossDungeonScene);
 	SCENEMANAGER->addScene("던전로딩", new dungeonLoading);
+	SCENEMANAGER->addScene("아이템로딩", new itemMenuLoading);
 	SCENEMANAGER->addScene("상점로딩", new shopLoading);
 	SCENEMANAGER->addScene("상점화면", new shopScene);
 	SCENEMANAGER->addScene("던전가는길", new gotoDungeon);
@@ -33,7 +34,7 @@ HRESULT mainGame::init()
 	PLAYER->init();
 	PLAYERDATA->init();
 
-	SCENEMANAGER->loadScene("타운로딩");
+	SCENEMANAGER->loadScene("아이템로딩");
 
 	CAMERAMANAGER->FadeInit(1, FADE_IN);
 

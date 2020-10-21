@@ -51,10 +51,11 @@ public:
 	//get함수 
 	vector<material*> getMeterial() { return _vMaterial; }
 
-	void addMaterial(int itemIdx, int count);				//레시피에 재료 추가하기 
-	bool checkMaterialOX(int index);						//해당 재료의 조건충족여부 확인
-	bool checkRequirements();								//전체 재료의 조건충족여부 확인 
-	const char *getShortMaterialName();						//부족한 재료의 이름 받기 
+	void addMaterial(int itemIdx, int count);		//레시피에 재료 추가하기 
+	bool checkMaterialOX(int index);				//해당 재료의 조건충족여부 확인
+	bool checkRequirements();						//전체 재료의 조건충족여부 확인 
+	int getMaxProduceBasedOnMaterial();				//소지 중인 재료를 기반으로 최대제조개수 구하기 
+	const char *getShortMaterialName();				//부족한 재료의 이름 받기 
 
 	//렌더함수 
 	void recipeIconRender(HDC hdc, int destX, int destY);

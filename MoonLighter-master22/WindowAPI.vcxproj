@@ -175,6 +175,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="itemManager.h" />
     <ClInclude Include="itemMenu.h" />
+    <ClInclude Include="itemMenuLoading.h" />
     <ClInclude Include="loading.h" />
     <ClInclude Include="mapSaveLoad.h" />
     <ClInclude Include="maptoolLoading.h" />
@@ -240,6 +241,7 @@
     <ClCompile Include="item.cpp" />
     <ClCompile Include="itemManager.cpp" />
     <ClCompile Include="itemMenu.cpp" />
+    <ClCompile Include="itemMenuLoading.cpp" />
     <ClCompile Include="loading.cpp" />
     <ClCompile Include="mapSaveLoad.cpp" />
     <ClCompile Include="maptoolLoading.cpp" />

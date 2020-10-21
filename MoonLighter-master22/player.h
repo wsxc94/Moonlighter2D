@@ -156,6 +156,7 @@ public:
 	bool getKeyMove();			//wasd를 눌렀냐?
 	void arrowSkillSet();		//플레이어 스킬 차지
 
+
 	void imageInit();
 
 	void setDisplayOn(bool on) { _displayOn = on; }

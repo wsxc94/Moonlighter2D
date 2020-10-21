@@ -407,18 +407,20 @@ void npc::action(string talk)
 	_talk = talk;
 
 	RECT tmp;
-	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc) && INPUT->GetKeyDown('J'))
+	if (!ITEMMENU->getOpenMenu())
 	{
-
-		if (_Istalk)
+		if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc) && INPUT->GetKeyDown('J'))
 		{
-			_Istalk = false;
-			_stop = false;
-		}
-		else {
-			_Istalk = true;
-			_stop = true;
-			lookPlayer();
+			if (_Istalk)
+			{
+				_Istalk = false;
+				_stop = false;
+			}
+			else {
+				_Istalk = true;
+				_stop = true;
+				lookPlayer();
+			}
 		}
 	}
 

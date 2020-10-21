@@ -1,6 +1,6 @@
 #pragma once
 // 'I' 버튼을 눌러서 메뉴 on/off 
-// 'Q(좌)' 'E(우)' 버튼을 눌러서 메뉴 이동 
+// 'Q(좌)' 'E(우)' 버튼을 눌러서 메뉴 이동
 #include "calendar.h"
 #include "wishList.h"
 #include "inventory.h"
@@ -44,6 +44,7 @@ private:
 	float _tagMoveSpeed;	//태그메뉴 이동하는 속도 
 
 private:
+	bool _initIsDone;		//초기화 실행여부 확인 
 	bool _menuOn;			//메뉴창 toggle용 변수 
 	bool _calendarOn;		//캘린더메뉴 랜더용 toggle 변수
 	bool _wishListOn;		//위시리스트메뉴 랜더용 toggle 변수
@@ -59,7 +60,7 @@ private:
 	bool _movingRight;		//메뉴가 오른쪽으로 움직이는지 확인하는 변수 
 
 	bool _goToTown_Pentant;		//상인의 펜던트 사용여부 확인(마을로 돌아가기)
-	bool _goToTown_Emblem;
+	bool _goToTown_Emblem;		//상인의 엠블렘 사용여부 확인 
 
 public:
 	HRESULT init();
@@ -76,6 +77,7 @@ public:
 	bool getCanKeyInput() { return _canKeyInput; }					//아이템 메뉴 키 입력 받기변수 가져오기 
 	bool getGoToTownPendant() { return _goToTown_Pentant; }
 	bool getGoToTownEmblem() { return _goToTown_Emblem; }
+	bool getInitIsDone() { return _initIsDone; }
 	
 	//set함수 
 	void setCurItemCount();			//소지하고 있는 아이템 개수를 데이터에 업데이트 
@@ -87,6 +89,7 @@ public:
 	void SetGoToTownEmblem(bool value) { _goToTown_Emblem = value; }
 	void setMenuOn(bool value) { _menuOn = value; }
 	void setInvenOn(bool value) { _invenOn = value; }
+	void setInitIsDone(bool value) { _initIsDone = value; }
 
 	void toggleMenu();						//메뉴창 껐다 켰다하기 
 	void DoCloseMenu();						//메뉴창을 닫기를 실행하는 함수(외부에서 접근해서 끄기 가능)
@@ -110,6 +113,9 @@ public:
 	void menuRender(HDC hdc);				//아이템메뉴 랜더 
 	void tagMenuRender(HDC hdc);			//상단의 태그메뉴 랜더 
 	bool& getOpenMenu() { return _menuOn; }
+
+	//로드이미지 
+	void loadImages();
 
 };
 

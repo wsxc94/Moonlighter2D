@@ -6,7 +6,7 @@ HRESULT selectMenu::init()
 	//선택메뉴 초기화 
 	_selectMenu.animTimer = 0;
 	_selectMenu.frameUnit = 8;
-	_selectMenu.idx = 0;
+	_selectMenu.idx = 1;
 	_selectMenu.selectIdx = 0;
 	_selectMenu.img = IMAGEMANAGER->findImage("select_no");
 	
@@ -22,8 +22,32 @@ void selectMenu::update()
 	animation();
 }
 
-void selectMenu::render(HDC hdc)
+void selectMenu::render(HDC hdc, int destX, int destY)
 {
+	_selectMenu.img->frameRender(hdc, destX, destY, _selectMenu.idx, 0);
+
+	if (_selectMenu.selectIdx == SELECT_YES)
+	{
+		RECT txtRC = RectMake(destX + 18, destY + 82, 42, 26);
+		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		HFONT oFont = (HFONT)SelectObject(hdc, font);
+		SetTextColor(hdc, RGB(227, 212, 184));
+		DrawText(hdc, "네", -1, &txtRC, DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		SelectObject(hdc, oFont);
+		DeleteObject(font);
+	}
+	else
+	{
+		RECT txtRC = RectMake(destX + 10, destY + 82, 58, 26);
+		HFONT font = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
+		HFONT oFont = (HFONT)SelectObject(hdc, font);
+		SetTextColor(hdc, RGB(227, 212, 184));
+		DrawText(hdc, "아니요", -1, &txtRC, DT_CENTER | DT_WORDBREAK | DT_VCENTER);
+		SelectObject(hdc, oFont);
+		DeleteObject(font);
+	}
 }
 
 void selectMenu::setMenuState(int selectIdx)
@@ -31,13 +55,15 @@ void selectMenu::setMenuState(int selectIdx)
 	switch (selectIdx)
 	{
 		case SELECT_YES:
+			_selectMenu.selectIdx = SELECT_YES;
 			_selectMenu.img = IMAGEMANAGER->findImage("select_yes");
-			_selectMenu.idx = 0;
+			_selectMenu.idx = 1;
 			break;
 
 		case SELECT_NO:
+			_selectMenu.selectIdx = SELECT_NO;
 			_selectMenu.img = IMAGEMANAGER->findImage("select_no");
-			_selectMenu.idx = 0;
+			_selectMenu.idx = 1;
 			break;
 	}
 }
@@ -68,7 +94,7 @@ void selectMenu::yesAnim()
 		}
 		else
 		{
-			_selectMenu.idx = 0;
+			_selectMenu.idx = 1;
 		}
 	}
 }
@@ -85,7 +111,7 @@ void selectMenu::noAnim()
 		}
 		else
 		{
-			_selectMenu.idx = 0;
+			_selectMenu.idx = 1;
 		}
 	}
 }

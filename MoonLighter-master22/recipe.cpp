@@ -101,6 +101,27 @@ bool recipe::checkRequirements()
 	return true; 
 }
 
+int recipe::getMaxProduceBasedOnMaterial()
+{
+	//재료별 제조가능한 최대개수(그 중에서 가장 작은 값을 반환할 것.) 
+	int maxCount[3] = { 0 };
+
+	for (int i = 0; i < _vMaterial.size(); i++)
+	{
+		//해당 인덱스 값의 최대개수를 구해서 집어넣기 
+		maxCount[i] = ITEMMENU->getInventory()->getCountByIdx(
+			_vMaterial[i]->getItem().getItemIdx());
+	}
+
+	int minimumCount = maxCount[0];
+	for (int i = 0; i < _vMaterial.size(); i++)
+	{
+		if (maxCount[i] < minimumCount) minimumCount = maxCount[i];
+	}
+
+	return minimumCount;
+}
+
 const char * recipe::getShortMaterialName()
 {
 	memset(_materialName, 0, sizeof(_materialName));

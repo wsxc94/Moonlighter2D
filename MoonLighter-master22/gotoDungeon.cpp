@@ -4,7 +4,6 @@
 
 HRESULT gotoDungeon::init()
 {
-	
 	this->loadTile();
 	PLAYER->setX(1200);
 	PLAYER->setY(1900);

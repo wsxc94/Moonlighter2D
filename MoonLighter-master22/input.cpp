@@ -10,32 +10,13 @@ HRESULT input::init()
 		_keyDown[i] = false;
 	}
 
-	_isLButtonDown = false;
-	_isRButtonDown = false;
-
 	return S_OK;
 }
 
 void input::Update()
 {
-	ButtonDownChecker();
 }
 
-void input::ButtonDownChecker()
-{
-	_isLButtonDown = false;
-	_isRButtonDown = false;
-	
-	/*if (GetKeyDown(VK_LBUTTON))
-	{
-		_isLButtonDown = true;
-	}
-
-	if (GetKeyDown(VK_RBUTTON))
-	{
-		_isRButtonDown = true;
-	}*/
-}
 void input::release()
 {
 }

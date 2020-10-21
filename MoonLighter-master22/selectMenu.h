@@ -19,7 +19,7 @@ public:
 	HRESULT init();
 	void release();
 	void update();
-	void render(HDC hdc);
+	void render(HDC hdc, int destX, int destY);
 
 	//getÇÔ¼ö 
 	image *getImg() { return _selectMenu.img; }

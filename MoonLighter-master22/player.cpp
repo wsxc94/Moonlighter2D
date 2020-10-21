@@ -72,6 +72,7 @@ void player::release()
 void player::update()
 {
 	this->arrowSkillSet();
+
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -257,8 +258,8 @@ void player::playerState()
 
 			this->playerAttack();
 			this->playerSkill();
-
 			break;
+
 		case PLAYER_RUN:
 			if (!SOUNDMANAGER->isPlaySound("플레이어걷기"))
 			{
@@ -334,7 +335,6 @@ void player::playerState()
 				_state = PLAYER_IDLE;
 			
 			}
-		
 			break;
 
 		case PLAYER_ATTACK_SWORD:
@@ -355,6 +355,7 @@ void player::playerState()
 				_state = PLAYER_IDLE;
 			}
 			break;
+
 		case PLAYER_SHILED:
 			if (INPUT->GetKey('W'))
 			{
@@ -546,6 +547,7 @@ void player::keyInput()
 	if (INPUT->GetKeyDown('Z'))
 	{
 		ITEMMENU->getInventory()->switchWeapon();
+		updateWeaponState();
 	}
 	//포션을 사용하는 함수
 	//아이템 메뉴가 오픈되지 않았을 때만 동작 
@@ -577,9 +579,9 @@ void player::updateWeaponState()
 		_player.weapon = BOW;
 		break;
 
-	default:
-		_player.weapon = SHORT_SOWRD;
-		break;
+	//default:
+	//	_player.weapon = SHORT_SOWRD;
+	//	break;
 	}
 }
 
@@ -599,7 +601,6 @@ void player::hitPlayer()
 {
 	if (!PLAYERDATA->getIsInDungeon()) return; 
 
-
 	if (_isHit)
 	{
 		_playerHp = PLAYERDATA->getInDungeonHp();
@@ -611,7 +612,6 @@ void player::hitPlayer()
 			_isHit = false;
 		}
 	}
-
 }
 
 void player::playerMove()
@@ -660,35 +660,40 @@ void player::playerAttack()
 {
 	if (INPUT->GetKey('J') && _place == TOWN_DUNGEON)
 	{
-
-		switch (_player.weapon)
+		if (!_isShoot)
 		{
-		case EMPTY:
 
-			break;
-		case SHORT_SOWRD:
-			_state = PLAYER_ATTACK_SWORD;
-			if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
+			switch (_player.weapon)
 			{
-				SOUNDMANAGER->play("검휘두르기", 0.3f);
-			}
-			_aniSword->aniRestart();
-			break;
+			case EMPTY:
 
-		case BOW:
-			if (!_isShoot)
-			{
-				_state = PLAYER_ATTACK_BOW;
-				if (!SOUNDMANAGER->isPlaySound("화살발사"))
+				break;
+			case SHORT_SOWRD:
+				_state = PLAYER_ATTACK_SWORD;
+				if (!SOUNDMANAGER->isPlaySound("검휘두르기"))
+					switch (_player.weapon)
+					{
+						SOUNDMANAGER->play("검휘두르기", 0.3f);
+					}
+				_aniSword->aniRestart();
+				break;
+
+			case BOW:
+				if (!_isShoot)
 				{
-					SOUNDMANAGER->play("화살발사", 0.3f);
+					_state = PLAYER_ATTACK_BOW;
+					if (!SOUNDMANAGER->isPlaySound("화살발사"))
+					{
+						SOUNDMANAGER->play("화살발사", 0.3f);
+					}
+					_aniBow->aniRestart();
+					_isShoot = true;
 				}
-				_aniBow->aniRestart();
-				_isShoot = true;
+				break;
 			}
-			break;
 		}
 	}
+	
 }
 
 void player::playerSkill()
