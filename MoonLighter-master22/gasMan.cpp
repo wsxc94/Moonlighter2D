@@ -493,18 +493,9 @@ void gasMan::gasManCollision()
 	for (int i = 0; i < _vArrow.size(); i++)
 	{
 		if (IntersectRect(&temp, &PLAYER->getRect(), &_vArrow[i].rc) && PLAYER->getPlayerState() != PLAYER_ROLL)
-		{
-			
-			if (PLAYER->getPlayerState() == PLAYER_SHILED )
-			{
-				PLAYER->playerPush();
-			}
-			else
-			{
-				PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - _emAtk);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
-			}
+		{	
+
+			allEnemyColi(_emAtk, PLAYER->getPlayerDirection() == _arrow.direction);
 			if (PLAYERDATA->getInDungeonHp() <= 0)
 			{
 				RESULTENEMY* em = new RESULTENEMY;

@@ -613,7 +613,14 @@ void bossSkeleton::attackUpdate()
 		{
 			_blade->ani->aniPlay();
 			_blade->isBreak = true;
-			PLAYERDATA->minusInDungeonHp(_blade->atk);
+			if (PLAYER->getPlayerState() == PLAYER_SHILED)
+			{
+				PLAYER->playerPush();
+			}
+			else
+			{
+				PLAYERDATA->minusInDungeonHp(_blade->atk);
+			}
 		}
 		BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
 	}
@@ -748,46 +755,22 @@ void bossSkeleton::hitToPlayer()
 	{
 		switch (_stState)
 		{
-		case bossSkeleton::ST_ATTACK_SWORD:
+		case bossSkeleton::ST_ATTACK_SWORD: case bossSkeleton::ST_SKILL_SWORD:
 			if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
 			{
-				_swordAtkBox.isHit = true;
-				PLAYERDATA->minusInDungeonHp(_emAtkSword);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
+				bossColi(_emAtkSword, _swordAtkBox);
 			}
 			if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
 			break;
-		case bossSkeleton::ST_ATTACK_HAMMER:
+
+		case bossSkeleton::ST_ATTACK_HAMMER: case bossSkeleton::ST_SKILL_HAMMER:
 			if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false)
 			{
-				_hammerAtkBox.isHit = true;
-				PLAYERDATA->minusInDungeonHp(_emAtkHammer);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
+				bossColi(_emAtkHammer, _hammerAtkBox);
 			}
 			if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
 			break;
-		case bossSkeleton::ST_SKILL_SWORD:
-			if (IntersectRect(&temp, &PLAYER->getRect(), &_swordAtkBox.box) && _swordAtkBox.isHit == false)
-			{
-				_swordAtkBox.isHit = true;
-				PLAYERDATA->minusInDungeonHp(_emAtkSword);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
-			}
-			if (_attackSword->getCurIndex() == _attackSword->getImage()->getMaxFrameX()) _swordAtkBox.isHit = false;
-			break;
-		case bossSkeleton::ST_SKILL_HAMMER:
-			if (IntersectRect(&temp, &PLAYER->getRect(), &_hammerAtkBox.box) && _hammerAtkBox.isHit == false && _attackHammer->getCurIndex() < 9)
-			{
-				_hammerAtkBox.isHit = true;
-				PLAYERDATA->minusInDungeonHp(_emAtkHammer);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
-			}
-			if (_attackHammer->getCurIndex() == _attackHammer->getImage()->getMaxFrameX()) _hammerAtkBox.isHit = false;
-			break;
+
 		case bossSkeleton::ST_WAVE:
 			RECT _waveRC;
 			float pDist;
@@ -802,10 +785,7 @@ void bossSkeleton::hitToPlayer()
 					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
 					if (getDistance(_x - 166, _y + 30, cx, cy) < 180 + pDist)
 					{
-						PLAYERDATA->minusInDungeonHp(_emAtkWave);
-						PLAYER->setPlayerState(HIT_IDLE);
-						PLAYER->setHit(true);
-						_isWaveHit = true;
+						this->coliWaveAtk(_emAtkWave);
 					}
 				}
 				break;
@@ -816,10 +796,7 @@ void bossSkeleton::hitToPlayer()
 					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
 					if (getDistance(_x + 166, _y + 30, cx, cy) < 180 + pDist)
 					{
-						PLAYERDATA->minusInDungeonHp(_emAtkWave);
-						PLAYER->setPlayerState(HIT_IDLE);
-						PLAYER->setHit(true);
-						_isWaveHit = true;
+						this->coliWaveAtk(_emAtkWave);
 					}
 				}
 				break;
@@ -830,10 +807,7 @@ void bossSkeleton::hitToPlayer()
 					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
 					if (getDistance(_x - 8, _y - 149, cx, cy) < 180 + pDist)
 					{
-						PLAYERDATA->minusInDungeonHp(_emAtkWave);
-						PLAYER->setPlayerState(HIT_IDLE);
-						PLAYER->setHit(true);
-						_isWaveHit = true;
+						this->coliWaveAtk(_emAtkWave);
 					}
 				}
 				break;
@@ -844,10 +818,7 @@ void bossSkeleton::hitToPlayer()
 					pDist = getDistance(cx, cy, PLAYER->getRect().left, PLAYER->getRect().right);
 					if (getDistance(_x + 13, _y + 140, cx, cy) < 180 + pDist)
 					{
-						PLAYERDATA->minusInDungeonHp(_emAtkWave);
-						PLAYER->setPlayerState(HIT_IDLE);
-						PLAYER->setHit(true);
-						_isWaveHit = true;
+						this->coliWaveAtk(_emAtkWave);
 					}
 				}
 				break;
@@ -885,6 +856,36 @@ void bossSkeleton::hitSoundPlay()
 	case 2:
 		SOUNDMANAGER->play("skullHit2", 0.3f);
 		break;
+	}
+}
+
+void bossSkeleton::bossColi(int bossTypeDemage, tagAtkBox &bossTypeRect)
+{
+	if (PLAYER->getPlayerState() == PLAYER_SHILED && checkDirection())
+	{
+		PLAYER->playerPush();
+	}
+	else
+	{
+		bossTypeRect.isHit = true;
+		PLAYERDATA->minusInDungeonHp(bossTypeDemage);
+		PLAYER->setPlayerState(HIT_IDLE);
+		PLAYER->setHit(true);
+	}
+}
+
+void bossSkeleton::coliWaveAtk(int waveDamage)
+{
+	if (PLAYER->getPlayerState() == PLAYER_SHILED)
+	{
+		PLAYER->playerPush();
+	}
+	else
+	{
+		PLAYERDATA->minusInDungeonHp(waveDamage);
+		PLAYER->setPlayerState(HIT_IDLE);
+		PLAYER->setHit(true);
+		_isWaveHit = true;
 	}
 }
 

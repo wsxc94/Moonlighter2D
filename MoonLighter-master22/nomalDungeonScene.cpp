@@ -133,6 +133,7 @@ void nomalDungeonScene::update()
 		this->emblemUpdate();
 		this->dungeonUpdate();
 		PLAYER->update();
+		PLAYER->updateWeaponState();
 		ITEMMENU->update();
 		break;
 	case DS_RESULT:

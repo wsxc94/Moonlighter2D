@@ -16,7 +16,7 @@ enum ENEMYSTATE			// 상태
 
 enum ENEMYDIRECTION		//보고있는 방향
 {
-	EM_LEFT, EM_RIGHT, EM_TOP, EM_BOTTOM
+	EM_TOP, EM_BOTTOM, EM_LEFT, EM_RIGHT
 };
 
 enum NODESTATE
@@ -120,6 +120,9 @@ public:
 	virtual void soundUpdate();
 	virtual void setProgressBar();
 	virtual void hitSoundPlay();
+	virtual bool checkDirection();	//적이공격하는 방향검사
+	virtual void allEnemyColi(int emDemage, bool checkDirection);	//모든적과 플레이어 충돌 검사
+	
 public:
 	virtual bool getIsActivate() { return _isActivate; }
 	virtual void setIsActivate(bool at) { _isActivate = at; }
@@ -322,6 +325,7 @@ public:
 	void setStartNode();
 	void hitSoundPlay() override;
 	void skullHammerCollision();
+	
 	virtual animation* getAttackAnimation();
 	virtual int getDownDirectionY();
 };
@@ -331,7 +335,7 @@ class gasMan : public enemy
 private:
 	enum GASARROWDIRECTION
 	{
-		AR_LEFT, AR_RIGHT, AR_UP, AR_DOWN
+		AR_UP, AR_DOWN, AR_LEFT, AR_RIGHT
 	};
 	struct tagGasArrow
 	{
@@ -467,6 +471,8 @@ public:
 	void hitUpdate();
 	void hitToPlayer();
 	void hitSoundPlay();
+	void bossColi(int bossTypeDemage, tagAtkBox &bossTypeRect);		//보스 충돌처리
+	void coliWaveAtk(int waveDamage);		//웨이브 충돌처리
 	virtual animation* getAttackAnimation();
 	virtual int getDownDirectionY();
 	virtual float getEnemyScale() { return 3.f; }

@@ -122,13 +122,14 @@ void townScene::update()
 	ObjectAnim();
 	ObjectColl();
 	MapColl();
+	this->collArrow();
 
 }
 
 void townScene::render()
 {
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
-	
+	//Rectangle(getMemDC(), CAMERAMANAGER->getRect());
 	for (int i = 0; i < _objManager.size(); i++)
 	{
 		RECT tmp;
@@ -346,6 +347,15 @@ void townScene::MapColl()
 		PLAYER->setRollPower(0);
 
 		PLAYER->setY(PLAYER->getY() - PLAYER->getSpeed());
+	}
+}
+
+void townScene::collArrow()
+{
+	RECT temp;
+	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
+	{
+		PLAYER->setShoot(false);
 	}
 }
 

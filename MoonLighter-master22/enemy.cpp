@@ -220,6 +220,7 @@ bool enemy::isAstarFail()
 
 void enemy::collision()
 {
+	int damage = RANDOM->range(PLAYERDATA->getAtk() - 2, PLAYERDATA->getAtk() + 2);
 	RECT temp;
 	if (IntersectRect(&temp, &PLAYER->getPlayerAttackBox().rc, &_emRC))
 	{
@@ -227,9 +228,9 @@ void enemy::collision()
 		{
 			EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", 2000,
 				(_emRC.right + _emRC.left) / 2,
-				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
-			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
-			_emHp -= PLAYERDATA->getAtk();
+				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);		
+			DAMAGEFONT->init(_x, _y - 30, damage);
+			_emHp -= damage;
 			_isHit = true;
 			this->setProgressBar();
 			this->hitSoundPlay();
@@ -243,8 +244,8 @@ void enemy::collision()
 			EFFECTMANAGER->addEffect("°ø°ÝÀÌÆåÆ®", 2000,
 				(_emRC.right + _emRC.left) / 2,
 				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
-			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
-			_emHp -= PLAYERDATA->getAtk();;
+			DAMAGEFONT->init(_x, _y - 30, damage);
+			_emHp -= damage;
 			_isHit = true;
 			this->setProgressBar();
 			this->hitSoundPlay();
@@ -260,18 +261,18 @@ void enemy::collision()
 			EFFECTMANAGER->addEffect("È­»ìÀÌÆåÆ®", (_emRC.bottom + _emRC.top) / 2 + 3,
 				(_emRC.right + _emRC.left) / 2,
 				(_emRC.bottom + _emRC.top) / 2, PLAYER->getPlayerDirection(), 10);
-			DAMAGEFONT->init(_x, _y - 30, PLAYERDATA->getAtk());
+			DAMAGEFONT->init(_x, _y - 30, damage);
 
 			if (PLAYER->getSkill())
 			{
-				_emHp -= PLAYERDATA->getAtk();
+				_emHp -= 10 + damage;
 				_isHit = true;
 				this->setProgressBar();
 				this->hitSoundPlay();
 			}
 			else
 			{
-				_emHp -= PLAYERDATA->getAtk();
+				_emHp -= damage;
 				_isHit = true;
 				this->setProgressBar();
 				this->hitSoundPlay();
@@ -299,4 +300,28 @@ void enemy::setProgressBar()
 void enemy::hitSoundPlay()
 {
 }
+
+bool enemy::checkDirection()
+{
+	if (PLAYER->getPlayerDirection() == _emDirection)
+	{
+		return true;
+	}
+	return false;
+}
+
+void enemy::allEnemyColi(int emDemage, bool checkDirection)
+{
+	if (PLAYER->getPlayerState() == PLAYER_SHILED && checkDirection)
+	{
+		PLAYER->playerPush();
+	}
+	else
+	{
+		PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - emDemage);
+		PLAYER->setPlayerState(HIT_IDLE);
+		PLAYER->setHit(true);
+	}
+}
+
 
