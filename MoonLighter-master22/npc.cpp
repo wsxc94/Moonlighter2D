@@ -96,7 +96,7 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 	_count = 0;
 	_time = 0;
 	_angle = 0;
-	_spawnTime = RANDOM->range(200, 500);
+	_spawnTime = RANDOM->range(200, 1000);
 	_Istalk = false;
 	_boxidx = 0;
 	_boxCnt = 0;
@@ -188,6 +188,8 @@ void npc::render()
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 	}
+	
+	ShadowPosRender();
 
 	TalkInterfaceRender();
 	
@@ -217,6 +219,8 @@ void npc::render(NPC_MAP NPC_SHOP)
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 
+		ShadowPosRender();
+
 		if (_state == NPC_ITEM_PICK) {
 
 			CAMERAMANAGER->ZorderRender(_peekItemImg,
@@ -238,8 +242,18 @@ void npc::anim() // npc각도에 따라 애니메이션을 바꿔주는 함수
 		if (_key != "에리스" && _key != "강아지npc") {
 			if (RadianToDegree(_angle) >= 225 && RadianToDegree(_angle) <= 360) _aniNpc->setFrameY(0);
 			if (RadianToDegree(_angle) >= 45 && RadianToDegree(_angle) < 135) _aniNpc->setFrameY(1);
-			if (RadianToDegree(_angle) >= 0 && RadianToDegree(_angle) < 45) _aniNpc->setFrameY(2);
-			if (RadianToDegree(_angle) >= 135 && RadianToDegree(_angle) < 225) _aniNpc->setFrameY(3);
+			if (RadianToDegree(_angle) >= 0 && RadianToDegree(_angle) < 45) {
+				if(_key != "도둑강아지")
+				_aniNpc->setFrameY(2);
+				else
+				_aniNpc->setFrameY(3);
+			}
+			if (RadianToDegree(_angle) >= 135 && RadianToDegree(_angle) < 225) {
+				if (_key != "도둑강아지")
+					_aniNpc->setFrameY(3);
+				else
+					_aniNpc->setFrameY(2);
+			}
 		}
 		else {
 			_aniNpc->setFrameY(0);
@@ -334,11 +348,17 @@ void npc::DistanceCheck()
 			if (shop_currentTargetIdx == 2) {
 
 				if (shop_targetIdx == 0 || shop_targetIdx == 2) {
+					if(_key != "도둑강아지")
 					_aniNpc->setFrameY(2);
+					else
+					_aniNpc->setFrameY(3);
 				}
 				else if (shop_targetIdx == 1 || shop_targetIdx == 3)
 				{
+					if (_key != "도둑강아지")
 					_aniNpc->setFrameY(3);
+					else
+					_aniNpc->setFrameY(2);
 				}
 				priceCheck();
 			}
@@ -498,7 +518,11 @@ void npc::npcSpawn()
 
 void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 {
-
+	if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() == 0 || _displayStand->getDisplayItem()[shop_targetIdx].getType() == ITEM_EMPTY) {
+		shop_currentTargetIdx++;
+		_state = NPC_MOVE;
+		return;
+	}
 	for (int i = 0; i < 4; i++) {
 
 		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() / _displayStand->getDisplayItem()[shop_targetIdx].getCount()
@@ -582,6 +606,41 @@ void npc::ItemActive()
 	{
 		_isActive = true;
 	}
+}
+
+void npc::ShadowPosRender() // 더 수정 및 함수화
+{
+	if (_key == "강아지npc"){
+		CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
+			_pos.x + 1,
+			_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / 3), 0, 0, 150);
+	}
+	else if(_key == "모리" || _key == "원형아저씨")
+	{
+		ShadowPosSet(6, 4, 4);
+	}
+	else if(_key == "마사")
+	{
+		ShadowPosSet(3, 3, 4);
+	}
+	else if (_key == "히어로")
+	{
+		ShadowPosSet(3, 8, 4);
+	}
+	else if (_key == "배낭맨여자")
+	{
+		ShadowPosSet(0, 3, 4);
+	}
+	else {
+		ShadowPosSet(2, 1, 4);
+	}
+}
+
+void npc::ShadowPosSet(int x , int y , int div)
+{
+	CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
+		_pos.x + _aniNpc->getImage()->getFrameWidth() / div - x,
+		_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / div) - y, 0, 0, 150);
 }
 
 void npc::TalkInterfaceRender()

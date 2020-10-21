@@ -281,7 +281,7 @@ void townLoading::loadingImage()
 	_loading->loadFrameImage("플레이어던전입장", "Images/플레이어/TeleportIn20X1.bmp", 1040, 70, 20, 1);
 	_loading->loadFrameImage("던전가는길문", "Images/던전가는길/던전가는길문.bmp", 1280*2, 128*2, 10, 1);
 
-
+	_loading->loadFrameImage("npc그림자", "Images/npc/npc_shadow.bmp", 36, 20, 1, 1);
 
 }
 

@@ -65,9 +65,15 @@ void shopLoading::loadingImage()
 	_loading->loadFrameImage("npc말풍선왼쪽", "Images/상점/bubble_left.bmp", 6, 24, 1, 1);
 	_loading->loadFrameImage("npc말풍선오른쪽", "Images/상점/bubble_right.bmp", 6, 24, 1, 1);
 
-	_loading->loadFrameImage("상점배치", "Images/상점/ui_onDP.bmp", 310, 50, 3, 1);
-	_loading->loadFrameImage("책상금고", "Images/상점/cash_register.bmp", 704, 64, 11, 1);
-	_loading->loadFrameImage("판매버튼", "Images/상점/jButton.bmp", 40, 40, 1, 1);
+	_loading->loadFrameImage("상점배치", "Images/상점/icon_display.bmp", 384, 56, 3, 1);
+	_loading->loadFrameImage("책상금고", "Images/상점/shop_counter.bmp", 308, 46, 7, 1);
+	_loading->loadFrameImage("판매버튼", "Images/상점/icon_sell.bmp", 768, 56, 6, 1);
+	_loading->loadFrameImage("꿀단지", "Images/상점/shop_cauldron.bmp", 204, 32, 6, 1);
+
+	_loading->loadFrameImage("원형아저씨", "Images/npc/원형아저씨8X4.bmp", 352, 304, 8, 4);
+	_loading->loadFrameImage("도둑강아지", "Images/npc/AnimalThief2 8x4.bmp", 464, 308, 8, 4);
+	_loading->loadFrameImage("배낭맨여자", "Images/npc/women.bmp", 630, 280, 9, 4);
+	_loading->loadFrameImage("히어로", "Images/npc/hero.bmp", 512, 303, 8, 4);
 	//_loading->loadFrameImage("상점배치", "Images/상점/ui_onDP.bmp", 310, 50, 3, 1);
 
 

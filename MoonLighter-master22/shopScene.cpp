@@ -63,13 +63,22 @@ HRESULT shopScene::init()
 
 	_cashRegister = new animation;
 	_cashRegister->init(IMAGEMANAGER->findImage("책상금고"), 0, 7);
+	_cashRegister->aniStop();
 
 	_button = new animation; //상첨 배치 버튼
 	_button->init(IMAGEMANAGER->findImage("상점배치"), 0, 7);
 
 	_door = new animation;
 	_door->init(IMAGEMANAGER->findImage("상점문열어"), 0, 7, false, false);
-	_door->aniStop();
+	//_door->aniStop();
+
+	_cauldron = new animation;
+	_cauldron->init(IMAGEMANAGER->findImage("꿀단지"), 0, 11, true, false);
+	_cauldron->aniPlay();
+
+	_sellButton = new animation;
+	_sellButton->init(IMAGEMANAGER->findImage("판매버튼"), 0, 8);
+	_sellNpcCheck = false;
 
 	_shopDoorCheck = false;
 	_doorOpen = false;
@@ -118,6 +127,10 @@ void shopScene::update()
 	_cashRegister->update();
 	_button->update();
 	_door->update();
+	_cauldron->update();
+	_sellButton->update();
+	
+
 }
 
 void shopScene::render()
@@ -191,8 +204,8 @@ void shopScene::PlayerSell()
 {
 	RECT tmp;
 	// 상점책상앞에서 대기하는 npc들에게만 적용
-	
-	_desk = RectMake(646, 660,
+	//646 ,660
+	_desk = RectMake(657, 660,
 		IMAGEMANAGER->findImage("상점책상")->getWidth(),
 		IMAGEMANAGER->findImage("상점책상")->getHeight()/2);
 
@@ -200,37 +213,11 @@ void shopScene::PlayerSell()
 		IMAGEMANAGER->findImage("상점좌판")->getWidth(),
 		IMAGEMANAGER->findImage("상점좌판")->getHeight());
 
+	if (_cashRegister->getAniState() == ANIMATION_END) _cashRegister->setCurIndex(0);
 
-	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
-	{
-		_button->aniPlay();
-		if (INPUT->GetKeyDown('J'))
-		{
-			_displayStand->openDisplayStand();
-			_displayStand->setCanGrab(false);
-		}
-	}
-	else 
-	{
-		_button->setCurIndex(0);
-	}
+	sellStandAction();
+	sellDeskAction();
 
-	for (int i = 0; i < _npc->getVector().size(); i++) {
-		if (_npc->getVector()[i]->getState() == NPC_WAIT) {
-			if(IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
-				if (INPUT->GetKeyDown('J')) {
-					_cashRegister->setCurIndex(0);
-					_cashRegister->aniPlay();
-					_npc->getVector()[i]->setState(NPC_MOVE);
-					_npc->getVector()[i]->setCurrentTargetIdxPlus();
-					PLAYERDATA->addGold(_npc->getVector()[i]->getPeekItemCnt() * _npc->getVector()[i]->getPeekItemGold());
-					SOUNDMANAGER->play("아이템팔림");
-				}
-			}
-			
-		}
-	}
-	//IMAGEMANAGER->findImage("상점책상")
 }
 
 void shopScene::itemInfoUpdate()  // 좌판의 아이템정보를 검사해 npc를 초기화시키는 함수
@@ -256,11 +243,16 @@ void shopScene::itemInfoUpdate()  // 좌판의 아이템정보를 검사해 npc를 초기화시키
 	}
 	for (int i = 0; i < _npc->getVector().size(); i++)
 	{
-		if (!_npc->getVector()[i]->getActive() && 
+		/*if (!_npc->getVector()[i]->getActive() && 
 			_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY &&
 			_displayStand->getDisplayItem()[i].getPrice() != 0 &&
 			_npc->getVector()[i]->getThinkInfo() != "비싸다" &&
 			_npc->getVector()[i]->getThinkInfo() != "엄청비싸다") {
+			npcInit(i);
+		}*/
+
+		if (!_npc->getVector()[i]->getActive()){
+			 
 			npcInit(i);
 		}
 	}
@@ -294,25 +286,28 @@ void shopScene::npcInit(int idx) // 인덱스 번호의 npc 초기화
 
 }
 
-void shopScene::doorOpen()
+void shopScene::doorOpen() // 수정중
 {
 	RECT tmp;
 
 	_doorTime++;
 
 	if (IntersectRect(&tmp, &_doorRect, &PLAYER->getShadowRect())) _doorOpen = true;
-
+	
+	int cnt = 0;
 	for (int i = 0; i < _npc->getVector().size(); i++) {
-		if ((IntersectRect(&tmp, &_doorRect, &_npc->getVector()[i]->getRect())) && !_shopDoorCheck && _npc->getVector()[i]->getState() == NPC_MOVE)
+		if ((IntersectRect(&tmp, &_doorRect, &_npc->getVector()[i]->getRect())) && _npc->getVector()[i]->getState() == NPC_MOVE)
 		{	
+			cnt--;
 			_doorOpen = true;
 		}
 	}
+	//if (cnt == 0 && !IntersectRect(&tmp, &_doorRect, &PLAYER->getShadowRect())) _doorOpen = false;
 
-	if (_doorOpen && _doorTime % 160 == 0) _doorOpen = false;
+	if (cnt == 0 && _doorOpen && _doorTime % 160 == 0) _doorOpen = false;
 
 	if (_doorOpen && !_shopDoorCheck) doorPlay();
-	else if(!_doorOpen && _shopDoorCheck) doorReverseplay();
+	if(!_doorOpen && _shopDoorCheck) doorReverseplay();
 	
 }
 
@@ -322,24 +317,80 @@ void shopScene::doorPlay()
 	{
 		//_door->setCurIndex(0);
 		_door->aniPlay();
-		if(!SOUNDMANAGER->isPlaySound("상점입장0"))
-		SOUNDMANAGER->play("상점입장0");
+		/*if(!SOUNDMANAGER->isPlaySound("상점입장0"))
+		SOUNDMANAGER->play("상점입장0");*/
 		_shopDoorCheck = true;	
+
 	}
 	
-
 }
 
 void shopScene::doorReverseplay()
 {
-	if (_door->getAniState() != ANIMATION_PLAY)
+	if (_door->getAniState() == ANIMATION_END)
 	{
 		_door->aniReverse();
-		if (!SOUNDMANAGER->isPlaySound("문닫아"))
 		SOUNDMANAGER->play("문닫아");
 		_shopDoorCheck = false;
+		return;
 	}
 	
+}
+
+void shopScene::sellStandAction()
+{
+	RECT tmp;
+	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
+	{
+		_button->aniPlay();
+		if (INPUT->GetKeyDown('J'))
+		{
+			_displayStand->openDisplayStand();
+
+			_displayStand->setCanGrab(false);
+		}
+	}
+	else
+	{
+		_button->setCurIndex(0);
+	}
+}
+
+void shopScene::sellDeskAction()
+{
+	RECT tmp;
+	if (IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
+
+		for (int i = 0; i < _npc->getVector().size(); i++) {
+
+			if (_npc->getVector()[i]->getState() == NPC_WAIT) {
+				_sellNpcCheck = true;
+				if (INPUT->GetKeyDown('J')) {
+					_cashRegister->setCurIndex(3);
+					_cashRegister->aniPlay();
+					_npc->getVector()[i]->setState(NPC_MOVE);
+					_sellNpcCheck = false;
+					_sellButton->setCurIndex(0);
+					_npc->getVector()[i]->setCurrentTargetIdxPlus();
+					PLAYERDATA->addGold(_npc->getVector()[i]->getPeekItemCnt() * _npc->getVector()[i]->getPeekItemGold());
+					SOUNDMANAGER->play("아이템팔림");
+				}
+			}
+		}
+	}
+
+	if (_sellNpcCheck && !IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
+		_sellButton->setCurIndex(3);
+	}
+	else if (!_sellNpcCheck && !IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
+		_sellButton->setCurIndex(0);
+	}
+
+	if (IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
+		if (_sellNpcCheck && _sellButton->getCurIndex() == 5)  _sellButton->aniPause();
+		else if (!_sellNpcCheck && _sellButton->getCurIndex() == 2) _sellButton->aniPause();
+		else _sellButton->aniPlay();
+	}
 }
 
 void shopScene::itemMove()
@@ -409,29 +460,31 @@ void shopScene::backGroundRender()
 	//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점문열어"), 1000 + IMAGEMANAGER->findImage("상점문열어")->getFrameHeight() / 4, 665, 823);
 
 	_door->ZoderRender(1000, 665, 823);
+	//732, 664
+	_cashRegister->ZoderRender(700, 732, 664);
 
-	_cashRegister->ZoderRender(700, 700 + _cashRegister->getImage()->getFrameWidth() / 4, 650 + _cashRegister->getImage()->getFrameHeight() / 4);
+	_cauldron->ZoderRender(500, 478, 594);
 }
 
 void shopScene::InterfaceRender()
 {
 	RECT tmp;
 
-	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect()))
-		_button->ZoderRender(1000, PLAYER->getRect().left + _button->getImage()->getFrameWidth() / 2,
-		PLAYER->getRect().top - _button->getImage()->getFrameHeight());
-
+	if (IntersectRect(&tmp, &_stand, &PLAYER->getRect())) {
+		_button->ZoderRender(1000,
+			_stand.right - 10,
+			_stand.top - _button->getImage()->getFrameHeight() + 10);
+	}
 
 	char str[256];
+
 	for (int i = 0; i < ITEMDESKCOUNT; i++)
 	{
-		if (_npc->getVector()[i]->getState() == NPC_WAIT) {
+		
 			if (IntersectRect(&tmp, &_desk, &PLAYER->getRect())) {
-				CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("판매버튼"),
-					700, PLAYER->getRect().left + IMAGEMANAGER->findImage("판매버튼")->getWidth()
-					, PLAYER->getRect().top - IMAGEMANAGER->findImage("판매버튼")->getHeight());
+				_sellButton->ZoderRender(900, 766, 628);
 			}
-		}
+		
 		if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY && _displayStand->getDisplayItem()[i].getPrice() != 0) {
 
 			CAMERAMANAGER->ZorderRender(_displayStand->getDisplayItem()[i].getItemImg(),
@@ -494,7 +547,7 @@ void shopScene::InterfaceRender()
 			CAMERAMANAGER->ZorderTextOut(str, 752,
 				_x
 				, v_itemPos[i].second - 20 + v_itemMoveSpeed[i].first
-				, strlen(str), RGB(0, 200, 0));
+				, strlen(str), RGB(20, 157, 114));
 
 			wsprintf(str, "%d", _displayStand->getDisplayItem()[i].getCount());
 			if (_displayStand->getDisplayItem()[i].getCount() >= 10) {
