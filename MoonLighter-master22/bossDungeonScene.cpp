@@ -48,8 +48,6 @@ void bossDungeonScene::update()
 	//鸥老捞尔 面倒贸府
 	this->collisionTile();
 	PLAYER->updateWeaponState();
-	if(_golemKing)
-	_golemKing->update();
 
 	switch (_bsState)
 	{
