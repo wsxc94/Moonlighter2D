@@ -1,6 +1,6 @@
 #pragma once
 #include "gameNode.h"
-#include "npc.h"
+#include "PotionShopNpc.h"
 
 class displayStand;
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "gameNode.h"
 #include "tileNode.h"
-#include "npc.h"
+#include "PotionShopNpc.h"
 
 class npcManager : public gameNode // 마을 npc 매니저
 {

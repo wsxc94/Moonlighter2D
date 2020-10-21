@@ -10,7 +10,7 @@ HRESULT npcManager::init(vector<tagTile>& vec)
 	for (int i = 0; i < vec.size(); i++)
 	{
 		if (vec[i].key == "¿¡¸®½º") {
-			_witch = new npc;
+			_witch = new PotionShopNpc;
 			_witch->init(tagPosF(vec[i].rc.left, vec[i].rc.top), vec[i].key);
 			_npcs.push_back(_witch);
 		}
@@ -80,7 +80,7 @@ void npcManager::update()
 	_redmond->move();
 	_masa->move();
 
-	_witch->action("³ÊÇÑÅÙ ¾ÈÆÈ¾Æ");
+	_witch->action("³ÊÇÑÅÙ¾ÈÆÈ¾Æ");
 	_girl->action("¤¾¤·");
 	_blackOctopus->action("Å»¸ðºö !!!!");
 	_masa->action("Äà¹° °³²Ü¸À ¹äµµµÏ");

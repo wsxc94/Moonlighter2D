@@ -22,14 +22,14 @@ enum NPC_MAP // npc가 어디있는지 기본 = 마을
 };
 class npc : public gameNode
 {
-private:
+protected:
 	animation* _aniNpc; // npc 애니메이션 변수
 	animation* _aniPriceCheck; // 이모티콘 애니메이션 변수
 	image* _peekItemImg; // 현재 잡고 있는 아이템 이미지
 	int _peekItemGold;
 	int _peekItemCnt;
 	string thinkInfo; // 엄청싸다 싸다 비싸다 엄청비싸다
-private:
+protected:
 	int _count;
 	int _idx;
 	int _time;
@@ -85,14 +85,14 @@ private:
 
 
 public:
-	HRESULT init(tagPosF pos, string key); // 마을 npc 초기화
+	virtual HRESULT init(tagPosF pos, string key); // 마을 npc 초기화
 	HRESULT init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displayStand* dis);  //상점 npc 초기화
 
 	void release();
-	void update(); // 마을 NPC 업데이트
+	virtual void update(); // 마을 NPC 업데이트
 	void update(NPC_MAP NPC_SHOP); // 상점NPC 업데이트
 
-	void render(); // 기본 npc 렌더링
+	virtual void render(); // 기본 npc 렌더링
 	void render(NPC_MAP NPC_SHOP); // 상점 npc 렌더링
 
 	void anim(); // npc 애니메이션
@@ -101,7 +101,7 @@ public:
 	void move(NPC_MAP NPC_SHOP); // 상점에서의 npc 움직임
 
 	void DistanceCheck();
-	void action(string talk); //NPC 멘트 및 말풍선 업데이트
+	virtual void action(string talk); //NPC 멘트 및 말풍선 업데이트
 	void action(); //강아지 전용
 	void collision(); // NPC 충돌렉트 설정
 	void lookPlayer(); // 플레이어를 바라보도록 조정 강아지전용

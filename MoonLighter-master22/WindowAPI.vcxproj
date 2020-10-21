@@ -191,6 +191,7 @@
     <ClInclude Include="playerData.h" />
     <ClInclude Include="potal.h" />
     <ClInclude Include="potionShop.h" />
+    <ClInclude Include="PotionShopNpc.h" />
     <ClInclude Include="progressBar.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="recipe.h" />
@@ -258,6 +259,7 @@
     <ClCompile Include="potal.cpp" />
     <ClCompile Include="potGolem.cpp" />
     <ClCompile Include="potionShop.cpp" />
+    <ClCompile Include="PotionShopNpc.cpp" />
     <ClCompile Include="progressBar.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="recipe.cpp" />
