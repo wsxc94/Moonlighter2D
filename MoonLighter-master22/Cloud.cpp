@@ -6,9 +6,10 @@ HRESULT Cloud::init(tagPosF pos)
 {
 	_pos = pos;
 	_speed = 0.8f;
-	_angle = getAngle(_pos.x, _pos.y, _pos.x - RANDOM->range(300,2000), _pos.y + 50000);
+	_angle = getAngle(_pos.x, _pos.y, _pos.x - RANDOM->range(500,2500), _pos.y + 50000);
 	_time = 0;
 	_isActive = false;
+
 	delay = RANDOM->range(60, 300);
 	return S_OK;
 }
@@ -38,10 +39,10 @@ void Cloud::move()
 {
 	
 
-	if (_pos.y >= IMAGEMANAGER->findImage("townBack")->getHeight() + 500) {
+	if (_pos.x <= -500 || _pos.y >= IMAGEMANAGER->findImage("townBack")->getHeight() + 500) {
 		tagPosF tmp;
-		tmp.x = RANDOM->range(100, IMAGEMANAGER->findImage("townBack")->getWidth() + 200);
-		tmp.y = RANDOM->range(-2000, -3500);
+		tmp.x = RANDOM->range(400, IMAGEMANAGER->findImage("townBack")->getWidth() + 200);
+		tmp.y = RANDOM->range(-1800, -3500);
 
 		_pos = tmp;
 	}

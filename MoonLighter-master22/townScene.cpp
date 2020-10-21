@@ -368,8 +368,8 @@ void townScene::cloudInit()
 		tmp_cloud = new Cloud;
 		v_cloud.push_back(tmp_cloud);
 		tagPosF tmp;
-		tmp.x = RANDOM->range(100, IMAGEMANAGER->findImage("townBack")->getWidth() + 200);
-		tmp.y = RANDOM->range(-2000, -3500);
+		tmp.x = RANDOM->range(400, IMAGEMANAGER->findImage("townBack")->getWidth() + 200);
+		tmp.y = RANDOM->range(-1800, -3500);
 		v_cloud[i]->init(tmp);
 	}
 }
