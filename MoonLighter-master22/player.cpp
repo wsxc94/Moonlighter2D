@@ -806,3 +806,46 @@ void player::imageInit()
 	_aniDiePortal->aniStop();
 }
 
+::animation * player::getAnimation()
+{
+	switch (_state)
+	{
+	case PLAYER_IDLE:
+		break;
+	case PLAYER_RUN:
+		break;
+	case PLAYER_ROLL:
+		break;
+	case PLAYER_ATTACK_SWORD:
+		break;
+	case PLAYER_ATTACK_SWORD_SECOND:
+		break;
+	case PLAYER_ATTACK_BOW:
+		break;
+	case PLAYER_SHILED:
+		break;
+	case BOW_CHARGE:
+		break;
+	case PLAYER_TALK:
+		break;
+	case PLAYER_DIE:
+		return _aniDie;
+		break;
+	case PLAYER_DIE_PORTAL:
+		break;
+	case PLAYER_FALL:
+		break;
+	case PLAYER_SWIM:
+		break;
+	case HIT_IDLE:
+		break;
+	case HIT_RUN:
+		break;
+	case HIT_SWORD:
+		break;
+	case HIT_SWORD_TWO:
+		break;
+	}
+	return nullptr;
+}
+

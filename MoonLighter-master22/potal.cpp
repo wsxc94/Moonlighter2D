@@ -27,6 +27,15 @@ HRESULT potal::init(float x, float y, POTALSTATE state)
 	return S_OK;
 }
 
+void potal::release()
+{
+	SAFE_DELETE(_init);
+	SAFE_DELETE(_update);
+	SAFE_DELETE(_break);
+	SAFE_DELETE(_playerIn);
+	SAFE_DELETE(_playerOut);
+}
+
 void potal::update()
 {
 	switch (_potalState)

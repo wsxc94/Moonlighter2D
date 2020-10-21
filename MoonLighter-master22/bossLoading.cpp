@@ -52,10 +52,10 @@ void bossLoading::loadImage()
 	_loading->loadFrameImage("bossIdle", "Images/보스/idleBoss .bmp", 350, 175, 2, 1);
 
 	//보스오브젝트
-	_loading->loadImage("bossRock0", "Images/보스/Boss_Rock0 .bmp", 100, 108, true, RGB(255, 0, 255));
-	_loading->loadImage("bossRock1", "Images/보스/Boss_Rock1 .bmp", 100, 108, true, RGB(255, 0, 255));
-	_loading->loadImage("bossRock2", "Images/보스/Boss_Rock2 .bmp", 100, 108, true, RGB(255, 0, 255));
-	_loading->loadImage("bossRock3", "Images/보스/Boss_Rock3 .bmp", 100, 108, true, RGB(255, 0, 255));
+	_loading->loadFrameImage("bossRock0", "Images/보스/Boss_Rock0 .bmp", 100, 108,1,1);
+	_loading->loadFrameImage("bossRock1", "Images/보스/Boss_Rock1 .bmp", 100, 108, 1, 1);
+	_loading->loadFrameImage("bossRock2", "Images/보스/Boss_Rock2 .bmp", 100, 108, 1, 1);
+	_loading->loadFrameImage("bossRock3", "Images/보스/Boss_Rock3 .bmp", 100, 108, 1, 1);
 	//_loading->loadImage("bossFist", "Images/보스/fist .bmp", 104, 373, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("bossFist", "Images/보스/fist2 .bmp", 623, 746, 6, 1);
 	_loading->loadFrameImage("bossHand", "Images/보스/hand.bmp", 1140, 60, 19, 1);
@@ -73,6 +73,7 @@ void bossLoading::loadImage()
 	_loading->loadImage("messegeBox_potal", "Images/던전/messegeBox_potal.bmp", 183, 50, true, RGB(255, 0, 255));
 	_loading->loadFrameImage("dungeonStageBar", "Images/던전결과창/dungeonProgress1X3.bmp", 85, 45, 1, 3);
 	_loading->loadImage("resultBack", "Images/던전결과창/ui_dungeonResult4022.bmp", 1158, 656, true, RGB(255, 0, 255));
+	
 }
 
 void bossLoading::loadSound()

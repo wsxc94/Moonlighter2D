@@ -615,7 +615,7 @@ void image::stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFra
 {
 	//스트레치이미지 처음 사용하냐?
 	//이미지 스케일링을 사용할 수 있도록 초기화 해라
-	if (!_stretchImage) this->initForStretch();
+	if (!_stretchImage) this->initForStretch(_imageInfo->width * size, _imageInfo->height * size);
 
 	_stretchImage->width = _imageInfo->width * size;
 	_stretchImage->height = _imageInfo->height * size;
@@ -625,7 +625,7 @@ void image::stretchFrameRender(HDC hdc, int centerX, int centerY, int currentFra
 	if (_isTrans) //배경색 없앨꺼냐?
 	{
 		//원본이미지를 Scale값 만큼 확대/축소시켜서 그려준다
-		SetStretchBltMode(hdc, COLORONCOLOR);
+		SetStretchBltMode(getMemDC(), COLORONCOLOR);
 		StretchBlt(_stretchImage->hMemDC, 0, 0, _stretchImage->frameWidth, _stretchImage->frameHeight,
 			_imageInfo->hMemDC,
 			currentFrameX * _imageInfo->frameWidth,

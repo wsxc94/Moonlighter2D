@@ -32,7 +32,7 @@ HRESULT townScene::init()
 	CAMERAMANAGER->FadeStart();
 
 	// 포탈 
-	if (PLAYERDATA->getIsEmblemReturn())
+	if (PLAYERDATA->getIsEmblemReturn() || PLAYERDATA->getIsBossReturn())
 	{
 		_potal = new potal;
 		_potal->init(300, 200, POTAL_INIT);
@@ -360,17 +360,33 @@ void townScene::updatePotal()
 {
 	if (!_potal) return;
 	_potal->update();
-
-	if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
+	if (PLAYERDATA->getIsBossReturn())
 	{
-		_potal->setPotalState(POTAL_PLAYERIN);
+		if (_potal->getPotalState() == POTAL_UPDATE)
+		{
+			_potal->setPotalState(POTAL_BREAK);
+		}
+		if (_potal->getIsActivate() == false)
+		{
+			_potal->release();
+			SAFE_DELETE(_potal);
+		}
+	}
+	else
+	{
+		if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
+		{
+			_potal->setPotalState(POTAL_PLAYERIN);
+		}
+
+		if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
+		{
+			SOUNDMANAGER->stop("마을브금");
+			SCENEMANAGER->loadScene("던전로딩");
+		}
 	}
 
-	if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
-	{
-		SOUNDMANAGER->stop("마을브금");
-		SCENEMANAGER->loadScene("던전로딩");
-	}
+
 
 }
 

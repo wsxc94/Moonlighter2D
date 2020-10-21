@@ -7,7 +7,7 @@
 
 enum BOSSSCENESTATE
 {
-	BS_INIT,BS_UPDATE,BS_MAKEPOTAL,BS_RESULT
+	BS_INIT,BS_UPDATE,BS_RESULT
 };
 
 struct tagDungeonSlot
@@ -38,6 +38,7 @@ private:
 	vector<tagTile> _vTile;
 
 	potal* _potal;
+	bool _isPlayerRender;				//플레이어 렌더할거냐
 public:
 
 	HRESULT init();
@@ -46,6 +47,7 @@ public:
 	void render();
 
 	void loadTile();
+	void collisionTile();
 
 	void initItemSlot();
 	void getInvenItem();

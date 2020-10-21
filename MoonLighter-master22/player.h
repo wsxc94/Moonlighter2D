@@ -205,7 +205,7 @@ public:
 	void setPlayerDirection(int i) { _player.direction = i; }
 	::animation* getPlayerDGRoll() { return _aniDgRoll; }
 	void playDgRoll() { _aniDgRoll->aniRestart(); }
-
+	::animation* getAnimation();
 
 };
 

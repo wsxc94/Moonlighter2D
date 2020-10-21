@@ -4,7 +4,7 @@
 
 HRESULT nomalDungeonScene::init()
 {
-	if (PLAYERDATA->getIsEmblemReturn())
+	if (PLAYERDATA->getIsEmblemReturn() && PLAYERDATA->getMapData() != nullptr)
 	{
 		this->initFromSave();
 		return S_OK;

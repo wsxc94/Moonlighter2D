@@ -24,19 +24,29 @@ HRESULT bossDungeonScene::init()
 	SOUNDMANAGER->play("bossBGM", 0.5f);
 
 	_potal = nullptr;
+	_isPlayerRender = true;
+	_aniCenter = new animation;
+
+	this->initItemSlot();
 
 	return S_OK;
 }
 
 void bossDungeonScene::release()
 {
-	SAFE_DELETE(_potal);
+	if (_potal)
+	{
+		_potal->release();
+		SAFE_DELETE(_potal);
+	}
+	
 }
 
 void bossDungeonScene::update()
 {
 	PLAYER->update();
-
+	//Å¸ÀÏÀÌ¶û Ãæµ¹Ã³¸®
+	this->collisionTile();
 	switch (_bsState)
 	{
 	case BS_INIT:
@@ -58,31 +68,57 @@ void bossDungeonScene::update()
 
 			if (_potal->getPotalState() == POTAL_PLAYERIN && _potal->getAnimation()->getAniState() == ANIMATION_END)
 			{
+				this->getInvenItem();
+				_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5, true);
 				_bsState = BS_RESULT;
+				_rtKind = BOSSRESULTKIND::RT_POTAL;
+				_vEnemy = PLAYERDATA->getVEnemy();
+			}
+
+			if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
+			{
+
+				_potal->setPotalState(POTAL_PLAYERIN);
+				_isPlayerRender = false;
 			}
 		}
-		//Á×À¸¸é Æ÷Å»»ý¼º
+		//Á×ÀÌ¸é Æ÷Å»»ý¼º
 		if (_golemKing->getIsDead() == true && !_potal)
 		{
 			_potal = new potal;
 			_potal->init(1024, 839, POTAL_INIT);
 		}
-		if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
+		
+		//ÇÃ·¹ÀÌ¾î Á×À¸¸é °á°úÃ¢
+		if (PLAYERDATA->getInDungeonHp() <= 0 && PLAYER->getPlayerState() != PLAYER_DIE)
 		{
-			_potal->setPotalState(POTAL_PLAYERIN);
+			PLAYER->setPlayerState(PLAYER_DIE);
+		}
+		else if (PLAYER->getPlayerState() == PLAYER_DIE && PLAYER->getAnimation()->getAniState() == ANIMATION_END)
+		{
+			this->getInvenItem();
+			_aniCenter->init(IMAGEMANAGER->findImage("Á×À½"), 0, 5);
+			_bsState = BS_RESULT;
+			_rtKind = BOSSRESULTKIND::RT_DIE;
+			_vEnemy = PLAYERDATA->getVEnemy();
+			_killEnemy = PLAYERDATA->getKillEnemy();
 		}
 	
 		break;
-	case BS_MAKEPOTAL:
-		
-		break;
 	case BS_RESULT:
+		_aniCenter->update();
+		_killEnemy->attack->update();
 		PLAYERDATA->setIsActivate(false);
 		if (INPUT->GetKeyDown('J'))
 		{
-			//¿¥ºí·½ »ç¿ë ½Ã 
-			PLAYERDATA->setIsEmblemReturn(true);
-			PLAYERDATA->setIsPendantReturn(false);
+			if (_rtKind == BOSSRESULTKIND::RT_DIE)
+			{
+				PLAYERDATA->setIsPendantReturn(true);
+			}
+			else if (_rtKind == BOSSRESULTKIND::RT_POTAL)
+			{
+				PLAYERDATA->setIsBossReturn(true);
+			}
 			PLAYERDATA->setIsInDungeon(false);
 			SCENEMANAGER->loadScene("Å¸¿îÈ­¸é");
 			SOUNDMANAGER->stop("bossBGM");
@@ -92,7 +128,7 @@ void bossDungeonScene::update()
 		break;
 	}
 	
-	
+	cout << CAMERAMANAGER->getRect().left << endl;
 
 	CAMERAMANAGER->update(PLAYER->getX(), PLAYER->getY());
 	CAMERAMANAGER->movePivot(PLAYER->getX(), PLAYER->getY());
@@ -102,16 +138,14 @@ void bossDungeonScene::update()
 void bossDungeonScene::render()
 {
 	CAMERAMANAGER->StretchRender(getMemDC(), IMAGEMANAGER->findImage("bossRoomBack"), 1024, 839, 2.f);
-	PLAYER->render(getMemDC());
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
-
+	if(_isPlayerRender)
+	PLAYER->render(getMemDC());
 	switch (_bsState)
 	{
 	case BS_INIT:case BS_UPDATE:
 		
 	
-		break;
-	case BS_MAKEPOTAL:
 		break;
 	case BS_RESULT:
 		IMAGEMANAGER->addImage("dark", WINSIZEX, WINSIZEY)->alphaRender(getMemDC(), 0, 0, 170);
@@ -149,6 +183,49 @@ void bossDungeonScene::render()
 void bossDungeonScene::loadTile()
 {
 	_vTile = mapSaveLoad::getSingleton()->loadTile("maptool/bossDungeon", 60, 48);
+}
+
+void bossDungeonScene::collisionTile()
+{
+	for (int i = 0; i < _vTile.size(); i++)
+	{
+		RECT temp;
+		if (!IntersectRect(&temp, &CAMERAMANAGER->getRect(), &_vTile[i].rc)) continue;
+		if (IntersectRect(&temp, &PLAYER->getShadowRect(), &_vTile[i].rc))
+		{
+			if (_vTile[i].tState == TS_MOVEBAN)
+			{
+				int wid = temp.right - temp.left;
+				int hei = temp.bottom - temp.top;
+				int pwid = (PLAYER->getShadowRect().right - PLAYER->getShadowRect().left) / 2;
+				int phei = (PLAYER->getShadowRect().bottom - PLAYER->getShadowRect().top) / 2;
+
+				if (wid > hei) // À§¾Æ·¡
+				{
+					if (temp.top == PLAYER->getShadowRect().top) // ¾Æ·¡
+					{
+						PLAYER->setY(_vTile[i].rc.bottom + phei);
+					}
+					else  // À§
+					{
+						PLAYER->setY(_vTile[i].rc.top - phei);
+					}
+				}
+				else  // ¾ç¿·
+				{
+					if (temp.left == PLAYER->getShadowRect().left) // ¿À¸¥ÂÊ
+					{
+						PLAYER->setX(_vTile[i].rc.right + pwid);
+					}
+					else // ¿ÞÂÊ
+					{
+						PLAYER->setX(_vTile[i].rc.left - pwid);
+					}
+				}
+
+			}
+		}
+	}
 }
 
 void bossDungeonScene::initItemSlot()

@@ -14,6 +14,7 @@ HRESULT playerData::init()
 	_killEnemy = nullptr;
 	_isEmblemReturn = false;
 	_isPendantReturn = false;
+	_isBossReturn = false;
 
 	return S_OK;
 }

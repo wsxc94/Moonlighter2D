@@ -73,6 +73,8 @@ HRESULT bossGolemKing::init(int x, int y)
 	//보스 xy 좌표
 	_x = x;
 	_y = y;
+	_bossRC = RectMakeCenter(_x - 10, _y + 85, 250, 150);
+	_hitCount = 0;
 
 	//돌공격 카운트 초기화
 	_rockFireTime = 0;
@@ -83,6 +85,7 @@ HRESULT bossGolemKing::init(int x, int y)
 	_isAttackSoundPlay = false;
 	_isDeadSoundPlay = false;
 	_isDead = false;
+	_isHit = false;
 
 	return S_OK;
 }
@@ -95,7 +98,7 @@ void bossGolemKing::update()
 {
 	if (INPUT->GetKeyDown(VK_DOWN))
 	{
-		_hp = 0;
+		PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
 	}
 	//스크롤 업뎃
 	_scroll->update();
@@ -202,7 +205,7 @@ void bossGolemKing::render()
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		CAMERAMANAGER->ZorderDrawText("골 렘 왕", 2000, txtRC, hFont, RGB(255, 255, 255), DT_CENTER | DT_WORDBREAK | DT_VCENTER);
 	}
-	
+	CAMERAMANAGER->FrameRect(getMemDC(), _bossRC, RGB(255, 0, 0));
 
 	switch (_golemState)
 	{
@@ -300,6 +303,11 @@ void bossGolemKing::initAttack()
 
 	//현재상태 제거
 	_vGolemAttack.pop_back();
+}
+
+void bossGolemKing::collisionPlayer()
+{
+	
 }
 
 void bossGolemKing::initVGolemAttack()
@@ -407,6 +415,16 @@ void bossGolemKing::bsFistUpdate()
 			PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
 			PLAYER->setPlayerState(HIT_IDLE);
 			PLAYER->setHit(true);
+
+			if (PLAYERDATA->getInDungeonHp() <= 0)
+			{
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_bossFist.ani->getImage(), 0, 7, true);
+				em->frameY = 0;
+				em->scale = 0.5f;
+				PLAYERDATA->setKillEnemy(em);
+			}
 		}
 	}
 	//아이들 상태로 바꾸기
@@ -516,6 +534,16 @@ void bossGolemKing::bsHandUpdate()
 			PLAYER->setPlayerState(HIT_IDLE);
 			PLAYER->setHit(true);
 			_golemHand.isHit = true;
+
+			if (PLAYERDATA->getInDungeonHp() <= 0)
+			{
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_golemHand.ani->getImage(), 0, 7, true);
+				em->frameY = 0;
+				em->scale = 3.f;
+				PLAYERDATA->setKillEnemy(em);
+			}
 		}
 	}
 
@@ -623,6 +651,15 @@ void bossGolemKing::vRockUpdate()
 			PLAYER->setPlayerState(HIT_IDLE);
 			PLAYER->setHit(true);
 			_vRock[i].isHit = true;
+			if (PLAYERDATA->getInDungeonHp() <= 0)
+			{
+				RESULTENEMY* em = new RESULTENEMY;
+				em->attack = new animation;
+				em->attack->init(_vRock[i].img, 0, 7, true);
+				em->frameY = 0;
+				em->scale = 1.f;
+				PLAYERDATA->setKillEnemy(em);
+			}
 		}
 
 		if (_vRock[i].time > 600)

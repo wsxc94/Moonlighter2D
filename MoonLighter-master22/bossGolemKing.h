@@ -81,6 +81,7 @@ private:
 
 	int _hp;									//체력	
 	int _attackCool;							//공격 쿨타임
+	int _hitCount;
 
 	tagGolemHand _golemHand;					//손으로 찍는공격
 
@@ -95,7 +96,7 @@ private:
 	bool _isAttackSoundPlay;					//공격전 사운드
 	bool _isDeadSoundPlay;						//죽는 사운드
 	bool _isDead;								//죽었냐?
-
+	bool _isHit;
 
 public:
 	bossGolemKing() {}
@@ -105,12 +106,14 @@ public:
 	void release();
 	void update();
 	void render();
-	void changeAniState(GOLEMANISTATE state);						//애니메이션 변경
-	void initAttack();							//공격하기전 상태별 초기화
+	void changeAniState(GOLEMANISTATE state);				//애니메이션 변경
+	void initAttack();										//공격하기전 상태별 초기화
 
-	void initVGolemAttack();					//벡터에 공격패턴 넣기
-	void suffleVGolemAttack();					//랜덤하게 셔플하기
-	void initGolemHand();						//손공격 이닛
+	void collisionPlayer();
+
+	void initVGolemAttack();								//벡터에 공격패턴 넣기
+	void suffleVGolemAttack();								//랜덤하게 셔플하기
+	void initGolemHand();									//손공격 이닛
 
 	void bsFistUpdate();
 	void bsRockShootUpdate();
