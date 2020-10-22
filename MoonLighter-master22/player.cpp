@@ -243,7 +243,7 @@ void player::playerState()
 			{
 				if (_place == TOWN_DUNGEON)
 				{
-					SOUNDMANAGER->play("구르기", 0.3f);
+					SOUNDMANAGER->play("구르기", 0.2f);
 				}
 				_lastRollX = _player.x;
 				_lastRollY = _player.y;
@@ -260,7 +260,7 @@ void player::playerState()
 		case PLAYER_RUN:
 			if (!SOUNDMANAGER->isPlaySound("플레이어걷기"))
 			{
-				SOUNDMANAGER->play("플레이어걷기", 0.3f);
+				SOUNDMANAGER->play("플레이어걷기", 0.15f);
 			}
 			if (_isHit)
 			{

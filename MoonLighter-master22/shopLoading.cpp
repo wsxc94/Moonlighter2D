@@ -54,10 +54,10 @@ void shopLoading::loadingImage()
 	_loading->loadFrameImage("아이템그림자", "Images/상점/item_shadow.bmp", 24, 12, 1, 1);
 
 
-	_loading->loadFrameImage("엄청싸다", "Images/npc/엄청싸다.bmp", 832, 52, 16, 1);
+	_loading->loadFrameImage("엄청싸다", "Images/npc/엄청싸다.bmp", 884, 52, 17, 1);
 	_loading->loadFrameImage("싸다", "Images/npc/싸다.bmp", 416, 52, 8, 1);
 	_loading->loadFrameImage("비싸다", "Images/npc/비싸다.bmp", 468, 52, 9, 1);
-	_loading->loadFrameImage("엄청비싸다", "Images/npc/엄청비싸다.bmp", 624, 52, 12, 1);
+	_loading->loadFrameImage("엄청비싸다", "Images/npc/엄청비싸다.bmp", 676, 52, 13, 1);
 	_loading->loadFrameImage("기다리는중", "Images/npc/npc_waiting.bmp", 104, 52, 2, 1);
 
 	_loading->loadFrameImage("npc말풍선몸", "Images/상점/bubble_body.bmp", 24, 24, 1, 1);

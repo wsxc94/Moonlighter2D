@@ -83,10 +83,10 @@ void npcManager::update()
 	_masa->move();
 
 	_witch->action("Àß ¿Ô¾î, ¾È³ç Àª! ¿À´ÃÀº ¾î¶² °É ¸¸µé°í ½Í¾î?");
-	_girl->action("¤¾¤·");
-	_blackOctopus->action("Å»¸ðºö !!!!");
-	_masa->action("Äà¹° °³²Ü¸À ¹äµµµÏ");
-	_redmond->action("¹»ºÁ ¤»");
+	_girl->action("Àª!!! Àü¿¡ °ñ·½ ´øÀü¿¡¼­ ³Î º» ÀûÀÌ ÀÖ¾î! ½ÅºñÇÑ À¯¹°Àº Á» Ã£¾Ò¾î!?!");
+	_blackOctopus->action("´øÀü¿¡¼­ »õ·Î¿î ¹®¸í À¯¹°Àº Á» Ã£¾Ò´Ï, Àª?");
+	_masa->action("Àª! ´ÙÀ½¿¡ »óÁ¡¿¡ ³î·¯°¡¸é ¼ú·¡Àâ±â ÇØµµ µÅ?");
+	_redmond->action("´øÀü¿¡¼­ Ä¡À¯ÀÇ »ùÀ» ¹ß°ßÇÑ´Ù¸é È°¿ëÇÏ´Â °Å ÀØ      Áö¸¶!");
 	_doberman->action();
 
 	Coll();

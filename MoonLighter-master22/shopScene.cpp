@@ -59,6 +59,7 @@ HRESULT shopScene::init()
 	_disMenuOn = false;
 
 	_visit = false;
+	_isShopOpen = false;
 
 	_cashRegister = new animation;
 	_cashRegister->init(IMAGEMANAGER->findImage("책상금고"), 0, 7);
@@ -117,7 +118,15 @@ void shopScene::update()
 
 	PlayerCol();
 	PortaltoTown();
+
+	if (INPUT->GetKeyDown('Q')) {
+		if (!_isShopOpen)_isShopOpen = true;
+		else _isShopOpen = false;
+	}
+
+	if (_isShopOpen)
 	npcAI();
+
 	PlayerSell();
 	itemInfoUpdate();
 	itemMove();
@@ -471,6 +480,9 @@ void shopScene::backGroundRender()
 
 	//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점문열어"), 1000 + IMAGEMANAGER->findImage("상점문열어")->getFrameHeight() / 4, 665, 823);
 
+	if (INPUT->GetToggleKey(VK_F1)) {
+		CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("상점픽셀"), 304, 132);
+	}
 	_door->ZoderRender(1000, 665, 823);
 	//732, 664
 	_cashRegister->ZoderRender(700, 732, 664);
