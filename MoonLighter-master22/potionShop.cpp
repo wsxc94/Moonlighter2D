@@ -84,7 +84,7 @@ void potionShop::render()
 	_fadeManager->render(getMemDC());
 
 	//char str[100];
-	//wsprintf(str, "produceCount : %d", _produceCount);
+	//wsprintf(str, "potionCtrl: %d", _potionCtrl);
 	//TextOut(getMemDC(), 10, 130, str, strlen(str));
 	//
 	//wsprintf(str, "frameCount : %d", _frameCount);
@@ -118,6 +118,10 @@ void potionShop::render()
 
 			case POTION_SET_COUNT:
 				setCountRender();
+				if (_potionSlot[_cursor->getSlotIdx()].type == POTION_CRAFT)
+				{
+					totalMaterialRender();
+				}
 				break;
 
 			case POTION_SELECTMENU:
@@ -981,6 +985,21 @@ void potionShop::totalPriceRender()
 	int totalPrice = _produceCount * _potionSlot[_cursor->getSlotIdx()].price;
 
 	countRender(totalPrice, 769, 330, COLOR_WHITE);
+}
+
+void potionShop::totalMaterialRender()
+{
+	int tempX = 751;
+	int tempY = 360;
+
+	for (int i = 0; i < _potionSlot[_cursor->getSlotIdx()].mixRecipe->getMeterial().size(); i++)
+	{
+		_potionSlot[_cursor->getSlotIdx()].mixRecipe->getMeterial()[i]->
+			getItem().getItemImg()->render(getMemDC(), tempX - (i * 70), tempY);
+
+		countRender(_potionSlot[_cursor->getSlotIdx()].mixRecipe->getMeterial()[i]->
+			getCount() * _produceCount, (tempX + 19) - (i * 70), tempY + 62, COLOR_WHITE);
+	}
 }
 
 void potionShop::countRender(int count, int destX, int destY, COLOR_TYPE color)
