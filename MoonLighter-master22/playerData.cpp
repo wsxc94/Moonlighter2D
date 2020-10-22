@@ -62,7 +62,7 @@ void playerData::initPlayerStatus()
 	_gold = 5000;
 	_itemCount = 0;
 
-	_isInDungeon = true;
+	_isInDungeon = false;
 	
 	//ITEMMENU->getInventory()->updateStatus();
 }

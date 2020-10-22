@@ -578,6 +578,21 @@ void inventory::initItem()
 				_vInven.push_back(item);
 				break;
 			}
+			//if (item->getItemIdx() == POTION1_IDX)
+			//{
+			//	_invenSlot[20].isEmpty = false;
+			//	item->setInvenPosIdx(20);
+			//	item->setCount(5);
+			//	_vInven.push_back(item);
+			//	break;
+			//}
+			//if (item->getItemIdx() == POTION2_IDX)
+			//{
+			//	_invenSlot[0].isEmpty = false;
+			//	item->setInvenPosIdx(0);
+			//	_vInven.push_back(item);
+			//	break;
+			//}
 			else
 			{
 				_invenSlot[j].isEmpty = false;
@@ -591,8 +606,8 @@ void inventory::initItem()
 	_vInven[RICHJELLY_IDX]->setCount(5);
 	_vInven[VENOMJELLY_IDX]->setCount(10);
 	_vInven[CRYSTAL_IDX]->setCount(5);
-	_vInven[VINE_IDX]->setCount(5);
-	//_vInven[POTION1_IDX]->setCount(5);
+	_vInven[VINE_IDX]->setCount(10);
+	_vInven[POTION1_IDX]->setCount(5);
 	_vInven[POTION2_IDX]->setCount(5);
 }
 

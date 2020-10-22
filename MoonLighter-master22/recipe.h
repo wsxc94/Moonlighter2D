@@ -41,6 +41,7 @@ private:
 
 private:
 	char _materialName[64];
+	bool _showTotalMaterial;
 
 public:
 	HRESULT init();
@@ -54,6 +55,10 @@ public:
 	bool checkRequirements();						//전체 재료의 조건충족여부 확인 
 	int getMaxProduceBasedOnMaterial();				//소지 중인 재료를 기반으로 최대제조개수 구하기 
 	const char *getShortMaterialName();				//부족한 재료의 이름 받기 
+	bool getShowTotalMaterial() { return _showTotalMaterial; }
+
+	//set함수
+	void setShowTotalMaterial(bool value) { _showTotalMaterial = value; }
 
 	//재료 추가 및 인벤토리에서 삭제 함수 
 	void addMaterial(int itemIdx, int count);		//레시피에 재료 추가하기 
@@ -64,6 +69,7 @@ public:
 	void recipeTextRender(HDC hdc, int destX, int destY);
 	void recipeOXIconRender(HDC hdc, int destX, int destY);
 	void recipeCountRender(HDC hdc, int destX, int destY);
-	void countRender(HDC hdc, int destX, int destY, int count);
+	void totalRecipeRender(HDC hdc, int destX, int destY);
+	void countRender(HDC hdc, int destX, int destY, int count, COLOR_TYPE type);
 };
 

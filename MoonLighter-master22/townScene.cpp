@@ -75,7 +75,7 @@ void townScene::update()
 	}
 	else 
 	{
-		if (ITEMMENU->getOpenMenu() || _npcManager->getPotionShopNpc() ) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
+		if (ITEMMENU->getOpenMenu() /*|| _npcManager->getPotionShopNpc()*/ ) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
 		else SOUNDMANAGER->setVolumn("마을브금", 0.3f);
 	}
 
