@@ -47,6 +47,8 @@ HRESULT townScene::init()
 		PLAYERDATA->setIsPendantReturn(false);
 	}
 
+	
+	cloudInit();
 	this->initPotal();
 	return S_OK;
 }
@@ -119,6 +121,7 @@ void townScene::update()
 	ObjectColl();
 	MapColl();
 	this->collArrow();
+	cloudMove();
 
 }
 
@@ -189,6 +192,7 @@ void townScene::render()
 	ITEMMENU->render(getMemDC());
 
 	this->renderPotal();
+	cloudRender();
 
 	//CAMERAMANAGER->Rectangle(getMemDC(), shopPortal);
 	//CAMERAMANAGER->Rectangle(getMemDC(), gotoDungeonPortal);
@@ -353,6 +357,37 @@ void townScene::collArrow()
 	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
 	{
 		PLAYER->getArrow()->setIsShoot(false);
+	}
+}
+
+void townScene::cloudInit()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		Cloud* tmp_cloud;
+		tmp_cloud = new Cloud;
+		v_cloud.push_back(tmp_cloud);
+		tagPosF tmp;
+		tmp.x = RANDOM->range(400, IMAGEMANAGER->findImage("townBack")->getWidth() + 200);
+		tmp.y = RANDOM->range(-1800, -3500);
+		v_cloud[i]->init(tmp);
+	}
+}
+
+void townScene::cloudMove()
+{
+	for (int i = 0; i < v_cloud.size(); i++)
+	{
+		v_cloud[i]->update();
+	}
+}
+
+void townScene::cloudRender()
+{
+	for (int i = 0; i < v_cloud.size(); i++)
+	{
+		
+		v_cloud[i]->render(getMemDC());
 	}
 }
 

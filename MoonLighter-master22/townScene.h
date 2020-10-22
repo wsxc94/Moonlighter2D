@@ -3,11 +3,12 @@
 #include "npcManager.h"
 #include "dungeonMap.h"
 #include "potionShop.h"
+#include "Cloud.h"
 class townScene : public gameNode
 {
 private:
 	potal* _potal;
-
+	vector<Cloud*> v_cloud;
 private:
 	animation* _aniPotalInit;		//던전 시작 / 종료애니
 	bool _isReturn;		//던전에서 돌아오는거냐?  맞으면 플레이어 클론애니로 굴려버려
@@ -47,6 +48,10 @@ public:
 	void ObjectSetAnim(); // _objManager 세팅 - 팀장급 디렉터
 	void MapColl();
 	void collArrow();
+
+	void cloudInit();
+	void cloudMove();
+	void cloudRender();
 
 	HRESULT initPotal();
 	void updatePotal();

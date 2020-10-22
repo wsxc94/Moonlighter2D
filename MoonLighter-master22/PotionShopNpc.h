@@ -14,5 +14,8 @@ public:
 	virtual void action(string talk);
 
 	potionShop* getPotionShop() { return _potionShop; }
+
+	PotionShopNpc() {}
+	virtual ~PotionShopNpc() {}
 };
 

@@ -121,6 +121,9 @@ void townLoading::loadingImage()
 
 	_loading->loadFrameImage("npc그림자", "Images/npc/npc_shadow.bmp", 36, 20, 1, 1);
 
+	_loading->loadFrameImage("작은구름", "Images/Town/작은구름.bmp", 128, 128, 1, 1);
+	_loading->loadFrameImage("큰구름", "Images/Town/큰구름.bmp", 400, 400, 1, 1);
+
 }
 
 void townLoading::loadingSound()
