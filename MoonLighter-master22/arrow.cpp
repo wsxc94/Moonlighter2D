@@ -102,7 +102,8 @@ void arrow::moveArrow()
 		_y += _speed;
 		_rc = RectMake(_x, _y, 20, 50);
 		break;
-	case ARROW_UP:
+	
+case ARROW_UP:
 		_y -= _speed;		
 		_rc = RectMake(_x, _y, 20, 50);
 		break;
