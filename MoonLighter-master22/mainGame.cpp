@@ -89,7 +89,7 @@ void mainGame::render()
 	//데미지 폰트 렌더
 	DAMAGEFONT->render(getMemDC());
 	//프레임을 보고싶으면 주석해제
-	TIMEMANAGER->render(getMemDC());
+	//TIMEMANAGER->render(getMemDC());
 	
 	PLAYERDATA->render(getMemDC());
 

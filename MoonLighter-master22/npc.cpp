@@ -310,8 +310,9 @@ void npc::move()
 
 void npc::move(NPC_MAP NPC_SHOP)
 {
-	_time++;
+
 	if (_state == NPC_STOP) {
+	_time++;
 		if (_time % 160 == 0) {
 			shop_currentTargetIdx++;
 			_state = NPC_MOVE;

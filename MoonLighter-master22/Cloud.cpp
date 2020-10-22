@@ -29,8 +29,8 @@ void Cloud::update()
 
 void Cloud::render(HDC hdc)
 {
-	CAMERAMANAGER->AlphaRender(hdc, IMAGEMANAGER->findImage("큰구름"), _pos.x, _pos.y, 40);
-	CAMERAMANAGER->AlphaRender(hdc, IMAGEMANAGER->findImage("작은구름"), _pos.x + IMAGEMANAGER->findImage("큰구름")->getWidth() / 2,
+	CAMERAMANAGER->ZorderAlphaRender(IMAGEMANAGER->findImage("큰구름"), 1000, _pos.x, _pos.y, 40);
+	CAMERAMANAGER->ZorderAlphaRender( IMAGEMANAGER->findImage("작은구름"),1000, _pos.x + IMAGEMANAGER->findImage("큰구름")->getWidth() / 2,
 		_pos.y - IMAGEMANAGER->findImage("큰구름")->getHeight() / 2, 40);
 	
 }

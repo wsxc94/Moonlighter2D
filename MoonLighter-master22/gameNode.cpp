@@ -6,8 +6,9 @@
 //=============================================================
 HRESULT gameNode::init()
 {
-	_hdc = GetDC(_hWnd);				//HDC 얻기
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	_hdc = GetDC(_hWnd);				//HDC 얻기
 	INPUT->init();						//입력매니져 초기화
 	RANDOM->init();						//랜덤매니져 초기화
 	IMAGEMANAGER->init();				//이미지매니져 초기화
