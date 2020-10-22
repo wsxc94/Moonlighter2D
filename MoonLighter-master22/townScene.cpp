@@ -4,6 +4,7 @@
 
 HRESULT townScene::init()
 {
+
 	_vTest = mapSaveLoad::getSingleton()->loadObject("maptool/town3", 74, 60);
 
 	IMAGEMANAGER->addImage("test", 2590, 2100);
@@ -189,10 +190,10 @@ void townScene::render()
 	if (!_potal || (_potal->getPotalState() != POTAL_INIT && _potal->getPotalState() != POTAL_PLAYERIN && _potal->getPotalState() != POTAL_PLAYEROUT))
 		PLAYER->render(getMemDC());
 
-	ITEMMENU->render(getMemDC());
 
 	this->renderPotal();
 	cloudRender();
+	ITEMMENU->render(getMemDC());
 
 	//CAMERAMANAGER->Rectangle(getMemDC(), shopPortal);
 	//CAMERAMANAGER->Rectangle(getMemDC(), gotoDungeonPortal);

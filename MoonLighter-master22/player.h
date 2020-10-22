@@ -134,7 +134,7 @@ private:
 
 public:
 	HRESULT init();
-	void release();
+	void release(); // 메모리 해제를 생활화 하자.
 	void update();
 	void render(HDC hdc);
 
