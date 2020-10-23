@@ -11,6 +11,11 @@ HRESULT damageFont::init(int x, int y, int damage)
 
 void damageFont::release()
 {
+	for (int i = 0; i < _vFont.size(); i++)
+	{
+		SAFE_DELETE(_vFont[i]);
+	}
+	_vFont.clear();
 }
 
 void damageFont::update()

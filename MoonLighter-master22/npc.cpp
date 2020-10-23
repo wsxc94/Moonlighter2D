@@ -180,7 +180,7 @@ void npc::render()
 		CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("npc대화"), 2000, _pos.x + 30, _pos.y - 50, _boxidx, 0);
 	}
 
-	if (_stop)
+	if (_state == NPC_STOP)
 	{
 
 		_aniNpc->aniStop();
@@ -203,9 +203,6 @@ void npc::render(NPC_MAP NPC_SHOP)
 {
 	if (_state == NPC_STOP || _state == NPC_WAIT || _state == NPC_CHECK_PRICE)
 	{
-		//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key), _pos.x, _pos.y,
-		//	0, IMAGEMANAGER->findImage(_key)->getFrameY());
-		// 영훈이형 z오더를 했더니 IMAGEMANAGER->getFrameX() 이게안되서 제가 애니메이션으로 바꿨습니다.....죄송합니다ㅠㅠ
 		_aniNpc->aniStop();
 		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
 
@@ -239,6 +236,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 void npc::anim() // npc각도에 따라 애니메이션을 바꿔주는 함수
 {
 	_aniNpc->update();
+
 	if ((_state == NPC_MOVE || _state == NPC_ITEM_PICK) && !_stop)
 	{
 		if (_key != "에리스" && _key != "강아지npc") {
@@ -282,12 +280,13 @@ void npc::move()
 {
 	_time++;
 
-	if (!_stop) {
+	if (_state == NPC_MOVE) {
 
 		if (_speed == 0)
 		{
 			_aniNpc->setCurIndex(0);
 		}
+
 		if (_time % 120 == 0)
 		{
 			_speed = 1.0f;
@@ -436,8 +435,10 @@ void npc::action(string talk)
 			{
 				_Istalk = false;
 				_stop = false;
+				_state = NPC_MOVE;
 			}
 			else {
+				_state = NPC_STOP;
 				_Istalk = true;
 				_stop = true;
 				lookPlayer();
@@ -449,6 +450,7 @@ void npc::action(string talk)
 	{
 		_Istalk = false;
 		_stop = false;
+		_state = NPC_MOVE;
 	}
 
 }

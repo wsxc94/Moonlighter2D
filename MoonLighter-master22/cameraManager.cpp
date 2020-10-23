@@ -119,6 +119,14 @@ void cameraManager::update(float pivotX, float  pivotY)
 
 }
 
+void cameraManager::release()
+{
+	for (int i = 0; i < _vZoderRender.size(); i++) {
+		SAFE_DELETE(_vZoderRender[i]);
+	}
+	_vZoderRender.clear();
+}
+
 void cameraManager::Rectangle(HDC hdc, RECT rc)
 {
 	::Rectangle(hdc, getRelativeX(rc.left), getRelativeY(rc.top), getRelativeX(rc.right), getRelativeY(rc.bottom));

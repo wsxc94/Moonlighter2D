@@ -38,6 +38,7 @@ public:
 	HRESULT addEffect(string key, float z, int x, int y, int frameY, int playSpeed, bool isAlpha = 0, BYTE alpha = 0);
 	void update();
 	void render();
+	void release();
 	void deleteAnimation(int idx);
 
 	HRESULT addParticle(string key, float z, int x, int y, bool isAlpha = false, BYTE alpha = 0);

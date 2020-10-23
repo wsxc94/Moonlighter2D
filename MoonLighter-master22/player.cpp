@@ -66,6 +66,7 @@ HRESULT player::init()
 void player::release()
 {
 	_arrow->release();
+
 	SAFE_DELETE(_arrow);
 	SAFE_DELETE(_aniTownIdle);
 	SAFE_DELETE(_aniTownRun);

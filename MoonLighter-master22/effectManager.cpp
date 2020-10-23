@@ -57,6 +57,10 @@ void effectManager::render()
 	}
 }
 
+void effectManager::release()
+{
+}
+
 void effectManager::deleteAnimation(int idx)
 {
 	_vEffect.erase(_vEffect.begin() + idx);

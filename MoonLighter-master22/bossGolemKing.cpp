@@ -342,6 +342,7 @@ void bossGolemKing::collisionPlayer()
 			EFFECTMANAGER->addEffect("공격이펙트", 2000,
 				(_bossRC.right + _bossRC.left) / 2,
 				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			SOUNDMANAGER->play("화살맞음", 0.5f);
 			DAMAGEFONT->init(_x, _y - 30, damage);
 			_hp -= damage;
 			_isHit = true;
@@ -356,6 +357,7 @@ void bossGolemKing::collisionPlayer()
 			EFFECTMANAGER->addEffect("공격이펙트", 2000,
 				(_bossRC.right + _bossRC.left) / 2,
 				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			SOUNDMANAGER->play("화살맞음", 0.5f);
 			DAMAGEFONT->init(_x, _y - 30, damage);
 			_hp -= damage;
 			_isHit = true;
@@ -372,6 +374,8 @@ void bossGolemKing::collisionPlayer()
 				(_bossRC.right + _bossRC.left) / 2,
 				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
 			DAMAGEFONT->init(_x, _y - 30, damage);
+
+			SOUNDMANAGER->play("화살맞음", 0.5f);
 
 			if (PLAYER->getSkill())
 			{
