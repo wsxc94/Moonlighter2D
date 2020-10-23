@@ -34,6 +34,7 @@ void enemy::initTileSize(int x, int y)
 			_totalNode[j][i].init(i, j);
 		}
 	}
+
 	_startNode = nullptr;
 	_endNode = nullptr;
 	_curNode = nullptr;
