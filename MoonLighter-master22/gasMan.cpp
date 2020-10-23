@@ -161,6 +161,7 @@ void gasMan::render()
 	this->arrowRender();
 	this->aniRender();
 	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 80, _hpBarAlpha);
+	aStarRender();
 }
 
 void gasMan::aniRender()
@@ -386,7 +387,7 @@ void gasMan::arrowFire()
 		_arrow.angle = PI;
 		_arrow.x = _emRC.left;
 		_arrow.y = _y;
-		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 24, 5);
+		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 48, 10);
 		_arrow.speed = 4.f;
 		_arrow.isFire = true;
 		_isFire = true;
@@ -396,7 +397,7 @@ void gasMan::arrowFire()
 		_arrow.angle = 0;
 		_arrow.x = _emRC.right;
 		_arrow.y = _y;
-		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 24, 5);
+		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 48, 10);
 		_arrow.speed = 4.f;
 		_arrow.isFire = true;
 		_isFire = true;
@@ -406,7 +407,7 @@ void gasMan::arrowFire()
 		_arrow.angle = PI / 2;
 		_arrow.x = _x + 20;
 		_arrow.y = _emRC.top;
-		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 5, 24);
+		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 48, 10);
 		_arrow.speed = 4.f;
 		_arrow.isFire = true;
 		_isFire = true;
@@ -416,7 +417,7 @@ void gasMan::arrowFire()
 		_arrow.angle = PI / 2 * 3;
 		_arrow.x = _x - 10;
 		_arrow.y = _emRC.bottom;
-		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 5, 24);
+		_arrow.rc = RectMakeCenter(_arrow.x, _arrow.y, 48, 10);
 		_arrow.speed = 4.f;
 		_arrow.isFire = true;
 		_isFire = true;
@@ -456,22 +457,22 @@ void gasMan::arrowRender()
 		case gasMan::AR_LEFT:
 			//IMAGEMANAGER->findImage("가스화살W")->frameRender(getMemDC(), _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0);
 			//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage("가스화살W"), _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0);
-			CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("가스화살W"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0);
+			CAMERAMANAGER->ZorderStretchFrameRender(IMAGEMANAGER->findImage("가스화살W"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0,2.f);
 			break;
 		case gasMan::AR_RIGHT:
 			//IMAGEMANAGER->findImage("가스화살W")->frameRender(getMemDC(), _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0);
 			//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage("가스화살W"), _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0);
-			CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("가스화살W"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0);
+			CAMERAMANAGER->ZorderStretchFrameRender(IMAGEMANAGER->findImage("가스화살W"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0,2.f);
 			break;
 		case gasMan::AR_UP:
 			//IMAGEMANAGER->findImage("가스화살H")->frameRender(getMemDC(), _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0);
 			//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage("가스화살H"), _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0);
-			CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("가스화살H"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0);
+			CAMERAMANAGER->ZorderStretchFrameRender(IMAGEMANAGER->findImage("가스화살H"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 0, 0,2.f);
 			break;
 		case gasMan::AR_DOWN:
 			//IMAGEMANAGER->findImage("가스화살H")->frameRender(getMemDC(), _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0);
 			//CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage("가스화살H"), _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0);
-			CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("가스화살H"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0);
+			CAMERAMANAGER->ZorderStretchFrameRender(IMAGEMANAGER->findImage("가스화살H"), _vArrow[i].y, _vArrow[i].rc.left, _vArrow[i].rc.top, 1, 0,2.f);
 			break;
 		default:
 			break;

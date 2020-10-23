@@ -244,7 +244,6 @@ void nomalDungeonScene::render()
 			IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
 			this->resultRender();
 			this->itemResultRender();
-
 			/*char str[100];
 			wsprintf(str, "invenSize : %d", ITEMMENU->getInventory()->getItem().size());
 			TextOut(getMemDC(), 10, 110, str, strlen(str));
@@ -419,7 +418,13 @@ void nomalDungeonScene::dungeonUpdate()
 		if (_dgFloor == 1)
 			this->setNewFloor();
 		else if (_dgFloor == 2)
+		{
 			SCENEMANAGER->loadScene("보스로딩");
+			SOUNDMANAGER->stop("spaRoomBGM");
+			SOUNDMANAGER->stop("bossRoomBGM");
+			SOUNDMANAGER->stop("dungeonBGM");
+		}
+			
 	}
 
 

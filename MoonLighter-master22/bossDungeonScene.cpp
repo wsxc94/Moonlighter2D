@@ -20,8 +20,8 @@ HRESULT bossDungeonScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
-
-	SOUNDMANAGER->play("bossBGM", 0.5f);
+	PLAYERDATA->setIsInDungeon(true);
+	//SOUNDMANAGER->play("bossBGM", 0.5f);
 
 	_potal = nullptr;
 	_isPlayerRender = true;
@@ -40,11 +40,11 @@ HRESULT bossDungeonScene::init()
 
 void bossDungeonScene::release()
 {
-	if (_potal)
+	/*if (_potal)
 	{
 		_potal->release();
 		SAFE_DELETE(_potal);
-	}	
+	}	*/
 }
 
 void bossDungeonScene::update()
