@@ -7,9 +7,9 @@ HRESULT bossGolemKing::init(int x, int y)
 	_aniBossUp = new animation;
 	_aniBossUp->init(IMAGEMANAGER->findImage("bossUp"), 0, 7, false);
 	_aniBossDead1 = new animation;
-	_aniBossDead1->init(IMAGEMANAGER->findImage("bossDead1"), 0, 4, false);
+	_aniBossDead1->init(IMAGEMANAGER->findImage("bossDead1"), 0, 5, false);
 	_aniBossDead2 = new animation;
-	_aniBossDead2->init(IMAGEMANAGER->findImage("bossDead2"), 0, 3, false);
+	_aniBossDead2->init(IMAGEMANAGER->findImage("bossDead2"), 0, 5, false);
 	/*_aniBossFistShoot = new animation;
 	_aniBossFistShoot->init(IMAGEMANAGER->findImage("bossFistShoot"), 0, 7, false);*/
 	_aniBossHandShootStart = new animation;
