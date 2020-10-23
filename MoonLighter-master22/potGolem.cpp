@@ -110,6 +110,7 @@ void potGolem::render()
 		CAMERAMANAGER->ZorderFrameRender(_bullet[i].img, _bullet[i].y, _bullet[i].rc.left, _bullet[i].rc.top, 0, _bullet[i].frameY);
 	}
 	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 50, _hpBarAlpha);
+	aStarRender();
 }
 
 void potGolem::aniUpdate()

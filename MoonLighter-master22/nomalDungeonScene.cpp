@@ -245,12 +245,6 @@ void nomalDungeonScene::render()
 			this->resultRender();
 			this->itemResultRender();
 
-			char str[100];
-			wsprintf(str, "invenSize : %d", ITEMMENU->getInventory()->getItem().size());
-			TextOut(getMemDC(), 10, 110, str, strlen(str));
-
-			wsprintf(str, "dungeonInvenSize : %d", _vItem.size());
-			TextOut(getMemDC(), 10, 130, str, strlen(str));
 		}
 		break;
 	case DS_RETURN:
@@ -419,7 +413,13 @@ void nomalDungeonScene::dungeonUpdate()
 		if (_dgFloor == 1)
 			this->setNewFloor();
 		else if (_dgFloor == 2)
+		{
 			SCENEMANAGER->loadScene("보스로딩");
+			SOUNDMANAGER->stop("spaRoomBGM");
+			SOUNDMANAGER->stop("bossRoomBGM");
+			SOUNDMANAGER->stop("dungeonBGM");
+		}
+			
 	}
 
 

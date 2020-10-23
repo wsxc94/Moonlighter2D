@@ -164,6 +164,7 @@ void skullHammer::render()
 		break;
 	}
 	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 70, _hpBarAlpha);
+	aStarRender();
 }
 
 void skullHammer::directionUpdate()

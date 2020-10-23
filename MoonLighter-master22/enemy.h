@@ -122,6 +122,7 @@ public:
 	virtual void hitSoundPlay();
 	virtual bool checkDirection();	//적이공격하는 방향검사
 	virtual void allEnemyColi(int emDemage, bool checkDirection);	//모든적과 플레이어 충돌 검사
+	virtual void aStarRender();
 	
 public:
 	virtual bool getIsActivate() { return _isActivate; }
@@ -167,7 +168,7 @@ public:
 	virtual void release();
 	virtual void update();
 	virtual void render();
-
+	
 	void directionUpdate();
 	void moveRender();
 	void attackRender();

@@ -189,6 +189,7 @@ void bossSkeleton::render()
 	//_blade->ani->ZorderRotateAlphaRender(getMemDC(), 2000, _blade->x, _blade->y, _blade->angle, 150);
 	
 	_hpBar->cameraRender(WINSIZEX / 2, WINSIZEY - 50);
+	aStarRender();
 }
 
 void bossSkeleton::setStartNode()
@@ -620,6 +621,8 @@ void bossSkeleton::attackUpdate()
 			else
 			{
 				PLAYERDATA->minusInDungeonHp(_blade->atk);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
 			}
 		}
 		BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
