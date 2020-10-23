@@ -119,11 +119,11 @@ public:
 	virtual bool isAstarFail();
 	virtual void collision();
 	virtual void soundUpdate();
-	virtual void setProgressBar();
+	void setProgressBar();
 	virtual void hitSoundPlay();
 	virtual bool checkDirection();	//적이공격하는 방향검사
 	virtual void allEnemyColi(int emDemage, bool checkDirection);	//모든적과 플레이어 충돌 검사
-	virtual void aStarRender();
+	void aStarRender();
 	
 public:
 	bool getIsActivate() { return _isActivate; }
@@ -139,8 +139,8 @@ public:
 	bool getIsItemDrop() { return _isItemDrop; }
 	void setIsItemDrop(bool drop) { _isItemDrop = drop; }
 	virtual animation* getAttackAnimation() { return nullptr; };
-	int getDownDirectionY() { return 0; };
-	float getEnemyScale() { return 1.f; }
+	virtual int getDownDirectionY() { return 0; };
+	virtual float getEnemyScale() { return 1.f; }
 };
 
 class redGolem : public enemy

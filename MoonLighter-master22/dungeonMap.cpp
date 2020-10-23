@@ -31,11 +31,7 @@ HRESULT DungeonMap::init()
 {
 	this->setStartDungeon();
 
-	enemy* _em = new skullHammer;
-	_em->init(WINSIZEX/2, WINSIZEY /2);
-	_em->initTileSize(28, 15);
-	_vEnemy.push_back(_em);
-	
+
 	
 	return S_OK;
 }
