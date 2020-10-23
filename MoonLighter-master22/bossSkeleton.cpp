@@ -604,29 +604,32 @@ void bossSkeleton::attackUpdate()
 	//블레이드 픽셀충돌
 	if (_blade->isFire && !_blade->isBreak)
 	{
-		IMAGEMANAGER->findImage("skeletonBlade")->rotateFrameRender(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), _blade->x, _blade->y, _blade->angle, _blade->ani->getCurIndex(), 0);
-		IMAGEMANAGER->findImage("pixelCollision_skeleton")->render(getMemDC(), 0, 0);
-		COLORREF co = GetPixel(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), PLAYER->getX(), PLAYER->getY());
-		int r = GetRValue(co);
-		int g = GetGValue(co);
-		int b = GetBValue(co);
-		if (r != 0 && g != 0 && b != 0)
-		{
-			_blade->ani->aniPlay();
-			_blade->isBreak = true;
-			if (PLAYER->getPlayerState() == PLAYER_SHILED)
+		if (getDistance(PLAYER->getX(), PLAYER->getY(), _blade->x ,_blade->y) <= 80) {
+			IMAGEMANAGER->findImage("skeletonBlade")->rotateFrameRender(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), _blade->x, _blade->y, _blade->angle, _blade->ani->getCurIndex(), 0);
+			IMAGEMANAGER->findImage("pixelCollision_skeleton")->render(getMemDC(), 0, 0);
+			COLORREF co = GetPixel(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), PLAYER->getX(), PLAYER->getY());
+			int r = GetRValue(co);
+			int g = GetGValue(co);
+			int b = GetBValue(co);
+			if (r != 0 && g != 0 && b != 0)
 			{
-				PLAYER->playerPush();
+				_blade->ani->aniPlay();
+				_blade->isBreak = true;
+				if (PLAYER->getPlayerState() == PLAYER_SHILED)
+				{
+					PLAYER->playerPush();
+				}
+				else
+				{
+					PLAYERDATA->minusInDungeonHp(_blade->atk);
+					PLAYER->setPlayerState(HIT_IDLE);
+					PLAYER->setHit(true);
+				}
 			}
-			else
-			{
-				PLAYERDATA->minusInDungeonHp(_blade->atk);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
-			}
+			BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
 		}
-		BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
 	}
+	
 
 	if (PLAYERDATA->getInDungeonHp() <= 0)
 	{
