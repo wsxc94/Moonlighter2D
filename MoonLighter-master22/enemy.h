@@ -58,6 +58,7 @@ protected:
 	image* _enemyImg;
 
 	progressBar* _hpBar;
+
 	bool _isHpBarRender;
 	int _hpBarRenterTime;
 	int _hpBarAlpha;
@@ -125,21 +126,21 @@ public:
 	virtual void aStarRender();
 	
 public:
-	virtual bool getIsActivate() { return _isActivate; }
-	virtual void setIsActivate(bool at) { _isActivate = at; }
-	virtual int getEmHp() { return _emHp; }
-	virtual void setEmHp(int hp) { _emHp = hp; }
-	virtual int getEmAtk() { return _emAtk; }
-	virtual RECT getEmRC() { return _emRC; }
-	virtual int* getDropItemIndex() { return _itemNum; }
-	virtual int getDropItemSize() { return _itemDropSize; }
-	virtual float getX() { return _x; }
-	virtual float getY() { return _y; }
-	virtual bool getIsItemDrop() { return _isItemDrop; }
-	virtual void setIsItemDrop(bool drop) { _isItemDrop = drop; }
+	bool getIsActivate() { return _isActivate; }
+	void setIsActivate(bool at) { _isActivate = at; }
+	int getEmHp() { return _emHp; }
+	void setEmHp(int hp) { _emHp = hp; }
+	int getEmAtk() { return _emAtk; }
+	RECT getEmRC() { return _emRC; }
+	int* getDropItemIndex() { return _itemNum; }
+	int getDropItemSize() { return _itemDropSize; }
+	float getX() { return _x; }
+	float getY() { return _y; }
+	bool getIsItemDrop() { return _isItemDrop; }
+	void setIsItemDrop(bool drop) { _isItemDrop = drop; }
 	virtual animation* getAttackAnimation() { return nullptr; };
-	virtual int getDownDirectionY() { return 0; };
-	virtual float getEnemyScale() { return 1.f; }
+	int getDownDirectionY() { return 0; };
+	float getEnemyScale() { return 1.f; }
 };
 
 class redGolem : public enemy

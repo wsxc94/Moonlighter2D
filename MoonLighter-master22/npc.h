@@ -35,6 +35,7 @@ protected:
 	int _count;
 	int _idx;
 	int _time;
+	int rndStopTime;
 
 	int _spawnTime; // npc 젠 타임
 	float _speed;   // npc 이동속도

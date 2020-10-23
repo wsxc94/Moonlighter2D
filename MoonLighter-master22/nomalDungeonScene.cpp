@@ -242,7 +242,12 @@ void nomalDungeonScene::render()
 			IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
 			this->resultRender();
 			this->itemResultRender();
+			/*char str[100];
+			wsprintf(str, "invenSize : %d", ITEMMENU->getInventory()->getItem().size());
+			TextOut(getMemDC(), 10, 110, str, strlen(str));
 
+			wsprintf(str, "dungeonInvenSize : %d", _vItem.size());
+			TextOut(getMemDC(), 10, 130, str, strlen(str));*/
 		}
 		break;
 	case DS_RETURN:

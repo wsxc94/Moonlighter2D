@@ -195,7 +195,7 @@ void maptoolScene::update()
 
 	void maptoolScene::render()
 	{
-		//if (_backImg != nullptr) CAMERAMANAGER->Render(getMemDC(), _backImg, 0, 0);
+		if (_backImg != nullptr) CAMERAMANAGER->Render(getMemDC(), _backImg, 0, 0);
 		//CAMERAMANAGER->StretchRender(getMemDC(), IMAGEMANAGER->findImage("bossDungeon"), IMAGEMANAGER->findImage("bossDungeon")->getWidth(), IMAGEMANAGER->findImage("bossDungeon")->getHeight(), 2.f);
 
 		//타일맵 이미지 전체화면 우측상단에 배치하기

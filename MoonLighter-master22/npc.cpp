@@ -284,6 +284,10 @@ void npc::move()
 
 	if (!_stop) {
 
+		if (_speed == 0)
+		{
+			_aniNpc->setCurIndex(0);
+		}
 		if (_time % 120 == 0)
 		{
 			_speed = 1.0f;
@@ -299,8 +303,6 @@ void npc::move()
 			_targetIdx = RANDOM->range(1, 4);
 			_time = 0;
 			_speed = 0;
-			_stop = true;
-
 		}
 
 		_pos.x += cosf(_angle) * _speed;
