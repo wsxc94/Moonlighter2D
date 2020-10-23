@@ -184,12 +184,12 @@ void npc::render()
 	{
 
 		_aniNpc->aniStop();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1), _pos.x, _pos.y);
 	}
 	else {
 
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1) , _pos.x, _pos.y);
 	}
 	
 	ShadowPosRender();
@@ -204,7 +204,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 	if (_state == NPC_STOP || _state == NPC_WAIT || _state == NPC_CHECK_PRICE)
 	{
 		_aniNpc->aniStop();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1) , _pos.x, _pos.y);
 
 		if (_state == NPC_CHECK_PRICE || _state == NPC_WAIT)
 		{
@@ -217,7 +217,7 @@ void npc::render(NPC_MAP NPC_SHOP)
 	else if (_state == NPC_MOVE || _state == NPC_ITEM_PICK) {
 		
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1) , _pos.x, _pos.y);
 
 		ShadowPosRender();
 
@@ -481,8 +481,8 @@ void npc::action()
 void npc::collision()
 {
 	if (_key != "에리스") {
-		_rc = RectMake(_pos.x - IMAGEMANAGER->findImage(_key)->getFrameWidth() / 2,
-			_pos.y - IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2,
+		_rc = RectMake(_pos.x - (IMAGEMANAGER->findImage(_key)->getFrameWidth() >> 1),
+			_pos.y - (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1),
 			IMAGEMANAGER->findImage(_key)->getFrameWidth() * 2,
 			IMAGEMANAGER->findImage(_key)->getFrameHeight() * 2);
 	}
@@ -640,30 +640,30 @@ void npc::ShadowPosRender() // 더 수정 및 함수화
 	}
 	else if(_key == "모리" || _key == "원형아저씨")
 	{
-		ShadowPosSet(6, 4, 4);
+		ShadowPosSet(6, 4, 2);
 	}
 	else if(_key == "마사")
 	{
-		ShadowPosSet(3, 3, 4);
+		ShadowPosSet(3, 3, 2);
 	}
 	else if (_key == "히어로")
 	{
-		ShadowPosSet(3, 8, 4);
+		ShadowPosSet(3, 8, 2);
 	}
 	else if (_key == "배낭맨여자")
 	{
-		ShadowPosSet(0, 3, 4);
+		ShadowPosSet(0, 3, 2);
 	}
 	else {
-		ShadowPosSet(2, 1, 4);
+		ShadowPosSet(2, 1, 2);
 	}
 }
 
 void npc::ShadowPosSet(int x , int y , int div)
 {
 	CAMERAMANAGER->ZorderAlphaFrameRender(IMAGEMANAGER->findImage("npc그림자"), 10,
-		_pos.x + _aniNpc->getImage()->getFrameWidth() / div - x,
-		_pos.y + (_aniNpc->getImage()->getFrameHeight() - _aniNpc->getImage()->getFrameHeight() / div) - y, 0, 0, 80);
+		_pos.x + (_aniNpc->getImage()->getFrameWidth() >> div) - x,
+		_pos.y + (_aniNpc->getImage()->getFrameHeight() - (_aniNpc->getImage()->getFrameHeight() >> div)) - y, 0, 0, 80);
 }
 
 void npc::TalkInterfaceRender()

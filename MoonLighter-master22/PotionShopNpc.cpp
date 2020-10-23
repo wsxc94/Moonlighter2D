@@ -68,12 +68,12 @@ void PotionShopNpc::render()
 	{
 
 		_aniNpc->aniStop();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1), _pos.x, _pos.y);
 	}
 	else {
 
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1), _pos.x, _pos.y);
 	}
 
 	ShadowPosRender();

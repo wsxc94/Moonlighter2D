@@ -8,12 +8,15 @@ private:
 	int _time;
 	bool _isActive;
 	int delay;
+	RECT _rc;
 public:
 	HRESULT init(tagPosF pos);
 	void release();
 	void update();
 	void render(HDC hdc);
 	void move();
+
+	RECT& getRect() { return _rc; }
 
 	Cloud() {}
 	~Cloud() {}
