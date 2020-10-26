@@ -10,7 +10,9 @@ HRESULT bossDungeonScene::init()
 
 	//_golemKing = new bossGolemKing;
 	//_golemKing->init(1067, 477);
+
 	_golemKing = nullptr;
+
 	_bsState = BS_INIT;
 
 	//타일 로드하기
@@ -20,7 +22,7 @@ HRESULT bossDungeonScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
-
+	PLAYERDATA->setIsInDungeon(true);
 	SOUNDMANAGER->play("bossBGM", 0.5f);
 
 	_potal = nullptr;
@@ -40,11 +42,11 @@ HRESULT bossDungeonScene::init()
 
 void bossDungeonScene::release()
 {
-	if (_potal)
+	/*if (_potal)
 	{
 		_potal->release();
 		SAFE_DELETE(_potal);
-	}	
+	}	*/
 }
 
 void bossDungeonScene::update()
@@ -122,6 +124,7 @@ void bossDungeonScene::update()
 		{
 			PLAYER->setPlayerState(PLAYER_DIE);
 		}
+
 		else if (PLAYER->getPlayerState() == PLAYER_DIE && PLAYER->getAnimation()->getAniState() == ANIMATION_END)
 		{
 			this->getInvenItem();

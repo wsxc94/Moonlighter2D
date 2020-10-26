@@ -34,6 +34,7 @@ void enemy::initTileSize(int x, int y)
 			_totalNode[j][i].init(i, j);
 		}
 	}
+
 	_startNode = nullptr;
 	_endNode = nullptr;
 	_curNode = nullptr;
@@ -322,6 +323,30 @@ void enemy::allEnemyColi(int emDemage, bool checkDirection)
 		PLAYER->setPlayerState(HIT_IDLE);
 		PLAYER->setHit(true);
 		DAMAGEFONT->init(PLAYER->getX(), PLAYER->getY(), emDemage);
+	}
+}
+
+void enemy::aStarRender()
+{
+	if (INPUT->GetToggleKey(VK_F2))
+	{
+		for (int i = 0; i < _idy; i++)
+		{
+			for (int j = 0; j < _idx; j++)
+			{
+				if (_totalNode[i][j].nodeState == NODE_WALL)
+					CAMERAMANAGER->FrameRect(getMemDC(), _totalNode[i][j].rc, RGB(255, 255, 0));
+			}
+		}
+		if (_startNode)
+			CAMERAMANAGER->FrameRect(getMemDC(), _startNode->rc, RGB(0, 0, 255));
+		if (_endNode)
+			CAMERAMANAGER->FrameRect(getMemDC(), _endNode->rc, RGB(255, 0, 0));
+
+		for (int i = 0; i < _finalList.size(); i++)
+		{
+			CAMERAMANAGER->FrameRect(getMemDC(), _finalList[i]->rc, RGB(0, 255, 0));
+		}
 	}
 }
 

@@ -30,7 +30,8 @@ DungeonMap::DungeonMap(int x, int y)
 HRESULT DungeonMap::init()
 {
 	this->setStartDungeon();
-	
+
+
 	
 	return S_OK;
 }
@@ -97,6 +98,21 @@ void DungeonMap::render()
 	//포탈 렌더
 	potalRender();
 	this->dgDoorRender();
+
+	if (INPUT->GetToggleKey(VK_F1))
+	{
+		for (int i = 0; i < _vTile.size(); i++)
+		{
+			CAMERAMANAGER->FrameRect(getMemDC(), _vTile[i].rc, RGB(255, 255, 255));
+			if (_vTile[i].tState == TS_MOVEBAN)
+				CAMERAMANAGER->FrameRect(getMemDC(), _vTile[i].rc, RGB(255, 0, 0));
+			if (_vTile[i].tState == TS_PORTAL)
+				CAMERAMANAGER->FrameRect(getMemDC(), _vTile[i].rc, RGB(0, 0, 255));
+			if (_vTile[i].tState == TS_HOLE)
+				CAMERAMANAGER->FrameRect(getMemDC(), _vTile[i].rc, RGB(255, 255, 0));
+		}
+	}
+	
 
 }
 
@@ -520,7 +536,7 @@ void DungeonMap::enemyUpdate()
 {
 	for (int i = 0; i < _vEnemy.size(); i++)
 	{
-		_vEnemy[i]->isAttackRange(PLAYER->getRect());
+		_vEnemy[i]->isAttackRange(PLAYER->getShadowRect());
 		_vEnemy[i]->update();
 		_vEnemy[i]->setEndTile((PLAYER->getRect().right + PLAYER->getRect().left) / 2, (PLAYER->getRect().bottom + PLAYER->getRect().top) / 2);
 		// 에너미 마지막까지 돌았을때 플레이어 공격박스 비활성화 ( 공격한번에 체력한번 깍기위해 하는거임 )

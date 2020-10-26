@@ -97,8 +97,8 @@ void timeManager::render(HDC hdc)
 {
 	char str[256];
 	//FPS
-	sprintf(str, "FPS: %d", _frameRate);
-	textOut(hdc, 0, 0, str, RGB(0, 0, 0));
+	//sprintf(str, "FPS: %d", _frameRate);
+	//textOut(hdc, 0, 0, str, RGB(0, 0, 0));
 	//전체시간
 	//sprintf(str, "Time: %.2f", _time);
 	//textOut(hdc, 0, 20, str, RGB(255, 0, 255));

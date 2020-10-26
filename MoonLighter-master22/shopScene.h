@@ -43,6 +43,7 @@ private:
 	animation* _sellButton; // 판매 버튼
 
 	bool _sellNpcCheck;
+	bool _pixelBackGround;
 
 
 public:

@@ -139,6 +139,7 @@ public:
 	void setCountIconRender();			//제작개수 화살표(커서) 출력 
 	void produceCountRender();			//제작개수(숫자 이미지) 렌더 
 	void totalPriceRender();			//제작개수*제작금액 = 총 제작금액 렌더 
+	void totalMaterialRender();			//총 재료개수 렌더 
 	void countRender(int count, int destX, int destY, COLOR_TYPE color);//공통 숫자 이미지 출력 함수 
 
 	//렌더 함수(네/아니오 선택메뉴)

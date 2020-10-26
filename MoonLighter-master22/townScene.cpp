@@ -4,6 +4,7 @@
 
 HRESULT townScene::init()
 {
+
 	_vTest = mapSaveLoad::getSingleton()->loadObject("maptool/town3", 74, 60);
 
 	IMAGEMANAGER->addImage("test", 2590, 2100);
@@ -13,7 +14,7 @@ HRESULT townScene::init()
 
 	PLAYER->init();
 	
-	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
+	CAMERAMANAGER->init(PLAYER->getX(), PLAYER->getY(), 2590, 2100, 0, 0, WINSIZEX >> 1, WINSIZEY >> 1);
 
 	shopPortal = RectMake(1650, 315 , 80 , 80);
 	gotoDungeonPortal = RectMake(460, 0, 460, 20);
@@ -77,7 +78,7 @@ void townScene::update()
 	}
 	else 
 	{
-		if (ITEMMENU->getOpenMenu() || _npcManager->getPotionShopNpc() ) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
+		if (ITEMMENU->getOpenMenu() /*|| _npcManager->getPotionShopNpc()*/ ) SOUNDMANAGER->setVolumn("마을브금", 0.08f);
 		else SOUNDMANAGER->setVolumn("마을브금", 0.3f);
 	}
 
@@ -129,30 +130,31 @@ void townScene::render()
 {
 	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("townBack"), 0, 0);
 	//Rectangle(getMemDC(), CAMERAMANAGER->getRect());
+	RECT tmp;
 	for (int i = 0; i < _objManager.size(); i++)
 	{
-		RECT tmp;
+		//RECT tmp;
 		if (!IntersectRect(&tmp, &_objManager[i]->getRect(), &CAMERAMANAGER->getRect())) continue;
 
 		RECT temp;
-		temp = RectMake(_objManager[i]->getRect().left + _objManager[i]->getImage()->getFrameWidth() / 8,
-			_objManager[i]->getRect().top + (_objManager[i]->getRect().bottom - _objManager[i]->getRect().top)/8,
+		temp = RectMake(_objManager[i]->getRect().left + (_objManager[i]->getImage()->getFrameWidth() >> 3),
+			_objManager[i]->getRect().top + ((_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 3),
 			(_objManager[i]->getRect().right - _objManager[i]->getRect().left) / 1.3,
-			(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) / 2);
-
+			(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 1);
+		
 		//CAMERAMANAGER->Rectangle(getMemDC(), temp); //디버그용 -> z오더렉트 
 
 		RECT temp2;
 		if (_objManager[i]->getKey() == "주황나무" || _objManager[i]->getKey() == "진한주황나무" || _objManager[i]->getKey() == "초록나무") {
 			
-			temp2 = RectMake(_objManager[i]->getRect().left + _objManager[i]->getImage()->getFrameWidth() / 4,
-				_objManager[i]->getRect().top + (_objManager[i]->getRect().bottom - _objManager[i]->getRect().top)/2,
+			temp2 = RectMake(_objManager[i]->getRect().left + (_objManager[i]->getImage()->getFrameWidth() >> 2),
+				_objManager[i]->getRect().top + ((_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 1) ,
 				(_objManager[i]->getRect().right - _objManager[i]->getRect().left) - _objManager[i]->getImage()->getFrameWidth() / 3,
 				(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) - _objManager[i]->getImage()->getFrameHeight()*0.6);
 		}
 		else {
 			temp2 = RectMake(_objManager[i]->getRect().left + _objManager[i]->getImage()->getFrameWidth() / 40,
-				_objManager[i]->getRect().top + (_objManager[i]->getRect().bottom - _objManager[i]->getRect().top)/4,
+				_objManager[i]->getRect().top + ((_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 2) ,
 				//(_objManager[i]->getRect().right - _objManager[i]->getRect().left/10),
 				_objManager[i]->getImage()->getFrameWidth()- _objManager[i]->getImage()->getFrameWidth() / 40,
 				(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) - _objManager[i]->getImage()->getFrameHeight()*0.3);
@@ -163,21 +165,21 @@ void townScene::render()
 
 		if (IntersectRect(&tmp, &PLAYER->getShadowRect(), &temp)) {
 			if (_objManager[i]->getKey() == "주인공집" || _objManager[i]->getKey() == "눈있는집") {
-				_objManager[i]->ZoderAlphaRender(_objManager[i]->getRect().top + _objManager[i]->getImage()->getFrameHeight() / 2,
+				_objManager[i]->ZoderAlphaRender(_objManager[i]->getRect().top + (_objManager[i]->getImage()->getFrameHeight() >> 1),
 					_objManager[i]->getRect().left - 15, _objManager[i]->getRect().top, 150);
 			}
 			else {
-				_objManager[i]->ZoderAlphaRender(_objManager[i]->getRect().top + _objManager[i]->getImage()->getFrameHeight() / 2,
+				_objManager[i]->ZoderAlphaRender(_objManager[i]->getRect().top + (_objManager[i]->getImage()->getFrameHeight() >> 1),
 					_objManager[i]->getRect().left, _objManager[i]->getRect().top, 150);
 			}
 		}
 		else {
 			if (_objManager[i]->getKey() == "주인공집" || _objManager[i]->getKey() == "눈있는집") {
-				_objManager[i]->ZoderRender(_objManager[i]->getRect().top + _objManager[i]->getImage()->getFrameHeight() / 2,
+				_objManager[i]->ZoderRender(_objManager[i]->getRect().top + (_objManager[i]->getImage()->getFrameHeight() >> 1),
 					_objManager[i]->getRect().left - 15, _objManager[i]->getRect().top);
 			}
 			else {
-				_objManager[i]->ZoderRender(_objManager[i]->getRect().top + _objManager[i]->getImage()->getFrameHeight() / 2,
+				_objManager[i]->ZoderRender(_objManager[i]->getRect().top + (_objManager[i]->getImage()->getFrameHeight() >> 1),
 					_objManager[i]->getRect().left, _objManager[i]->getRect().top);
 			}
 		}
@@ -189,10 +191,11 @@ void townScene::render()
 	if (!_potal || (_potal->getPotalState() != POTAL_INIT && _potal->getPotalState() != POTAL_PLAYERIN && _potal->getPotalState() != POTAL_PLAYEROUT))
 		PLAYER->render(getMemDC());
 
-	ITEMMENU->render(getMemDC());
 
 	this->renderPotal();
 	cloudRender();
+
+	ITEMMENU->render(getMemDC());
 
 	//CAMERAMANAGER->Rectangle(getMemDC(), shopPortal);
 	//CAMERAMANAGER->Rectangle(getMemDC(), gotoDungeonPortal);
@@ -232,21 +235,21 @@ void townScene::ObjectColl()
 		
 			RECT temp;
 			
-			temp = RectMake(_objManager[i]->getRect().left + _objManager[i]->getImage()->getFrameWidth() / 8,
-				_objManager[i]->getRect().top + (_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) / 8,
+			temp = RectMake(_objManager[i]->getRect().left + (_objManager[i]->getImage()->getFrameWidth() >> 3),
+				_objManager[i]->getRect().top + ((_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 3),
 				(_objManager[i]->getRect().right - _objManager[i]->getRect().left) / 1.3,
-				(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) / 2);
+				((_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 1));
 
 
 			if (_objManager[i]->getKey() == "주황나무" || _objManager[i]->getKey() == "진한주황나무" || _objManager[i]->getKey() == "초록나무") {
-				temp = RectMake(_objManager[i]->getRect().left + _objManager[i]->getImage()->getFrameWidth() / 4,
-					_objManager[i]->getRect().top + (_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) / 2,
+				temp = RectMake(_objManager[i]->getRect().left + (_objManager[i]->getImage()->getFrameWidth() >> 2),
+					_objManager[i]->getRect().top + ((_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 1),
 					(_objManager[i]->getRect().right - _objManager[i]->getRect().left) - _objManager[i]->getImage()->getFrameWidth() / 3,
 					(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) - _objManager[i]->getImage()->getFrameHeight()*0.6);
 			}
 			else {
 				temp = RectMake(_objManager[i]->getRect().left + _objManager[i]->getImage()->getFrameWidth() / 40,
-					_objManager[i]->getRect().top + (_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) / 4,
+					_objManager[i]->getRect().top + ((_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) >> 2),
 					//(_objManager[i]->getRect().right - _objManager[i]->getRect().left/10),
 					_objManager[i]->getImage()->getFrameWidth() - _objManager[i]->getImage()->getFrameWidth() / 40,
 					(_objManager[i]->getRect().bottom - _objManager[i]->getRect().top) - _objManager[i]->getImage()->getFrameHeight()*0.3);
@@ -255,8 +258,8 @@ void townScene::ObjectColl()
 			if (IntersectRect(&tmp, &PLAYER->getShadowRect(), &temp)) {
 				int wid = tmp.right - tmp.left;
 				int hei = tmp.bottom - tmp.top;
-				int pwid = (PLAYER->getShadowRect().right - PLAYER->getShadowRect().left) / 2;
-				int phei = (PLAYER->getShadowRect().bottom - PLAYER->getShadowRect().top) / 2;
+				int pwid = ((PLAYER->getShadowRect().right - PLAYER->getShadowRect().left) >> 1);
+				int phei = ((PLAYER->getShadowRect().bottom - PLAYER->getShadowRect().top) >> 1);
 
 				if (wid > hei) // 위아래
 				{
@@ -384,9 +387,11 @@ void townScene::cloudMove()
 
 void townScene::cloudRender()
 {
+	RECT tmp;
+
 	for (int i = 0; i < v_cloud.size(); i++)
 	{
-		
+		if (!IntersectRect(&tmp, &v_cloud[i]->getRect(), &CAMERAMANAGER->getRect())) continue;
 		v_cloud[i]->render(getMemDC());
 	}
 }

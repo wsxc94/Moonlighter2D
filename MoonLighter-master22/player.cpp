@@ -66,6 +66,28 @@ HRESULT player::init()
 void player::release()
 {
 	_arrow->release();
+
+	SAFE_DELETE(_arrow);
+	SAFE_DELETE(_aniTownIdle);
+	SAFE_DELETE(_aniTownRun);
+	SAFE_DELETE(_aniTownRoll);
+	SAFE_DELETE(_aniDgIdle);
+	SAFE_DELETE(_aniDgRun);
+	SAFE_DELETE(_aniDgRoll);
+	SAFE_DELETE(_aniFall);
+	SAFE_DELETE(_aniSword);
+	SAFE_DELETE(_aniSwordTwo);
+	SAFE_DELETE(_aniBow);
+	SAFE_DELETE(_aniDie);
+	SAFE_DELETE(_aniSwim);
+	SAFE_DELETE(_aniShiled);
+	SAFE_DELETE(_bowCharge);
+	SAFE_DELETE(_aniHit);
+	SAFE_DELETE(_aniRunHit);
+	SAFE_DELETE(_aniSwordHit);
+	SAFE_DELETE(_aniSwordTwoHit);
+	SAFE_DELETE(_aniDiePortal);
+	
 }
 
 void player::update()

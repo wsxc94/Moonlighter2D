@@ -164,6 +164,7 @@ void redGolem::render()
 		break;
 	}
 	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 70, _hpBarAlpha);
+	aStarRender();
 }
 
 void redGolem::directionUpdate()

@@ -163,6 +163,7 @@ void golem::render()
 	}
 
 	if (_isHpBarRender) _hpBar->cameraAlphaRender(_x, _y - 70, _hpBarAlpha);
+	aStarRender();
 }
 
 void golem::directionUpdate()

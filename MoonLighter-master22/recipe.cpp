@@ -40,6 +40,8 @@ int material::updatePossession()
 
 HRESULT recipe::init()
 {
+	_showTotalMaterial = false; 
+
 	return S_OK;
 }
 
@@ -212,20 +214,42 @@ void recipe::recipeCountRender(HDC hdc, int destX, int destY)
 		int countNeeded = _vMaterial[i]->getCount();
 		int countHaving = ITEMMENU->getInventory()->getCountByIdx(_vMaterial[i]->getItem().getItemIdx());
 
-		countRender(hdc, tempX, tempY + (i * 74), countNeeded);
-		countRender(hdc, tempX, (tempY + 30) + (i * 74), countHaving);
+		countRender(hdc, tempX, tempY + (i * 74), countNeeded, COLOR_BLACK);
+		countRender(hdc, tempX, (tempY + 30) + (i * 74), countHaving, COLOR_BLACK);
 	}
 }
 
-void recipe::countRender(HDC hdc, int destX, int destY, int count)
+void recipe::totalRecipeRender(HDC hdc, int destX, int destY)
+{
+	int tempX = destX - 141;
+	int tempY = destY - 68;
+
+	for (int i = 0; i < _vMaterial.size(); i++)
+	{
+		_vMaterial[i]->getItem().getItemImg()->render(hdc, tempX - (i * 70), tempY);
+
+		countRender(hdc, (tempX + 19) - (i * 70), tempY + 62, 
+			_vMaterial[i]->getCount(), COLOR_WHITE);
+	}
+}
+
+void recipe::countRender(HDC hdc, int destX, int destY, int count, COLOR_TYPE type)
 {
 	int multiplyCount = 0;
 	int tempCount = count;
 
 	if (count == 0)
 	{
-		IMAGEMANAGER->render("0_black", hdc, destX, destY);
-		return;
+		if (type == COLOR_BLACK)
+		{
+			IMAGEMANAGER->render("0_black", hdc, destX, destY);
+			return;
+		}
+		else
+		{
+			IMAGEMANAGER->render("0", hdc, destX, destY);
+			return;
+		}
 	}
 
 	while (true)
@@ -243,7 +267,9 @@ void recipe::countRender(HDC hdc, int destX, int destY, int count)
 		int number = (count / i) % 10;
 
 		char keyName[16];
-		wsprintf(keyName, "%d_black", number);
+
+		if(type == COLOR_BLACK) wsprintf(keyName, "%d_black", number);
+		else wsprintf(keyName, "%d", number);
 		IMAGEMANAGER->render(keyName, hdc, destX + (multiplyCount * 12), destY);
 
 		multiplyCount--;

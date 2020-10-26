@@ -15,36 +15,42 @@ HRESULT npcManager::init(vector<tagTile>& vec)
 			_witch->init(tagPosF(vec[i].rc.left, vec[i].rc.top), vec[i].key);
 
 			_npcs.push_back(_witch);
+			continue;
 		}
 		if (vec[i].key == "토모")
 		{
 			_girl = new npc;
 			_girl->init(tagPosF(vec[i].rc.left, vec[i].rc.top), vec[i].key);
 			_npcs.push_back(_girl);
+			continue;
 		}
 		if (vec[i].key == "모리")
 		{
 			_blackOctopus = new npc;
 			_blackOctopus->init(tagPosF(vec[i].rc.left, vec[i].rc.top), vec[i].key);
 			_npcs.push_back(_blackOctopus);
+			continue;
 		}
 		if (vec[i].key == "마사")
 		{
 			_masa = new npc;
 			_masa->init(tagPosF(vec[i].rc.left, vec[i].rc.top), vec[i].key);
 			_npcs.push_back(_masa);
+			continue;
 		}
 		if (vec[i].key == "레드먼드")
 		{
 			_redmond = new npc;
 			_redmond->init(tagPosF(vec[i].rc.left, vec[i].rc.top), vec[i].key);
 			_npcs.push_back(_redmond);
+			continue;
 		}
 		if (vec[i].key == "강아지npc")
 		{
 			_doberman = new npc;
 			_doberman->init(tagPosF(vec[i].rc.left, vec[i].rc.top), vec[i].key);
 			_npcs.push_back(_doberman);
+			continue;
 		}
 	
 	}

@@ -67,6 +67,8 @@ HRESULT nomalDungeonScene::initFromSave()
 	PLAYERDATA->initDungeonHp();
 	PLAYER->setX(_currentDungeon->getPotal()->getX());
 	PLAYER->setY(_currentDungeon->getPotal()->getY());
+	PLAYER->setPlayerState(PLAYER_IDLE);
+	PLAYER->setPlayerDirection(0);
 	SOUNDMANAGER->play("dungeonBGM", 0.4f);
 	CAMERAMANAGER->init(WINSIZEX / 2, WINSIZEY / 2, WINSIZEX, WINSIZEY, 0, 0, WINSIZEX / 2, WINSIZEY / 2);
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
@@ -79,10 +81,6 @@ HRESULT nomalDungeonScene::initFromSave()
 	_potal->setPotalState(POTAL_INIT);
 	_aniBefore = new animation;
 	_aniCenter = new animation;
-	_playerClone = new animation;
-	_playerClone->init(IMAGEMANAGER->findImage("던전구르기"), 0, 4);
-	_playerClone->aniStop();
-	_vMinimap.clear();
 	return S_OK;
 }
 
@@ -244,13 +242,12 @@ void nomalDungeonScene::render()
 			IMAGEMANAGER->findImage("resultBack")->render(getMemDC(), 40, 22);
 			this->resultRender();
 			this->itemResultRender();
-
-			char str[100];
+			/*char str[100];
 			wsprintf(str, "invenSize : %d", ITEMMENU->getInventory()->getItem().size());
 			TextOut(getMemDC(), 10, 110, str, strlen(str));
 
 			wsprintf(str, "dungeonInvenSize : %d", _vItem.size());
-			TextOut(getMemDC(), 10, 130, str, strlen(str));
+			TextOut(getMemDC(), 10, 130, str, strlen(str));*/
 		}
 		break;
 	case DS_RETURN:
@@ -419,7 +416,13 @@ void nomalDungeonScene::dungeonUpdate()
 		if (_dgFloor == 1)
 			this->setNewFloor();
 		else if (_dgFloor == 2)
+		{
 			SCENEMANAGER->loadScene("보스로딩");
+			SOUNDMANAGER->stop("spaRoomBGM");
+			SOUNDMANAGER->stop("bossRoomBGM");
+			SOUNDMANAGER->stop("dungeonBGM");
+		}
+			
 	}
 
 

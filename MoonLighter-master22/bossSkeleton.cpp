@@ -178,6 +178,7 @@ void bossSkeleton::update()
 void bossSkeleton::render()
 {
 	this->animationRender();
+
 	if (_scroll->getAniState() == ANIMATION_PLAY) _scroll->ZorderStretchRender(WINSIZEY, WINSIZEX / 2, WINSIZEY - 150, 2.f);
 	RECT txtRC = RectMakeCenter(WINSIZEX / 2, WINSIZEY - 70, 300, 40);
 	HFONT hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
@@ -189,6 +190,8 @@ void bossSkeleton::render()
 	//_blade->ani->ZorderRotateAlphaRender(getMemDC(), 2000, _blade->x, _blade->y, _blade->angle, 150);
 	
 	_hpBar->cameraRender(WINSIZEX / 2, WINSIZEY - 50);
+	aStarRender();
+
 }
 
 void bossSkeleton::setStartNode()
@@ -208,9 +211,15 @@ void bossSkeleton::setStartNode()
 
 void bossSkeleton::enemyMove()
 {
-	if (_finalList.size() > 0)
+	if (_finalList.size() >= 0)
 	{
-		float angle = getAngle(_x, _y, _finalList.front()->centerX, _finalList.front()->centerY);
+		float angle;
+
+		if (_finalList.size() == 0)
+			angle = getAngle(_x, _y, PLAYER->getX(), PLAYER->getY());
+		else
+			angle = getAngle(_x, _y, _finalList.front()->centerX, _finalList.front()->centerY);
+
 		_x += cosf(angle) * 0.5f;
 		_y -= sinf(angle) * 0.5f;
 
@@ -603,29 +612,32 @@ void bossSkeleton::attackUpdate()
 	//블레이드 픽셀충돌
 	if (_blade->isFire && !_blade->isBreak)
 	{
-		IMAGEMANAGER->findImage("skeletonBlade")->rotateFrameRender(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), _blade->x, _blade->y, _blade->angle, _blade->ani->getCurIndex(), 0);
-		IMAGEMANAGER->findImage("pixelCollision_skeleton")->render(getMemDC(), 0, 0);
-		COLORREF co = GetPixel(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), PLAYER->getX(), PLAYER->getY());
-		int r = GetRValue(co);
-		int g = GetGValue(co);
-		int b = GetBValue(co);
-		if (r != 0 && g != 0 && b != 0)
-		{
-			_blade->ani->aniPlay();
-			_blade->isBreak = true;
-			if (PLAYER->getPlayerState() == PLAYER_SHILED)
+		if (getDistance(PLAYER->getX(), PLAYER->getY(), _blade->x ,_blade->y) <= 80) {
+			IMAGEMANAGER->findImage("skeletonBlade")->rotateFrameRender(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), _blade->x, _blade->y, _blade->angle, _blade->ani->getCurIndex(), 0);
+			IMAGEMANAGER->findImage("pixelCollision_skeleton")->render(getMemDC(), 0, 0);
+			COLORREF co = GetPixel(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), PLAYER->getX(), PLAYER->getY());
+			int r = GetRValue(co);
+			int g = GetGValue(co);
+			int b = GetBValue(co);
+			if (r != 0 && g != 0 && b != 0)
 			{
-				PLAYER->playerPush();
+				_blade->ani->aniPlay();
+				_blade->isBreak = true;
+				if (PLAYER->getPlayerState() == PLAYER_SHILED)
+				{
+					PLAYER->playerPush();
+				}
+				else
+				{
+					PLAYERDATA->minusInDungeonHp(_blade->atk);
+					PLAYER->setPlayerState(HIT_IDLE);
+					PLAYER->setHit(true);
+				}
 			}
-			else
-			{
-				PLAYERDATA->minusInDungeonHp(_blade->atk);
-				PLAYER->setPlayerState(HIT_IDLE);
-				PLAYER->setHit(true);
-			}
+			BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
 		}
-		BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
 	}
+	
 
 	if (PLAYERDATA->getInDungeonHp() <= 0)
 	{

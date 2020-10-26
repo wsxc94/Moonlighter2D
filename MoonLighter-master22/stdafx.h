@@ -9,8 +9,19 @@
 //디버깅용 (주석치면 콘솔창이 사라진다)
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
 
+//메모리 누수 체크용
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+
+#ifdef _DEBUG
+#define new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#endif
+//
+
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
-#define _CRT_SECURE_NO_WARNINGS
+
+
 // Windows 헤더 파일:
 #include <Windows.h>
 // C 런타임 헤더 파일입니다.
