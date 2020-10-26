@@ -320,7 +320,7 @@ void npc::move(NPC_MAP NPC_SHOP)
 		}
 	}
 
-	if (_state == NPC_MOVE || _state == NPC_ITEM_PICK)
+	else if (_state == NPC_MOVE || _state == NPC_ITEM_PICK)
 	{
 		_speed = 1.0f;
 
@@ -330,7 +330,7 @@ void npc::move(NPC_MAP NPC_SHOP)
 		_pos.x += cosf(_angle) * _speed;
 		_pos.y += -sinf(_angle) * _speed / 2;
 	}
-	if (_state == NPC_CHECK_PRICE || _state == NPC_WAIT) {
+	else if (_state == NPC_CHECK_PRICE || _state == NPC_WAIT) {
 		PriceCheckAnim();
 	}
 

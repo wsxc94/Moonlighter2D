@@ -7,21 +7,23 @@ class displayStand;
 
 enum NPC_ACTION // npc 상태 스테이트
 {
-	NPC_START,
-	NPC_MOVE,
-	NPC_STOP,
-	NPC_CHECK_PRICE,
-	NPC_WAIT,
-	NPC_GO_HOME,
-	NPC_ITEM_PICK,
-	NPC_TALK
+	NPC_START, //대기상태
+	NPC_MOVE,  //움직임
+	NPC_STOP,  //멈춤
+	NPC_CHECK_PRICE, //가격 체크
+	NPC_ITEM_PICK, // 아이템선택
+	NPC_WAIT,  // 결제 대기
+	NPC_GO_HOME, // 돌아가기
+	NPC_TALK // 플레이어와 대화
 };
+
 
 enum NPC_MAP // npc가 어디있는지 기본 = 마을
 {
 	NPC_TOWN,
 	NPC_SHOP
 };
+
 class npc : public gameNode
 {
 protected:
