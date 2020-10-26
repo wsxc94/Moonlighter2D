@@ -620,6 +620,8 @@ void bossSkeleton::attackUpdate()
 			else
 			{
 				PLAYERDATA->minusInDungeonHp(_blade->atk);
+				PLAYER->setPlayerState(HIT_IDLE);
+				PLAYER->setHit(true);
 			}
 		}
 		BitBlt(IMAGEMANAGER->findImage("pixelCollision_skeleton")->getMemDC(), 0, 0, WINSIZEX, WINSIZEY, getMemDC(), 0, 0, BLACKNESS);
