@@ -8,9 +8,9 @@ private:
 
 public:
 	HRESULT init(tagPosF pos, string key);
+
 	void update();
 	void render();
-
 	void action(string talk);
 
 	potionShop* getPotionShop() { return _potionShop; }

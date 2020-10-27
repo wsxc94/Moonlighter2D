@@ -69,6 +69,7 @@ HRESULT bossGolemKing::init(int x, int y)
 
 	_golemState = GOLEMKINGSTATE::BS_INIT;
 	_golemAni = GOLEMANISTATE::ANI_BOSSUP;
+	_pattern = BOSSPATTERN::EMPTY;
 
 	//보스 xy 좌표
 	_x = x;
@@ -76,9 +77,6 @@ HRESULT bossGolemKing::init(int x, int y)
 	_bossRC = RectMakeCenter(_x - 10, _y + 85, 250, 150);
 	_hitCount = 0;
 
-	//돌공격 카운트 초기화
-	_rockFireTime = 0;
-	_rockFireCount = 0;
 
 	_golemHand.ani = nullptr;
 
@@ -87,6 +85,7 @@ HRESULT bossGolemKing::init(int x, int y)
 	_isDead = false;
 	_isHit = false;
 	_coliSkillAroow = false;
+	_isFirst = true;
 	
 
 	//아이템 초기화
@@ -118,10 +117,6 @@ void bossGolemKing::release()
 
 void bossGolemKing::update()
 {
-	if (INPUT->GetKeyDown(VK_DOWN))
-	{
-		_hp = 0;
-	}
 	//스크롤 업뎃
 	_scroll->update();
 	//상태에따른 애니메이션 업데이트
@@ -161,22 +156,67 @@ void bossGolemKing::update()
 		}
 		break;
 	case GOLEMKINGSTATE::BS_IDLE:
-		_attackCool--;
 
-		//공격쿨타임이 끝나면 공격~
-		if (_attackCool <= 0)
+		switch (_pattern)
 		{
-			this->initAttack();
+		case BOSSPATTERN::PATTERN1:
+			if (_isFirst)
+				_golemState = GOLEMKINGSTATE::BS_ROCK_ROUND;
+			else
+			{
+				_golemState = GOLEMKINGSTATE::BS_FIST;
+				this->changeAniState(GOLEMANISTATE::ANI_FISTSHOOT1);
+			}
+			break;
+		case BOSSPATTERN::PATTERN2:
+			if (_isFirst)
+				_golemState = GOLEMKINGSTATE::BS_ROCK_SHOOT;
+			else
+			{
+				_golemState = GOLEMKINGSTATE::BS_FIST;
+				this->changeAniState(GOLEMANISTATE::ANI_FISTSHOOT1);
+			}
+			break;
+		case BOSSPATTERN::PATTERN3:
+			if (_isFirst)
+				_golemState = GOLEMKINGSTATE::BS_ROCK_ROUND;
+			else
+			{
+				_golemState = GOLEMKINGSTATE::BS_HAND;
+				this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
+			}
+			break;
+		case BOSSPATTERN::PATTERN4:
+			if (_isFirst)
+				_golemState = GOLEMKINGSTATE::BS_ROCK_SHOOT;
+			else
+			{
+				_golemState = GOLEMKINGSTATE::BS_HAND;
+				this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
+			}
+			break;
+		case BOSSPATTERN::EMPTY:
+			_attackCool--;
+
+			//공격쿨타임이 끝나면 공격~
+			if (_attackCool <= 0)
+			{
+				this->initAttack();
+			}
+			break;
+		default:
+			break;
 		}
+		
 
 		break;
 	case  GOLEMKINGSTATE::BS_FIST:
 		this->bsFistUpdate();
 		break;
-	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
+	case GOLEMKINGSTATE::BS_ROCK_SHOOT:	// 대각선 돌맹이
 		this->bsRockShootUpdate();
 		break;
-	case GOLEMKINGSTATE::BS_ROCK_ROUND:
+	case GOLEMKINGSTATE::BS_ROCK_ROUND: // 둥그런 돌맹이
 		this->bsRockRoundUpdate();
 	
 		break;
@@ -277,54 +317,45 @@ void bossGolemKing::initAttack()
 	if (_vGolemAttack.size() == 0)
 		this->initVGolemAttack();
 
+	if (_vRock.size() > 0) _vRock.clear();
 
 	switch (_vGolemAttack.back())
 	{
-	case GOLEMKINGSTATE::BS_FIST:
-		//주먹질 초기화
+	case BOSSPATTERN::PATTERN1:
 		_bossFist.ani = new animation;
 		_bossFist.ani->initReverse(IMAGEMANAGER->findImage("bossFist"), 0, 7, false, true);
 		_bossFist.angle = RANDOM->range(DEGREE(240), DEGREE(300)) + DEGREE(90);
 		_bossFist.x = _x - 70;
 		_bossFist.y = _y + 30;
-		_bossFist.count = RANDOM->range(4, 7);
+		_bossFist.count = 5;
 		_bossFist.isMoveLeft = (bool)RANDOM->range(2);
 		_bossFist.isHit = false;
-		this->changeAniState(GOLEMANISTATE::ANI_FISTSHOOT1);
 		break;
-	case GOLEMKINGSTATE::BS_HAND:
+	case BOSSPATTERN::PATTERN2:
+		_bossFist.ani = new animation;
+		_bossFist.ani->initReverse(IMAGEMANAGER->findImage("bossFist"), 0, 7, false, true);
+		_bossFist.angle = RANDOM->range(DEGREE(240), DEGREE(300)) + DEGREE(90);
+		_bossFist.x = _x - 70;
+		_bossFist.y = _y + 30;
+		_bossFist.count = 5;
+		_bossFist.isMoveLeft = (bool)RANDOM->range(2);
+		_bossFist.isHit = false;
+		break;
+	case BOSSPATTERN::PATTERN3:
+		this->initGolemHand();
+		break;
+	case BOSSPATTERN::PATTERN4:
 		//손 초기황
 		this->initGolemHand();
-		this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
 		break;
-	case GOLEMKINGSTATE::BS_ROCK_ROUND:
-		if (_vRock.size() > 0) _vRock.clear();
-		if (!_isAttackSoundPlay)
-		{
-			SOUNDMANAGER->play("bossRock");
-			_isAttackSoundPlay = true;
-		}
-		else if (SOUNDMANAGER->isPlaySound("bossRock")) return;
-		break;
-	case GOLEMKINGSTATE::BS_ROCK_SHOOT:
-		if (_vRock.size() > 0) _vRock.clear();
-		if (!_isAttackSoundPlay)
-		{
-			SOUNDMANAGER->play("bossRock");
-			_isAttackSoundPlay = true;
-		}
-		else if (SOUNDMANAGER->isPlaySound("bossRock")) return;
-		
-		//돌슛 초기황
-		_rockShootAngle[0] = RANDOM->range(DEGREE(240), DEGREE(300));
-		_rockShootAngle[1] = _rockShootAngle[0] + DEGREE(5);
-		_rockShootAngle[2] = _rockShootAngle[0] + DEGREE(10);
-
+	default:
 		break;
 	}
 
+	
+	_isFirst = true;
 	_attackCool = RANDOM->range(150, 300);
-	_golemState = _vGolemAttack.back();
+	_pattern = _vGolemAttack.back();
 	_isAttackSoundPlay = false;
 
 	//현재상태 제거
@@ -422,17 +453,10 @@ void bossGolemKing::hitUpdate()
 
 void bossGolemKing::initVGolemAttack()
 {
-	_vGolemAttack.push_back(GOLEMKINGSTATE::BS_FIST);
-	_vGolemAttack.push_back(GOLEMKINGSTATE::BS_HAND);
-	switch (RANDOM->range(2))
-	{
-	case 0:
-		_vGolemAttack.push_back(GOLEMKINGSTATE::BS_ROCK_ROUND);
-		break;
-	case 1:
-		_vGolemAttack.push_back(GOLEMKINGSTATE::BS_ROCK_SHOOT);
-		break;
-	}
+	_vGolemAttack.push_back(BOSSPATTERN::PATTERN1);
+	_vGolemAttack.push_back(BOSSPATTERN::PATTERN2);
+	_vGolemAttack.push_back(BOSSPATTERN::PATTERN3);
+	_vGolemAttack.push_back(BOSSPATTERN::PATTERN4);
 	this->suffleVGolemAttack();
 }
 
@@ -460,7 +484,7 @@ void bossGolemKing::initGolemHand()
 	_golemHand.atkCount = 0;
 	_golemHand.state = HANDSTATE::HAND_INIT;
 	_golemHand.isHit = false;
-	_golemHand.speed = 15;
+	_golemHand.speed = 30;
 }
 
 void bossGolemKing::bsFistUpdate()
@@ -483,7 +507,7 @@ void bossGolemKing::bsFistUpdate()
 		{
 			if (_bossFist.isMoveLeft)
 			{
-				_bossFist.angle -= DEGREE(1);
+				_bossFist.angle -= DEGREE(3);
 				if (_bossFist.angle <= DEGREE(270))
 				{
 					_bossFist.isMoveLeft = false;
@@ -493,7 +517,7 @@ void bossGolemKing::bsFistUpdate()
 			}
 			else if (!_bossFist.isMoveLeft)
 			{
-				_bossFist.angle += DEGREE(1);
+				_bossFist.angle += DEGREE(3);
 				if (_bossFist.angle > DEGREE(360 + 90))
 				{
 					_bossFist.isMoveLeft = true;
@@ -551,6 +575,7 @@ void bossGolemKing::bsFistUpdate()
 
 		if (_bossFist.ani->getAniState() == ANIMATION_END)
 		{
+			_pattern = BOSSPATTERN::EMPTY;
 			_golemAni = GOLEMANISTATE::ANI_IDLE;
 			_golemState = GOLEMKINGSTATE::BS_IDLE;
 		}
@@ -560,65 +585,59 @@ void bossGolemKing::bsFistUpdate()
 
 void bossGolemKing::bsRockShootUpdate()
 {
-	_rockFireTime++;
-
-	//발사시간이 되면 발사해라
-	if (_rockFireTime % 20 == 0)
+	for (int p = 0; p < 2; p++)
 	{
-		tagRock rock[3];
-		for (int i = 0; i < 3; i++)
+		float angle;
+		if (p == 0)
+			angle = DEGREE(290);
+		else
+			angle = DEGREE(250);
+		for (int i = 0; i < 20; i++)
 		{
-			string str = "bossRock" + to_string(RANDOM->range(4));
-			rock[i].img = IMAGEMANAGER->findImage(str);
-			rock[i].x = _x + cosf(_rockShootAngle[i]) * (100 + _rockFireTime * 5);
-			rock[i].y = _y - sinf(_rockShootAngle[i]) * (100 + _rockFireTime * 5);
-			rock[i].hight = -100;
-			rock[i].time = 0;
-			rock[i].shadowScale = 0.5f;
-			rock[i].isHit = false;
-			_vRock.push_back(rock[i]);
-		}
-		_rockFireCount++;
-	}
-	if (_rockFireCount > 8)
-	{
-		_rockFireCount = 0;
-		_rockFireTime = 0;
-		_golemState = GOLEMKINGSTATE::BS_IDLE;
-	}
-}
-
-void bossGolemKing::bsRockRoundUpdate()
-{
-	_rockFireTime++;
-
-	if (_rockFireTime % 100 == 0)
-	{
-		int j = RANDOM->range(11);
-		for (int i = 0; i <= 10; i++)
-		{
-			if (i == j) continue;
-			float angle = PI / 10;
 			string str = "bossRock" + to_string(RANDOM->range(4));
 			tagRock _rock;
 			_rock.img = IMAGEMANAGER->findImage(str);
-			_rock.x = _x - 50 + cosf(angle * i + PI) * (100 + _rockFireTime * 3);
-			_rock.y = _y - sinf(angle * i + PI) * (100 + _rockFireTime * 3);
+			if(p == 0)
+			_rock.x = _x - 300 + cosf(angle) * (40 * i);
+			else
+				_rock.x = _x + 300 + cosf(angle) * (40 * i);
+			_rock.y = _y - sinf(angle) * (40 * i);
 			_rock.hight = -100;
 			_rock.time = 0;
 			_rock.shadowScale = 0.5f;
 			_rock.isHit = false;
 			_vRock.push_back(_rock);
 		}
-		//공격횟수 ++
-		_rockFireCount++;
 	}
-	if (_rockFireCount >= 2)
+	
+	if (_isFirst)
+		_isFirst = false;
+	_golemState = GOLEMKINGSTATE::BS_IDLE;
+}
+
+void bossGolemKing::bsRockRoundUpdate()
+{
+	for (int p = 1; p <= 2; p++)
 	{
-		_rockFireCount = 0;
-		_rockFireTime = 0;
-		_golemState = GOLEMKINGSTATE::BS_IDLE;
+		for (int i = 0; i <= 20; i++)
+		{
+			float angle = PI / 20;
+			string str = "bossRock" + to_string(RANDOM->range(4));
+			tagRock _rock;
+			_rock.img = IMAGEMANAGER->findImage(str);
+			_rock.x = _x - 50 + cosf(angle * i + PI) * (400 * p);
+			_rock.y = _y - sinf(angle * i + PI) * (400 * p);
+			_rock.hight = -100;
+			_rock.time = 0;
+			_rock.shadowScale = 0.5f;
+			_rock.isHit = false;
+			_vRock.push_back(_rock);
+		}
 	}
+	
+	if (_isFirst)
+		_isFirst = false;
+	_golemState = GOLEMKINGSTATE::BS_IDLE;
 }
 
 void bossGolemKing::bsHandUpdate()
@@ -672,8 +691,9 @@ void bossGolemKing::bsHandUpdate()
 		float angle = getAngle(_golemHand.x, _golemHand.y, PLAYER->getX(), PLAYER->getY() + 25);
 		if (dist > 0.5f)
 		{
-			_golemHand.x += cosf(angle) * 1.5f;
-			_golemHand.y -= sinf(angle) * 1.5f;
+			//따라가는 속도
+			_golemHand.x += cosf(angle) * 2.5f;
+			_golemHand.y -= sinf(angle) * 2.5f;
 		}
 		//일정시간 지나면 떨구자
 		_golemHand.count--;
@@ -738,6 +758,7 @@ void bossGolemKing::bsHandUpdate()
 				this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTEND);
 				if (_vAni[(int)_golemAni]->getAniState() == ANIMATION_END)
 				{
+					_pattern = BOSSPATTERN::EMPTY;
 					_golemAni = GOLEMANISTATE::ANI_IDLE;
 					_golemState = GOLEMKINGSTATE::BS_IDLE;
 				}
@@ -755,7 +776,7 @@ void bossGolemKing::bsHandUpdate()
 void bossGolemKing::vRockUpdate()
 {
 	//돌맹이 밑으로 내려오는 업데이트
-	for (int i = 0; i < _vRock.size();)
+	for (int i = 0; i < _vRock.size(); i++)
 	{
 		_vRock[i].hight += 10;
 		if (_vRock[i].hight >= _vRock[i].y)
@@ -790,12 +811,6 @@ void bossGolemKing::vRockUpdate()
 				PLAYERDATA->setKillEnemy(em);
 			}
 		}
-
-		if (_vRock[i].time > 600)
-		{
-			_vRock.erase(_vRock.begin() + i);
-		}
-		else i++;
 	}
 }
 

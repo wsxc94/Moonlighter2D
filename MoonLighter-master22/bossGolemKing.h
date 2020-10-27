@@ -16,6 +16,11 @@ enum class GOLEMANISTATE
 	ANI_BOSSUP,ANI_DEAD1,ANI_DEAD2,ANI_FISTSHOOT1, ANI_FISTSHOOT2, ANI_FISTSHOOT3, ANI_HANDSHOOTSTART,ANI_HANDSHOOTEND,ANI_IDLE
 };
 
+enum class BOSSPATTERN
+{
+	PATTERN1, PATTERN2, PATTERN3, PATTERN4, EMPTY
+};
+
 enum class HANDSTATE
 {
 	HAND_INIT,HAND_FALL,HAND_UP
@@ -66,8 +71,10 @@ class bossGolemKing : public boss
 private:
 	GOLEMKINGSTATE _golemState;					//골렘 스테이트
 	GOLEMANISTATE _golemAni;					//골렘 애니메이션
+	BOSSPATTERN _pattern;						//공격 패턴
+	
 
-	vector<GOLEMKINGSTATE> _vGolemAttack;			//골렘 공격패턴들
+	vector<BOSSPATTERN> _vGolemAttack;			//골렘 공격패턴들
 
 	animation* _aniBossUp;						//init모션
 	animation* _aniBossDead1;					//죽는거 첫번째
@@ -95,13 +102,13 @@ private:
 	int  _itemDropSize;			//아이템드롭될개수
 	bool _isItemDrop;
 
+	bool _isFirst;
+
 	tagGolemHand _golemHand;					//손으로 찍는공격
 
-	int _rockFireTime;							//일정주기로 돌을 떨어뜨려라
-	int _rockFireCount;							//몇번 떨궜냐?
 	vector<tagRock> _vRock;						//돌들
 
-	float _rockShootAngle[3];						//슛할 각도들
+	float _rockShootAngle[2];						//슛할 각도들
 
 	tagFist _bossFist;							//보스 주먹질
 

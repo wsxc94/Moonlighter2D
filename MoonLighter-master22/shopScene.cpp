@@ -88,6 +88,7 @@ HRESULT shopScene::init()
 	CAMERAMANAGER->FadeStart();
 
 	_pixelBackGround = false;
+
 	return S_OK;
 }
 
@@ -130,10 +131,6 @@ void shopScene::update()
 	PlayerCol();
 	PortaltoTown();
 
-	if (INPUT->GetKeyDown('Q')) {
-		if (!_isShopOpen)_isShopOpen = true;
-		else _isShopOpen = false;
-	}
 
 	if (_isShopOpen)
 	npcAI();
@@ -359,7 +356,7 @@ void shopScene::sellStandAction()
 		if (INPUT->GetKeyDown('J'))
 		{
 			_displayStand->openDisplayStand();
-
+			_isShopOpen = true;
 			_displayStand->setCanGrab(false);
 		}
 	}
