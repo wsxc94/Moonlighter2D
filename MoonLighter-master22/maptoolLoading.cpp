@@ -126,7 +126,7 @@ void maptoolLoading::loadingImage()
 	_loading->loadFrameImage("고장난분수", "Images/맵툴/fountain.bmp", 82, 102, 1, 1);
 	_loading->loadFrameImage("울타리집", "Images/맵툴/울타리집.bmp", 486, 454, 1, 1);
 
-	_loading->loadFrameImage("가스총맨", "Images/맵툴/gas_suit_12.bmp", 696, 77, 12, 1);
+	_loading->loadFrameImage("babySlime", "Images/맵툴/gas_suit_12.bmp", 696, 77, 12, 1);
 	_loading->loadFrameImage("집샘플", "Images/맵툴/objectHouse.bmp", 250, 250, 2, 2);
 	_loading->loadFrameImage("나무샘플", "Images/맵툴/objectTree.bmp", 250, 250, 2, 2);
 	_loading->loadFrameImage("건물샘플", "Images/맵툴/object2.bmp", 250, 250, 2, 2);
@@ -157,7 +157,7 @@ void maptoolLoading::loadingImage()
 	_loading->loadImage("arrow_down", "Images/맵툴/arrow_down.bmp", 18, 10, true, RGB(255, 0, 255));
 	_loading->loadImage("scrollBar", "Images/맵툴/scrollBar.bmp", 10, 47, true, RGB(255, 0, 255));
 
-	_loading->loadFrameImage("babySlime", "Images/몬스터/babySlime9x4(2).bmp", 1152, 512, 9, 4);
+	_loading->loadFrameImage("가스총맨", "Images/몬스터/babySlime9x4(2).bmp", 1152, 512, 9, 4);
 	_loading->loadFrameImage("bigSlime", "Images/몬스터/BigSlime12x2.bmp", 984, 526, 12, 2);
 	_loading->loadFrameImage("골렘공격", "Images/몬스터/GolemAttack13x4.bmp", 2470, 760, 13, 4);
 	_loading->loadFrameImage("골렘전사", "Images/몬스터/GolemMove8x4.bmp", 1520, 760, 8, 4);
