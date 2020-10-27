@@ -676,6 +676,12 @@ void potionShop::setCountKeyInput()
 		
 		setPotionCtrl(POTION_SELECTMENU);
 	}
+	if (INPUT->GetKeyDown('L'))
+	{
+		setPotionCtrl(POTION_MENU);
+		SOUNDMANAGER->play("cursor_move", 0.2f);
+	}
+
 }
 
 void potionShop::selectMenuKeyInput()
