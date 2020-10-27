@@ -195,7 +195,7 @@ void maptoolScene::update()
 
 	void maptoolScene::render()
 	{
-		//if (_backImg != nullptr) CAMERAMANAGER->Render(getMemDC(), _backImg, 0, 0);
+		if (_backImg != nullptr) CAMERAMANAGER->Render(getMemDC(), _backImg, 0, 0);
 		//CAMERAMANAGER->StretchRender(getMemDC(), IMAGEMANAGER->findImage("bossDungeon"), IMAGEMANAGER->findImage("bossDungeon")->getWidth(), IMAGEMANAGER->findImage("bossDungeon")->getHeight(), 2.f);
 
 		//타일맵 이미지 전체화면 우측상단에 배치하기
@@ -1251,7 +1251,7 @@ void maptoolScene::menuBarRender()
 			if (_page == 0) IMAGEMANAGER->render("NPC샘플", getMemDC(), 788, 325);
 			if (_page == 1) IMAGEMANAGER->render("NPC샘플2", getMemDC(), 788, 325);
 			if (_page == 2) IMAGEMANAGER->render("몬스터샘플", getMemDC(), 788, 325);
-			if (_page == 3) IMAGEMANAGER->render("몬스터샘플2", getMemDC(), 788, 325);
+			//if (_page == 3) IMAGEMANAGER->render("몬스터샘플2", getMemDC(), 788, 325);
 		}
 
 		//지우개 모드 on/off에 따라 지우개 태그 toggle
@@ -1325,7 +1325,7 @@ void maptoolScene::scrollBarRender()
 		{
 			IMAGEMANAGER->findImage("arrow_up")->render(getMemDC(), 1094, 337);
 		}
-		if (_page < 3)
+		if (_page < 2)
 		{
 			IMAGEMANAGER->findImage("arrow_down")->render(getMemDC(), 1094, 469);
 		}
@@ -1356,7 +1356,7 @@ void maptoolScene::tileArrowDown()
 		switch (_ctrlSelect)
 		{
 		case CTRL_NPC:
-			if (_page < 3) _page++;
+			if (_page < 2) _page++;
 			break;
 		case CTRL_TERRAIN:
 			if (_page < 2) _page++;

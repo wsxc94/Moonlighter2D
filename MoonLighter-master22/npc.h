@@ -7,19 +7,23 @@ class displayStand;
 
 enum NPC_ACTION // npc 상태 스테이트
 {
-	NPC_START,
-	NPC_MOVE,
-	NPC_STOP,
-	NPC_CHECK_PRICE,
-	NPC_WAIT,
-	NPC_GO_HOME,
-	NPC_ITEM_PICK
+	NPC_START, //대기상태
+	NPC_MOVE,  //움직임
+	NPC_STOP,  //멈춤
+	NPC_CHECK_PRICE, //가격 체크
+	NPC_ITEM_PICK, // 아이템선택
+	NPC_WAIT,  // 결제 대기
+	NPC_GO_HOME, // 돌아가기
+	NPC_TALK // 플레이어와 대화
 };
+
 
 enum NPC_MAP // npc가 어디있는지 기본 = 마을
 {
+	NPC_TOWN,
 	NPC_SHOP
 };
+
 class npc : public gameNode
 {
 protected:
@@ -33,6 +37,7 @@ protected:
 	int _count;
 	int _idx;
 	int _time;
+	int rndStopTime;
 
 	int _spawnTime; // npc 젠 타임
 	float _speed;   // npc 이동속도
@@ -97,6 +102,7 @@ public:
 
 	void anim(); // npc 애니메이션
 	void boxAnim(); // 대화박스 애니메이션
+
 	void move(); // 마을 npc 움직임
 	void move(NPC_MAP NPC_SHOP); // 상점에서의 npc 움직임
 
@@ -134,6 +140,7 @@ public:
 	NPC_ACTION& getState() { return _state; } // npc 현재 스테이트 반환
 	void setState(NPC_ACTION st) { _state = st; } // npc 상태 업데이트
 	string& getThinkInfo() { return thinkInfo; } // 싼지 안싼지 상태에 대한 문자열 반환
+
 	npc() {}
 	~npc() {}
 };

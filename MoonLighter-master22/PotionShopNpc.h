@@ -7,12 +7,15 @@ private:
 	potionShop* _potionShop;
 
 public:
-	virtual HRESULT init(tagPosF pos, string key);
-	virtual void update();
-	virtual void render();
+	HRESULT init(tagPosF pos, string key);
 
-	virtual void action(string talk);
+	void update();
+	void render();
+	void action(string talk);
 
 	potionShop* getPotionShop() { return _potionShop; }
+
+	PotionShopNpc() {}
+	virtual ~PotionShopNpc() {}
 };
 

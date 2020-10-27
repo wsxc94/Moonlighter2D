@@ -59,6 +59,7 @@ HRESULT shopScene::init()
 	_disMenuOn = false;
 
 	_visit = false;
+	_isShopOpen = false;
 
 	_cashRegister = new animation;
 	_cashRegister->init(IMAGEMANAGER->findImage("책상금고"), 0, 7);
@@ -86,6 +87,8 @@ HRESULT shopScene::init()
 	CAMERAMANAGER->FadeInit(80, FADE_IN);
 	CAMERAMANAGER->FadeStart();
 
+	_pixelBackGround = false;
+
 	return S_OK;
 }
 
@@ -103,6 +106,16 @@ void shopScene::release()
 
 void shopScene::update()
 {
+	if (INPUT->GetKeyDown(VK_F1)) {
+		if (_pixelBackGround)
+		{
+			_pixelBackGround = false;
+		}
+		else {
+			_pixelBackGround = true;
+		}
+	}
+	
 	SoundUpdate();
 
 	_npc->update();
@@ -117,7 +130,11 @@ void shopScene::update()
 
 	PlayerCol();
 	PortaltoTown();
+
+
+	if (_isShopOpen)
 	npcAI();
+
 	PlayerSell();
 	itemInfoUpdate();
 	itemMove();
@@ -128,7 +145,6 @@ void shopScene::update()
 	_door->update();
 	_cauldron->update();
 	_sellButton->update();
-	
 
 }
 
@@ -241,27 +257,9 @@ void shopScene::itemInfoUpdate()  // 좌판의 아이템정보를 검사해 npc를 초기화시키
 	else if (_disMenuOn && !PLAYER->getDisplayOn()){
 
 		  _disMenuOn = false;
-
-		  for (int i = 0; i < _npc->getVector().size(); i++)
-		  {
-
-			  if (_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY && _displayStand->getDisplayItem()[i].getPrice() != 0) {
-				  if (_npc->getVector()[i]->getActive()) continue;
-				  
-				  npcInit(i);
-			  }
-		  }
-
 	}
 	for (int i = 0; i < _npc->getVector().size(); i++)
 	{
-		/*if (!_npc->getVector()[i]->getActive() && 
-			_displayStand->getDisplayItem()[i].getType() != ITEM_EMPTY &&
-			_displayStand->getDisplayItem()[i].getPrice() != 0 &&
-			_npc->getVector()[i]->getThinkInfo() != "비싸다" &&
-			_npc->getVector()[i]->getThinkInfo() != "엄청비싸다") {
-			npcInit(i);
-		}*/
 
 		if (!_npc->getVector()[i]->getActive()){
 			 
@@ -358,7 +356,7 @@ void shopScene::sellStandAction()
 		if (INPUT->GetKeyDown('J'))
 		{
 			_displayStand->openDisplayStand();
-
+			_isShopOpen = true;
 			_displayStand->setCanGrab(false);
 		}
 	}
@@ -470,6 +468,10 @@ void shopScene::backGroundRender()
 	CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점책상"), 670 + IMAGEMANAGER->findImage("상점책상")->getFrameHeight() / 4, 646, 670);
 
 	//CAMERAMANAGER->ZorderFrameRender(IMAGEMANAGER->findImage("상점문열어"), 1000 + IMAGEMANAGER->findImage("상점문열어")->getFrameHeight() / 4, 665, 823);
+
+	if (_pixelBackGround) {
+		CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("상점픽셀"), 304, 132);
+	}
 
 	_door->ZoderRender(1000, 665, 823);
 	//732, 664

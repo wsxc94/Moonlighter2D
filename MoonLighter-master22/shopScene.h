@@ -30,7 +30,7 @@ private:
 	bool _shopDoorCheck; 
 	bool _doorOpen;
 	void ItemPosSet(); // 아이템 위치 세팅
-
+	bool _isShopOpen;
 
 	RECT _itemText[4]; // 아이템 드로우 텍스트 렉트
 	HFONT hFont; // 아이템 가격 폰트
@@ -43,6 +43,7 @@ private:
 	animation* _sellButton; // 판매 버튼
 
 	bool _sellNpcCheck;
+	bool _pixelBackGround;
 
 
 public:

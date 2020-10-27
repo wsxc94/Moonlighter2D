@@ -134,7 +134,7 @@ private:
 
 public:
 	HRESULT init();
-	void release();
+	void release(); // 메모리 해제를 생활화 하자.
 	void update();
 	void render(HDC hdc);
 
@@ -165,7 +165,7 @@ public:
 	float getY() { return _player.y; }
 
 	RECT& getRect() { return _player.rc; }
-	RECT getShadowRect() { return _player.shadowRc; }
+	RECT& getShadowRect() { return _player.shadowRc; }
 
 	arrow *getArrow() { return _arrow; }
 
@@ -177,12 +177,12 @@ public:
 	bool& getLeft() { return _left; }
 	bool& getUp() { return _up; }
 	bool& getDown() { return _down; }
-	bool getSkill() { return _isSkill; }
+	bool& getSkill() { return _isSkill; }
 
 
 	WEAPONSTATE getWeaponState() { return _player.weapon; }
 
-	PLAYER_STATE getPlayerState() { return _state; }
+	PLAYER_STATE& getPlayerState() { return _state; }
 
 	void setPlayerState(PLAYER_STATE state) { _state = state; }
 

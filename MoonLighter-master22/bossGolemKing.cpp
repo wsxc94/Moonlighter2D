@@ -7,9 +7,9 @@ HRESULT bossGolemKing::init(int x, int y)
 	_aniBossUp = new animation;
 	_aniBossUp->init(IMAGEMANAGER->findImage("bossUp"), 0, 7, false);
 	_aniBossDead1 = new animation;
-	_aniBossDead1->init(IMAGEMANAGER->findImage("bossDead1"), 0, 7, false);
+	_aniBossDead1->init(IMAGEMANAGER->findImage("bossDead1"), 0, 5, false);
 	_aniBossDead2 = new animation;
-	_aniBossDead2->init(IMAGEMANAGER->findImage("bossDead2"), 0, 7, false);
+	_aniBossDead2->init(IMAGEMANAGER->findImage("bossDead2"), 0, 5, false);
 	/*_aniBossFistShoot = new animation;
 	_aniBossFistShoot->init(IMAGEMANAGER->findImage("bossFistShoot"), 0, 7, false);*/
 	_aniBossHandShootStart = new animation;
@@ -87,6 +87,27 @@ HRESULT bossGolemKing::init(int x, int y)
 	_isDead = false;
 	_isHit = false;
 	_coliSkillAroow = false;
+	
+
+	//아이템 초기화
+	//아이템 초기화
+	_isItemDrop = true;
+	_itemIndexSize = 11;
+	_itemDropSize = RANDOM->range(3, 10);
+	_itemIndex = new int[_itemIndexSize];
+	_itemNum = new int[_itemDropSize];
+
+	//나올수 있는 아이템인덱스 초기화
+	for (int i = 0; i < 10; i++)
+	{
+		_itemIndex[i] = i + 1;
+	}
+
+	// 드랍될 아이템의 인덱스를 랜덤으로 지정
+	for (int i = 0; i < _itemDropSize; i++)
+	{
+		_itemNum[i] = _itemIndex[RANDOM->range(_itemIndexSize)];
+	}
 
 	return S_OK;
 }
@@ -99,7 +120,7 @@ void bossGolemKing::update()
 {
 	if (INPUT->GetKeyDown(VK_DOWN))
 	{
-		PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
+		_hp = 0;
 	}
 	//스크롤 업뎃
 	_scroll->update();
@@ -177,6 +198,7 @@ void bossGolemKing::update()
 			if (_golemAni == GOLEMANISTATE::ANI_DEAD2)
 			{
 				_isDead = true;
+				_isItemDrop = false;
 			}
 		}
 		break;
@@ -320,6 +342,7 @@ void bossGolemKing::collisionPlayer()
 			EFFECTMANAGER->addEffect("공격이펙트", 2000,
 				(_bossRC.right + _bossRC.left) / 2,
 				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			SOUNDMANAGER->play("화살맞음", 0.5f);
 			DAMAGEFONT->init(_x, _y - 30, damage);
 			_hp -= damage;
 			_isHit = true;
@@ -334,6 +357,7 @@ void bossGolemKing::collisionPlayer()
 			EFFECTMANAGER->addEffect("공격이펙트", 2000,
 				(_bossRC.right + _bossRC.left) / 2,
 				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
+			SOUNDMANAGER->play("화살맞음", 0.5f);
 			DAMAGEFONT->init(_x, _y - 30, damage);
 			_hp -= damage;
 			_isHit = true;
@@ -350,6 +374,8 @@ void bossGolemKing::collisionPlayer()
 				(_bossRC.right + _bossRC.left) / 2,
 				(_bossRC.bottom + _bossRC.top) / 2, PLAYER->getPlayerDirection(), 10);
 			DAMAGEFONT->init(_x, _y - 30, damage);
+
+			SOUNDMANAGER->play("화살맞음", 0.5f);
 
 			if (PLAYER->getSkill())
 			{
@@ -702,6 +728,7 @@ void bossGolemKing::bsHandUpdate()
 				_golemHand.state = HANDSTATE::HAND_INIT;
 				_golemHand.count = 200;
 				_golemHand.atkCount++;
+				_golemHand.isHit = false;
 				_golemHand.ani->aniRestart();
 				_golemHand.ani->aniStop();
 			}

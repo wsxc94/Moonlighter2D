@@ -6,8 +6,10 @@
 //=============================================================
 HRESULT gameNode::init()
 {
-	_hdc = GetDC(_hWnd);				//HDC 얻기
+	//_CrtSetBreakAlloc(276);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+	_hdc = GetDC(_hWnd);				//HDC 얻기
 	INPUT->init();						//입력매니져 초기화
 	RANDOM->init();						//랜덤매니져 초기화
 	IMAGEMANAGER->init();				//이미지매니져 초기화
@@ -49,6 +51,20 @@ void gameNode::release()
 	//타임매니저 해제
 	TIMEMANAGER->release();
 	TIMEMANAGER->releaseSingleton();
+	//플레이어 해제
+	PLAYER->release();
+	PLAYER->releaseSingleton();
+	//카메라매니저 해제
+	CAMERAMANAGER->release();
+	CAMERAMANAGER->releaseSingleton();
+	//이펙트매니저 해제
+	EFFECTMANAGER->release();
+	EFFECTMANAGER->releaseSingleton();
+	//아이템메뉴 해제
+	ITEMMENU->release();
+	ITEMMENU->releaseSingleton();
+	
+
 
 	//HDC 해제
 	ReleaseDC(_hWnd, _hdc);

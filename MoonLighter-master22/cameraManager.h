@@ -114,6 +114,7 @@ public:
 
 	HRESULT init(float pivotX, float pivotY, float maxX, float maxY, float minX, float minY, float disX, float disY);
 	void update(float pivotX, float  pivotY);
+	void release();
 
 	void Rectangle(HDC hdc, RECT rc);
 	void Rectangle(HDC hdc, int left, int top, int width, int height);

@@ -18,11 +18,6 @@ HRESULT PotionShopNpc::init(tagPosF pos, string key)
 
 	_speed = 1.0f;
 
-	_target[0] = tagPosF(pos.x + 80, pos.y + 80);
-	_target[1] = tagPosF(pos.x - 80, pos.y + 80);
-	_target[2] = tagPosF(pos.x + 80, pos.y - 80);
-	_target[3] = tagPosF(pos.x - 80, pos.y - 0);
-
 	_stop = false;
 	_state = NPC_MOVE;
 
@@ -47,6 +42,7 @@ void PotionShopNpc::update()
 	anim(); // 각도에 따라 애니메이션을 변경하는 함수
 
 	RECT tmp;
+
 	if (IntersectRect(&tmp, &PLAYER->getRect(), &_rc))
 		boxAnim();
 	else
@@ -72,12 +68,12 @@ void PotionShopNpc::render()
 	{
 
 		_aniNpc->aniStop();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1), _pos.x, _pos.y);
 	}
 	else {
 
 		if (_aniNpc->getAniState() == ANIMATION_END) _aniNpc->aniRestart();
-		_aniNpc->ZoderRender(_pos.y + IMAGEMANAGER->findImage(_key)->getFrameHeight() / 2, _pos.x, _pos.y);
+		_aniNpc->ZoderRender(_pos.y + (IMAGEMANAGER->findImage(_key)->getFrameHeight() >> 1), _pos.x, _pos.y);
 	}
 
 	ShadowPosRender();
@@ -103,7 +99,6 @@ void PotionShopNpc::action(string talk)
 		{
 				_Istalk = true;
 				_stop = true;
-				lookPlayer();
 		}
 	}
 

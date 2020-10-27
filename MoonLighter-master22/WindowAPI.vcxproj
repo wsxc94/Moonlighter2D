@@ -156,6 +156,7 @@
     <ClInclude Include="bossLoading.h" />
     <ClInclude Include="calendar.h" />
     <ClInclude Include="cameraManager.h" />
+    <ClInclude Include="Cloud.h" />
     <ClInclude Include="commonMacroFunction.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="damageFont.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="bossSkeleton.cpp" />
     <ClCompile Include="calendar.cpp" />
     <ClCompile Include="cameraManager.cpp" />
+    <ClCompile Include="Cloud.cpp" />
     <ClCompile Include="cursor.cpp" />
     <ClCompile Include="damageFont.cpp" />
     <ClCompile Include="effectManager.cpp" />

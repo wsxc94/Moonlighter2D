@@ -52,7 +52,7 @@ public:
 	void setY(float y) { _y = y; }
 	void setAlpha(int alpha) { _alpha = alpha; }
 
-	bool getIsShoot() { return _isShoot; }
+	bool& getIsShoot() { return _isShoot; }
 	void setIsShoot(bool value);
 
 };
