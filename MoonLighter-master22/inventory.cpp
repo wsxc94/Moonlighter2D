@@ -4,13 +4,13 @@
 HRESULT inventory::init()
 {
 	//클래스 초기화 
-	_itemManager = new itemManager;
+	_itemManager = make_unique<itemManager>();
 	_itemManager->init();
 
-	_cursor = new cursor;
+	_cursor = make_unique<cursor>();
 	_cursor->init();
 
-	_selectMenu = new selectMenu;
+	_selectMenu = make_unique<selectMenu>();
 	_selectMenu->init();
 
 	//인벤토리메뉴 위치 초기화 
@@ -45,13 +45,11 @@ HRESULT inventory::init()
 void inventory::release()
 {
 	_itemManager->release();
-	SAFE_DELETE(_itemManager);
 
 	_cursor->release();
-	SAFE_DELETE(_cursor);
 
 	_selectMenu->release();
-	SAFE_DELETE(_selectMenu);
+	
 }
 
 void inventory::update()
@@ -119,7 +117,7 @@ void inventory::render(HDC hdc)
 
 }
 
-itemManager * inventory::getItemManager()
+unique_ptr<itemManager>& inventory::getItemManager()
 {
 	return _itemManager;
 }

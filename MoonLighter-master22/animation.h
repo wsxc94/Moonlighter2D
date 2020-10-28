@@ -25,8 +25,7 @@ private:
 	bool		_isArray;				// 배열이냐?
 	RECT        _rc;                    // 좌표
 	string      _key;                   // 키값
-
-
+ 
 public:
 	animation() {}
 	~animation() {}

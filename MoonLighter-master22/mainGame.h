@@ -20,7 +20,6 @@
 class mainGame : public gameNode
 {
 private:
-	itemMenu* _itemMenu;
 	HFONT hFont;
 	HFONT oldFont;
 

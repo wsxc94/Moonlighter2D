@@ -72,6 +72,7 @@ struct tagZoderRender
 		y = _y;
 		frameX = frameY = sourX = sourY = sourWid = sourHei = alpha = angle = scale = alpha = format = NULL;
 	}
+
 };
 
 class cameraManager : public singletonBase<cameraManager>
@@ -96,7 +97,7 @@ private:
 
 	tagFadeInfo _fadeInfo;
 
-	vector<tagZoderRender*> _vZoderRender;
+	vector<tagZoderRender> _vZoderRender;
 public:
 	cameraManager() {
 		_cameraRect = { 0,0,0,0 };
@@ -161,9 +162,9 @@ public:
 	void FadeRender(HDC hdc);
 	bool& getFadeIsStart() { return _fadeInfo.isStart; }
 
-	void ZorderSort();
+	inline void ZorderSort();
 	void ZorderTotalRender(HDC hdc);
-	static bool ZordorCompare(const tagZoderRender* z1, const tagZoderRender* z2);
+	static bool ZordorCompare(const tagZoderRender& z1, const tagZoderRender& z2);
 	void Sort(int left, int right);
 
 

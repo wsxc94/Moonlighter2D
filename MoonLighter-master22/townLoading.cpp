@@ -3,7 +3,7 @@
 
 HRESULT townLoading::init()
 {
-	_loading = new loading;
+	_loading = make_unique<loading>();
 	_loading->init();
 
 	this->loadingImage();
@@ -19,7 +19,6 @@ void townLoading::release()
 	if (_loading)
 	{
 		_loading->release();
-		SAFE_DELETE(_loading);
 	}
 }
 

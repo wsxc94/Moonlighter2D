@@ -35,7 +35,7 @@ HRESULT shopScene::init()
 {
 	//클래스 초기화
 
-	_displayStand = new displayStand;
+	_displayStand = new displayStand();
 	_displayStand->init();
 
 	_npc = new ShopNpcManager;
@@ -94,14 +94,15 @@ HRESULT shopScene::init()
 
 void shopScene::release()
 {
-	/*_npc->release();
+	_npc->release();
+
 	SAFE_DELETE(_npc);
 	SAFE_DELETE(_cashRegister);
 	SAFE_DELETE(_button);
 	SAFE_DELETE(_door);
 
 	_displayStand->release();
-	SAFE_DELETE(_displayStand);*/
+	SAFE_DELETE(_displayStand);
 }
 
 void shopScene::update()

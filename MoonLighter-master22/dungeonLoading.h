@@ -5,7 +5,7 @@
 class dungeonLoading : public gameNode
 {
 private:
-	loading* _loading;
+	unique_ptr<loading> _loading;
 public:
 	dungeonLoading() : _loading(nullptr) {}
 	~dungeonLoading() {}

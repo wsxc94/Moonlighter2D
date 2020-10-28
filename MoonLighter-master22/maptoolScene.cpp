@@ -80,7 +80,6 @@ HRESULT maptoolScene::init()
 
 void maptoolScene::release()
 {
-
 }
 
 void maptoolScene::update()
