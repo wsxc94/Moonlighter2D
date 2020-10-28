@@ -52,6 +52,11 @@ HRESULT displayStand::init()
 
 void displayStand::release()
 {
+	for (int i = 0; i < _vShopInven.size(); i++)
+	{
+		SAFE_DELETE(_vShopInven[i]);
+	}
+
 	//_cursor->release();
 	//SAFE_DELETE(_cursor);
 }
