@@ -576,36 +576,22 @@ void inventory::initItem()
 				_vInven.push_back(item);
 				break;
 			}
-			else if(item->getItemIdx() == RICHJELLY_IDX)
+			else
 			{
 				_invenSlot[j].isEmpty = false;
 				item->setInvenPosIdx(j);
 				_vInven.push_back(item);
 				break;
 			}
-			else if (item->getItemIdx() == VENOMJELLY_IDX)
-			{
-				_invenSlot[j].isEmpty = false;
-				item->setInvenPosIdx(j);
-				_vInven.push_back(item);
-				break;
-			}
-			//else
-			//{
-			//	_invenSlot[j].isEmpty = false;
-			//	item->setInvenPosIdx(j);
-			//	_vInven.push_back(item);
-			//	break;
-			//}
 		}
 	}
 
 	_vInven[RICHJELLY_IDX]->setCount(5);
 	_vInven[VENOMJELLY_IDX]->setCount(10);
-	//_vInven[CRYSTAL_IDX]->setCount(5);
-	//_vInven[VINE_IDX]->setCount(10);
-	//_vInven[POTION1_IDX]->setCount(5);
-//	_vInven[POTION2_IDX]->setCount(5);
+	_vInven[CRYSTAL_IDX]->setCount(5);
+	_vInven[VINE_IDX]->setCount(10);
+	_vInven[POTION1_IDX]->setCount(5);
+	_vInven[POTION2_IDX]->setCount(5);
 }
 
 bool inventory::addItemToInven(gameItem item)

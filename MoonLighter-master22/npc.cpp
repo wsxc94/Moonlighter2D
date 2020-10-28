@@ -613,6 +613,7 @@ void npc::PriceCheckAnim()
 void npc::ItemGet()
 {
 	_state = NPC_ITEM_PICK; 
+
 	_peekItemImg = new image;
 
 	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
