@@ -613,6 +613,9 @@ void npc::PriceCheckAnim()
 void npc::ItemGet()
 {
 	_state = NPC_ITEM_PICK;
+
+	cout << "itemGet" << endl;
+
 	_peekItemImg = new image;
 	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
 	_peekItemCnt = _displayStand->getDisplayItem()[shop_targetIdx].getCount();
