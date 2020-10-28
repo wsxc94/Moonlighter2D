@@ -4,7 +4,7 @@
 class shopLoading : public gameNode
 {
 private:
-	loading* _loading;
+	unique_ptr<loading> _loading;
 
 public:
 	shopLoading() :_loading(nullptr) {}

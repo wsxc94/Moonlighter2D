@@ -3,7 +3,7 @@
 
 HRESULT bossLoading::init()
 {
-	_loading = new loading;
+	_loading = make_unique<loading>();
 	_loading->init();
 
 	this->loadImage();
@@ -18,7 +18,6 @@ void bossLoading::release()
 	if (_loading)
 	{
 		_loading->release();
-		SAFE_DELETE(_loading);
 	}
 }
 

@@ -53,9 +53,9 @@ private:
 	viInven _viInven;
 
 private:
-	itemManager *_itemManager;				//아이템 매니저 클래스 
-	selectMenu *_selectMenu;				//선택메뉴 클래스 
-	cursor *_cursor;						//커서 클래스 
+	unique_ptr<itemManager> _itemManager;				//아이템 매니저 클래스 
+	unique_ptr<selectMenu> _selectMenu;				//선택메뉴 클래스 
+	unique_ptr<cursor> _cursor;						//커서 클래스 
 
 	gameItem _tempItem;						//임시 게임아이템 구조체 
 	gameItem _itemEmpty;					//비어있는 아이템 구조체 
@@ -84,8 +84,8 @@ public:
 
 	//get함수 
 	vector<gameItem*> getItem() { return _vInven; }		//인벤토리 아이템 반환 
-	itemManager* getItemManager();						//아이템매니저 클래스 반환 
-	cursor *getCursor() { return _cursor; }				//인벤토리 커서 반환 
+	unique_ptr<itemManager>& getItemManager();						//아이템매니저 클래스 반환 
+	unique_ptr<cursor>& getCursor() { return _cursor; }				//인벤토리 커서 반환 
 	int getWeaponIdx() { return _curWeaponIdx; }		//현재의 무기인덱스 값을 반환 
 	int getMaxItemSlot() { return MAXITEMSLOT; }		//인벤토리에 소지 가능한 최대 아이템 개수 반환 
 	int getCurItemCount();								//현재 인벤토리에 소지하고 있는 아이템 수 반환

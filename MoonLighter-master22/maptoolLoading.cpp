@@ -4,7 +4,7 @@
 HRESULT maptoolLoading::init()
 {
 	//로딩클래스 초기화
-	_loading = new loading;
+	_loading = make_unique<loading>();
 	_loading->init();
 
 	//로딩 이미지 및 사운드 초기화
@@ -20,7 +20,6 @@ void maptoolLoading::release()
 	if (_loading)
 	{
 		_loading->release();
-		SAFE_DELETE(_loading);
 	}
 }
 
@@ -67,26 +66,6 @@ void maptoolLoading::loadingImage()
 	_loading->loadFrameImage("모리", "Images/npc/대머리아저씨 8 X 4.bmp", 400, 328, 8, 4); // 모리
 	_loading->loadFrameImage("레드먼드", "Images/npc/NPC_Irish_Dad(4x8).bmp", 512, 304, 8, 4); //레드먼드
 	_loading->loadFrameImage("원형탈모아저씨", "Images/npc/원형아저씨8X4.bmp", 352, 304, 8, 4);
-
-	/*_loading->loadFrameImage("빨랫줄집", "Images/맵툴/빨랫줄집.bmp", 7840, 181, 32, 1);
-	_loading->loadFrameImage("눈있는집", "Images/맵툴/눈있는집.bmp", 201, 200, 1, 1);
-	_loading->loadFrameImage("주인공집", "Images/맵툴/주인공집40.bmp", 9800, 200, 40, 1);
-	_loading->loadFrameImage("포션상점", "Images/맵툴/포션상점.bmp", 208, 264, 1, 1);
-	_loading->loadFrameImage("노란지붕집", "Images/맵툴/노란지붕집.bmp", 231, 210, 1, 1);
-	_loading->loadFrameImage("판자집", "Images/맵툴/판자집.bmp", 159, 209, 1, 1);
-	_loading->loadFrameImage("상점보자기", "Images/맵툴/상점보자기.bmp", 2774, 150, 40, 1);
-	_loading->loadFrameImage("던전돌", "Images/맵툴/던전돌.bmp", 35, 35, 1, 1);
-	_loading->loadFrameImage("던전돌2", "Images/맵툴/던전돌2.bmp", 35, 35, 1, 1);
-	_loading->loadFrameImage("던전돌3", "Images/맵툴/던전돌3.bmp", 35, 35, 1, 1);
-	_loading->loadFrameImage("던전돌4", "Images/맵툴/던전돌4.bmp", 35, 35, 1, 1);
-	_loading->loadFrameImage("던전돌5", "Images/맵툴/던전돌5.bmp", 35, 35, 1, 1);
-	_loading->loadFrameImage("나무뿌리", "Images/맵툴/나무뿌리.bmp", 105, 84, 1, 1);
-	_loading->loadFrameImage("나무뿌리2", "Images/맵툴/나무뿌리2.bmp", 84, 126, 1, 1);
-	_loading->loadFrameImage("던전텐트", "Images/맵툴/던전텐트.bmp", 280, 210, 1, 1);
-	_loading->loadFrameImage("던전책", "Images/맵툴/던전책.bmp", 35, 35, 1, 1);
-	_loading->loadFrameImage("던전의자", "Images/맵툴/던전의자.bmp", 70, 70, 1, 1);
-	_loading->loadFrameImage("던전통", "Images/맵툴/던전통.bmp", 35, 35, 1, 1);
-	_loading->loadFrameImage("던전보물상자", "Images/맵툴/던전보물상자14.bmp", 420, 38, 14, 1);*/
 
 	_loading->loadFrameImage("빨랫줄집", "Images/맵툴/빨랫줄집.bmp", 15680, 362, 32, 1);
 	_loading->loadFrameImage("눈있는집", "Images/맵툴/눈있는집.bmp", 304, 340, 1, 1);
@@ -165,12 +144,6 @@ void maptoolLoading::loadingImage()
 	
 	_loading->loadSound("맵툴브금", "Sound/shopBGM.mp3", true, true);
 	
-
-
-
-
-
-
 }
 
 void maptoolLoading::loadingSound()

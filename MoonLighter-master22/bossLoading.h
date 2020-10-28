@@ -4,7 +4,7 @@
 class bossLoading : public gameNode
 {
 private:
-	loading* _loading;
+	unique_ptr<loading> _loading;
 public:
 	bossLoading() : _loading(nullptr) {}
 	~bossLoading() {}

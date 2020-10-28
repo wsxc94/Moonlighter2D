@@ -6,7 +6,7 @@
 class townLoading : public gameNode
 {
 private:
-	loading* _loading;
+	unique_ptr<loading> _loading;
 public:
 	townLoading() :_loading(nullptr) {}
 	~townLoading() {}

@@ -6,7 +6,7 @@
 //=============================================================
 HRESULT gameNode::init()
 {
-	//_CrtSetBreakAlloc(276);
+	_CrtSetBreakAlloc(201);
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	_hdc = GetDC(_hWnd);				//HDC ¾ò±â

@@ -126,6 +126,12 @@ HRESULT loading::init()
 
 void loading::release()
 {
+	for (int i = 0; i < _vLoadItem.size(); i++)
+	{
+		SAFE_DELETE(_vLoadItem[i]);
+	}
+	_vLoadItem.clear();
+
 }
 
 void loading::update()

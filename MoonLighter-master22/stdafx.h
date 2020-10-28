@@ -38,6 +38,7 @@ using namespace std;
 #include <map>
 #include <unordered_map>
 #include <queue>
+#include <memory>
 
 //=============================================================
 //	## 내가 만든 헤더파일을 이곳에 추가한다 ##

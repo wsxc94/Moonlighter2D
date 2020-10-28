@@ -76,8 +76,8 @@ private:
 	vLoadItem _vLoadItem;
 
 	//이부분은 로딩화면에서 사용할 이미지와 로딩바
-	image* _background;
-	progressBar* _loadingBar;
+	/*image* _background;
+	progressBar* _loadingBar;*/
 	int _currentGauge;
 	int _count;
 	int r_index;

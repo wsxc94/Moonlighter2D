@@ -7,19 +7,19 @@ HRESULT itemMenu::init()
 	// 'Q(좌)' 'E(우)' 버튼을 눌러서 메뉴 이동 
 
 	//클래스 초기화 
-	_calendar = new calendar;
+	_calendar = make_unique<calendar>();
 	_calendar->init();
 
-	_wishList = new wishList;
+	_wishList = make_unique<wishList>();
 	_wishList->init();
 
-	_inventory = new inventory;
+	_inventory = make_unique<inventory>();
 	_inventory->init();
 
-	_noteBook = new noteBook;
+	_noteBook = make_unique<noteBook>();
 	_noteBook->init();
 
-	_fadeManager = new fadeManager;
+	_fadeManager = make_unique<fadeManager>();
 	_fadeManager->init();
 
 	//메뉴 위치 초기화 
@@ -57,19 +57,19 @@ HRESULT itemMenu::init()
 void itemMenu::release()
 {
 	_calendar->release();
-	SAFE_DELETE(_calendar);
+	//SAFE_DELETE(_calendar);
 
 	_wishList->release();
-	SAFE_DELETE(_wishList);
+	//SAFE_DELETE(_wishList);
 
 	_inventory->release();
-	SAFE_DELETE(_inventory);
+	//SAFE_DELETE(_inventory);
 
 	_noteBook->release();
-	SAFE_DELETE(_noteBook);
+	//SAFE_DELETE(_noteBook);
 
 	_fadeManager->release();
-	SAFE_DELETE(_fadeManager);
+	//SAFE_DELETE(_fadeManager);
 }
 
 void itemMenu::update()

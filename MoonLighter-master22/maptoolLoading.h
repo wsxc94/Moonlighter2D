@@ -6,7 +6,7 @@
 class maptoolLoading : public gameNode
 {
 private:
-	loading* _loading;
+	unique_ptr<loading> _loading;
 
 public:
 	maptoolLoading() : _loading(nullptr) {}

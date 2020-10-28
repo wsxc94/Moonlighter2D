@@ -31,12 +31,18 @@ enum CTRL_MENU
 class itemMenu : public singletonBase <itemMenu>
 {
 private:
-	calendar *_calendar;		//캘린더 메뉴 클래스 
-	wishList *_wishList;		//위시리스트 메뉴 클래스 
-	inventory *_inventory;		//인벤토리 메뉴 클래스
-	noteBook *_noteBook;		//노트북 메뉴 클래스 
-	fadeManager *_fadeManager;	//페이드 매니져 클래스 
-	CTRL_MENU _ctrlState;		//현재 컨트롤러 상태 
+	//calendar *_calendar;		//캘린더 메뉴 클래스 
+	//wishList *_wishList;		//위시리스트 메뉴 클래스 
+	//inventory *_inventory;		//인벤토리 메뉴 클래스
+	//noteBook *_noteBook;		//노트북 메뉴 클래스 
+	//fadeManager *_fadeManager;	//페이드 매니져 클래스 
+	CTRL_MENU _ctrlState;		//현재 컨트롤러 상태
+
+	unique_ptr<calendar> _calendar;
+	unique_ptr<wishList> _wishList;
+	unique_ptr<inventory> _inventory;
+	unique_ptr<noteBook> _noteBook;
+	unique_ptr<fadeManager> _fadeManager;
 
 	POINT _tagPos;			//상단의 태그메뉴(캘린더부터 노트북까지 나열된 메뉴)의 위치 
 	int _tagIdx;			//상단의 태그메뉴 인덱스(컨트롤러에 맞추면 속도가 좀 느림) 
@@ -69,9 +75,9 @@ public:
 	void render(HDC hdc);
 
 	//get함수 
-	inventory *getInventory() { return _inventory; }						//인벤토리 클래스 가져오기 
-	itemManager *getItemManager() { return _inventory->getItemManager(); }	//아이템매니져 클래스 가져오기
-	fadeManager *getFadeManager() { return _fadeManager; }
+	unique_ptr<inventory>& getInventory() { return _inventory; }						//인벤토리 클래스 가져오기 
+	unique_ptr<itemManager>& getItemManager() { return _inventory->getItemManager(); }	//아이템매니져 클래스 가져오기
+	unique_ptr<fadeManager>& getFadeManager() { return _fadeManager; }
 	bool getInvenOn() { return _invenOn; }
 	int getMaxItemSlot() { return _inventory->getMaxItemSlot(); }	//소지 가능한 최대 아이템 개수 반환
 	bool getCanKeyInput() { return _canKeyInput; }					//아이템 메뉴 키 입력 받기변수 가져오기 
