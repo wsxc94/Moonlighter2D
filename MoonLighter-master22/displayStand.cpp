@@ -52,8 +52,11 @@ HRESULT displayStand::init()
 
 void displayStand::release()
 {
-	//_cursor->release();
-	//SAFE_DELETE(_cursor);
+	_fadeManager->release();
+	SAFE_DELETE(_fadeManager);
+
+	_cursor->release();
+	SAFE_DELETE(_cursor);
 }
 
 void displayStand::update()
