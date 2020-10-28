@@ -68,7 +68,7 @@ void potionShop::update()
 	_cursor->update();
 
 	//메뉴 열고 닫기 
-	toggleMenu();
+	//toggleMenu();
 	openMenu();
 	closeMenu();
 
