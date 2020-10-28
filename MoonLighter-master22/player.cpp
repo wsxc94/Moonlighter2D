@@ -55,7 +55,7 @@ HRESULT player::init()
 
 	_playerHp = PLAYERDATA->getInDungeonHp();
 
-	_arrow = new arrow;
+	_arrow = make_shared<arrow>();
 	_arrow->init();
 
 	_displayOn = false;
@@ -66,27 +66,6 @@ HRESULT player::init()
 void player::release()
 {
 	_arrow->release();
-
-	SAFE_DELETE(_arrow);
-	SAFE_DELETE(_aniTownIdle);
-	SAFE_DELETE(_aniTownRun);
-	SAFE_DELETE(_aniTownRoll);
-	SAFE_DELETE(_aniDgIdle);
-	SAFE_DELETE(_aniDgRun);
-	SAFE_DELETE(_aniDgRoll);
-	SAFE_DELETE(_aniFall);
-	SAFE_DELETE(_aniSword);
-	SAFE_DELETE(_aniSwordTwo);
-	SAFE_DELETE(_aniBow);
-	SAFE_DELETE(_aniDie);
-	SAFE_DELETE(_aniSwim);
-	SAFE_DELETE(_aniShiled);
-	SAFE_DELETE(_bowCharge);
-	SAFE_DELETE(_aniHit);
-	SAFE_DELETE(_aniRunHit);
-	SAFE_DELETE(_aniSwordHit);
-	SAFE_DELETE(_aniSwordTwoHit);
-	SAFE_DELETE(_aniDiePortal);
 	
 }
 
@@ -816,25 +795,25 @@ void player::imageInit()
 
 	IMAGEMANAGER->addFrameImage("대시이펙트", "Images/플레이어/roll_dust6X1.bmp", 240, 40, 6, 1);
 
-	_aniTownIdle = new ::animation;
-	_aniTownRun = new ::animation;
-	_aniTownRoll = new ::animation;
-	_aniDgIdle = new ::animation;
-	_aniDgRun = new ::animation;
-	_aniDgRoll = new ::animation;
-	_aniFall = new ::animation;
-	_aniSword = new ::animation;
-	_aniSwordTwo = new ::animation;
-	_aniShiled = new ::animation;
-	_bowCharge = new ::animation;
-	_aniBow = new ::animation;
-	_aniDie = new ::animation;
-	_aniSwim = new ::animation;
-	_aniHit = new ::animation;
-	_aniRunHit = new ::animation;
-	_aniSwordHit = new ::animation;
-	_aniSwordTwoHit = new ::animation;
-	_aniDiePortal = new ::animation;
+	_aniTownIdle = make_unique<::animation>();
+	_aniTownRun = make_unique<::animation>();
+	_aniTownRoll = make_unique<::animation>();
+	_aniDgIdle = make_unique<::animation>();
+	_aniDgRun = make_unique<::animation>();
+	_aniDgRoll = make_unique<::animation>();
+	_aniFall = make_unique<::animation>();
+	_aniSword = make_unique<::animation>();
+	_aniSwordTwo = make_unique<::animation>();
+	_aniBow = make_unique<::animation>();
+	_aniDie = make_unique<::animation>();
+	_aniSwim = make_unique<::animation>();
+	_aniShiled = make_unique<::animation>();
+	_bowCharge = make_unique<::animation>();
+	_aniHit = make_unique<::animation>();
+	_aniRunHit = make_unique<::animation>();
+	_aniSwordHit = make_unique<::animation>();
+	_aniSwordTwoHit = make_unique<::animation>();
+	_aniDiePortal = make_unique<::animation>();
 
 	_aniTownIdle->init(IMAGEMANAGER->findImage("idle"), 0, 7, true);
 	_aniTownRun->init(IMAGEMANAGER->findImage("달리기"), 0, 5, true);
@@ -868,7 +847,7 @@ void player::imageInit()
 	_aniDiePortal->aniStop();
 }
 
-::animation * player::getAnimation()
+unique_ptr<::animation> player::getAnimation()
 {
 	switch (_state)
 	{
@@ -891,7 +870,7 @@ void player::imageInit()
 	case PLAYER_TALK:
 		break;
 	case PLAYER_DIE:
-		return _aniDie;
+		return move(_aniDie);
 		break;
 	case PLAYER_DIE_PORTAL:
 		break;

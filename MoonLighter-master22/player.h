@@ -64,7 +64,7 @@ class player : public singletonBase <player>
 private:
 	vector<tagDamegeFont*> _damageFont;
 private:
-	arrow* _arrow;
+	shared_ptr<arrow> _arrow;
 
 	PLAYER_STATE _state;
 	PLACE _place;
@@ -109,28 +109,25 @@ private:
 	float _rollGravity;
 private:
 
-	animation* _aniTownIdle;
-	animation* _aniTownRun;
-	animation* _aniTownRoll;
-	animation* _aniDgIdle;
-	animation* _aniDgRun;
-	animation* _aniDgRoll;
-	animation* _aniFall;
-	animation* _aniSword;
-	animation* _aniSwordTwo;
-	animation* _aniBow;
-	animation* _aniDie;
-	animation* _aniSwim;
-	
-	animation* _aniShiled;
-	animation* _bowCharge;
-
-	animation* _aniHit;
-	animation* _aniRunHit;
-	animation* _aniSwordHit;
-	animation* _aniSwordTwoHit;
-
-	animation* _aniDiePortal;
+	unique_ptr<::animation> _aniTownIdle;
+	unique_ptr<::animation> _aniTownRun;
+	unique_ptr<::animation> _aniTownRoll;
+	unique_ptr<::animation> _aniDgIdle;
+	unique_ptr<::animation> _aniDgRun;
+	unique_ptr<::animation> _aniDgRoll;
+	unique_ptr<::animation> _aniFall;
+	unique_ptr<::animation> _aniSword;
+	unique_ptr<::animation> _aniSwordTwo;
+	unique_ptr<::animation> _aniBow;
+	unique_ptr<::animation> _aniDie;
+	unique_ptr<::animation> _aniSwim;
+	unique_ptr<::animation> _aniShiled;
+	unique_ptr<::animation> _bowCharge;
+	unique_ptr<::animation> _aniHit;
+	unique_ptr<::animation> _aniRunHit;
+	unique_ptr<::animation> _aniSwordHit;
+	unique_ptr<::animation> _aniSwordTwoHit;
+	unique_ptr<::animation> _aniDiePortal;
 
 public:
 	HRESULT init();
@@ -167,7 +164,7 @@ public:
 	RECT& getRect() { return _player.rc; }
 	RECT& getShadowRect() { return _player.shadowRc; }
 
-	arrow *getArrow() { return _arrow; }
+	shared_ptr<arrow> getArrow() { return _arrow; }
 
 	int getPlayerDirection() { return _player.direction; }
 	int getSpeed() { return _player.speed; }
@@ -201,9 +198,10 @@ public:
 	void setPlace(PLACE place) { _place = place; }
 	void setHit(bool isHit) { _isHit = isHit; }
 	void setPlayerDirection(int i) { _player.direction = i; }
-	::animation* getPlayerDGRoll() { return _aniDgRoll; }
+	unique_ptr<::animation> getPlayerDGRoll() { return move(_aniDgRoll); }
 	void playDgRoll() { _aniDgRoll->aniRestart(); }
-	::animation* getAnimation();
+	unique_ptr<::animation> getAnimation();
 
 };
+
 
