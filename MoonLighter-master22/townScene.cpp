@@ -83,10 +83,10 @@ void townScene::update()
 	}
 
 	//====================================================
-	//if (INPUT->GetKeyDown('G')) {
-	//	SOUNDMANAGER->stop("마을브금");
-	//	SCENEMANAGER->loadScene("던전로딩");
-	//}
+	if (INPUT->GetKeyDown('G')) {
+		SOUNDMANAGER->stop("마을브금");
+		SCENEMANAGER->loadScene("던전로딩");
+	}
 	//if (INPUT->GetKeyDown('H')) {
 	//	SOUNDMANAGER->stop("마을브금");
 	//	SCENEMANAGER->loadScene("보스로딩");

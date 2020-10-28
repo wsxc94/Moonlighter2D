@@ -58,6 +58,7 @@ void displayStand::release()
 	}
 
 	_fadeManager->release();
+
 	SAFE_DELETE(_fadeManager);
 
 	_cursor->release();

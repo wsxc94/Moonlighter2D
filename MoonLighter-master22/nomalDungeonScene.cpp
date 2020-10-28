@@ -12,6 +12,7 @@ HRESULT nomalDungeonScene::init()
 
 	//던전 업데이트 종류
 	_dState = DS_UPDATE;
+	
 	//던전층수
 	_dgFloor = 3;
 

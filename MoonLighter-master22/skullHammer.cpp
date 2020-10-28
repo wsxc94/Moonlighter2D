@@ -91,6 +91,7 @@ void skullHammer::update()
 		//에이스타
 		this->aStar();
 		//에이스타로 길찾은걸 기반으로 움직이기
+		if (!isAstarFail())
 		this->skullMove();
 		//공격범위안이면 공격
 		if (_isAttackRange)

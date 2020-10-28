@@ -90,6 +90,7 @@ void gasMan::update()
 		//에이스타
 		this->aStar();
 		// 무빙
+		if (!isAstarFail())
 		this->enemyMove();
 		// 에너미 보는방향
 		this->setEmDirection();
