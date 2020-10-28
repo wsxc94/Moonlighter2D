@@ -83,22 +83,22 @@ void townScene::update()
 	}
 
 	//====================================================
-	if (INPUT->GetKeyDown('G')) {
-		SOUNDMANAGER->stop("마을브금");
-		SCENEMANAGER->loadScene("던전로딩");
-	}
-	if (INPUT->GetKeyDown('H')) {
-		SOUNDMANAGER->stop("마을브금");
-		SCENEMANAGER->loadScene("보스로딩");
-	}
-	if (INPUT->GetKeyDown('P')) {
-		SOUNDMANAGER->stop("마을브금");
-		SCENEMANAGER->loadScene("상점로딩");
-	}
-	if (INPUT->GetKeyDown('U')) {
-		//SOUNDMANAGER->stop("마을브금");
-		SCENEMANAGER->loadScene("던전가는길");
-	}
+	//if (INPUT->GetKeyDown('G')) {
+	//	SOUNDMANAGER->stop("마을브금");
+	//	SCENEMANAGER->loadScene("던전로딩");
+	//}
+	//if (INPUT->GetKeyDown('H')) {
+	//	SOUNDMANAGER->stop("마을브금");
+	//	SCENEMANAGER->loadScene("보스로딩");
+	//}
+	//if (INPUT->GetKeyDown('P')) {
+	//	SOUNDMANAGER->stop("마을브금");
+	//	SCENEMANAGER->loadScene("상점로딩");
+	//}
+	//if (INPUT->GetKeyDown('U')) {
+	//	//SOUNDMANAGER->stop("마을브금");
+	//	SCENEMANAGER->loadScene("던전가는길");
+	//}
 
 	if (!_potal || (_potal->getPotalState() != POTAL_INIT &&
 		_potal->getPotalState() != POTAL_PLAYERIN &&

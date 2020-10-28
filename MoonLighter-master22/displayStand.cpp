@@ -398,9 +398,7 @@ gameItem displayStand::findItemByIdx(int index)
 		if (_vShopInven[i]->getPrice() == 0) return _itemEmpty;
 		else
 		{
-			gameItem *item = new gameItem;
-			item->init(_vShopInven[i]);
-			return *item;
+			return *_vShopInven[i];
 		}
 	}
 

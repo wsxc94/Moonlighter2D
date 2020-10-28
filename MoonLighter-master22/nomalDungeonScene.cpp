@@ -13,7 +13,7 @@ HRESULT nomalDungeonScene::init()
 	//던전 업데이트 종류
 	_dState = DS_UPDATE;
 	//던전층수
-	_dgFloor = 1;
+	_dgFloor = 3;
 
 	_startDungeon = new DungeonMap(0, 0, 1);
 	_startDungeon->setCurrentFloor(_dgFloor);
@@ -416,10 +416,21 @@ void nomalDungeonScene::dungeonUpdate()
 			this->setNewFloor();
 		else if (_dgFloor == 3)
 		{
-			SCENEMANAGER->loadScene("보스로딩");
+
+			this->getInvenItem();
+			_aniBefore->init(IMAGEMANAGER->findImage("플레이어팬던트사용"), 0, 5);
+			_aniCenter->init(IMAGEMANAGER->findImage("potalUpdate"), 0, 5, true);
+			_dState = DS_RESULT;
+			_vEnemy = PLAYERDATA->getVEnemy();
+			_killEnemy = PLAYERDATA->getKillEnemy();
+			_resultKind = RESULT_PENDANT;
+
+			ITEMMENU->getInventory()->putGrabbingItem();
+			ITEMMENU->getInventory()->setitemGrabbed();
+			/*SCENEMANAGER->loadScene("보스로딩");
 			SOUNDMANAGER->stop("spaRoomBGM");
 			SOUNDMANAGER->stop("bossRoomBGM");
-			SOUNDMANAGER->stop("dungeonBGM");
+			SOUNDMANAGER->stop("dungeonBGM");*/
 		}
 			
 	}
