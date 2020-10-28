@@ -60,7 +60,7 @@ private:
 	DUNGEONDOOR _doorState;
 	DUNGEONKIND _dgKind;
 public:
-	DungeonMap(int x, int y);
+	DungeonMap(int x, int y, int floor);
 	~DungeonMap() {}
 
 	HRESULT init();

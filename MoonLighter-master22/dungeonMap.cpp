@@ -2,13 +2,41 @@
 #include "dungeonMap.h"
 #include "mapSaveLoad.h"
 
-DungeonMap::DungeonMap(int x, int y)
+//DungeonMap::DungeonMap(int x, int y)
+//{
+//	_itemManager = new itemManager;
+//	_itemManager->init();
+//	_x = x;
+//	_y = y;
+//	_fileName = "maptool/dungeon" + to_string(RANDOM->range(14) + 1);
+//	_backImg = "dungeonBack";
+//	_isCheck = false;
+//	_isClear = false;
+//	_leftDg = nullptr;
+//	_rightDg = nullptr;
+//	_topDg = nullptr;
+//	_bottomDg = nullptr;
+//	_leftDoor = nullptr;
+//	_rightDoor = nullptr;
+//	_topDoor = nullptr;
+//	_bottomDoor = nullptr;
+//	_checkLoadTile = false;
+//	_doorState = DOOR_OPEN;
+//	_dgKind = DG_NOMAL;
+//	_potal = nullptr;
+//	_test = RANDOM->range(1000);
+//}
+
+DungeonMap::DungeonMap(int x, int y, int floor)
 {
 	_itemManager = new itemManager;
 	_itemManager->init();
 	_x = x;
 	_y = y;
+	if(floor  <= 2)
 	_fileName = "maptool/dungeon" + to_string(RANDOM->range(14) + 1);
+	else if(floor == 3)
+	_fileName = "maptool/dungeon" + to_string(RANDOM->range(12) + 15);
 	_backImg = "dungeonBack";
 	_isCheck = false;
 	_isClear = false;
@@ -24,7 +52,7 @@ DungeonMap::DungeonMap(int x, int y)
 	_doorState = DOOR_OPEN;
 	_dgKind = DG_NOMAL;
 	_potal = nullptr;
-	_test = RANDOM->range(1000);
+	_floor = floor;
 }
 
 HRESULT DungeonMap::init()
@@ -118,19 +146,19 @@ void DungeonMap::render()
 
 void DungeonMap::setStartDungeon()
 {
-	_fileName = "maptool/dungeonstart";
+	_fileName = "maptool/dungeonStart";
 	_vMaps.push_back(this);
 	_mapSize = 3;
 
-	_leftDg = new DungeonMap(-1, 0);
+	_leftDg = new DungeonMap(-1, 0, _floor);
 	_vMaps.push_back(_leftDg);
 	this->setRandomMap(&_leftDg);
 
-	_rightDg = new DungeonMap(1, 0);
+	_rightDg = new DungeonMap(1, 0, _floor);
 	_vMaps.push_back( _rightDg);
 	this->setRandomMap(&_rightDg);
 
-	_topDg = new DungeonMap(0, -1);
+	_topDg = new DungeonMap(0, -1, _floor);
 	_vMaps.push_back( _topDg);
 	this->setRandomMap(&_topDg);
 
@@ -156,28 +184,28 @@ void DungeonMap::setRandomMap(DungeonMap ** map)
 
 	if (left == 1 && !isFindMap(PointMake(cur->_x - 1, cur->_y)))
 	{
-		cur->_leftDg = new DungeonMap(cur->_x - 1, cur->_y);
+		cur->_leftDg = new DungeonMap(cur->_x - 1, cur->_y,cur->_floor);
 		_vMaps.push_back(cur->_leftDg);
 		_mapSize--;
 		this->setRandomMap(&cur->_leftDg);
 	}
 	if (right == 1 && !isFindMap(PointMake(cur->_x + 1, cur->_y)))
 	{
-		cur->_rightDg = new DungeonMap(cur->_x + 1, cur->_y);
+		cur->_rightDg = new DungeonMap(cur->_x + 1, cur->_y, cur->_floor);
 		_vMaps.push_back(cur->_rightDg);
 		_mapSize--;
 		this->setRandomMap(&cur->_rightDg);
 	}
 	if (top == 1 && !isFindMap(PointMake(cur->_x, cur->_y - 1)))
 	{
-		cur->_topDg = new DungeonMap(cur->_x, cur->_y - 1);
+		cur->_topDg = new DungeonMap(cur->_x, cur->_y - 1, cur->_floor);
 		_vMaps.push_back(cur->_topDg);
 		_mapSize--;
 		this->setRandomMap(&cur->_topDg);
 	}
 	if (bottom == 1 && !isFindMap(PointMake(cur->_x, cur->_y + 1)))
 	{
-		cur->_bottomDg = new DungeonMap(cur->_x, cur->_y + 1);
+		cur->_bottomDg = new DungeonMap(cur->_x, cur->_y + 1, cur->_floor);
 		_vMaps.push_back(cur->_bottomDg);
 		_mapSize--;
 		this->setRandomMap(&cur->_bottomDg);
@@ -260,12 +288,12 @@ void DungeonMap::setBossMap(DungeonMap ** map, int percent)
 	{
 		if (!isFindMap(PointMake(cur->_x, cur->_y - 1)) && cur->_topDg == nullptr && RANDOM->range(percent) == 0)
 		{
-			cur->_topDg = new DungeonMap(cur->_x, cur->_y - 1);
+			cur->_topDg = new DungeonMap(cur->_x, cur->_y - 1, cur->_floor);
 			cur->_topDg->_backImg = "dungeonSpa";
 			cur->_topDg->_fileName = "maptool/dungeonStart";
 			cur->_topDg->_dgKind = DG_SPA;
 			_vMaps.push_back(cur->_topDg);
-			cur->_topDg->_topDg = new DungeonMap(cur->_x, cur->_y - 2);
+			cur->_topDg->_topDg = new DungeonMap(cur->_x, cur->_y - 2, cur->_floor);
 			cur->_topDg->_topDg->_backImg = "dungeonBack";
 			cur->_topDg->_topDg->_fileName = "maptool/dungeonStart";
 			cur->_topDg->_topDg->_dgKind = DG_SEMIBOSS;

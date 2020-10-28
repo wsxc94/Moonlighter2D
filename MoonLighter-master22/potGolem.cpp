@@ -239,10 +239,10 @@ void potGolem::aniRender()
 
 void potGolem::emDirectionUpdate()
 {
-	_attackRangeL = RectMake(_emRC.left - WINSIZEX, _emRC.top, WINSIZEX, 35);
-	_attackRangeR = RectMake(_emRC.right, _emRC.top, WINSIZEX, 35);
-	_attackRangeT = RectMake(_emRC.left, _emRC.top - WINSIZEY, 35, WINSIZEY);
-	_attackRangeB = RectMake(_emRC.left, _emRC.bottom, 35, WINSIZEY);
+	_attackRangeL = RectMake(_emRC.left - WINSIZEX, _emRC.top, WINSIZEX, 105);
+	_attackRangeR = RectMake(_emRC.right, _emRC.top, WINSIZEX, 105);
+	_attackRangeT = RectMake(_emRC.left, _emRC.top - WINSIZEY, 105, WINSIZEY);
+	_attackRangeB = RectMake(_emRC.left, _emRC.bottom, 105, WINSIZEY);
 }
 
 void potGolem::emBulletFire()
