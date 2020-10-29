@@ -9,6 +9,8 @@ HRESULT skullHammer::init(int x, int y)
 	_attackHit = new animation;
 	_die = new animation;
 
+	_emKind = EM_SKULLHAMMER;
+
 	_move->init(IMAGEMANAGER->findImage("해골전사"), 0, 6, true);
 	_moveHit->init(IMAGEMANAGER->findImage("해골전사피격"), 0, 6, true);
 	_attack->init(IMAGEMANAGER->findImage("해골공격"), 0, 6);
@@ -86,13 +88,15 @@ void skullHammer::update()
 	switch (_emState)
 	{
 	case EM_MOVE:
-		_move->update();
-		_moveHit->update();
-		//에이스타
-		this->aStar();
-		//에이스타로 길찾은걸 기반으로 움직이기
-		if (!isAstarFail())
-		this->skullMove();
+		
+			_move->update();
+			_moveHit->update();
+			//에이스타
+			this->aStar();
+			//에이스타로 길찾은걸 기반으로 움직이기
+			if (!isAstarFail())
+			this->skullMove();
+		
 		//공격범위안이면 공격
 		if (_isAttackRange)
 		{

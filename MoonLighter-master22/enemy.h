@@ -6,7 +6,7 @@
 
 enum ENEMYKIND			// 종류
 {
-	EM_GOLEM, EM_REDGOLEM, EM_POTGOLEM, EM_SKULLHAMMER, EM_BABYSLIME
+	EM_GOLEM, EM_REDGOLEM, EM_POTGOLEM, EM_SKULLHAMMER, EM_BABYSLIME , EM_BOSS_SKELETON
 };
 
 enum ENEMYSTATE			// 상태
@@ -339,6 +339,7 @@ public:
 class gasMan : public enemy
 {
 private:
+	int _attRange;
 	enum GASARROWDIRECTION
 	{
 		AR_UP, AR_DOWN, AR_LEFT, AR_RIGHT

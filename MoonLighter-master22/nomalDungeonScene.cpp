@@ -14,7 +14,7 @@ HRESULT nomalDungeonScene::init()
 	_dState = DS_UPDATE;
 	
 	//´øÀüÃþ¼ö
-	_dgFloor = 3;
+	_dgFloor = 1;
 
 	_startDungeon = new DungeonMap(0, 0, 1);
 	_startDungeon->setCurrentFloor(_dgFloor);

@@ -678,10 +678,10 @@ void npc::TalkInterfaceRender()
 		CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("npc¸»Ç³¼±"), _pos.x, _pos.y - 200);
 		CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key + _illustrator), _pos.x + 10, _pos.y - 220, 1, 1);
 
-		hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		/*hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		oldFont = (HFONT)SelectObject(getMemDC(), hFont);
-		DeleteObject(oldFont);
+		DeleteObject(oldFont);*/
 
 		SetTextColor(getMemDC(), RGB(67, 42, 10));
 		wsprintf(str, _name.c_str(), strlen(str));

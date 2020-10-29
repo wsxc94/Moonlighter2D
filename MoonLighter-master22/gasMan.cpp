@@ -59,6 +59,8 @@ HRESULT gasMan::init(int x, int y)
 	_emPlayerColi = false;
 	count = 0;
 
+	_attRange = 200;
+
 	return S_OK;
 }
 
@@ -283,19 +285,23 @@ void gasMan::aniRender()
 
 void gasMan::attackRangeUpdate()
 {
+	
+	if (!isAstarFail()) _attRange = 200;
+	else _attRange = 1000;
+
 	switch (_emDirection)
 	{
 	case EM_LEFT:
-		_attackRange = RectMakeCenter(_emRC.left - 100, (_emRC.bottom + _emRC.top) / 2 + 20, 200, 50);
+		_attackRange = RectMakeCenter(_emRC.left - 100, (_emRC.bottom + _emRC.top) / 2 + 20, _attRange, 50);
 		break;
 	case EM_RIGHT:
-		_attackRange = RectMakeCenter(_emRC.right + 100, (_emRC.bottom + _emRC.top) / 2 + 20, 200, 50);
+		_attackRange = RectMakeCenter(_emRC.right + 100, (_emRC.bottom + _emRC.top) / 2 + 20, _attRange, 50);
 		break;
 	case EM_TOP:
-		_attackRange = RectMakeCenter((_emRC.left + _emRC.right) / 2 + 10, _emRC.top - 100, 50, 200);
+		_attackRange = RectMakeCenter((_emRC.left + _emRC.right) / 2 + 10, _emRC.top - 100, 50, _attRange);
 		break;
 	case EM_BOTTOM:
-		_attackRange = RectMakeCenter((_emRC.left + _emRC.right) / 2 - 10, _emRC.bottom + 100, 50, 200);
+		_attackRange = RectMakeCenter((_emRC.left + _emRC.right) / 2 - 10, _emRC.bottom + 100, 50, _attRange);
 		break;
 	}
 }

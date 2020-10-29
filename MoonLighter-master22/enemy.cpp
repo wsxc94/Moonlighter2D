@@ -221,6 +221,10 @@ void enemy::isAttackRange(RECT rc)
 bool enemy::isAstarFail()
 {
 	if (!_endNode) return true;
+
+	if(_emKind != EM_BOSS_SKELETON && _emKind != EM_SKULLHAMMER)
+	if (getDistance(_x, _y, PLAYER->getX(), PLAYER->getY()) > 250) return true;
+
 	for (int i = 0; i < _rangeList.size(); i++)
 	{
 		POINT pt = { _endNode->centerX,_endNode->centerY };
