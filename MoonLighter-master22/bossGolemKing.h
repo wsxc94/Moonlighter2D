@@ -5,6 +5,7 @@
 #define ROCKDAMAGE 7
 #define FISTDAMAGE 15
 #define HANDDAMAGE 10
+#define BOSS_MAXHP 2000
 
 enum class GOLEMKINGSTATE
 {
@@ -94,6 +95,7 @@ private:
 
 	int _hp;									//체력	
 	int _attackCool;							//공격 쿨타임
+	int _patternCool;							//패턴 넘어갈 쿨
 	int _hitCount;
 
 	int* _itemIndex;			//아이템 인덱스

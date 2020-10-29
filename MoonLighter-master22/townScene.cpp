@@ -56,17 +56,14 @@ HRESULT townScene::init()
 
 void townScene::release()
 {
-	/*SAFE_DELETE(_aniPotalInit);
+	SAFE_DELETE(_aniPotalInit);
 	
 	_npcManager->release();
 	SAFE_DELETE(_npcManager);
 	
-	_potionShop->release();
-	SAFE_DELETE(_potionShop);
-	
 	for (int i = 0; i < _objManager.size(); i++) {
 		SAFE_DELETE(_objManager[i]);
-	}*/
+	}
 }
 
 void townScene::update()
@@ -87,10 +84,10 @@ void townScene::update()
 		SOUNDMANAGER->stop("마을브금");
 		SCENEMANAGER->loadScene("던전로딩");
 	}
-	//if (INPUT->GetKeyDown('H')) {
-	//	SOUNDMANAGER->stop("마을브금");
-	//	SCENEMANAGER->loadScene("보스로딩");
-	//}
+	if (INPUT->GetKeyDown('H')) {
+		SOUNDMANAGER->stop("마을브금");
+		SCENEMANAGER->loadScene("보스로딩");
+	}
 	//if (INPUT->GetKeyDown('P')) {
 	//	SOUNDMANAGER->stop("마을브금");
 	//	SCENEMANAGER->loadScene("상점로딩");

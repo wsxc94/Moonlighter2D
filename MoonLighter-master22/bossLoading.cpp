@@ -39,7 +39,7 @@ void bossLoading::render()
 void bossLoading::loadImage()
 {
 	//보스방 배경
-	_loading->loadImage("bossRoomBack", "Images/보스/bossRoom .bmp", 1024, 839);
+	_loading->loadImage("bossRoomBack", "Images/보스/bossRoom .bmp", 2048, 1678);
 
 	//보스이미지
 	_loading->loadFrameImage("bossUp", "Images/보스/BossUp32 .bmp", 5600, 175, 32, 1);

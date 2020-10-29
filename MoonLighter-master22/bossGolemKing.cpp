@@ -57,14 +57,15 @@ HRESULT bossGolemKing::init(int x, int y)
 
 	//체력바
 	_hpRed = new progressBar;
-	_hpRed->init("semiBossHpBarFront(red)", "semiBossHpBarBack", 1000);
+	_hpRed->init("semiBossHpBarFront(red)", "semiBossHpBarBack", BOSS_MAXHP);
 	_hpWhite = new progressBar;
-	_hpWhite->init("semiBossHpBarFront(white)", "semiBossHpBarBack", 1000);
+	_hpWhite->init("semiBossHpBarFront(white)", "semiBossHpBarBack", BOSS_MAXHP);
 	_hpBar = _hpRed;
 
 
 	_hp = 0;
 	_attackCool = RANDOM->range(150,300);
+	_patternCool = 150;
 
 
 	_golemState = GOLEMKINGSTATE::BS_INIT;
@@ -129,6 +130,8 @@ void bossGolemKing::update()
 	{
 		this->changeAniState(GOLEMANISTATE::ANI_DEAD1);
 		_golemState = GOLEMKINGSTATE::BS_DEAD;
+		_vRock.clear();
+
 	}
 	//충돌처리
 	this->collisionPlayer();
@@ -138,10 +141,10 @@ void bossGolemKing::update()
 	switch (_golemState)
 	{
 	case GOLEMKINGSTATE::BS_INIT:
-		_hp += 5;
-		if (_hp > 1000)
+		_hp += 10;
+		if (_hp > BOSS_MAXHP)
 		{
-			_hp = 1000;
+			_hp = BOSS_MAXHP;
 			_golemState = GOLEMKINGSTATE::BS_IDLE;
 			CAMERAMANAGER->ChangePivot(PLAYER->getX(), PLAYER->getY(), 20);
 		}
@@ -164,8 +167,13 @@ void bossGolemKing::update()
 				_golemState = GOLEMKINGSTATE::BS_ROCK_ROUND;
 			else
 			{
-				_golemState = GOLEMKINGSTATE::BS_FIST;
-				this->changeAniState(GOLEMANISTATE::ANI_FISTSHOOT1);
+				if (_patternCool >= 0)
+					_patternCool--;
+				else
+				{
+					_golemState = GOLEMKINGSTATE::BS_FIST;
+					this->changeAniState(GOLEMANISTATE::ANI_FISTSHOOT1);
+				}
 			}
 			break;
 		case BOSSPATTERN::PATTERN2:
@@ -173,8 +181,13 @@ void bossGolemKing::update()
 				_golemState = GOLEMKINGSTATE::BS_ROCK_SHOOT;
 			else
 			{
+				if (_patternCool >= 0)
+					_patternCool--;
+				else
+				{
 				_golemState = GOLEMKINGSTATE::BS_FIST;
 				this->changeAniState(GOLEMANISTATE::ANI_FISTSHOOT1);
+				}
 			}
 			break;
 		case BOSSPATTERN::PATTERN3:
@@ -182,8 +195,13 @@ void bossGolemKing::update()
 				_golemState = GOLEMKINGSTATE::BS_ROCK_ROUND;
 			else
 			{
-				_golemState = GOLEMKINGSTATE::BS_HAND;
-				this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
+				if (_patternCool >= 0)
+					_patternCool--;
+				else
+				{
+					_golemState = GOLEMKINGSTATE::BS_HAND;
+					this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
+				}
 			}
 			break;
 		case BOSSPATTERN::PATTERN4:
@@ -191,8 +209,13 @@ void bossGolemKing::update()
 				_golemState = GOLEMKINGSTATE::BS_ROCK_SHOOT;
 			else
 			{
-				_golemState = GOLEMKINGSTATE::BS_HAND;
-				this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
+				if (_patternCool >= 0)
+					_patternCool--;
+				else
+				{
+					_golemState = GOLEMKINGSTATE::BS_HAND;
+					this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTSTART);
+				}
 			}
 			break;
 		case BOSSPATTERN::EMPTY:
@@ -355,6 +378,7 @@ void bossGolemKing::initAttack()
 	
 	_isFirst = true;
 	_attackCool = RANDOM->range(150, 300);
+	_patternCool = 150;
 	_pattern = _vGolemAttack.back();
 	_isAttackSoundPlay = false;
 
@@ -578,6 +602,7 @@ void bossGolemKing::bsFistUpdate()
 			_pattern = BOSSPATTERN::EMPTY;
 			_golemAni = GOLEMANISTATE::ANI_IDLE;
 			_golemState = GOLEMKINGSTATE::BS_IDLE;
+			_vRock.clear();
 		}
 	}
 	
@@ -598,9 +623,9 @@ void bossGolemKing::bsRockShootUpdate()
 			tagRock _rock;
 			_rock.img = IMAGEMANAGER->findImage(str);
 			if(p == 0)
-			_rock.x = _x - 300 + cosf(angle) * (40 * i);
+			_rock.x = _x - 500 + cosf(angle) * (40 * i);
 			else
-				_rock.x = _x + 300 + cosf(angle) * (40 * i);
+				_rock.x = _x + 500 + cosf(angle) * (40 * i);
 			_rock.y = _y - sinf(angle) * (40 * i);
 			_rock.hight = -100;
 			_rock.time = 0;
@@ -619,9 +644,9 @@ void bossGolemKing::bsRockRoundUpdate()
 {
 	for (int p = 1; p <= 2; p++)
 	{
-		for (int i = 0; i <= 20; i++)
+		for (int i = 0; i <= 20 * p; i++)
 		{
-			float angle = PI / 20;
+			float angle = PI / (20 * p);
 			string str = "bossRock" + to_string(RANDOM->range(4));
 			tagRock _rock;
 			_rock.img = IMAGEMANAGER->findImage(str);
@@ -692,8 +717,8 @@ void bossGolemKing::bsHandUpdate()
 		if (dist > 0.5f)
 		{
 			//따라가는 속도
-			_golemHand.x += cosf(angle) * 2.5f;
-			_golemHand.y -= sinf(angle) * 2.5f;
+			_golemHand.x += cosf(angle) * 4.f;
+			_golemHand.y -= sinf(angle) * 4.f;
 		}
 		//일정시간 지나면 떨구자
 		_golemHand.count--;
@@ -761,6 +786,7 @@ void bossGolemKing::bsHandUpdate()
 					_pattern = BOSSPATTERN::EMPTY;
 					_golemAni = GOLEMANISTATE::ANI_IDLE;
 					_golemState = GOLEMKINGSTATE::BS_IDLE;
+					_vRock.clear();
 				}
 			}
 			

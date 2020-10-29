@@ -200,7 +200,8 @@ public:
 	void setPlayerDirection(int i) { _player.direction = i; }
 	unique_ptr<::animation> getPlayerDGRoll() { return move(_aniDgRoll); }
 	void playDgRoll() { _aniDgRoll->aniRestart(); }
-	unique_ptr<::animation> getAnimation();
+
+	unique_ptr<::animation>& getAnimation();
 
 };
 

@@ -847,7 +847,7 @@ void player::imageInit()
 	_aniDiePortal->aniStop();
 }
 
-unique_ptr<::animation> player::getAnimation()
+unique_ptr<::animation>& player::getAnimation()
 {
 	switch (_state)
 	{
@@ -870,7 +870,7 @@ unique_ptr<::animation> player::getAnimation()
 	case PLAYER_TALK:
 		break;
 	case PLAYER_DIE:
-		return move(_aniDie);
+		return _aniDie;
 		break;
 	case PLAYER_DIE_PORTAL:
 		break;
@@ -887,6 +887,6 @@ unique_ptr<::animation> player::getAnimation()
 	case HIT_SWORD_TWO:
 		break;
 	}
-	return nullptr;
+	return _aniDgIdle;
 }
 
