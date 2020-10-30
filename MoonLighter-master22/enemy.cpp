@@ -3,7 +3,7 @@
 
 HRESULT enemy::init(int x, int y)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void enemy::release()
