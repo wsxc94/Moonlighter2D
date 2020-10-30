@@ -161,7 +161,7 @@ public:
 		ITEM type, int itemIdx, int hpValue, int atkValue, int defValue, int spdValue,
 		int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
 
-	void csvItemDataLoad();
+	void csvItemDataLoad(string path, CSVITEMTYPE _type);
 
 	//게임에 사용하는 아이템들 추가하는 함수 
 	void addGameItems();

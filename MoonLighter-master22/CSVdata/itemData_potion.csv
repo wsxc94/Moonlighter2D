@@ -1,0 +1,4 @@
+count,itemKey,nameKey,desKey,name,itemIdx,potionValue,cheapPrice,reasonablePrice,expensivePrice,outrageousPrice,maxCount
+int,string,string,string,string,int,int,int,int,int,int,int
+1,HP 물약Ⅰ,name_hpPotion1,des_hpPotion1,HP 물약Ⅰ,11,40,111,138,144,145,5
+2,HP 물약Ⅱ,name_hpPotion2,des_hpPotion2,HP 물약Ⅱ,12,75,719,880,920,921,5
