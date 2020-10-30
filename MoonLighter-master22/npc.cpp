@@ -84,7 +84,7 @@ HRESULT npc::init(tagPosF pos, string key)
 	_stop = false;
 	_state = NPC_MOVE;
 
-	_aniNpc = new animation;
+	_aniNpc = make_unique<animation>();
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
 
 	_isBarking = false;
@@ -122,7 +122,9 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 
 	_state = NPC_START;
 
-	_aniNpc = new animation;
+	_peekItemImg = new image;
+
+	_aniNpc = make_unique<animation>();
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
 
 	thinkInfo.clear();
@@ -132,8 +134,6 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 
 void npc::release()
 {
-	SAFE_DELETE(_aniNpc);
-	SAFE_DELETE(_aniPriceCheck);
 	SAFE_DELETE(_peekItemImg);
 	SAFE_DELETE(_displayStand);
 }
@@ -380,7 +380,7 @@ void npc::DistanceCheck()
 			{
 				if (thinkInfo == "싸다" || thinkInfo == "엄청싸다") {
 					_state = NPC_WAIT;
-					_aniPriceCheck = new animation;
+					_aniPriceCheck = make_unique<animation>();
 					_aniPriceCheck->init(IMAGEMANAGER->findImage("기다리는중"), 0, 10, true, false);
 				}
 				else {
@@ -556,22 +556,22 @@ void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 			switch (i) // 이거의 값에 따라 애니메이션 프레임 y 값을 정해줘야함., 사운드가 달라지게 해야함.
 			{
 			case 0: //많이 싸다
-				_aniPriceCheck = new animation;
+				_aniPriceCheck = make_unique<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청싸다"), 0, 15);
 				thinkInfo = "엄청싸다";
 				break;
 			case 1: //싸다
-				_aniPriceCheck = new animation;
+				_aniPriceCheck = make_unique<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("싸다"), 0, 15);
 				thinkInfo = "싸다";
 				break;
 			case 2: // 비싸다
-				_aniPriceCheck = new animation;
+				_aniPriceCheck = make_unique<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("비싸다"), 0, 15);
 				thinkInfo = "비싸다";
 				break;
 			case 3: default: // 존나비싸다
-				_aniPriceCheck = new animation;
+				_aniPriceCheck = make_unique<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청비싸다"), 0, 15);
 				thinkInfo = "엄청비싸다";
 				break;
@@ -581,7 +581,7 @@ void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 	}
 
 	if (thinkInfo == "") {
-		_aniPriceCheck = new animation;
+	    _aniPriceCheck = make_unique<animation>();;
 		_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청비싸다"), 0, 15);
 		thinkInfo = "엄청비싸다";
 	}
@@ -612,17 +612,17 @@ void npc::PriceCheckAnim()
 
 void npc::ItemGet()
 {
-	_state = NPC_ITEM_PICK;
-
-	cout << "itemGet" << endl;
+	_state = NPC_ITEM_PICK; 
 
 	_peekItemImg = new image;
+
 	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
 	_peekItemCnt = _displayStand->getDisplayItem()[shop_targetIdx].getCount();
 	_peekItemGold = _displayStand->getDisplayItem()[shop_targetIdx].getPrice();
 
 	// 여기서 좌판 아이템 정보 삭제 해야함.
 	_displayStand->deleteDisplayItem(shop_targetIdx);
+
 }
 
 void npc::ItemActive()
@@ -678,10 +678,10 @@ void npc::TalkInterfaceRender()
 		CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("npc말풍선"), _pos.x, _pos.y - 200);
 		CAMERAMANAGER->FrameRender(getMemDC(), IMAGEMANAGER->findImage(_key + _illustrator), _pos.x + 10, _pos.y - 220, 1, 1);
 
-		hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
+		/*hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET,
 			0, 0, 0, VARIABLE_PITCH | FF_ROMAN, TEXT("JejuGothic"));
 		oldFont = (HFONT)SelectObject(getMemDC(), hFont);
-		DeleteObject(oldFont);
+		DeleteObject(oldFont);*/
 
 		SetTextColor(getMemDC(), RGB(67, 42, 10));
 		wsprintf(str, _name.c_str(), strlen(str));

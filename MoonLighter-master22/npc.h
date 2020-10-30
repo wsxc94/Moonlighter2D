@@ -27,9 +27,10 @@ enum NPC_MAP // npc가 어디있는지 기본 = 마을
 class npc : public gameNode
 {
 protected:
-	animation* _aniNpc; // npc 애니메이션 변수
-	animation* _aniPriceCheck; // 이모티콘 애니메이션 변수
+	unique_ptr<animation> _aniNpc; // npc 애니메이션 변수
+	unique_ptr<animation> _aniPriceCheck; // 이모티콘 애니메이션 변수
 	image* _peekItemImg; // 현재 잡고 있는 아이템 이미지
+
 	int _peekItemGold;
 	int _peekItemCnt;
 	string thinkInfo; // 엄청싸다 싸다 비싸다 엄청비싸다

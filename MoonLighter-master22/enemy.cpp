@@ -3,7 +3,7 @@
 
 HRESULT enemy::init(int x, int y)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void enemy::release()
@@ -35,7 +35,18 @@ void enemy::initTileSize(int x, int y)
 		}
 	}
 
-	_startNode = nullptr;
+	for (int i = 0; i < _idy; i++)
+	{
+		for (int j = 0; j < _idx; j++)
+		{
+			POINT pt = { _x,_y };
+			if (PtInRect(&_totalNode[i][j].rc, pt))
+			{
+				_startNode = &_totalNode[i][j];
+			}
+		}
+	}
+
 	_endNode = nullptr;
 	_curNode = nullptr;
 	_count = -1;
@@ -47,7 +58,6 @@ void enemy::initTileSize(int x, int y)
 	_emPlayerColi = false;
 	_coliSkillAroow = false;
 	count = 0;
-
 }
 
 void enemy::setEndTile(int x, int y)
@@ -97,12 +107,13 @@ void enemy::setWallTile(vector<tagTile> vTile)
 		}
 
 	}
+	this->setRange(_startNode->idx, _startNode->idy);
 }
 
 void enemy::aStar()
 {
 	if (!_endNode) return;
-
+	if (this->isAstarFail())return;
 
 	_openList.clear();
 	_closeList.clear();
@@ -209,14 +220,34 @@ void enemy::isAttackRange(RECT rc)
 
 bool enemy::isAstarFail()
 {
-	for (int count = 0, x = 0; x < _idx; x++)
+	if (!_endNode) return true;
+
+	if(_emKind != EM_BOSS_SKELETON && _emKind != EM_SKULLHAMMER)
+	if (getDistance(_x, _y, PLAYER->getX(), PLAYER->getY()) > 250) return true;
+
+	for (int i = 0; i < _rangeList.size(); i++)
 	{
-		for (int y = 0; y < _idy; y++)   
-		{
-			if (_totalNode[y][x].nodeState != NODE_WALL) count++;
-		}
+		POINT pt = { _endNode->centerX,_endNode->centerY };
+		if (PtInRect(&_rangeList[i]->rc, pt))
+			return false;
 	}
-	return false;
+	return true;
+}
+
+void enemy::setRange(int x, int y)
+{
+ 	if (x < 0 || x >= _idx || y < 0 || y >= _idy) return;
+	if (_totalNode[y][x].nodeState == NODE_WALL) return;
+	if (_totalNode[y][x].isRange) return;
+	if (_totalNode[y][x].nodeState != NODE_WALL)
+	{
+		_totalNode[y][x].isRange = true;
+		_rangeList.push_back(&_totalNode[y][x]);
+	}
+	setRange(x + 1, y);
+	setRange(x - 1, y);
+	setRange(x, y+1);
+	setRange(x, y-1);
 }
 
 void enemy::collision()

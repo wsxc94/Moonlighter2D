@@ -233,9 +233,56 @@ void itemManager::addEquipmentItem(string itemKey, string nameKey, string desKey
 	_vItem.push_back(item);
 }
 
+void itemManager::csvItemDataLoad(string path , CSVITEMTYPE _type)
+{
+	FILE* fp = fopen(path.c_str(), "rt");
+
+	vector<string> column;
+	vector<string> DataType;
+
+	CSVData::parse(fp, column);
+	CSVData::parse(fp, DataType);
+
+	vector<string> Data;
+	int cnt = 1;
+	while (CSVData::parse(fp, Data))
+	{
+		::Item data;
+
+		data.FillData(Data , _type);
+
+		m_itemData.insert(make_pair(cnt, data));
+		cnt++;
+		Data.clear();
+	}
+
+	fclose(fp);
+
+	for (int i = 1; i <= m_itemData.size(); i++)
+	{
+		switch (_type)
+		{
+		case CSV_NOMAL:
+		    addNormalItem(m_itemData[i].getItemKey(), m_itemData[i].getNameKey(), m_itemData[i].getDesKey(), m_itemData[i].getName().c_str(), m_itemData[i].getItemIdx(), m_itemData[i].getCheapPrice(), m_itemData[i].getReasonablePrice(), m_itemData[i].getExpensivePrice(), m_itemData[i].getOutrageousPrice(), m_itemData[i].getMaxCount());
+			break;
+		case CSV_POTION:
+			addPotionItem(m_itemData[i].getItemKey(), m_itemData[i].getNameKey(), m_itemData[i].getDesKey(), m_itemData[i].getName().c_str(), m_itemData[i].getItemIdx(), m_itemData[i].getpotionValue(), m_itemData[i].getCheapPrice(), m_itemData[i].getReasonablePrice(), m_itemData[i].getExpensivePrice(), m_itemData[i].getOutrageousPrice(), m_itemData[i].getMaxCount());
+			break;
+		case CSV_WEAPON:
+			addEquipmentItem(m_itemData[i].getItemKey() , m_itemData[i].getNameKey() , m_itemData[i].getDesKey() , m_itemData[i].getName().c_str() , ITEM_WEAPON , m_itemData[i].getItemIdx() , m_itemData[i].gethpValue() , m_itemData[i].getatkValue() , m_itemData[i].getdefValue() , m_itemData[i].getspdValue() , m_itemData[i].getCheapPrice() , m_itemData[i].getReasonablePrice() , m_itemData[i].getExpensivePrice() , m_itemData[i].getOutrageousPrice() , m_itemData[i].getMaxCount());
+			break;
+		default:
+			break;
+		}
+	}
+	m_itemData.clear();
+	
+}
+
 //게임에 사용하는 아이템들 추가하는 함수 
 void itemManager::addGameItems()
 {
+<<<<<<< HEAD
 	////일반 아이템 추가
 	//addNormalItem("richJelly", "name_richJelly", "des_richJelly", "richJelly", RICHJELLY_IDX, 3, 6, 8, 9, 10);
 	//addNormalItem("venomJelly", "name_venomJelly", "des_venomJelly", "venomJelly", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
@@ -287,6 +334,12 @@ void itemManager::addGameItems()
 		"훈련용 활", ITEM_WEAPON, TRAININGBOW_IDX, 0, 15, 0, 0, 899, 1100, 1150, 1151, 1);
 	addEquipmentItem("훈련용 단검", "name_trainingShortSword", "des_trainingShortSword",
 		"훈련용 단검", ITEM_WEAPON, TRAININGSWORD_IDX, 0, 20, 0, 0, 899, 1100, 1150, 1151, 1);
+=======
+
+	csvItemDataLoad("CSVdata/itemData_nomal.csv" , CSVITEMTYPE::CSV_NOMAL);
+	csvItemDataLoad("CSVdata/itemData_potion.csv" , CSVITEMTYPE::CSV_POTION);
+    csvItemDataLoad("CSVdata/itemData_weapon.csv" , CSVITEMTYPE::CSV_WEAPON);
+>>>>>>> 9df8ee1c8e4c0204e4945b3bda511ee341819ded
 
 }
 

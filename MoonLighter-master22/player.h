@@ -106,7 +106,7 @@ private:
 	int _skillIndex;
 
 	float _rollJumpPower;
-	float _rollGravity;
+	float _rollAngle;
 private:
 
 	unique_ptr<::animation> _aniTownIdle;
@@ -151,7 +151,7 @@ public:
 	void playerPush();			//방패를 든채로 맞거나 화살을 쏠때 밀려나나
 	bool getKeyMove();			//wasd를 눌렀냐?
 	void arrowSkillSet();		//플레이어 스킬 차지
-
+	void setPlayerRoll();		//구르기 세팅
 
 	void imageInit();
 
@@ -186,7 +186,7 @@ public:
 	void setX(float x) { _player.x = x; }
 	void setY(float y) { _player.y = y; }
 	void setRollPower(float p) { _rollJumpPower = p; }
-	void setRollGravity(float g) { _rollGravity = g; }
+	void setRollGravity(float g) { _rollAngle = g; }
 	void setSkill(bool isSkill) { _isSkill = isSkill; }
 
 	tagPlayerAttackBox& getPlayerAttackBox() { return _playerAttackBox; }
@@ -200,7 +200,8 @@ public:
 	void setPlayerDirection(int i) { _player.direction = i; }
 	unique_ptr<::animation> getPlayerDGRoll() { return move(_aniDgRoll); }
 	void playDgRoll() { _aniDgRoll->aniRestart(); }
-	unique_ptr<::animation> getAnimation();
+
+	unique_ptr<::animation>& getAnimation();
 
 };
 

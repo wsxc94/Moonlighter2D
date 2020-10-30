@@ -1,0 +1,13 @@
+count,itemKey,nameKey,desKey,name,itemIdx,cheapPrice,reasonablePrice,expensivePrice,outrageousPrice,maxCount
+int,string,string,string,string,int,int,int,int,int,int
+1,«≥∫Œ«— ¡©∏Æ,name_richJelly,des_richJelly,«≥∫Œ«— ¡©∏Æ,0,3,6,8,9,10
+2,∏Õµ∂º∫ ¡©∏Æ,name_venomJelly,des_venomJelly,∏Õµ∂º∫ ¡©∏Æ,1,17,22,24,25,10
+3,∞≠»≠ ºˆ¡§,name_crystal,des_crystal,∞≠»≠ ºˆ¡§,2,89,110,115,116,5
+4,µ¢±º,name_vine,des_vine,µ¢±º,3,2,3,5,6,10
+5,¿Ãª°ºÆ,name_teethStone,des_teethStone,¿Ãª°ºÆ,4,3,6,8,9,10
+6,ª—∏Æ,name_root,des_root,ª—∏Æ,5,3,6,8,9,10
+7,ºË∏∑¥Î,name_ironBar,des_ironBar,ºË∏∑¥Î,6,21,28,30,31,10
+8,¡÷π∞ ¿‹«ÿ,name_foundryRests,des_foundryRests,¡÷π∞ ¿‹«ÿ,7,134,165,173,174,5
+9,∏¡∞°¡¯ ∞À,name_brokenSword,des_brokenSword,∏¡∞°¡¯ ∞À,8,134,165,173,174,5
+10,√µ,name_fabric,des_fabric,√µ,9,224,275,288,289,5
+11,∞Ê»≠ ∞≠√∂,name_hardenedSteel,des_hardenedSteel,∞Ê»≠ ∞≠√∂,10,269,330,345,346,5

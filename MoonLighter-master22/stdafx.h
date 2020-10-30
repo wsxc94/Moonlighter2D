@@ -13,7 +13,8 @@
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
 #include <crtdbg.h>
-
+#include <cstdio>
+#include <fstream>
 #ifdef _DEBUG
 #define new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 #endif
@@ -39,6 +40,7 @@ using namespace std;
 #include <unordered_map>
 #include <queue>
 #include <memory>
+#include <algorithm>
 
 //=============================================================
 //	## 내가 만든 헤더파일을 이곳에 추가한다 ##

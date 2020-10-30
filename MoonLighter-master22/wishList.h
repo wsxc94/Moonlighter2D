@@ -1,5 +1,4 @@
 #pragma once
-#include "item.h"
 #define WISHLISTPOSX	232
 #define WISHLISTPOSY	130
 

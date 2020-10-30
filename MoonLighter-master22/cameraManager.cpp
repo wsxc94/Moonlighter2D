@@ -427,6 +427,9 @@ void cameraManager::ZorderTotalRender(HDC hdc)
 {
 
 	Sort(0, _vZoderRender.size() - 1);
+
+	//sort(_vZoderRender.begin(), _vZoderRender.end() , ZordorCompare);
+
 	for (int i = _vZoderRender.size() - 1; i >= 0; i--)
 	{
 		switch (_vZoderRender[i].kind)

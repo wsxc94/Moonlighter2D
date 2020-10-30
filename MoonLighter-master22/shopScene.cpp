@@ -34,7 +34,6 @@ void shopScene::ItemPosSet()
 HRESULT shopScene::init()
 {
 	//클래스 초기화
-
 	_displayStand = new displayStand();
 	_displayStand->init();
 

@@ -97,6 +97,7 @@ HRESULT bossSkeleton::init(int x, int y)
 		_itemNum[i] = _itemIndex[RANDOM->range(_itemIndexSize)];
 	}
 
+	_emKind = EM_BOSS_SKELETON;
 
 	CAMERAMANAGER->FadeInit(50, FADE_IN);
 	CAMERAMANAGER->FadeStart();

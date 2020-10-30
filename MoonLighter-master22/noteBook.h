@@ -1,5 +1,4 @@
 #pragma once
-#include "item.h"
 #define NOTEBOOKPOSX	230
 #define NOTEBOOKPOSY	98
 

@@ -189,10 +189,14 @@ void bossDungeonScene::update()
 
 void bossDungeonScene::render()
 {
-	CAMERAMANAGER->StretchRender(getMemDC(), IMAGEMANAGER->findImage("bossRoomBack"), 1024, 839, 2.f);
+	//CAMERAMANAGER->StretchRender(getMemDC(), IMAGEMANAGER->findImage("bossRoomBack"), 1024, 839, 2.f);
+	CAMERAMANAGER->Render(getMemDC(), IMAGEMANAGER->findImage("bossRoomBack"), 0, 0);
+
 	CAMERAMANAGER->ZorderTotalRender(getMemDC());
-	if(_isPlayerRender)
+
+    if(_isPlayerRender)
 	PLAYER->render(getMemDC());
+
 	switch (_bsState)
 	{
 	case BS_INIT:case BS_UPDATE:

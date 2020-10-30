@@ -33,10 +33,21 @@ DungeonMap::DungeonMap(int x, int y, int floor)
 	_itemManager->init();
 	_x = x;
 	_y = y;
-	if(floor  <= 2)
-	_fileName = "maptool/dungeon" + to_string(RANDOM->range(14) + 1);
-	else if(floor == 3)
-	_fileName = "maptool/dungeon" + to_string(RANDOM->range(12) + 15);
+
+	switch (floor)
+	{
+	case 1:
+		_fileName = "maptool/dungeon" + to_string(RANDOM->range(14) + 1);
+		break;
+	case 2:
+		_fileName = "maptool/2Ãþ/dungeon" + to_string(RANDOM->range(24) + 15);
+		break;
+	case 3:
+		_fileName = "maptool/3Ãþ/dungeon" + to_string(RANDOM->range(24) + 39);
+		break;
+	default:
+		break;
+	}
 	_backImg = "dungeonBack";
 	_isCheck = false;
 	_isClear = false;
@@ -720,7 +731,7 @@ void DungeonMap::checkColiHole()
 		{
 			if (_vTile[i].tState == TS_HOLE)
 			{
-				if (PLAYER->getPlayerState() == PLAYER_RUN || PLAYER->getPlayerState() == HIT_RUN)
+				if (PLAYER->getPlayerState() == PLAYER_RUN || PLAYER->getPlayerState() == HIT_RUN || PLAYER->getPlayerState () == PLAYER_SHILED)
 				{
 					int wid = temp.right - temp.left;
 					int hei = temp.bottom - temp.top;

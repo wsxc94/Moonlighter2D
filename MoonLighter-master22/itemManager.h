@@ -1,4 +1,6 @@
 #pragma once
+#include "csvload.h"
+
 #define MAXITEM	16
 
 //아이템의 종류 
@@ -135,9 +137,11 @@ class itemManager
 private:
 	typedef vector<gameItem*> vItem;
 	typedef vector<gameItem*>::iterator viItem;
+	int _cnt;
 
 private:
 	vItem _vItem;
+	unordered_map<int, ::Item> m_itemData;
 
 public:
 	HRESULT init();
@@ -155,6 +159,8 @@ public:
 	void addEquipmentItem(string itemKey, string nameKey, string desKey, const char* name,
 		ITEM type, int itemIdx, int hpValue, int atkValue, int defValue, int spdValue,
 		int cheapPrice, int reasonablePrice, int expensivePrice, int outrageousPrice, int maxCount);
+
+	void csvItemDataLoad(string path, CSVITEMTYPE _type);
 
 	//게임에 사용하는 아이템들 추가하는 함수 
 	void addGameItems();

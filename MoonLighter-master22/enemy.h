@@ -6,7 +6,7 @@
 
 enum ENEMYKIND			// 종류
 {
-	EM_GOLEM, EM_REDGOLEM, EM_POTGOLEM, EM_SKULLHAMMER, EM_BABYSLIME
+	EM_GOLEM, EM_REDGOLEM, EM_POTGOLEM, EM_SKULLHAMMER, EM_BABYSLIME , EM_BOSS_SKELETON
 };
 
 enum ENEMYSTATE			// 상태
@@ -33,6 +33,7 @@ struct node
 	int idx, idy;
 	int centerX, centerY;
 	int F, G, H;
+	bool isRange;
 	node* parentNode;
 	NODESTATE nodeState;
 
@@ -44,6 +45,7 @@ struct node
 		centerX = (rc.left + rc.right) / 2;
 		centerY = (rc.top + rc.bottom) / 2;
 		F = G = H = 0;
+		isRange = false;
 		nodeState = NODE_EMPTY;
 		parentNode = NULL;
 	}
@@ -98,6 +100,7 @@ protected:
 	vector<node*> _openList;
 	vector<node*> _closeList;
 	vector<node*> _finalList;
+	vector<node*> _rangeList;
 
 	int _count;
 	bool _isFind;
@@ -117,6 +120,7 @@ public:
 	virtual void delOpenList(int arr);
 	virtual void isAttackRange(RECT rc);
 	virtual bool isAstarFail();
+	virtual void setRange(int x, int y);
 	virtual void collision();
 	virtual void soundUpdate();
 	void setProgressBar();
@@ -335,6 +339,7 @@ public:
 class gasMan : public enemy
 {
 private:
+	int _attRange;
 	enum GASARROWDIRECTION
 	{
 		AR_UP, AR_DOWN, AR_LEFT, AR_RIGHT

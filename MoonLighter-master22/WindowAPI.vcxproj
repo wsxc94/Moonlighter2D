@@ -119,7 +119,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -158,6 +158,7 @@
     <ClInclude Include="cameraManager.h" />
     <ClInclude Include="Cloud.h" />
     <ClInclude Include="commonMacroFunction.h" />
+    <ClInclude Include="csvload.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="damageFont.h" />
     <ClInclude Include="effectManager.h" />
@@ -241,7 +242,6 @@
     <ClCompile Include="iniData.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="inventory.cpp" />
-    <ClCompile Include="item.cpp" />
     <ClCompile Include="itemManager.cpp" />
     <ClCompile Include="itemMenu.cpp" />
     <ClCompile Include="itemMenuLoading.cpp" />

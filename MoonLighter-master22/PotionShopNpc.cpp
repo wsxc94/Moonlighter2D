@@ -21,7 +21,7 @@ HRESULT PotionShopNpc::init(tagPosF pos, string key)
 	_stop = false;
 	_state = NPC_MOVE;
 
-	_aniNpc = new animation;
+	_aniNpc = make_unique<animation>();
 	_aniNpc->init(IMAGEMANAGER->findImage(_key), 0, 7, true);
 
 	_isBarking = false;

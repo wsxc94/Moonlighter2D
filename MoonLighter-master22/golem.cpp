@@ -87,8 +87,10 @@ void golem::update()
 	case EM_MOVE:
 		_move->update();
 		_moveHit->update();
+
 		this->aStar();
 
+		if(!isAstarFail())
 		this->golemMove();
 
 		if (_isAttackRange)
