@@ -731,7 +731,7 @@ void DungeonMap::checkColiHole()
 		{
 			if (_vTile[i].tState == TS_HOLE)
 			{
-				if (PLAYER->getPlayerState() == PLAYER_RUN || PLAYER->getPlayerState() == HIT_RUN)
+				if (PLAYER->getPlayerState() == PLAYER_RUN || PLAYER->getPlayerState() == HIT_RUN || PLAYER->getPlayerState () == PLAYER_SHILED)
 				{
 					int wid = temp.right - temp.left;
 					int hei = temp.bottom - temp.top;

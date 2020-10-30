@@ -198,9 +198,6 @@
     <ClCompile Include="inventory.cpp">
       <Filter>GameFramework\아이템\inventory</Filter>
     </ClCompile>
-    <ClCompile Include="item.cpp">
-      <Filter>GameFramework\아이템\itemManager\item</Filter>
-    </ClCompile>
     <ClCompile Include="itemManager.cpp">
       <Filter>GameFramework\아이템\itemManager</Filter>
     </ClCompile>
