@@ -243,13 +243,6 @@ void itemManager::csvItemDataLoad(string path , CSVITEMTYPE _type)
 	CSVData::parse(fp, column);
 	CSVData::parse(fp, DataType);
 
-	//1안
-	// 데이터 타입은 이미 알고 잇음.
-	// tab구분자로 저장하고 scanf를 이용해서 순서대로 파싱 가능
-
-	//2안
-	//GENERATESTRUCT(LoLChampion, column, DataType);
-
 	vector<string> Data;
 	int cnt = 1;
 	while (CSVData::parse(fp, Data))

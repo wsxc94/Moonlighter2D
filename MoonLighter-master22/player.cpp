@@ -175,10 +175,10 @@ void player::render(HDC hdc)
 
 	}
 
-	TextOut(hdc, 10, 200 + 30, ("right " + to_string(_right)).c_str(), ("right " + to_string(_right)).size());
+	/*TextOut(hdc, 10, 200 + 30, ("right " + to_string(_right)).c_str(), ("right " + to_string(_right)).size());
 	TextOut(hdc, 10, 200 + 60, ("left	" + to_string(_left)).c_str(), ("left " + to_string(_left)).size());
 	TextOut(hdc, 10, 200 + 90, ("up " + to_string(_up)).c_str(), ("up " + to_string(_up)).size());
-	TextOut(hdc, 10, 200 + 120, ("down " + to_string(_down)).c_str(), ("down " + to_string(_down)).size());
+	TextOut(hdc, 10, 200 + 120, ("down " + to_string(_down)).c_str(), ("down " + to_string(_down)).size());*/
 
 }
 
@@ -311,7 +311,30 @@ void player::playerState()
 				_rollIndex = 0;
 				_rollJumpPower = 0;
 				_player.dashCount = 0;
+				
+				switch (_aniTownRoll->getFrameY())
+				{
+				case 0: // ¾Æ·¡
+					_rollAngle = DEGREE(270);
+					break;
+				case 1: // À§
+					_rollAngle = DEGREE(90);
+					break;
+				case 2: // ¿À
+					_rollAngle = DEGREE(0);
+					break;
+				case 3: // ¿Þ
+					_rollAngle = DEGREE(180);
+					break;
+				default:
+					break;
+				}
+				_right = false;
+				_left = false;
+				_up = false;
+				_down = false;
 			}
+			
 			break;
 
 		case PLAYER_FALL:
@@ -429,7 +452,6 @@ void player::playerState()
 				_holeAlpha = 255;
 				_state = PLAYER_ROLL;
 			}
-			cout << _state << endl;
 			break;
 		case PLAYER_DIE:
 			if (_aniDie->getAniState() == ANIMATION_END && !_isDie)

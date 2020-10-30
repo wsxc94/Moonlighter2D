@@ -3,7 +3,6 @@
 
 #define MAXITEM	16
 
-
 //아이템의 종류 
 enum ITEM
 {
