@@ -255,8 +255,17 @@ void shopScene::itemInfoUpdate()  // 좌판의 아이템정보를 검사해 npc를 초기화시키
 		_disMenuOn = true;
 	}
 	else if (_disMenuOn && !PLAYER->getDisplayOn()){
-
+		
 		  _disMenuOn = false;
+
+		  for (int i = 0; i < _npc->getVector().size(); i++)
+		  {
+			  if (_npc->getVector()[i]->getCurrentTargetIdx() == 2) {
+				  _npc->getVector()[i]->setCurrentTargetIdx(2);
+				  _npc->getVector()[i]->setState(NPC_MOVE);
+				  _npc->getVector()[i]->setDelay(false);
+			 }
+		  }
 	}
 	for (int i = 0; i < _npc->getVector().size(); i++)
 	{

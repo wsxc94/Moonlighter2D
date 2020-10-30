@@ -28,7 +28,8 @@ class npc : public gameNode
 {
 protected:
 	unique_ptr<animation> _aniNpc; // npc 애니메이션 변수
-	unique_ptr<animation> _aniPriceCheck; // 이모티콘 애니메이션 변수
+	shared_ptr<animation> _aniPriceCheck; // 이모티콘 애니메이션 변수
+
 	image* _peekItemImg; // 현재 잡고 있는 아이템 이미지
 
 	int _peekItemGold;
@@ -116,7 +117,7 @@ public:
 
 	tagPosF& getPos() { return _pos; } // npc x , y 좌표 가져오기
 	RECT& getRect() { return _rc; } // npc 렉트 가져오기
-	string getKey() { return _key; } // npc 이미지 KEY값 가져오기
+	string& getKey() { return _key; } // npc 이미지 KEY값 가져오기
 
 	void setPosX(float x) { _pos.x = x; } // x 좌표 세팅
 	void setPosY(float y) { _pos.x = y; } // y 좌표 세팅
@@ -126,6 +127,8 @@ public:
 
 	int& getCurrentTargetIdx() { return shop_currentTargetIdx; } // 현재 가야할 좌표 인덱스
 	void setCurrentTargetIdxPlus() { shop_currentTargetIdx++; }
+	void setCurrentTargetIdxMinus() { shop_currentTargetIdx--; }
+	void setCurrentTargetIdx(int idx) { shop_currentTargetIdx = idx; }
 	void priceCheck(); // 상점 아이템 가격에 따른 세팅
 	void PriceCheckAnim(); // 이모티콘 애니메이션
 	void ItemGet(); // 아이템 정보 가져오기
@@ -142,6 +145,9 @@ public:
 	void setState(NPC_ACTION st) { _state = st; } // npc 상태 업데이트
 	string& getThinkInfo() { return thinkInfo; } // 싼지 안싼지 상태에 대한 문자열 반환
 
+	shared_ptr<animation>& getAniPriceCheck() { return _aniPriceCheck; }
+
+	void setDelay(bool b) { _delay = b; }
 	npc() {}
 	~npc() {}
 };

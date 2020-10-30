@@ -108,15 +108,15 @@ public:
 	const char* getName() { return _item.name; }
 	POINT getPos() { return _item.itemPos; }
 
-	int getInvenPosIdx() { return _item.invenPosIdx; }
-	int getItemIdx() { return _item.itemIdx; }
-	int getPotionValue() { return _item.potionValue; }
+	int& getInvenPosIdx() { return _item.invenPosIdx; }
+	int& getItemIdx() { return _item.itemIdx; }
+	int& getPotionValue() { return _item.potionValue; }
 	int *getAbility() { return _item.ability; }
 	int *getPriceRange() { return _item.priceRange; }
-	int getPrice() { return _item.price; }
-	int getPopularity() { return _item.popularity; }
-	int getCount() { return _item.count; }
-	int getMaxCount() { return _item.maxCount; }
+	int& getPrice() { return _item.price; }
+	int& getPopularity() { return _item.popularity; }
+	int& getCount() { return _item.count; }
+	int& getMaxCount() { return _item.maxCount; }
 	bool getIsObtained() { return _item.isObtained; }
 
 	//setÇÔ¼ö 

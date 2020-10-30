@@ -357,7 +357,6 @@ void npc::DistanceCheck()
 
 		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() && !_delay) {
 			_delay = true;
-			
 
 			if (shop_currentTargetIdx == 2) {
 
@@ -543,11 +542,14 @@ void npc::npcSpawn()
 
 void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 {
+	thinkInfo.clear();
+
 	if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() == 0 || _displayStand->getDisplayItem()[shop_targetIdx].getType() == ITEM_EMPTY) {
 		shop_currentTargetIdx++;
 		_state = NPC_MOVE;
 		return;
 	}
+
 	for (int i = 0; i < 4; i++) {
 
 		if (_displayStand->getDisplayItem()[shop_targetIdx].getPrice() / _displayStand->getDisplayItem()[shop_targetIdx].getCount()
@@ -556,22 +558,22 @@ void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 			switch (i) // 이거의 값에 따라 애니메이션 프레임 y 값을 정해줘야함., 사운드가 달라지게 해야함.
 			{
 			case 0: //많이 싸다
-				_aniPriceCheck = make_unique<animation>();
+				_aniPriceCheck = make_shared<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청싸다"), 0, 15);
 				thinkInfo = "엄청싸다";
 				break;
 			case 1: //싸다
-				_aniPriceCheck = make_unique<animation>();
+				_aniPriceCheck = make_shared<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("싸다"), 0, 15);
 				thinkInfo = "싸다";
 				break;
 			case 2: // 비싸다
-				_aniPriceCheck = make_unique<animation>();
+				_aniPriceCheck = make_shared<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("비싸다"), 0, 15);
 				thinkInfo = "비싸다";
 				break;
 			case 3: default: // 존나비싸다
-				_aniPriceCheck = make_unique<animation>();
+				_aniPriceCheck = make_shared<animation>();
 				_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청비싸다"), 0, 15);
 				thinkInfo = "엄청비싸다";
 				break;
@@ -581,7 +583,7 @@ void npc::priceCheck() // 좌판아이템의 가격을 보고 판단한다.
 	}
 
 	if (thinkInfo == "") {
-	    _aniPriceCheck = make_unique<animation>();;
+	    _aniPriceCheck = make_shared<animation>();
 		_aniPriceCheck->init(IMAGEMANAGER->findImage("엄청비싸다"), 0, 15);
 		thinkInfo = "엄청비싸다";
 	}
@@ -594,9 +596,10 @@ void npc::PriceCheckAnim()
 	_aniPriceCheck->update();
 
 	if (_state == NPC_CHECK_PRICE) {
+		
 		if (_aniPriceCheck->getAniState() == ANIMATION_END) {
 			SOUNDMANAGER->play(thinkInfo);
-
+			_state = NPC_ITEM_PICK;
 			if (thinkInfo == "싸다" || thinkInfo == "엄청싸다") {
 				ItemGet();
 			}
@@ -607,13 +610,12 @@ void npc::PriceCheckAnim()
 			_speed = 1.0f;
 			shop_currentTargetIdx++;
 		}
+
 	}
 }
 
 void npc::ItemGet()
-{
-	_state = NPC_ITEM_PICK; 
-
+{ 
 	_peekItemImg = new image;
 
 	_peekItemImg = _displayStand->getDisplayItem()[shop_targetIdx].getItemImg();
