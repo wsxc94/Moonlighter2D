@@ -45,7 +45,7 @@ HRESULT player::init()
 	_rollCount = 0;
 	_rollIndex = 0;
 	_rollJumpPower = 0;
-	_rollGravity = 0;
+	_rollAngle = 0;
 
 	_skillCount = 0;
 	_skillIndex = 0;
@@ -72,7 +72,7 @@ void player::release()
 void player::update()
 {
 	this->arrowSkillSet();
-
+	this->setPlayerRoll();
 	this->playerState();
 	this->animation(_player.direction);
 	this->hitPlayer();
@@ -174,6 +174,11 @@ void player::render(HDC hdc)
 
 
 	}
+
+	TextOut(hdc, 10, 200 + 30, ("right " + to_string(_right)).c_str(), ("right " + to_string(_right)).size());
+	TextOut(hdc, 10, 200 + 60, ("left	" + to_string(_left)).c_str(), ("left " + to_string(_left)).size());
+	TextOut(hdc, 10, 200 + 90, ("up " + to_string(_up)).c_str(), ("up " + to_string(_up)).size());
+	TextOut(hdc, 10, 200 + 120, ("down " + to_string(_down)).c_str(), ("down " + to_string(_down)).size());
 
 }
 
@@ -289,35 +294,21 @@ void player::playerState()
 
 		case PLAYER_ROLL:
 			_rollJumpPower = 5.0f;
-			_rollGravity = 0.1f;
 			_player.dashCount++;
 			if(_player.dashCount % 5 == 0)
 			EFFECTMANAGER->addParticle("대시이펙트", _player.y, _player.x, _player.y,true,90);
 			_rollCount++;
-			switch (_player.direction)
-			{
-			case 0:
-				_player.y += _rollJumpPower;
-				break;
-			case 1:
-				_player.y -= _rollJumpPower;
-				break;
-			case 2:
-				_player.x += _rollJumpPower;
-				break;
-			case 3:
-				_player.x -= _rollJumpPower;
-				break;
-			}
+			
+			_player.x += cosf(_rollAngle) * _rollJumpPower;
+			_player.y -= sinf(_rollAngle) * _rollJumpPower;
 
-			_rollJumpPower -= _rollGravity;
+
 			if (_aniDgRoll->getAniState() == ANIMATION_END ||
 				_aniTownRoll->getAniState() == ANIMATION_END)
 			{
 				_state = PLAYER_IDLE;
 				_rollCount = 0;
 				_rollIndex = 0;
-				_rollGravity = 0;
 				_rollJumpPower = 0;
 				_player.dashCount = 0;
 			}
@@ -392,6 +383,9 @@ void player::playerState()
 				_player.x += 1;
 				_player.direction = 2;
 				_right = true;
+			}
+			else {
+				_right = false;
 			}
 			if (INPUT->GetKeyUp('K'))
 			{
@@ -760,6 +754,57 @@ void player::arrowSkillSet()
 	{
 		_bowCharge->aniStop();
 		_isSkill = true;
+	}
+
+}
+
+void player::setPlayerRoll()
+{
+	//오른쪽은 0
+	//왼쪽은 PI
+	//위는 pi/2
+	//아래는 PI/2 *3
+	//우상 pi /4 ,dw
+	//좌상 pi/4 * 3
+	//우하 pi / 4 *3 +pi
+	//좌하 pi /4 + pi
+	if (_right)
+	{
+		if (_up)
+		{
+			_rollAngle = PI / 4;
+		}
+		else if (_down)
+		{
+			_rollAngle = (PI / 4 * 3) + PI;
+		}
+		else
+		{
+			_rollAngle = 0;
+		}
+	}
+	else if (_left)
+	{
+		if (_up)
+		{
+			_rollAngle = PI / 4 * 3;
+		}
+		else if (_down)
+		{
+			_rollAngle = PI / 4 + PI;
+		}
+		else
+		{
+			_rollAngle = PI;
+		}
+	}
+	else if (_up)
+	{
+		_rollAngle = PI / 2;
+	}
+	else if (_down)
+	{
+		_rollAngle = PI / 2 * 3;
 	}
 
 }

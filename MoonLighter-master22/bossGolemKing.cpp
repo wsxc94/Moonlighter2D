@@ -768,7 +768,7 @@ void bossGolemKing::bsHandUpdate()
 		//카메라 밖으로 나갔으면 상태변경
 		if (_golemHand.hight < CAMERAMANAGER->getRect().top - 200)
 		{
-			if (_golemHand.atkCount < 3)
+			if (_golemHand.atkCount < 4)
 			{
 				_golemHand.state = HANDSTATE::HAND_INIT;
 				_golemHand.count = 200;
@@ -777,7 +777,7 @@ void bossGolemKing::bsHandUpdate()
 				_golemHand.ani->aniRestart();
 				_golemHand.ani->aniStop();
 			}
-			else if(_golemHand.atkCount == 3)
+			else if(_golemHand.atkCount == 4)
 			{
 				if(_golemAni != GOLEMANISTATE::ANI_HANDSHOOTEND)
 				this->changeAniState(GOLEMANISTATE::ANI_HANDSHOOTEND);
