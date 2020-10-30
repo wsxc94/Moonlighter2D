@@ -1,0 +1,4 @@
+count,itemKey,nameKey,desKey,name,itemIdx,hpValue,atkValue,defValue,spdValue,cheapPrice,reasonablePrice,expensivePrice,outrageousPrice,maxCount
+int,string,string,string,string,int,int,int,int,int,int,int,int,int,int
+1,ÈÆ·Ã¿ë È°,name_trainingBow,des_trainingBow,ÈÆ·Ã¿ë È°,13,0,15,0,0,899,1100,1150,1151,1
+2,ÈÆ·Ã¿ë ´Ü°Ë,name_trainingShortSword,des_trainingShortSword,ÈÆ·Ã¿ë ´Ü°Ë,14,0,20,0,0,899,1100,1150,1151,1

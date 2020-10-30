@@ -158,6 +158,7 @@
     <ClInclude Include="cameraManager.h" />
     <ClInclude Include="Cloud.h" />
     <ClInclude Include="commonMacroFunction.h" />
+    <ClInclude Include="csvload.h" />
     <ClInclude Include="cursor.h" />
     <ClInclude Include="damageFont.h" />
     <ClInclude Include="effectManager.h" />

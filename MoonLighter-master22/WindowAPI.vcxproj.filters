@@ -315,6 +315,9 @@
     <ClCompile Include="Cloud.cpp">
       <Filter>MainGame\townScene</Filter>
     </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>GameFramework\아이템\itemManager\item</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameNode.h">
@@ -508,6 +511,9 @@
     </ClInclude>
     <ClInclude Include="Cloud.h">
       <Filter>MainGame\townScene</Filter>
+    </ClInclude>
+    <ClInclude Include="csvload.h">
+      <Filter>GameFramework\아이템\itemManager\item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

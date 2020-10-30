@@ -1,6 +1,10 @@
 #pragma once
 #include "stdafx.h"
-
+enum CSVITEMTYPE {
+	CSV_NOMAL,
+	CSV_POTION,
+	CSV_WEAPON
+};
 enum NomalItem {
 	eNomalItem_count,
 	eNomalItem_itemKey,
@@ -13,6 +17,39 @@ enum NomalItem {
 	eNomalItem_expensivePrice,
 	eNomalItem_outrageousPrice,
 	eNomalItem_maxCount
+};
+enum WeaponItem
+{
+	eWeaponItem_count,
+	eWeaponItem_itemKey,
+	eWeaponItem_nameKey,
+	eWeaponItem_desKey,
+	eWeaponItem_name,
+	eWeaponItem_itemIdx,
+	eWeaponItem_hpValue,
+	eWeaponItem_atkValue,
+	eWeaponItem_defValue,
+	eWeaponItem_spdValue,
+	eWeaponItem_cheapPrice,
+	eWeaponItem_reasonablePrice,
+	eWeaponItem_expensivePrice,
+	eWeaponItem_outrageousPrice,
+	eWeaponItem_maxCount,
+};
+enum PotionItem
+{
+	ePotionItem_count,
+	ePotionItem_itemKey,
+	ePotionItem_nameKey,
+	ePotionItem_desKey,
+	ePotionItem_name,
+	ePotionItem_itemIdx,
+	ePotionItem_potionValue,
+	ePotionItem_cheapPrice,
+	ePotionItem_reasonablePrice,
+	ePotionItem_expensivePrice,
+	ePotionItem_outrageousPrice,
+	ePotionItem_maxCount
 };
 
 class Item {
@@ -50,18 +87,36 @@ public:
 	int getMaxCount() const { return maxCount; }
 	void setMaxCount(int value) { maxCount = value; }
 
-	void FillData(std::vector<string>& In) {
-		setCount(atoi(In[eNomalItem_count].c_str()));
-		setItemKey(In[eNomalItem_itemKey].c_str());
-		setNameKey(In[eNomalItem_nameKey].c_str());
-		setDesKey(In[eNomalItem_desKey].c_str());
-		setName(In[eNomalItem_name].c_str());
-		setItemIdx(atoi(In[eNomalItem_itemIdx].c_str()));
-		setCheapPrice(atoi(In[eNomalItem_cheapPrice].c_str()));
-		setReasonablePrice(atoi(In[eNomalItem_reasonablePrice].c_str()));
-		setExpensivePrice(atoi(In[eNomalItem_expensivePrice].c_str()));
-		setOutrageousPrice(atoi(In[eNomalItem_outrageousPrice].c_str()));
-		setMaxCount(atoi(In[eNomalItem_maxCount].c_str()));
+	int gethpValue() const { return hpValue; }
+	void sethpValue(int value) { hpValue = value; }
+
+	int getatkValue() const { return atkValue; }
+	void setatkValue(int value) { atkValue = value; }
+
+	int getdefValue() const { return defValue; }
+	void setdefValue(int value) { defValue = value; }
+
+	int getspdValue() const { return spdValue; }
+	void setspdValue(int value) { spdValue = value; }
+
+	int getpotionValue() const { return potionValue; }
+	void setpotionValue(int value) { potionValue = value; }
+
+	void FillData(std::vector<string>& In, CSVITEMTYPE& _type) {
+		switch (_type)
+		{
+		case CSV_NOMAL:
+			setNomalData(In);
+			break;
+		case CSV_POTION:
+			setPotionData(In);
+			break;
+		case CSV_WEAPON:
+			setWeaponData(In);
+			break;
+		default:
+			break;
+		}
 	}
 private:
 	int count;
@@ -75,4 +130,13 @@ private:
 	int expensivePrice;
 	int outrageousPrice;
 	int maxCount;
+	int hpValue;
+	int atkValue;
+	int defValue;
+	int spdValue;
+	int potionValue;
+
+	void setNomalData(vector<string>& In);
+	void setPotionData(vector<string>& In);
+	void setWeaponData(vector<string>& In);
 };
