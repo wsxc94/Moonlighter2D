@@ -175,8 +175,8 @@ bool gameItem::checkCollision(RECT rc)
 {
 	RECT tempRect;
 
-	if (IntersectRect(&tempRect, &_item.rc, &rc)) return true; 
-	else false; 
+	if (IntersectRect(&tempRect, &_item.rc, &rc)) return true;
+	else false;
 }
 
 //=============================================================
@@ -233,7 +233,7 @@ void itemManager::addEquipmentItem(string itemKey, string nameKey, string desKey
 	_vItem.push_back(item);
 }
 
-void itemManager::csvItemDataLoad(string path , CSVITEMTYPE _type)
+void itemManager::csvItemDataLoad(string path, CSVITEMTYPE _type)
 {
 	FILE* fp = fopen(path.c_str(), "rt");
 
@@ -249,7 +249,7 @@ void itemManager::csvItemDataLoad(string path , CSVITEMTYPE _type)
 	{
 		::Item data;
 
-		data.FillData(Data , _type);
+		data.FillData(Data, _type);
 
 		m_itemData.insert(make_pair(cnt, data));
 		cnt++;
@@ -263,29 +263,29 @@ void itemManager::csvItemDataLoad(string path , CSVITEMTYPE _type)
 		switch (_type)
 		{
 		case CSV_NOMAL:
-		    addNormalItem(m_itemData[i].getItemKey(), m_itemData[i].getNameKey(), m_itemData[i].getDesKey(), m_itemData[i].getName().c_str(), m_itemData[i].getItemIdx(), m_itemData[i].getCheapPrice(), m_itemData[i].getReasonablePrice(), m_itemData[i].getExpensivePrice(), m_itemData[i].getOutrageousPrice(), m_itemData[i].getMaxCount());
+			addNormalItem(m_itemData[i].getItemKey(), m_itemData[i].getNameKey(), m_itemData[i].getDesKey(), m_itemData[i].getName().c_str(), m_itemData[i].getItemIdx(), m_itemData[i].getCheapPrice(), m_itemData[i].getReasonablePrice(), m_itemData[i].getExpensivePrice(), m_itemData[i].getOutrageousPrice(), m_itemData[i].getMaxCount());
 			break;
 		case CSV_POTION:
 			addPotionItem(m_itemData[i].getItemKey(), m_itemData[i].getNameKey(), m_itemData[i].getDesKey(), m_itemData[i].getName().c_str(), m_itemData[i].getItemIdx(), m_itemData[i].getpotionValue(), m_itemData[i].getCheapPrice(), m_itemData[i].getReasonablePrice(), m_itemData[i].getExpensivePrice(), m_itemData[i].getOutrageousPrice(), m_itemData[i].getMaxCount());
 			break;
 		case CSV_WEAPON:
-			addEquipmentItem(m_itemData[i].getItemKey() , m_itemData[i].getNameKey() , m_itemData[i].getDesKey() , m_itemData[i].getName().c_str() , ITEM_WEAPON , m_itemData[i].getItemIdx() , m_itemData[i].gethpValue() , m_itemData[i].getatkValue() , m_itemData[i].getdefValue() , m_itemData[i].getspdValue() , m_itemData[i].getCheapPrice() , m_itemData[i].getReasonablePrice() , m_itemData[i].getExpensivePrice() , m_itemData[i].getOutrageousPrice() , m_itemData[i].getMaxCount());
+			addEquipmentItem(m_itemData[i].getItemKey(), m_itemData[i].getNameKey(), m_itemData[i].getDesKey(), m_itemData[i].getName().c_str(), ITEM_WEAPON, m_itemData[i].getItemIdx(), m_itemData[i].gethpValue(), m_itemData[i].getatkValue(), m_itemData[i].getdefValue(), m_itemData[i].getspdValue(), m_itemData[i].getCheapPrice(), m_itemData[i].getReasonablePrice(), m_itemData[i].getExpensivePrice(), m_itemData[i].getOutrageousPrice(), m_itemData[i].getMaxCount());
 			break;
 		default:
 			break;
 		}
 	}
 	m_itemData.clear();
-	
+
 }
 
 //게임에 사용하는 아이템들 추가하는 함수 
 void itemManager::addGameItems()
 {
 
-	csvItemDataLoad("CSVdata/itemData_nomal.csv" , CSVITEMTYPE::CSV_NOMAL);
-	csvItemDataLoad("CSVdata/itemData_potion.csv" , CSVITEMTYPE::CSV_POTION);
-    csvItemDataLoad("CSVdata/itemData_weapon.csv" , CSVITEMTYPE::CSV_WEAPON);
+	csvItemDataLoad("CSVdata/itemData_nomal.csv", CSVITEMTYPE::CSV_NOMAL);
+	csvItemDataLoad("CSVdata/itemData_potion.csv", CSVITEMTYPE::CSV_POTION);
+	csvItemDataLoad("CSVdata/itemData_weapon.csv", CSVITEMTYPE::CSV_WEAPON);
 
 }
 

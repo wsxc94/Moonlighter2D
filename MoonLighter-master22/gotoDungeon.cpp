@@ -38,7 +38,7 @@ void gotoDungeon::update()
 	if (y > 1500) _portalPosCheck = true;
 	else _portalPosCheck = false;
 
-	if ((y < 1030) && _dungeonDoorCheck) {
+	if ((getDistance(565, 770,PLAYER->getX(),PLAYER->getY()) < 300) && _dungeonDoorCheck) {
 		if (_DungeonDoorAnim->getAniState() != ANIMATION_PLAY)
 		{
 			_DungeonDoorAnim->aniPlay();
@@ -46,7 +46,7 @@ void gotoDungeon::update()
 			SOUNDMANAGER->play("doorBGM");
 		}
 	}
-	else if ((y > 1030) && !_dungeonDoorCheck) {
+	else if ((getDistance(565, 770, PLAYER->getX(), PLAYER->getY()) > 300) && !_dungeonDoorCheck) {
 		
 		if (_DungeonDoorAnim->getAniState() != ANIMATION_PLAY)
 		{

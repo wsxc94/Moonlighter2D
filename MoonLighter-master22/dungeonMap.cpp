@@ -157,7 +157,7 @@ void DungeonMap::render()
 
 void DungeonMap::setStartDungeon()
 {
-	_fileName = "maptool/dungeonStart";
+	_fileName = "maptool/dungeon7";
 	_vMaps.push_back(this);
 	_mapSize = 3;
 
@@ -829,7 +829,16 @@ void DungeonMap::checkColiHole()
 					{
 						PLAYER->setPlayerState(PLAYER_FALL);
 						PLAYERDATA->setInDungeonHp(PLAYERDATA->getInDungeonHp() - 10);
-						
+						if (PLAYERDATA->getInDungeonHp() <= 0)
+						{
+							PLAYER->setPlayerState(PLAYER_DIE);
+							RESULTENEMY* em = new RESULTENEMY;
+							em->attack = new animation;
+							em->attack->init(IMAGEMANAGER->findImage(_vTile[i].key), 0, 7, true);
+							em->frameY = 0;
+							em->scale = 1.f;
+							PLAYERDATA->setKillEnemy(em);
+						}
 					}
 					else
 					{

@@ -60,6 +60,7 @@ public:
 	void itemResultRender();
 	void countRender(int count, int destX, int destY);
 	void resultRender();
+	void checkColiArrow();
 
 };
 

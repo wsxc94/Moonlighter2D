@@ -27,6 +27,11 @@ enum NODESTATE
 	NODE_EMPTY
 };
 
+enum WALLSTATE
+{
+	WALL_OBJ,WALL_HOLE,WALL_EMPTY
+};
+
 struct node
 {
 	RECT rc;
@@ -36,6 +41,7 @@ struct node
 	bool isRange;
 	node* parentNode;
 	NODESTATE nodeState;
+	WALLSTATE wallState;
 
 	void init(int _idx, int _idy)
 	{
@@ -47,6 +53,7 @@ struct node
 		F = G = H = 0;
 		isRange = false;
 		nodeState = NODE_EMPTY;
+		wallState = WALL_EMPTY;
 		parentNode = NULL;
 	}
 };
