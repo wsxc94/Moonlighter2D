@@ -282,7 +282,6 @@ void itemManager::csvItemDataLoad(string path , CSVITEMTYPE _type)
 //게임에 사용하는 아이템들 추가하는 함수 
 void itemManager::addGameItems()
 {
-<<<<<<< HEAD
 	////일반 아이템 추가
 	//addNormalItem("richJelly", "name_richJelly", "des_richJelly", "richJelly", RICHJELLY_IDX, 3, 6, 8, 9, 10);
 	//addNormalItem("venomJelly", "name_venomJelly", "des_venomJelly", "venomJelly", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
@@ -334,12 +333,10 @@ void itemManager::addGameItems()
 		"훈련용 활", ITEM_WEAPON, TRAININGBOW_IDX, 0, 15, 0, 0, 899, 1100, 1150, 1151, 1);
 	addEquipmentItem("훈련용 단검", "name_trainingShortSword", "des_trainingShortSword",
 		"훈련용 단검", ITEM_WEAPON, TRAININGSWORD_IDX, 0, 20, 0, 0, 899, 1100, 1150, 1151, 1);
-=======
 
 	csvItemDataLoad("CSVdata/itemData_nomal.csv" , CSVITEMTYPE::CSV_NOMAL);
 	csvItemDataLoad("CSVdata/itemData_potion.csv" , CSVITEMTYPE::CSV_POTION);
     csvItemDataLoad("CSVdata/itemData_weapon.csv" , CSVITEMTYPE::CSV_WEAPON);
->>>>>>> 9df8ee1c8e4c0204e4945b3bda511ee341819ded
 
 }
 
