@@ -233,6 +233,42 @@ void itemManager::addEquipmentItem(string itemKey, string nameKey, string desKey
 	_vItem.push_back(item);
 }
 
+void itemManager::csvItemDataLoad()
+{
+	FILE* fp = fopen("itemData.csv", "rt");
+
+	vector<string> column;
+	vector<string> DataType;
+
+	CSVData::parse(fp, column);
+	CSVData::parse(fp, DataType);
+
+	//1안
+	// 데이터 타입은 이미 알고 잇음.
+	// tab구분자로 저장하고 scanf를 이용해서 순서대로 파싱 가능
+
+	//2안
+	//GENERATESTRUCT(LoLChampion, column, DataType);
+
+	vector<string> Data;
+	while (CSVData::parse(fp, Data))
+	{
+		::Item data;
+
+		data.FillData(Data);
+
+		m_itemData.insert(make_pair(data.getCount(), data));
+		Data.clear();
+	}
+
+	fclose(fp);
+
+	for (int i = 1; i < m_itemData.size(); i++)
+	{
+		addNormalItem(m_itemData[i].getItemKey(), m_itemData[i].getNameKey(), m_itemData[i].getDesKey(), m_itemData[i].getName().c_str(), m_itemData[i].getItemIdx(), m_itemData[i].getCheapPrice(), m_itemData[i].getReasonablePrice(), m_itemData[i].getExpensivePrice(), m_itemData[i].getOutrageousPrice(), m_itemData[i].getMaxCount());
+	}
+}
+
 //게임에 사용하는 아이템들 추가하는 함수 
 void itemManager::addGameItems()
 {
@@ -262,12 +298,14 @@ void itemManager::addGameItems()
 	//	"trainingBow", ITEM_WEAPON, TRAININGBOW_IDX, 0, 15, 0, 0, 899, 1100, 1150, 1151, 1);
 	//addEquipmentItem("trainingShortSword", "name_trainingShortSword", "des_trainingShortSword",
 	//	"trainingShortSword", ITEM_WEAPON, TRAININGSWORD_IDX, 0, 20, 0, 0, 899, 1100, 1150, 1151, 1);
-
 	//일반 아이템 추가
-	addNormalItem("풍부한 젤리", "name_richJelly", "des_richJelly", "풍부한 젤리", RICHJELLY_IDX, 3, 6, 8, 9, 10);
+
+
+	csvItemDataLoad();
+
+	/*addNormalItem("풍부한 젤리", "name_richJelly", "des_richJelly", "풍부한 젤리", RICHJELLY_IDX, 3, 6, 8, 9, 10);
 	addNormalItem("맹독성 젤리", "name_venomJelly", "des_venomJelly", "맹독성 젤리", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
 	addNormalItem("강화 수정", "name_crystal", "des_crystal", "강화 수정", CRYSTAL_IDX, 89, 110, 115, 116, 5);
-
 	addNormalItem("덩굴", "name_vine", "des_vine", "덩굴", VINE_IDX, 2, 3, 5, 6, 10);
 	addNormalItem("이빨석", "name_teethStone", "des_teethStone", "이빨석", TEETHSTONE_IDX, 3, 6, 8, 9, 10);
 	addNormalItem("뿌리", "name_root", "des_root", "뿌리", ROOT_IDX, 3, 6, 8, 9, 10);
@@ -275,7 +313,7 @@ void itemManager::addGameItems()
 	addNormalItem("주물 잔해", "name_foundryRests", "des_foundryRests", "주물 잔해", FOUNDRYRESTS_IDX, 134, 165, 173, 174, 5);
 	addNormalItem("망가진 검", "name_brokenSword", "des_brokenSword", "망가진 검", BROKENSWORD_IDX, 134, 165, 173, 174, 5);
 	addNormalItem("천", "name_fabric", "des_fabric", "천", FABRIC_IDX, 224, 275, 288, 289, 5);
-	addNormalItem("경화 강철", "name_hardenedSteel", "des_hardenedSteel", "경화 강철", HARDENEDSTEEL_IDX, 269, 330, 345, 346, 5);
+	addNormalItem("경화 강철", "name_hardenedSteel", "des_hardenedSteel", "경화 강철", HARDENEDSTEEL_IDX, 269, 330, 345, 346, 5);*/
 
 	//포션 아이템 추가 
 	addPotionItem("HP 물약Ⅰ", "name_hpPotion1", "des_hpPotion1", "HP 물약Ⅰ",
