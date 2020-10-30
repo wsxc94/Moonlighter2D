@@ -267,7 +267,6 @@ void itemManager::addGameItems()
 	addNormalItem("Ç³ºÎÇÑ Á©¸®", "name_richJelly", "des_richJelly", "Ç³ºÎÇÑ Á©¸®", RICHJELLY_IDX, 3, 6, 8, 9, 10);
 	addNormalItem("¸Íµ¶¼º Á©¸®", "name_venomJelly", "des_venomJelly", "¸Íµ¶¼º Á©¸®", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
 	addNormalItem("°­È­ ¼öÁ¤", "name_crystal", "des_crystal", "°­È­ ¼öÁ¤", CRYSTAL_IDX, 89, 110, 115, 116, 5);
-
 	addNormalItem("µ¢±¼", "name_vine", "des_vine", "µ¢±¼", VINE_IDX, 2, 3, 5, 6, 10);
 	addNormalItem("ÀÌ»¡¼®", "name_teethStone", "des_teethStone", "ÀÌ»¡¼®", TEETHSTONE_IDX, 3, 6, 8, 9, 10);
 	addNormalItem("»Ñ¸®", "name_root", "des_root", "»Ñ¸®", ROOT_IDX, 3, 6, 8, 9, 10);
