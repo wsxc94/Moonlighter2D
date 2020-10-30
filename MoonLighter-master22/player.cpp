@@ -175,11 +175,6 @@ void player::render(HDC hdc)
 
 	}
 
-	TextOut(hdc, 10, 200 + 30, ("right " + to_string(_right)).c_str(), ("right " + to_string(_right)).size());
-	TextOut(hdc, 10, 200 + 60, ("left	" + to_string(_left)).c_str(), ("left " + to_string(_left)).size());
-	TextOut(hdc, 10, 200 + 90, ("up " + to_string(_up)).c_str(), ("up " + to_string(_up)).size());
-	TextOut(hdc, 10, 200 + 120, ("down " + to_string(_down)).c_str(), ("down " + to_string(_down)).size());
-
 }
 
 int player::getMaxItemSlot()
