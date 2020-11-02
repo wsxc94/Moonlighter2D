@@ -50,6 +50,7 @@ HRESULT itemMenu::init()
 	_movingRight = false;
 	_goToTown_Pentant = false; 
 	_goToTown_Emblem = false;
+	_initDisplayStand = false; 
 
 	return S_OK;
 }

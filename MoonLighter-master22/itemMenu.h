@@ -67,6 +67,7 @@ private:
 
 	bool _goToTown_Pentant;		//상인의 펜던트 사용여부 확인(마을로 돌아가기)
 	bool _goToTown_Emblem;		//상인의 엠블렘 사용여부 확인 
+	bool _initDisplayStand;		//진열대 초기화 여부 확인 
 
 public:
 	HRESULT init();
@@ -84,7 +85,8 @@ public:
 	bool getGoToTownPendant() { return _goToTown_Pentant; }
 	bool getGoToTownEmblem() { return _goToTown_Emblem; }
 	bool getInitIsDone() { return _initIsDone; }
-	
+	bool getInitDisplayStand() { return _initDisplayStand; }
+
 	//set함수 
 	void setCurItemCount();			//소지하고 있는 아이템 개수를 데이터에 업데이트 
 	void setPotionEquipped();		//현재 장착 중인 포션 아이템을 데이터에 업데이트
@@ -96,6 +98,7 @@ public:
 	void setMenuOn(bool value) { _menuOn = value; }
 	void setInvenOn(bool value) { _invenOn = value; }
 	void setInitIsDone(bool value) { _initIsDone = value; }
+	void setInitDisplayStand(bool value) { _initDisplayStand = value; }
 
 	void toggleMenu();						//메뉴창 껐다 켰다하기 
 	void DoCloseMenu();						//메뉴창을 닫기를 실행하는 함수(외부에서 접근해서 끄기 가능)
