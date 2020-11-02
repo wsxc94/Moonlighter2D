@@ -52,8 +52,10 @@ void bossDungeonScene::release()
 void bossDungeonScene::update()
 {
 	PLAYER->update();
+	this->checkColiArrow();
 	//鸥老捞尔 面倒贸府
 	this->collisionTile();
+
 	PLAYER->updateWeaponState();
 
 	if (_bsState != BS_RESULT)
@@ -87,7 +89,7 @@ void bossDungeonScene::update()
 				_vEnemy = PLAYERDATA->getVEnemy();
 			}
 
-			if (INPUT->GetKeyDown('J') && _potal->getIsInRange())
+			if (INPUT->GetKeyDown('J') && _potal->getIsInRange() && _potal->getPotalState() == POTAL_UPDATE)
 			{
 
 				_potal->setPotalState(POTAL_PLAYERIN);
@@ -449,4 +451,15 @@ void bossDungeonScene::resultRender()
 		j++;
 	}
 
+}
+
+void bossDungeonScene::checkColiArrow()
+{
+	RECT temp;
+	
+	if (!IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &CAMERAMANAGER->getRect()))
+	{
+		PLAYER->getArrow()->setIsShoot(false);
+		PLAYER->setSkill(false);
+	}
 }

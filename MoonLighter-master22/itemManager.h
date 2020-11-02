@@ -44,7 +44,7 @@ enum POPULARITY
 
 enum ITEMMOVESTATE
 {
-	ITEM_INIT,ITEM_FALL,ITEM_FOLLOW,ITEM_IDLE,ITEM_CHECKSTATE
+	ITEM_INIT, ITEM_FALL, ITEM_FOLLOW, ITEM_IDLE, ITEM_CHECKSTATE
 };
 
 typedef struct
@@ -124,7 +124,7 @@ public:
 	void setInvenPosIdx(int index) { _item.invenPosIdx = index; }
 	void setPrice(int price) { _item.price = price; }
 	void addPrice(int addValue) { _item.price += addValue; }
-	void subPrice(int subValue) { _item.price -= subValue; }	
+	void subPrice(int subValue) { _item.price -= subValue; }
 	void setCount(int count) { _item.count = count; }
 	void plusOneCount() { _item.count++; }				//아이템 개수 +1
 	void minusOneCount() { _item.count--; }				//아이템 개수 -1

@@ -92,7 +92,6 @@ void gasMan::update()
 		//에이스타
 		this->aStar();
 		// 무빙
-		if (!isAstarFail())
 		this->enemyMove();
 		// 에너미 보는방향
 		this->setEmDirection();
@@ -329,7 +328,7 @@ void gasMan::setEmDirection()
 
 void gasMan::enemyMove()
 {
-	if (_finalList.size() > 0 && !_isHit)
+	if (_finalList.size() > 0 && !_isHit && !isAstarFail())
 	{
 		float angle = getAngle(_x, _y, _finalList.front()->centerX, _finalList.front()->centerY);
 		_x += cosf(angle) * 1.5f;
@@ -445,12 +444,40 @@ void gasMan::arrowMove()
 
 	RECT dunRC = RectMake(140, 105, 35 * _idx, 35 * _idy);
 
-	for (int i = 0; i < _vArrow.size(); i++)
+	//for (int i = 0; i < _vArrow.size(); i++)
+	//{
+	//	RECT temp;
+	//	if (IntersectRect(&temp, &_vArrow[i].rc, &dunRC))continue;
+
+	//	_vArrow.erase(_vArrow.begin() + i);
+	//	SOUNDMANAGER->play("gasArrowPop", 0.2f);
+	//	
+	//}
+
+	for (int i = 0; i < _vArrow.size();i++)
 	{
 		RECT temp;
-		if (IntersectRect(&temp, &_vArrow[i].rc, &dunRC)) continue;
-		_vArrow.erase(_vArrow.begin() + i);
-		SOUNDMANAGER->play("gasArrowPop",0.2f);
+		bool isBreak = false;
+		if (!IntersectRect(&temp, &_vArrow[i].rc, &dunRC))
+		{
+			_vArrow.erase(_vArrow.begin() + i);
+			SOUNDMANAGER->play("gasArrowPop", 0.2f);
+			break;
+		}
+		for (int y = 0; y < _idy; y++)
+		{
+			for (int x = 0; x < _idx; x++)
+			{
+				if (IntersectRect(&temp, &_vArrow[i].rc, &_totalNode[y][x].rc) && _totalNode[y][x].wallState == WALL_OBJ)
+				{
+					_vArrow.erase(_vArrow.begin() + i);
+					SOUNDMANAGER->play("gasArrowPop", 0.2f);
+					isBreak = true;
+					break;
+				}
+			}
+			if (isBreak)break;
+		}
 	}
 }
 

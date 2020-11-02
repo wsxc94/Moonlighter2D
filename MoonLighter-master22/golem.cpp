@@ -90,7 +90,6 @@ void golem::update()
 
 		this->aStar();
 
-		if(!isAstarFail())
 		this->golemMove();
 
 		if (_isAttackRange)
@@ -349,7 +348,7 @@ void golem::attackBox()
 
 void golem::golemMove()
 {
-	if (_finalList.size() > 0)
+	if (_finalList.size() > 0 && !isAstarFail())
 	{
 		if (!_isHit)
 		{

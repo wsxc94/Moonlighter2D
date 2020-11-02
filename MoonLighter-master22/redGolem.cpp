@@ -89,7 +89,7 @@ void redGolem::update()
 		_move->update();
 		_moveHit->update();
 		this->aStar();
-		if (!isAstarFail())
+
 		this->golemMove();
 
 		if (_isAttackRange)
@@ -348,7 +348,7 @@ void redGolem::attackBox()
 
 void redGolem::golemMove()
 {
-	if (_finalList.size() > 0)
+	if (_finalList.size() > 0 && !isAstarFail())
 	{
 		if (!_isHit)
 		{

@@ -144,6 +144,7 @@ public:
 	void bsHandUpdate();
 	void vRockUpdate();
 	void collisionRock();
+	void collisionArrow();
 
 
 	float getX() { return _x; }

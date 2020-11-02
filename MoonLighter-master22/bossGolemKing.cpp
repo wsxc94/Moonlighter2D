@@ -125,6 +125,7 @@ void bossGolemKing::update()
 	//체력바 업데이트
 	_hpRed->update(_hp);
 	_hpWhite->update(_hp);
+	this->collisionArrow();
 	//체력 0되면 죽여!
 	if (_hp <= 0 && _golemState != GOLEMKINGSTATE::BS_INIT && _golemState != GOLEMKINGSTATE::BS_DEAD)
 	{
@@ -875,6 +876,18 @@ void bossGolemKing::collisionRock()
 				}
 			}
 			
+		}
+	}
+}
+
+void bossGolemKing::collisionArrow()
+{
+	RECT temp;
+	for (int i = 0; i < _vRock.size(); i++)
+	{
+		if (IntersectRect(&temp, &PLAYER->getArrow()->getRect(), &_vRock[i].colRC))
+		{
+			PLAYER->getArrow()->setIsShoot(false);
 		}
 	}
 }
