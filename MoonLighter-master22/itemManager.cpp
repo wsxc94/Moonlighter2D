@@ -283,56 +283,29 @@ void itemManager::csvItemDataLoad(string path , CSVITEMTYPE _type)
 void itemManager::addGameItems()
 {
 	////¿œπ› æ∆¿Ã≈€ √ﬂ∞°
-	//addNormalItem("richJelly", "name_richJelly", "des_richJelly", "richJelly", RICHJELLY_IDX, 3, 6, 8, 9, 10);
-	//addNormalItem("venomJelly", "name_venomJelly", "des_venomJelly", "venomJelly", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
-	//addNormalItem("crystal", "name_crystal", "des_crystal", "crystal", CRYSTAL_IDX, 89, 110, 115, 116, 5);
-	//addNormalItem("crystal", "name_crystal", "des_crystal", "crystal", CRYSTAL_IDX, 89, 110, 115, 116, 5);
-
-	//addNormalItem("vine", "name_vine", "des_vine", "vine", VINE_IDX, 2, 3, 5, 6, 10);
-	//addNormalItem("teethStone", "name_teethStone", "des_teethStone", "teethStone", TEETHSTONE_IDX, 3, 6, 8, 9, 10);
-	//addNormalItem("root", "name_root", "des_root", "root", ROOT_IDX, 3, 6, 8, 9, 10);
-	//addNormalItem("ironBar", "name_ironBar", "des_ironBar", "ironBar", IRONBAR_IDX, 21, 28, 30, 31, 10);
-	//addNormalItem("foundryRests", "name_foundryRests", "des_foundryRests", "foundryRests", FOUNDRYRESTS_IDX, 134, 165, 173, 174, 5);
-	//addNormalItem("brokenSword", "name_brokenSword", "des_brokenSword", "brokenSword", BROKENSWORD_IDX, 134, 165, 173, 174, 5);
-	//addNormalItem("fabric", "name_fabric", "des_fabric", "fabric", FABRIC_IDX, 224, 275, 288, 289, 5);
-	//addNormalItem("hardenedSteel", "name_hardenedSteel", "des_hardenedSteel", "hardenedSteel", HARDENEDSTEEL_IDX, 269, 330, 345, 346, 5);
+	//addNormalItem("«≥∫Œ«— ¡©∏Æ", "name_richJelly", "des_richJelly", "«≥∫Œ«— ¡©∏Æ", RICHJELLY_IDX, 3, 6, 8, 9, 10);
+	//addNormalItem("∏Õµ∂º∫ ¡©∏Æ", "name_venomJelly", "des_venomJelly", "∏Õµ∂º∫ ¡©∏Æ", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
+	//addNormalItem("∞≠»≠ ºˆ¡§", "name_crystal", "des_crystal", "∞≠»≠ ºˆ¡§", CRYSTAL_IDX, 89, 110, 115, 116, 5);
+	//addNormalItem("µ¢±º", "name_vine", "des_vine", "µ¢±º", VINE_IDX, 2, 3, 5, 6, 10);
+	//addNormalItem("¿Ãª°ºÆ", "name_teethStone", "des_teethStone", "¿Ãª°ºÆ", TEETHSTONE_IDX, 3, 6, 8, 9, 10);
+	//addNormalItem("ª—∏Æ", "name_root", "des_root", "ª—∏Æ", ROOT_IDX, 3, 6, 8, 9, 10);
+	//addNormalItem("ºË∏∑¥Î", "name_ironBar", "des_ironBar", "ºË∏∑¥Î", IRONBAR_IDX, 21, 28, 30, 31, 10);
+	//addNormalItem("¡÷π∞ ¿‹«ÿ", "name_foundryRests", "des_foundryRests", "¡÷π∞ ¿‹«ÿ", FOUNDRYRESTS_IDX, 134, 165, 173, 174, 5);
+	//addNormalItem("∏¡∞°¡¯ ∞À", "name_brokenSword", "des_brokenSword", "∏¡∞°¡¯ ∞À", BROKENSWORD_IDX, 134, 165, 173, 174, 5);
+	//addNormalItem("√µ", "name_fabric", "des_fabric", "√µ", FABRIC_IDX, 224, 275, 288, 289, 5);
+	//addNormalItem("∞Ê»≠ ∞≠√∂", "name_hardenedSteel", "des_hardenedSteel", "∞Ê»≠ ∞≠√∂", HARDENEDSTEEL_IDX, 269, 330, 345, 346, 5);
 
 	////∆˜º« æ∆¿Ã≈€ √ﬂ∞° 
-	//addPotionItem("hpPotion1", "name_hpPotion1", "des_hpPotion1", "hpPotion1",
+	//addPotionItem("HP π∞æ‡•∞", "name_hpPotion1", "des_hpPotion1", "HP π∞æ‡•∞",
 	//	POTION1_IDX, 40, 111, 138, 144, 145, 5);
-	//addPotionItem("hpPotion2", "name_hpPotion2", "des_hpPotion2", "hpPotion2",
+	//addPotionItem("HP π∞æ‡•±", "name_hpPotion2", "des_hpPotion2", "HP π∞æ‡•±",
 	//	POTION2_IDX, 75, 719, 880, 920, 921, 5);
 
 	////π´±‚ æ∆¿Ã≈€ √ﬂ∞° 
-	//addEquipmentItem("trainingBow", "name_trainingBow", "des_trainingBow",
-	//	"trainingBow", ITEM_WEAPON, TRAININGBOW_IDX, 0, 15, 0, 0, 899, 1100, 1150, 1151, 1);
-	//addEquipmentItem("trainingShortSword", "name_trainingShortSword", "des_trainingShortSword",
-	//	"trainingShortSword", ITEM_WEAPON, TRAININGSWORD_IDX, 0, 20, 0, 0, 899, 1100, 1150, 1151, 1);
-
-	//¿œπ› æ∆¿Ã≈€ √ﬂ∞°
-	addNormalItem("«≥∫Œ«— ¡©∏Æ", "name_richJelly", "des_richJelly", "«≥∫Œ«— ¡©∏Æ", RICHJELLY_IDX, 3, 6, 8, 9, 10);
-	addNormalItem("∏Õµ∂º∫ ¡©∏Æ", "name_venomJelly", "des_venomJelly", "∏Õµ∂º∫ ¡©∏Æ", VENOMJELLY_IDX, 17, 22, 24, 25, 10);
-	addNormalItem("∞≠»≠ ºˆ¡§", "name_crystal", "des_crystal", "∞≠»≠ ºˆ¡§", CRYSTAL_IDX, 89, 110, 115, 116, 5);
-	addNormalItem("µ¢±º", "name_vine", "des_vine", "µ¢±º", VINE_IDX, 2, 3, 5, 6, 10);
-	addNormalItem("¿Ãª°ºÆ", "name_teethStone", "des_teethStone", "¿Ãª°ºÆ", TEETHSTONE_IDX, 3, 6, 8, 9, 10);
-	addNormalItem("ª—∏Æ", "name_root", "des_root", "ª—∏Æ", ROOT_IDX, 3, 6, 8, 9, 10);
-	addNormalItem("ºË∏∑¥Î", "name_ironBar", "des_ironBar", "ºË∏∑¥Î", IRONBAR_IDX, 21, 28, 30, 31, 10);
-	addNormalItem("¡÷π∞ ¿‹«ÿ", "name_foundryRests", "des_foundryRests", "¡÷π∞ ¿‹«ÿ", FOUNDRYRESTS_IDX, 134, 165, 173, 174, 5);
-	addNormalItem("∏¡∞°¡¯ ∞À", "name_brokenSword", "des_brokenSword", "∏¡∞°¡¯ ∞À", BROKENSWORD_IDX, 134, 165, 173, 174, 5);
-	addNormalItem("√µ", "name_fabric", "des_fabric", "√µ", FABRIC_IDX, 224, 275, 288, 289, 5);
-	addNormalItem("∞Ê»≠ ∞≠√∂", "name_hardenedSteel", "des_hardenedSteel", "∞Ê»≠ ∞≠√∂", HARDENEDSTEEL_IDX, 269, 330, 345, 346, 5);
-
-	//∆˜º« æ∆¿Ã≈€ √ﬂ∞° 
-	addPotionItem("HP π∞æ‡•∞", "name_hpPotion1", "des_hpPotion1", "HP π∞æ‡•∞",
-		POTION1_IDX, 40, 111, 138, 144, 145, 5);
-	addPotionItem("HP π∞æ‡•±", "name_hpPotion2", "des_hpPotion2", "HP π∞æ‡•±",
-		POTION2_IDX, 75, 719, 880, 920, 921, 5);
-
-	//π´±‚ æ∆¿Ã≈€ √ﬂ∞° 
-	addEquipmentItem("»∆∑√øÎ »∞", "name_trainingBow", "des_trainingBow",
-		"»∆∑√øÎ »∞", ITEM_WEAPON, TRAININGBOW_IDX, 0, 15, 0, 0, 899, 1100, 1150, 1151, 1);
-	addEquipmentItem("»∆∑√øÎ ¥‹∞À", "name_trainingShortSword", "des_trainingShortSword",
-		"»∆∑√øÎ ¥‹∞À", ITEM_WEAPON, TRAININGSWORD_IDX, 0, 20, 0, 0, 899, 1100, 1150, 1151, 1);
+	//addEquipmentItem("»∆∑√øÎ »∞", "name_trainingBow", "des_trainingBow",
+	//	"»∆∑√øÎ »∞", ITEM_WEAPON, TRAININGBOW_IDX, 0, 15, 0, 0, 899, 1100, 1150, 1151, 1);
+	//addEquipmentItem("»∆∑√øÎ ¥‹∞À", "name_trainingShortSword", "des_trainingShortSword",
+	//	"»∆∑√øÎ ¥‹∞À", ITEM_WEAPON, TRAININGSWORD_IDX, 0, 20, 0, 0, 899, 1100, 1150, 1151, 1);
 
 	csvItemDataLoad("CSVdata/itemData_nomal.csv" , CSVITEMTYPE::CSV_NOMAL);
 	csvItemDataLoad("CSVdata/itemData_potion.csv" , CSVITEMTYPE::CSV_POTION);

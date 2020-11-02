@@ -34,8 +34,15 @@ void shopScene::ItemPosSet()
 HRESULT shopScene::init()
 {
 	//클래스 초기화
-	_displayStand = new displayStand();
-	_displayStand->init();
+	if (ITEMMENU->getInitDisplayStand())
+	{
+		_displayStand->initShopInven();
+	}
+	else
+	{
+		_displayStand = new displayStand;
+		_displayStand->init();
+	}
 
 	_npc = new ShopNpcManager;
 	_npc->init(_displayStand);
@@ -100,8 +107,8 @@ void shopScene::release()
 	SAFE_DELETE(_button);
 	SAFE_DELETE(_door);
 
-	_displayStand->release();
-	SAFE_DELETE(_displayStand);
+	//_displayStand->release();
+	//SAFE_DELETE(_displayStand);
 }
 
 void shopScene::update()

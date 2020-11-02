@@ -105,6 +105,7 @@ public:
 	void menuMoveDown(POINT *pos, const int destPos);		//위치값을 받아 목적지로 아래쪽 이동 
 
 	//상점 인벤토리 관련 함수 
+	void initDisplayStand();			//진열대 초기화 함수 
 	void initShopInven();				//상점 인벤토리에 필요한 모든 초기화 실행(가판대를 열때마다 실행)
 	void initShopSlot();				//최초의 상점 슬롯 초기화 
 	void initInvenSlot();				//인벤토리 슬롯 초기화(가판대를 열 때마다 실행)

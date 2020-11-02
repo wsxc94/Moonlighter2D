@@ -594,9 +594,9 @@ void player::updateWeaponState()
 		_player.weapon = BOW;
 		break;
 
-	//default:
-	//	_player.weapon = SHORT_SOWRD;
-	//	break;
+	default:
+		_player.weapon = SHORT_SOWRD;
+		break;
 	}
 }
 

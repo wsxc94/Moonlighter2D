@@ -85,9 +85,6 @@ void displayStand::update()
 			//키 입력 함수 
 			keyInput();
 
-			//현재 디스플레이중인 아이템 업데이트 
-			//getDisplayItem();
-
 			//커서 애니메이션 함수 
 			_cursor->update();
 		}
@@ -123,19 +120,6 @@ void displayStand::render()
 
 	//wsprintf(str, "itemMenuCanKeyInput : %d", ITEMMENU->getCanKeyInput());
 	//TextOut(getMemDC(), 10, 90, str, strlen(str));
-
-	/*wsprintf(str, "invenSize : %d", _vShopInven.size());
-	TextOut(getMemDC(), 10, 90, str, strlen(str));*/
-
-	//for (int i = 0; i < 4; i++)
-	//{
-	//	if (_displayItem[i].getType() == ITEM_EMPTY) continue;
-
-	//	/*wsprintf(str, "displayItem[%d] : %d", i, _displayItem[i].getType());
-	//	TextOut(getMemDC(), 10, 130 + (i * 25), str, strlen(str));*/
-
-	//	_displayItem[i].getItemImg()->render(getMemDC(), 10, 130 + (i * 25));
-	//}
 }
 
 void displayStand::openDisplayStand()
@@ -157,6 +141,9 @@ void displayStand::openDisplayStand()
 	ITEMMENU->setCanKeyInput(false);
 	_fadeManager->fadeInit(16, FADE_OUT, 205);
 	SOUNDMANAGER->play("openInven", 0.4f);
+
+	getDisplayItem();
+	ITEMMENU->setInitDisplayStand(true);
 }
 
 void displayStand::closeDisplayStand()
@@ -285,6 +272,11 @@ void displayStand::menuMoveDown(POINT * pos, const int destPos)
 	pos->y += _menuMoveSpeed;
 
 	if (pos->y > destPos) pos->y = destPos;
+}
+
+void displayStand::initDisplayStand()
+{
+
 }
 
 void displayStand::initShopInven()
