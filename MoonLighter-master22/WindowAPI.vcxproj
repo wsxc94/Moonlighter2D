@@ -242,6 +242,7 @@
     <ClCompile Include="iniData.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="inventory.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="itemManager.cpp" />
     <ClCompile Include="itemMenu.cpp" />
     <ClCompile Include="itemMenuLoading.cpp" />
