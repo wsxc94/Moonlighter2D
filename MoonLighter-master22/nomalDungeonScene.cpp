@@ -32,9 +32,6 @@ HRESULT nomalDungeonScene::init()
 	PLAYER->setX(WINSIZEX / 2);
 	PLAYER->setY(WINSIZEY / 2);
 
-	PLAYER->setX(1085 + 10);
-	PLAYER->setY(350 + 17);
-
 	SOUNDMANAGER->play("dungeonBGM",0.3f);
 	PLAYERDATA->initDungeonHp();
 	ITEMMENU->getInventory()->updateStatus();

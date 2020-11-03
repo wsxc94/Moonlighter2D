@@ -157,7 +157,7 @@ void DungeonMap::render()
 
 void DungeonMap::setStartDungeon()
 {
-	_fileName = "maptool/dungeon7";
+	_fileName = "maptool/dungeonStart";
 	_vMaps.push_back(this);
 	_mapSize = 3;
 
