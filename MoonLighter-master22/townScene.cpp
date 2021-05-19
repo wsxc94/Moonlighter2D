@@ -56,14 +56,14 @@ HRESULT townScene::init()
 
 void townScene::release()
 {
-	SAFE_DELETE(_aniPotalInit);
+	/*SAFE_DELETE(_aniPotalInit);
 	
 	_npcManager->release();
 	SAFE_DELETE(_npcManager);
 	
 	for (int i = 0; i < _objManager.size(); i++) {
 		SAFE_DELETE(_objManager[i]);
-	}
+	}*/
 }
 
 void townScene::update()
