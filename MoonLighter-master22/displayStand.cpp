@@ -4,10 +4,12 @@
 HRESULT displayStand::init()
 {
 	//클래스 초기화 
-	_fadeManager = new fadeManager;
+	//_fadeManager = new fadeManager;
+	_fadeManager = make_unique<fadeManager>();
 	_fadeManager->init();
 
-	_cursor = new cursor;
+	//_cursor = new cursor;
+	_cursor = make_unique<cursor>();
 	_cursor->init();
 
 	//메뉴 위치 초기화 
@@ -58,11 +60,10 @@ void displayStand::release()
 	}
 
 	_fadeManager->release();
-
-	SAFE_DELETE(_fadeManager);
+     //SAFE_DELETE(_fadeManager);
 
 	_cursor->release();
-	SAFE_DELETE(_cursor);
+	//SAFE_DELETE(_cursor);
 }
 
 void displayStand::update()

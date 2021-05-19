@@ -14,8 +14,8 @@ class gameNode;
 class sceneManager : public singletonBase <sceneManager>
 {
 private:
-	typedef map<string, gameNode*> mSceneList;
-	typedef map<string, gameNode*>::iterator miSceneList;
+	typedef unordered_map<string, gameNode*> mSceneList;
+	typedef unordered_map<string, gameNode*>::iterator miSceneList;
 
 private:	
 	//map<string, gameNode*> _mSceneList;			//각각의 씬(화면)들을 담아둘 맵

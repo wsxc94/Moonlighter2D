@@ -36,11 +36,12 @@ private:
 	HFONT hFont; // 아이템 가격 폰트
 	HFONT oldFont; // 아이템 가격 폰트
 
-	animation* _cashRegister; // 책상 위 금고
-	animation* _button; // 좌판 배치 버튼
-	animation* _door; // 문
-	animation* _cauldron; //꿀단지
-	animation* _sellButton; // 판매 버튼
+
+	unique_ptr<animation> _cashRegister; // 책상 위 금고
+	unique_ptr<animation> _button; // 좌판 배치 버튼
+	unique_ptr<animation> _door; // 문
+	unique_ptr<animation> _cauldron; //꿀단지
+	unique_ptr<animation> _sellButton; // 판매 버튼
 
 	bool _sellNpcCheck;
 	bool _pixelBackGround;

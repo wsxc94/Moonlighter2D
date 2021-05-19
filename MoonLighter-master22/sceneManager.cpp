@@ -30,8 +30,6 @@ void sceneManager::release()
 	_mSceneList.clear();
 	*/
 
-	//C++ 고오급 문법
-	//for(auto scene in _mSceneList) => 지금은 사용불가
 	for (auto scene : _mSceneList)
 	{
 		scene.second->release();

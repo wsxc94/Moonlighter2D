@@ -44,7 +44,7 @@ HRESULT shopScene::init()
 		_displayStand->init();
 	}
 
-	_npc = new ShopNpcManager;
+	_npc = new ShopNpcManager();
 	_npc->init(_displayStand);
 
 	PLAYER->init();
@@ -67,22 +67,22 @@ HRESULT shopScene::init()
 	_visit = false;
 	_isShopOpen = false;
 
-	_cashRegister = new animation;
+	_cashRegister = make_unique<animation>();
 	_cashRegister->init(IMAGEMANAGER->findImage("책상금고"), 0, 7);
 	_cashRegister->aniStop();
 
-	_button = new animation; //상첨 배치 버튼
+	_button = make_unique<animation>(); //상첨 배치 버튼
 	_button->init(IMAGEMANAGER->findImage("상점배치"), 0, 7);
 
-	_door = new animation;
+	_door = make_unique<animation>();
 	_door->init(IMAGEMANAGER->findImage("상점문열어"), 0, 7, false, false);
 	//_door->aniStop();
 
-	_cauldron = new animation;
+	_cauldron = make_unique<animation>();
 	_cauldron->init(IMAGEMANAGER->findImage("꿀단지"), 0, 11, true, false);
 	_cauldron->aniPlay();
 
-	_sellButton = new animation;
+	_sellButton = make_unique<animation>();
 	_sellButton->init(IMAGEMANAGER->findImage("판매버튼"), 0, 8);
 	_sellNpcCheck = false;
 
@@ -100,12 +100,11 @@ HRESULT shopScene::init()
 
 void shopScene::release()
 {
-	_npc->release();
-
+	if(_npc) _npc->release();
 	SAFE_DELETE(_npc);
-	SAFE_DELETE(_cashRegister);
-	SAFE_DELETE(_button);
-	SAFE_DELETE(_door);
+	//SAFE_DELETE(_cashRegister);
+	//SAFE_DELETE(_button);
+	//SAFE_DELETE(_door);
 
 	//_displayStand->release();
 	//SAFE_DELETE(_displayStand);
