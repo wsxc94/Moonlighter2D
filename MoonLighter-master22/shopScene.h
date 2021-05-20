@@ -8,8 +8,8 @@
 class shopScene : public gameNode
 {
 private:
-	ShopNpcManager* _npc; // npc매니저
-	displayStand* _displayStand; //아이템 좌판 정보
+	unique_ptr<ShopNpcManager> _npc; // npc매니저
+	shared_ptr<displayStand> _displayStand; //아이템 좌판 정보
 
 	RECT GoTownPortal; // 마을로가는 포탈
 
@@ -48,6 +48,8 @@ private:
 
 
 public:
+	shopScene() {};
+	~shopScene();
 	HRESULT init();
 	void release();
 	void update();

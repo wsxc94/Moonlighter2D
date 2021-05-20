@@ -36,9 +36,6 @@ void sceneManager::release()
 		SAFE_DELETE(scene.second);
 	}
 
-	//int a = 10;
-	//auto b = 100.5f;
-	//var c = 10; //유니티에서
 }
 
 void sceneManager::update()

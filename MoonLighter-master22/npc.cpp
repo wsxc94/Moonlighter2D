@@ -92,7 +92,7 @@ HRESULT npc::init(tagPosF pos, string key)
 	return S_OK;
 }
 
-HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displayStand* dis)
+HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, shared_ptr<displayStand> dis)
 {
 	_peekItemGold = 0;
 	_peekItemCnt = 0;
@@ -134,8 +134,8 @@ HRESULT npc::init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displaySta
 
 void npc::release()
 {
-	SAFE_DELETE(_peekItemImg);
-	SAFE_DELETE(_displayStand);
+	//SAFE_DELETE(_peekItemImg);
+	//SAFE_DELETE(_displayStand);
 }
 
 void npc::update()
@@ -694,5 +694,10 @@ void npc::TalkInterfaceRender()
 		DrawText(getMemDC(), str, -1, &_textRect, DT_LEFT | DT_WORDBREAK);
 
 	}
+}
+
+npc::~npc()
+{
+	//SAFE_DELETE(_peekItemImg);
 }
 

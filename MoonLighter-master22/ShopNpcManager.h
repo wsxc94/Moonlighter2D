@@ -16,7 +16,7 @@ private:
 
 	vector<npc*> v_npcs;
 
-	displayStand* _displayStand;
+	shared_ptr<displayStand> _displayStand;
 
 	int _npcTime;
 
@@ -28,7 +28,11 @@ private:
 	};
 
 public:
-	HRESULT init(displayStand* dis);
+
+	ShopNpcManager() {};
+	~ShopNpcManager();
+
+	HRESULT init(shared_ptr<displayStand> dis);
 	void release();
 	void update();
 	void render();
@@ -37,8 +41,5 @@ public:
 
 	vector<npc*>& getVector() { return v_npcs; }
 	vector<pair<string, string>>& getNpcNamePair() { return _npcName; }
-
-	ShopNpcManager(){}
-	~ShopNpcManager(){}
 };
 

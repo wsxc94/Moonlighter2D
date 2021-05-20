@@ -1,6 +1,21 @@
 #include "stdafx.h"
 #include "displayStand.h"
 
+displayStand::~displayStand()
+{
+	for (int i = 0; i < _vShopInven.size(); i++)
+	{
+		SAFE_DELETE(_vShopInven[i]);
+	}
+
+	_fadeManager->release();
+	//SAFE_DELETE(_fadeManager);
+
+	_cursor->release();
+	//SAFE_DELETE(_cursor);
+
+}
+
 HRESULT displayStand::init()
 {
 	//클래스 초기화 
@@ -54,16 +69,16 @@ HRESULT displayStand::init()
 
 void displayStand::release()
 {
-	for (int i = 0; i < _vShopInven.size(); i++)
-	{
-		SAFE_DELETE(_vShopInven[i]);
-	}
+	//for (int i = 0; i < _vShopInven.size(); i++)
+	//{
+	//	SAFE_DELETE(_vShopInven[i]);
+	//}
 
-	_fadeManager->release();
-     //SAFE_DELETE(_fadeManager);
+	//_fadeManager->release();
+ //    //SAFE_DELETE(_fadeManager);
 
-	_cursor->release();
-	//SAFE_DELETE(_cursor);
+	//_cursor->release();
+	////SAFE_DELETE(_cursor);
 }
 
 void displayStand::update()

@@ -1,6 +1,16 @@
 #include "stdafx.h"
 #include "ShopNpcManager.h"
-HRESULT ShopNpcManager::init(displayStand* dis)
+ShopNpcManager::~ShopNpcManager()
+{
+	for (int i = 0; i < MAX_NPC; i++)
+	{
+		v_npcs[i]->release();
+		SAFE_DELETE(v_npcs[i]);
+	}
+
+	//SAFE_DELETE(_displayStand);
+}
+HRESULT ShopNpcManager::init(shared_ptr<displayStand> dis)
 {
 	_npcCnt = 0;
 
@@ -31,11 +41,11 @@ HRESULT ShopNpcManager::init(displayStand* dis)
 
 void ShopNpcManager::release()
 {
-	for (int i = 0; i < MAX_NPC; i++)
+	/*for (int i = 0; i < MAX_NPC; i++)
 	{
 		v_npcs[i]->release();
 		SAFE_DELETE(v_npcs[i]);
-	}
+	}*/
 }
 
 void ShopNpcManager::update()

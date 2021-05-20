@@ -81,6 +81,10 @@ private:
 	bool _grabSoundPlayed;				//아이템을 잡는 사운드가 플레이되었는지 확인하는 변수(중복 방지)
 
 public:
+
+	displayStand() {};
+	~displayStand();
+
 	HRESULT init();
 	void release();
 	void update();

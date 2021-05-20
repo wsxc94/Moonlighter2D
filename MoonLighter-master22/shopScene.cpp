@@ -31,6 +31,14 @@ void shopScene::ItemPosSet()
 
 }
 
+shopScene::~shopScene()
+{
+	//_npc->release();    
+	//_displayStand->release();
+	//SAFE_DELETE(_displayStand);
+	//SAFE_DELETE(_npc);
+}
+
 HRESULT shopScene::init()
 {
 	//클래스 초기화
@@ -40,11 +48,13 @@ HRESULT shopScene::init()
 	}
 	else
 	{
-		_displayStand = new displayStand;
+		//_displayStand = new displayStand;
+		_displayStand = make_shared<displayStand>();
 		_displayStand->init();
 	}
 
-	_npc = new ShopNpcManager();
+	//_npc = new ShopNpcManager();
+	_npc = make_unique<ShopNpcManager>();
 	_npc->init(_displayStand);
 
 	PLAYER->init();
@@ -100,12 +110,7 @@ HRESULT shopScene::init()
 
 void shopScene::release()
 {
-	/*_npc->release();
-	SAFE_DELETE(_npc);*/
-	//SAFE_DELETE(_cashRegister);
-	//SAFE_DELETE(_button);
-	//SAFE_DELETE(_door);
-
+	//_npc->release();    
 	//_displayStand->release();
 	//SAFE_DELETE(_displayStand);
 }

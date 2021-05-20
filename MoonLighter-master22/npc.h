@@ -79,7 +79,7 @@ protected:
 	RECT _nameRect; // 이름 drawtext용 렉트
 	RECT _textRect; // 멘트 drawtext용 렉트
 
-	displayStand* _displayStand; // 상점 좌판 정보
+	shared_ptr<displayStand> _displayStand; // 상점 좌판 정보
 	gameItem _itemEmpty;		//비어있는 아이템 
 
 	string _illustrator = "일러"; // 이름 + 일러 = 일러스트 이미지
@@ -93,7 +93,7 @@ protected:
 
 public:
     virtual HRESULT init(tagPosF pos, string key); // 마을 npc 초기화
-	HRESULT init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, displayStand* dis);  //상점 npc 초기화
+	HRESULT init(tagPosF pos, string key, NPC_MAP NPC_SHOP, int idx, shared_ptr<displayStand> dis);  //상점 npc 초기화
 
 	void release();
 	virtual void update(); // 마을 NPC 업데이트
@@ -149,6 +149,6 @@ public:
 
 	void setDelay(bool b) { _delay = b; }
 	npc() {}
-	~npc() {}
+	~npc();
 };
 
