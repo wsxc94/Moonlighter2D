@@ -10,7 +10,7 @@
 - https://www.youtube.com/watch?v=u2RAxY-6R2M&ab_channel=%EA%B2%BD%EC%9D%BC%EA%B2%8C%EC%9E%84%EC%95%84%EC%B9%B4%EB%8D%B0%EB%AF%B8
 ---
 ## 다운로드 링크
-- https://drive.google.com/file/d/189KbOcV0lMBCOGyDyWXr5zjajjrVvIF_/view?usp=sharing
+- https://drive.google.com/file/d/15MULvpWwGbdFbMubMrYnMk10qbpyfeYW/view?usp=sharing
 - 다운로드 및 압축해제 후 CopyMoonLighter.exe 실행
 ---
 
