@@ -276,7 +276,7 @@ void npc::boxAnim()
 	}
 }
 
-void npc::move()
+void npc::move() // npc 이동 함수 마을
 {
 	_time++;
 
@@ -309,7 +309,7 @@ void npc::move()
 	}
 }
 
-void npc::move(NPC_MAP NPC_SHOP)
+void npc::move(NPC_MAP NPC_SHOP) //npc 이동함수 상점
 {
 
 	if (_state == NPC_STOP) {
@@ -338,7 +338,7 @@ void npc::move(NPC_MAP NPC_SHOP)
 
 }
 
-void npc::DistanceCheck()
+void npc::DistanceCheck() // 타겟 좌표 변경 및 애니메이션 설정함수
 {
 	if (shop_target[shop_targetIdx][shop_currentTargetIdx].y == 680)
 	{
@@ -353,7 +353,6 @@ void npc::DistanceCheck()
 	if (getDistance(_pos.x, _pos.y, shop_target[shop_targetIdx][shop_currentTargetIdx].x,
 		shop_target[shop_targetIdx][shop_currentTargetIdx].y) < 1)
 	{
-
 
 		if (shop_currentTargetIdx < shop_target[shop_targetIdx].size() && !_delay) {
 			_delay = true;
